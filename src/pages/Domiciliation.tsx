@@ -35,7 +35,7 @@ const DomiciliationPublic = () => {
 
   useSEO({
     title: 'Domiciliation d\'Entreprise à Alger | Coffice Coworking',
-    description: 'Domiciliez votre entreprise au Centre Commercial Mohammadia Mall. Adresse prestigieuse, conformité légale, contrat notarié. À partir de 15.000 DZD/mois.',
+    description: 'Domiciliez votre entreprise au Centre Commercial Mohammadia Mall. Adresse prestigieuse, conformité légale, contrat notarié. 12.000 DA HT/mois avec accès coworking et partenariat Novihost inclus.',
     keywords: ['domiciliation entreprise Alger', 'adresse commerciale Alger', 'siège social Mohammadia Mall', 'domiciliation SARL Algérie', 'coworking Alger']
   })
 
@@ -50,51 +50,29 @@ const DomiciliationPublic = () => {
   const MAX_DOMICILIATIONS = 60
   const placesRestantes = MAX_DOMICILIATIONS - domiciliationServices.filter(s => s.status === 'active').length
 
-  const pricingPlans = [
-    {
-      name: 'Non-membres',
-      price: '22 000 DA TTC',
-      priceValue: 22000,
-      priceMember: false,
-      originalPrice: '27 500 DA',
-      discountStartup: '-20%',
-      priceStartup: '17 600 DA TTC',
-      period: '/mois',
-      description: 'Pour entreprises non domiciliées chez nous',
-      features: [
-        'Adresse commerciale prestigieuse',
-        'Gestion et réception du courrier',
-        'Attestation de domiciliation',
-        'Contrat notarié 100% conforme',
-        'Partenariat Novihost inclus',
-        'Accès services entreprises',
-        'Support administratif'
-      ],
-      highlight: 'Tarif réduit de 17 600 DA pour startups labelisées et auto-entrepreneurs'
-    },
-    {
-      name: 'Membres',
-      price: '14 000 DA TTC',
-      priceValue: 14000,
-      priceMember: true,
-      originalPrice: '17 500 DA',
-      discountStartup: '-20%',
-      priceStartup: '11 200 DA TTC',
-      period: '/mois',
-      description: 'Pour membres coworking Coffice',
-      features: [
-        'Toutes les fonctionnalités Non-membres',
-        'Accès coworking inclus',
-        'Salles de réunion prioritaires',
-        'Réductions services additionnels',
-        'Partenariat Novihost premium',
-        'Visibilité sur notre site',
-        'Support prioritaire 24/7'
-      ],
-      popular: true,
-      highlight: 'Tarif réduit de 11 200 DA pour startups labelisées et auto-entrepreneurs'
-    }
-  ]
+  const pricingPlan = {
+    name: 'Offre Unique',
+    price: '12 000 DA HT',
+    priceValue: 12000,
+    period: '/mois',
+    description: 'Formule complète pour votre domiciliation professionnelle',
+    features: [
+      'Adresse commerciale prestigieuse',
+      'Gestion et réception du courrier',
+      'Attestation de domiciliation',
+      'Contrat notarié 100% conforme',
+      'Accès coworking 8H/semaine',
+      'Salles de réunion prioritaire',
+      'Réductions de 20% sur tous les services',
+      'Partenariat Novihost premium :',
+      '  • Hébergement web professionnel',
+      '  • Nom de domaine .DZ inclus',
+      '  • 10 adresses email professionnelles',
+      'Visibilité sur notre site',
+      'Support prioritaire 24/7'
+    ],
+    popular: true
+  }
 
   const businessServices = [
     {
@@ -192,18 +170,18 @@ const DomiciliationPublic = () => {
     },
     {
       icon: Zap,
-      title: 'Domaine .DZ offert',
-      description: 'Un nom de domaine .dz gratuit la première année'
+      title: 'Domaine .DZ inclus',
+      description: 'Un nom de domaine .dz pour votre entreprise'
+    },
+    {
+      icon: Mail,
+      title: '10 Adresses Email Pro',
+      description: '10 adresses email professionnelles @votreentreprise.dz'
     },
     {
       icon: Shield,
       title: 'Sécurité renforcée',
       description: 'Certificat SSL, sauvegardes automatiques et protection anti-DDoS'
-    },
-    {
-      icon: Award,
-      title: 'Support technique',
-      description: 'Assistance technique 24/7 en français et en arabe'
     }
   ]
 
@@ -513,78 +491,80 @@ const DomiciliationPublic = () => {
 
       {/* Tarifs Section */}
       <section id="tarifs" className="py-20 px-4 bg-gradient-to-b from-gray-50 to-white">
-        <div className="container mx-auto max-w-6xl">
+        <div className="container mx-auto max-w-4xl">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
-              Nos Formules de Domiciliation
+              Formule de Domiciliation
             </h2>
             <p className="text-gray-600 text-lg">
-              Choisissez la formule adaptée à vos besoins et votre budget
+              Une offre complète pour votre domiciliation professionnelle
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
-            {pricingPlans.map((plan, index) => (
-              <motion.div
-                key={plan.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="flex"
-              >
-                <Card className={`p-8 flex flex-col w-full ${plan.popular ? 'border-2 border-accent shadow-xl relative' : ''}`}>
-                  {plan.popular && (
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                      <Badge className="bg-accent text-white">Le plus populaire</Badge>
-                    </div>
-                  )}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="max-w-2xl mx-auto"
+          >
+            <Card className="p-8 border-2 border-accent shadow-2xl relative">
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                <Badge className="bg-accent text-white">Offre Unique</Badge>
+              </div>
 
-                  <div className="mb-8">
-                    <h3 className="text-2xl font-bold text-primary mb-2">{plan.name}</h3>
-                    <p className="text-gray-600 mb-6">{plan.description}</p>
-                    <div className="flex items-baseline mb-2">
-                      <span className="text-4xl font-bold text-primary">{plan.price}</span>
-                    </div>
-                    <span className="text-gray-500">{plan.period}</span>
+              <div className="text-center mb-8">
+                <h3 className="text-3xl font-bold text-primary mb-2">{pricingPlan.name}</h3>
+                <p className="text-gray-600 mb-6">{pricingPlan.description}</p>
+                <div className="flex items-baseline justify-center mb-2">
+                  <span className="text-5xl font-bold text-primary">{pricingPlan.price}</span>
+                </div>
+                <span className="text-gray-500 text-lg">{pricingPlan.period}</span>
+              </div>
 
-                    {plan.discountStartup && (
-                      <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-                        <div className="flex items-center gap-2 mb-1">
-                          <Star className="w-4 h-4 text-green-600" />
-                          <span className="text-sm font-semibold text-green-700">Offre Startup & Auto-entrepreneur</span>
-                        </div>
-                        <div className="flex items-baseline gap-2">
-                          <span className="text-2xl font-bold text-green-700">{plan.priceStartup}</span>
-                          <Badge className="bg-green-600 text-white text-xs">{plan.discountStartup}</Badge>
-                        </div>
-                      </div>
-                    )}
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 mb-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center">
+                    <Server className="w-6 h-6 text-white" />
                   </div>
+                  <div>
+                    <h4 className="font-bold text-primary">Partenariat Novihost Premium Inclus</h4>
+                    <p className="text-sm text-gray-600">Présence digitale professionnelle complète</p>
+                  </div>
+                </div>
+              </div>
 
-                  <ul className="space-y-3 flex-grow mb-8">
-                    {plan.features.map((feature, idx) => (
-                      <li key={idx} className="flex items-start gap-3">
-                        <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="w-3 h-3 text-green-600" />
-                        </div>
-                        <span className="text-gray-700 text-sm">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
+              <ul className="space-y-3 mb-8">
+                {pricingPlan.features.map((feature, idx) => (
+                  <li key={idx} className="flex items-start gap-3">
+                    <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Check className="w-3 h-3 text-green-600" />
+                    </div>
+                    <span className={`text-gray-700 ${feature.startsWith('  •') ? 'ml-4 text-sm' : ''}`}>{feature}</span>
+                  </li>
+                ))}
+              </ul>
 
-                  <Link to="/inscription" className="block mt-auto">
-                    <Button
-                      variant={plan.popular ? 'primary' : 'outline'}
-                      className="w-full"
-                      size="lg"
-                    >
-                      Choisir cette formule
-                    </Button>
-                  </Link>
-                </Card>
-              </motion.div>
-            ))}
+              <Link to="/inscription" className="block">
+                <Button
+                  variant="primary"
+                  className="w-full"
+                  size="lg"
+                >
+                  Commencer maintenant
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
+              </Link>
+            </Card>
+          </motion.div>
+
+          <div className="mt-12 text-center">
+            <p className="text-gray-600 mb-4">
+              Questions sur notre offre de domiciliation?
+            </p>
+            <a href="tel:+213238049240" className="inline-flex items-center gap-2 text-primary font-semibold hover:text-accent transition-colors">
+              <Phone className="w-5 h-5" />
+              +213 23 804 924
+            </a>
           </div>
         </div>
       </section>
