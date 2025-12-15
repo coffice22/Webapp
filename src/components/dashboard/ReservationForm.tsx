@@ -108,7 +108,6 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ isOpen, onClose, sele
     try {
       const result = await apiClient.validateCodePromo(
         watchedFields.codePromo,
-        user.id,
         estimatedAmount,
         'reservation'
       )

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Tag, Copy, CheckCircle, Gift, Search } from 'lucide-react'
 import { apiClient } from '../../lib/api-client'
-import { useAuthStore } from '../../store/authStore'
 import Card from '../../components/ui/Card'
 import Badge from '../../components/ui/Badge'
 import Button from '../../components/ui/Button'
@@ -49,8 +48,7 @@ const CodesPromo = () => {
 
     setVerifying(true)
     try {
-      const user = useAuthStore.getState().user
-      const result = await apiClient.validateCodePromo(verifyCode.toUpperCase(), user!.id, 0, 'reservation')
+      const result = await apiClient.validateCodePromo(verifyCode.toUpperCase(), 0, 'reservation')
       if (result.valid) {
         toast.success(`Code valide ! Réduction de ${result.reduction} DA`)
       } else {

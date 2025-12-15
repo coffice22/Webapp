@@ -38,14 +38,14 @@ export const IMAGES = {
 
 export const getImageUrl = (category: keyof typeof IMAGES, key?: string): string => {
   if (!key) {
-    const item = IMAGES[category]
-    if (typeof item === 'object' && 'url' in item) {
+    const item = IMAGES[category] as Record<string, unknown>
+    if (typeof item === 'object' && 'url' in item && typeof item.url === 'string') {
       return item.url
     }
     return ''
   }
 
-  const categoryData = IMAGES[category] as any
+  const categoryData = IMAGES[category] as Record<string, Record<string, string>>
   if (categoryData && categoryData[key]) {
     return categoryData[key].url || ''
   }
@@ -55,14 +55,14 @@ export const getImageUrl = (category: keyof typeof IMAGES, key?: string): string
 
 export const getImageAlt = (category: keyof typeof IMAGES, key?: string): string => {
   if (!key) {
-    const item = IMAGES[category]
-    if (typeof item === 'object' && 'alt' in item) {
+    const item = IMAGES[category] as Record<string, unknown>
+    if (typeof item === 'object' && 'alt' in item && typeof item.alt === 'string') {
       return item.alt
     }
     return ''
   }
 
-  const categoryData = IMAGES[category] as any
+  const categoryData = IMAGES[category] as Record<string, Record<string, string>>
   if (categoryData && categoryData[key]) {
     return categoryData[key].alt || ''
   }

@@ -79,13 +79,18 @@ const PaymentForm: React.FC<PaymentFormProps> = ({
   const processPaymentTransaction = async () => {
     setLoading(true)
     setError(null)
-    
+
     try {
-      const paymentDetails: PaymentDetails = {
-        cardNumber: '1234567890123456',
-        cardholderName: 'Customer',
-        expiryDate: '12/25',
-        cvv: '123'
+      const paymentDetails: PaymentDetails = selectedMethod === 'cash' ? {
+        cardNumber: '',
+        cardholderName: cardName || 'Cash Payment',
+        expiryDate: '',
+        cvv: ''
+      } : {
+        cardNumber: cardNumber.replace(/\s/g, ''),
+        cardholderName: cardName,
+        expiryDate: cardExpiry,
+        cvv: cardCvv
       };
 
       const result = await processPayment(

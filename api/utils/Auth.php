@@ -169,6 +169,10 @@ class Auth {
      * Helper pour décoder du base64 URL-safe
      */
     private static function base64UrlDecode($data) {
+        $remainder = strlen($data) % 4;
+        if ($remainder) {
+            $data .= str_repeat('=', 4 - $remainder);
+        }
         return base64_decode(strtr($data, '-_', '+/'));
     }
 

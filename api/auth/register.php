@@ -158,10 +158,10 @@ try {
 } catch (PDOException $e) {
     error_log("Database error in register: " . $e->getMessage());
     error_log("Stack trace: " . $e->getTraceAsString());
-    Response::error("Erreur de base de données: " . $e->getMessage(), 500);
+    Response::serverError("Erreur lors de l'inscription");
 } catch (Exception $e) {
     error_log("Register error: " . $e->getMessage());
     error_log("Stack trace: " . $e->getTraceAsString());
-    Response::error("Erreur lors de l'inscription: " . $e->getMessage(), 500);
+    Response::serverError("Erreur lors de l'inscription");
 }
 ?>

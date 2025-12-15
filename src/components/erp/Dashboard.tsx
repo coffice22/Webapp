@@ -25,7 +25,6 @@ const ERPDashboard = () => {
       try {
         generateAnalytics(period);
 
-        // Charger les statistiques admin réelles
         const response = await apiClient.getAdminStats();
         if (response.success && response.data) {
           setAdminStats(response.data);
@@ -38,7 +37,7 @@ const ERPDashboard = () => {
     };
 
     loadData();
-  }, [period, generateAnalytics]);
+  }, [period]);
 
   // Calcul des statistiques
   const stats = {

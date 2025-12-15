@@ -376,6 +376,7 @@ const InvoiceManagement = () => {
     link.href = url;
     link.download = `coffice-invoices-${new Date().toISOString().split('T')[0]}.json`;
     link.click();
+    URL.revokeObjectURL(url);
     toast.success('Factures exportées avec succès');
   };
 

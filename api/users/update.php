@@ -117,11 +117,11 @@ try {
     error_log("User update error: " . $e->getMessage());
     error_log("User update trace: " . $e->getTraceAsString());
 
-    // En mode debug, retourner l'erreur complète
-    if (getenv('APP_ENV') === 'development' || $_ENV['APP_ENV'] === 'development') {
+    $isDev = getenv('APP_ENV') === 'development' || ($_ENV['APP_ENV'] ?? '') === 'development';
+    if ($isDev) {
         Response::error($e->getMessage(), 500);
     } else {
-        Response::serverError("Erreur lors de la mise à jour: " . $e->getMessage());
+        Response::serverError("Erreur lors de la mise à jour");
     }
 }
 ?>

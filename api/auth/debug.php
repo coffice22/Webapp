@@ -4,13 +4,31 @@
  * GET /api/auth/debug.php
  *
  * Test COMPLET de la chaîne d'authentification
- * Utilisez cet endpoint pour diagnostiquer les problèmes de 401
+ * SECURISE: Accessible uniquement en dev ou par admin authentifie
  */
 
 require_once '../config/cors.php';
 require_once '../utils/Auth.php';
+require_once '../utils/Response.php';
 
 header('Content-Type: application/json');
+
+$isProduction = getenv('APP_ENV') === 'production' ||
+                ($_ENV['APP_ENV'] ?? '') === 'production';
+
+if ($isProduction) {
+    $token = Auth::getBearerToken(false);
+    if ($token) {
+        $userData = Auth::validateToken($token);
+        if (!$userData || $userData->role !== 'admin') {
+            Response::error("Endpoint de debug non disponible en production", 403);
+            exit;
+        }
+    } else {
+        Response::error("Endpoint de debug non disponible en production", 403);
+        exit;
+    }
+}
 
 $debug = [];
 
@@ -75,13 +93,7 @@ if ($token) {
         'description' => 'Validation du token JWT'
     ];
 
-    // Récupérer la clé secrète utilisée
-    $reflection = new ReflectionClass('Auth');
-    $method = $reflection->getMethod('getSecretKey');
-    $method->setAccessible(true);
-    $secret = $method->invoke(null);
-
-    $debug['step_3_validate_token']['secret_key_preview'] = substr($secret, 0, 20) . '...';
+    $debug['step_3_validate_token']['secret_key_configured'] = true;
 
     // Tester la validation
     try {

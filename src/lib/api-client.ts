@@ -495,7 +495,7 @@ class ApiClient {
   }
 
   // ============= CODES PROMO =============
-  async validateCodePromo(code: string, userId: string, montant: number, type: string) {
+  async validateCodePromo(code: string, montant: number, type: string) {
     return this.request('/codes-promo/validate.php', {
       method: 'POST',
       body: JSON.stringify({ code, montant, type })
@@ -504,7 +504,7 @@ class ApiClient {
         const data = response.data as any
         return {
           valid: true,
-          codePromoId: data.code_promo_id || data.code,
+          codePromoId: data.id || data.code,
           reduction: data.reduction || 0
         }
       }
@@ -527,16 +527,15 @@ class ApiClient {
   }
 
   async updateCodePromo(id: string, data: any) {
-    return this.request('/codes-promo/update.php', {
+    return this.request(`/codes-promo/update.php?id=${encodeURIComponent(id)}`, {
       method: 'PUT',
-      body: JSON.stringify({ id, ...data })
+      body: JSON.stringify(data)
     })
   }
 
   async deleteCodePromo(id: string) {
-    return this.request('/codes-promo/delete.php', {
-      method: 'DELETE',
-      body: JSON.stringify({ id })
+    return this.request(`/codes-promo/delete.php?id=${encodeURIComponent(id)}`, {
+      method: 'DELETE'
     })
   }
 

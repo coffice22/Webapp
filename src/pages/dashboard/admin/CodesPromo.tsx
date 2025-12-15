@@ -17,16 +17,15 @@ import { format } from 'date-fns'
 interface CodePromo {
   id: string
   code: string
-  type_reduction: 'pourcentage' | 'montant_fixe'
+  type: 'pourcentage' | 'montant_fixe'
   valeur: number
   actif: boolean
   date_debut: string
   date_fin: string
   utilisations_actuelles: number
   utilisations_max: number
-  montant_min_commande?: number
-  montant_max_reduction?: number
-  type_applicable: string
+  montant_min?: number
+  types_application?: string
   description?: string
 }
 
@@ -38,13 +37,13 @@ const CodesPromo = () => {
   const [selectedCode, setSelectedCode] = useState<CodePromo | null>(null)
   const [formData, setFormData] = useState({
     code: '',
-    type_reduction: 'pourcentage',
+    type: 'pourcentage' as 'pourcentage' | 'montant_fixe',
     valeur: '',
     date_debut: '',
     date_fin: '',
     utilisations_max: '',
-    montant_min_commande: '',
-    type_applicable: 'tous',
+    montant_min: '',
+    types_application: 'tous',
     description: ''
   })
 
@@ -69,10 +68,15 @@ const CodesPromo = () => {
     e.preventDefault()
     try {
       await apiClient.createCodePromo({
-        ...formData,
+        code: formData.code,
+        type: formData.type,
         valeur: parseFloat(formData.valeur),
-        utilisations_max: parseInt(formData.utilisations_max),
-        montant_min_commande: formData.montant_min_commande ? parseFloat(formData.montant_min_commande) : 0
+        date_debut: formData.date_debut,
+        date_fin: formData.date_fin,
+        utilisations_max: parseInt(formData.utilisations_max) || null,
+        montant_min: formData.montant_min ? parseFloat(formData.montant_min) : 0,
+        types_application: [formData.types_application],
+        description: formData.description || null
       })
       toast.success('Code promo créé')
       setShowCreateModal(false)
@@ -112,13 +116,13 @@ const CodesPromo = () => {
   const resetForm = () => {
     setFormData({
       code: '',
-      type_reduction: 'pourcentage',
+      type: 'pourcentage',
       valeur: '',
       date_debut: '',
       date_fin: '',
       utilisations_max: '',
-      montant_min_commande: '',
-      type_applicable: 'tous',
+      montant_min: '',
+      types_application: 'tous',
       description: ''
     })
   }
@@ -204,7 +208,7 @@ const CodesPromo = () => {
 
                   {/* Value */}
                   <div className="text-2xl font-bold text-accent">
-                    {code.type_reduction === 'pourcentage' ? (
+                    {code.type === 'pourcentage' ? (
                       <span>-{code.valeur}%</span>
                     ) : (
                       <span>-{code.valeur} DA</span>
@@ -225,10 +229,10 @@ const CodesPromo = () => {
                         {format(new Date(code.date_fin), 'dd/MM/yyyy')}
                       </span>
                     </div>
-                    {code.montant_min_commande > 0 && (
+                    {code.montant_min && code.montant_min > 0 && (
                       <div className="flex justify-between">
                         <span className="text-gray-600">Min:</span>
-                        <span className="font-medium">{code.montant_min_commande} DA</span>
+                        <span className="font-medium">{code.montant_min} DA</span>
                       </div>
                     )}
                   </div>
@@ -327,8 +331,8 @@ const CodesPromo = () => {
                 Type de réduction
               </label>
               <select
-                value={formData.type_reduction}
-                onChange={(e) => setFormData({ ...formData, type_reduction: e.target.value as any })}
+                value={formData.type}
+                onChange={(e) => setFormData({ ...formData, type: e.target.value as 'pourcentage' | 'montant_fixe' })}
                 className="w-full px-4 py-2 border rounded-lg"
                 required
               >
@@ -343,7 +347,7 @@ const CodesPromo = () => {
               value={formData.valeur}
               onChange={(e) => setFormData({ ...formData, valeur: e.target.value })}
               required
-              placeholder={formData.type_reduction === 'pourcentage' ? '10' : '5000'}
+              placeholder={formData.type === 'pourcentage' ? '10' : '5000'}
             />
           </div>
 
@@ -376,8 +380,8 @@ const CodesPromo = () => {
             <Input
               label="Montant min. commande (DA)"
               type="number"
-              value={formData.montant_min_commande}
-              onChange={(e) => setFormData({ ...formData, montant_min_commande: e.target.value })}
+              value={formData.montant_min}
+              onChange={(e) => setFormData({ ...formData, montant_min: e.target.value })}
               placeholder="0"
             />
           </div>
@@ -387,8 +391,8 @@ const CodesPromo = () => {
               Applicable à
             </label>
             <select
-              value={formData.type_applicable}
-              onChange={(e) => setFormData({ ...formData, type_applicable: e.target.value })}
+              value={formData.types_application}
+              onChange={(e) => setFormData({ ...formData, types_application: e.target.value })}
               className="w-full px-4 py-2 border rounded-lg"
               required
             >
