@@ -104,7 +104,7 @@ const SpacesAndPricing = () => {
           name: 'Aurès',
           surface: '6m²',
           capacity: '2-4 personnes',
-          image: '/private_booth_aurès.jpeg',
+          image: '/private_booth_aurès copy copy.jpeg',
           description: 'Booth spacieux idéal pour petites équipes et réunions confidentielles',
           priceFullDay: '6 000 DA TTC',
           priceHalfDay: '3 500 DA TTC'
