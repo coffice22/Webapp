@@ -5,31 +5,31 @@ export const IMAGES = {
   },
   spaces: {
     coworking: {
-      url: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+      url: 'https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
       alt: 'Espace de coworking moderne Coffice Alger',
     },
     meeting: {
-      url: 'https://images.pexels.com/photos/1181406/pexels-photo-1181406.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+      url: 'https://images.pexels.com/photos/3184611/pexels-photo-3184611.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
       alt: 'Salle de réunion équipée Coffice',
     },
   },
   booths: {
     atlas: {
-      url: 'https://images.pexels.com/photos/7516347/pexels-photo-7516347.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+      url: 'https://images.pexels.com/photos/5238645/pexels-photo-5238645.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
       alt: 'Private Booth Atlas - Bureau privé 4 places',
     },
     aures: {
-      url: 'https://images.pexels.com/photos/6782567/pexels-photo-6782567.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+      url: 'https://images.pexels.com/photos/4226140/pexels-photo-4226140.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
       alt: 'Private Booth Aurès - Bureau privé 4 places',
     },
     hoggar: {
-      url: 'https://images.pexels.com/photos/4226140/pexels-photo-4226140.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
+      url: 'https://images.pexels.com/photos/4226721/pexels-photo-4226721.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750',
       alt: 'Private Booth Hoggar - Bureau privé 3 places',
     },
   },
   backgrounds: {
-    hero: 'https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080',
-    office: 'https://images.pexels.com/photos/3184338/pexels-photo-3184338.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080',
+    hero: 'https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080',
+    office: 'https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080',
   },
   partners: {
     novihost: 'https://images.pexels.com/photos/7688336/pexels-photo-7688336.png?auto=compress&cs=tinysrgb&w=400&h=200',
