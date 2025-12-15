@@ -1,61 +1,8 @@
+# Configuration pour api/users/
+<IfModule mod_rewrite.c>
+    RewriteEngine On
 
-overrideMethod @ installHook.js:1
-request @ dashboard-BV0Pdcg6.js:177
-await in request
-updateUser @ dashboard-BV0Pdcg6.js:177
-updateUser @ dashboard-BV0Pdcg6.js:177
-c @ dashboard-BV0Pdcg6.js:198
-df @ react-vendor-BGpcvQ50.js:29
-hf @ react-vendor-BGpcvQ50.js:29
-mf @ react-vendor-BGpcvQ50.js:29
-_o @ react-vendor-BGpcvQ50.js:29
-ya @ react-vendor-BGpcvQ50.js:29
-(anonyme) @ react-vendor-BGpcvQ50.js:29
-ji @ react-vendor-BGpcvQ50.js:32
-Vs @ react-vendor-BGpcvQ50.js:29
-Hl @ react-vendor-BGpcvQ50.js:29
-fi @ react-vendor-BGpcvQ50.js:29
-Rf @ react-vendor-BGpcvQ50.js:29Comprendre cette erreur
-dashboard-BV0Pdcg6.js:177 [API Client] Added Authorization header with token: eyJ0eXAiOiJKV1QiLCJh...
-dashboard-BV0Pdcg6.js:177 [API Client] Request: PUT https://test.coffice.dz/api/users/update.php?id=ac8db63d-bd33-4037-9750-ac04494a4439
-dashboard-BV0Pdcg6.js:177  PUT https://test.coffice.dz/api/users/update.php?id=ac8db63d-bd33-4037-9750-ac04494a4439 500 (Internal Server Error)
-request @ dashboard-BV0Pdcg6.js:177
-updateUser @ dashboard-BV0Pdcg6.js:177
-updateUser @ dashboard-BV0Pdcg6.js:177
-c @ dashboard-BV0Pdcg6.js:198
-df @ react-vendor-BGpcvQ50.js:29
-hf @ react-vendor-BGpcvQ50.js:29
-mf @ react-vendor-BGpcvQ50.js:29
-_o @ react-vendor-BGpcvQ50.js:29
-ya @ react-vendor-BGpcvQ50.js:29
-(anonyme) @ react-vendor-BGpcvQ50.js:29
-ji @ react-vendor-BGpcvQ50.js:32
-Vs @ react-vendor-BGpcvQ50.js:29
-Hl @ react-vendor-BGpcvQ50.js:29
-fi @ react-vendor-BGpcvQ50.js:29
-Rf @ react-vendor-BGpcvQ50.js:29Comprendre cette erreur
-dashboard-BV0Pdcg6.js:177 [API Client] Response status: 500
-installHook.js:1 [API Client] Request error: Error: Erreur lors de la mise à jour
-    at xa.request (dashboard-BV0Pdcg6.js:177:13944)
-    at async updateUser (dashboard-BV0Pdcg6.js:177:29346)
-    at async c (dashboard-BV0Pdcg6.js:198:42291)
-overrideMethod @ installHook.js:1
-request @ dashboard-BV0Pdcg6.js:177
-await in request
-updateUser @ dashboard-BV0Pdcg6.js:177
-updateUser @ dashboard-BV0Pdcg6.js:177
-c @ dashboard-BV0Pdcg6.js:198
-df @ react-vendor-BGpcvQ50.js:29
-hf @ react-vendor-BGpcvQ50.js:29
-mf @ react-vendor-BGpcvQ50.js:29
-_o @ react-vendor-BGpcvQ50.js:29
-ya @ react-vendor-BGpcvQ50.js:29
-(anonyme) @ react-vendor-BGpcvQ50.js:29
-ji @ react-vendor-BGpcvQ50.js:32
-Vs @ react-vendor-BGpcvQ50.js:29
-Hl @ react-vendor-BGpcvQ50.js:29
-fi @ react-vendor-BGpcvQ50.js:29
-Rf @ react-vendor-BGpcvQ50.js:29Comprendre cette erreur
-dashboard-BV0Pdcg6.js:177 [API Client] Added Authorization header with token: eyJ0eXAiOiJKV1QiLCJh...
-dashboard-BV0Pdcg6.js:177 [API Client] Request: GET https://test.coffice.dz/api/notifications/index.php
-dashboard-BV0Pdcg6.js:177 [API Client] Response status: 200
+    # Passer le header Authorization a PHP
+    RewriteCond %{HTTP:Authorization} ^(.*)
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+</IfModule>

@@ -11,7 +11,7 @@ require_once '../utils/Auth.php';
 require_once '../utils/Response.php';
 
 try {
-    $auth = Auth::verifyAuth(true);
+    $auth = Auth::verifyAuth();
 
     // Récupérer l'ID depuis query params
     $userId = $_GET['id'] ?? null;
@@ -77,10 +77,24 @@ try {
 
     foreach ($fieldMapping as $camelField => $dbField) {
         if (property_exists($data, $camelField)) {
-            // Utiliser le nom du champ de base de données directement comme nom de paramètre
+            $value = $data->$camelField;
+
+            if ($dbField === 'date_creation_entreprise' && $value) {
+                $timestamp = strtotime($value);
+                if ($timestamp === false) {
+                    $value = null;
+                } else {
+                    $value = date('Y-m-d H:i:s', $timestamp);
+                }
+            }
+
+            if ($dbField === 'capital' && $value !== null && $value !== '') {
+                $value = floatval($value);
+            }
+
             $paramName = $dbField;
             $updates[] = "$dbField = :$paramName";
-            $params[":$paramName"] = $data->$camelField;
+            $params[":$paramName"] = $value;
         }
     }
 
