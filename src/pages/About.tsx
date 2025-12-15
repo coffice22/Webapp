@@ -61,7 +61,7 @@ const About = () => {
               className="animate-on-scroll"
             >
               <img
-                src="/espace_de_cowoking_vue_.jpeg"
+                src="/espace-coworking.jpeg"
                 alt="Espace Coffice - Open Space"
                 className="rounded-2xl shadow-2xl"
               />

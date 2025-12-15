@@ -71,7 +71,7 @@ const Home = () => {
         {/* Background Image with Overlay */}
         <div className="absolute inset-0">
           <img
-            src="/espace_de_cowoking_vue_.jpeg"
+            src="/espace-coworking.jpeg"
             alt="Coffice Coworking Space - Réception"
             className="w-full h-full object-cover"
           />
@@ -219,7 +219,7 @@ const Home = () => {
             >
               <div className="h-64 relative overflow-hidden">
                 <img
-                  src="/espace_de_cowoking_vue_.jpeg"
+                  src="/espace-coworking.jpeg"
                   alt="Espace de coworking Coffice"
                   className="object-cover h-full w-full hover:scale-110 transition-transform duration-500"
                 />
@@ -265,7 +265,7 @@ const Home = () => {
             >
               <div className="h-64 relative overflow-hidden">
                 <img
-                  src="/private_booth_atlas_2.jpeg"
+                  src="/booth-atlas.jpeg"
                   alt="Private Booth Coffice"
                   className="object-cover h-full w-full hover:scale-110 transition-transform duration-500"
                 />
@@ -311,7 +311,7 @@ const Home = () => {
             >
               <div className="h-64 relative overflow-hidden">
                 <img
-                  src="/salle_de_réunion_5 copy copy.jpeg"
+                  src="/salle-reunion.jpeg"
                   alt="Salle de réunion Coffice"
                   className="object-cover h-full w-full hover:scale-110 transition-transform duration-500"
                 />
