@@ -35,7 +35,7 @@ try {
 
     try {
         // Récupérer les informations de l'espace
-        $query = "SELECT id, nom, prix_heure, prix_jour, prix_semaine, disponible
+        $query = "SELECT id, nom, prix_heure, prix_jour, prix_semaine, disponible, capacite
                   FROM espaces
                   WHERE id = :espace_id";
 

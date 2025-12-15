@@ -40,14 +40,20 @@ $allowed_origins = [
 ];
 
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+$isDevelopment = ($_ENV['APP_ENV'] ?? getenv('APP_ENV')) === 'development';
 
 // Vérifier si l'origine est autorisée
 if (in_array($origin, $allowed_origins)) {
+    // Origine autorisée - permettre credentials
     header("Access-Control-Allow-Origin: $origin");
     header("Access-Control-Allow-Credentials: true");
-} elseif ($_ENV['APP_ENV'] === 'development' || getenv('APP_ENV') === 'development') {
-    // En développement, autoriser toutes les origines
+} elseif ($isDevelopment) {
+    // En développement, autoriser toutes les origines SANS credentials
     header("Access-Control-Allow-Origin: *");
+    // Ne pas définir Allow-Credentials avec wildcard origin
+} else {
+    // Origine non autorisée en production
+    header("Access-Control-Allow-Origin: null");
 }
 
 header("Content-Type: application/json; charset=UTF-8");

@@ -510,8 +510,14 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ isOpen, onClose, sele
                   min={1}
                   max={selectedSpace?.capacite || 10}
                   defaultValue={1}
-                  {...register('participants')}
+                  {...register('participants', {
+                    required: 'Le nombre de participants est requis',
+                    min: { value: 1, message: 'Minimum 1 participant' },
+                    max: { value: selectedSpace?.capacite || 100, message: `Maximum ${selectedSpace?.capacite || 100} participants` },
+                    valueAsNumber: true
+                  })}
                   placeholder={`Max ${selectedSpace?.capacite || 10} personnes`}
+                  error={errors.participants?.message}
                 />
               </div>
 

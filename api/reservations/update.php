@@ -61,6 +61,59 @@ try {
         Response::error("Aucune donnée à mettre à jour", 400);
     }
 
+    // Si les dates sont modifiées, recalculer le montant côté serveur
+    if (isset($data->date_debut) || isset($data->date_fin)) {
+        // Récupérer les informations actuelles de la réservation
+        $query = "SELECT r.*, e.prix_heure, e.prix_jour, e.prix_semaine
+                  FROM reservations r
+                  LEFT JOIN espaces e ON r.espace_id = e.id
+                  WHERE r.id = :id";
+        $stmt = $db->prepare($query);
+        $stmt->execute([':id' => $data->id]);
+        $currentReservation = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $dateDebut = isset($data->date_debut) ? $data->date_debut : $currentReservation['date_debut'];
+        $dateFin = isset($data->date_fin) ? $data->date_fin : $currentReservation['date_fin'];
+
+        // Calculer le nouveau montant
+        $debut = new DateTime($dateDebut);
+        $fin = new DateTime($dateFin);
+        $heures = ($fin->getTimestamp() - $debut->getTimestamp()) / 3600;
+
+        if ($heures <= 0) {
+            Response::error("Dates invalides", 400);
+        }
+
+        $montant_total = 0;
+        $type_reservation = 'heure';
+
+        if ($heures < 24) {
+            $montant_total = ceil($heures) * $currentReservation['prix_heure'];
+            $type_reservation = 'heure';
+        } else {
+            $jours = ceil($heures / 24);
+
+            if ($jours >= 7 && !empty($currentReservation['prix_semaine'])) {
+                $semaines = floor($jours / 7);
+                $jours_restants = $jours % 7;
+                $montant_total = ($semaines * $currentReservation['prix_semaine']) + ($jours_restants * $currentReservation['prix_jour']);
+                $type_reservation = $semaines > 0 ? 'semaine' : 'jour';
+            } else {
+                $montant_total = $jours * $currentReservation['prix_jour'];
+                $type_reservation = 'jour';
+            }
+        }
+
+        // Conserver la réduction existante
+        $montant_final = $montant_total - ($currentReservation['reduction'] ?? 0);
+
+        // Ajouter les champs de montant à la mise à jour
+        $updateFields[] = "montant_total = :montant_total";
+        $params[":montant_total"] = $montant_total;
+        $updateFields[] = "type_reservation = :type_reservation";
+        $params[":type_reservation"] = $type_reservation;
+    }
+
     $query = "UPDATE reservations SET " . implode(', ', $updateFields) . " WHERE id = :id";
     $stmt = $db->prepare($query);
     $stmt->execute($params);

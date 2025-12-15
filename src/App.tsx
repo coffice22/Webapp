@@ -36,12 +36,11 @@ function App() {
     initRef.current = true
 
     const initApp = async () => {
-      if (!authStore.isInitialized) {
-        await authStore.initialize()
-      }
+      await authStore.initialize()
     }
 
     initApp()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   if (!authStore.isInitialized) {
@@ -149,6 +148,23 @@ function App() {
           
           {/* ERP System pour admin */}
           <Route path="/erp/*" element={<ERPSystem />} />
+
+          {/* Page 404 - doit être en dernier */}
+          <Route path="*" element={
+            <>
+              <Navbar />
+              <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                <div className="text-center">
+                  <h1 className="text-6xl font-bold text-gray-800 mb-4">404</h1>
+                  <p className="text-xl text-gray-600 mb-8">Page non trouvée</p>
+                  <a href="/" className="btn-primary">
+                    Retour à l'accueil
+                  </a>
+                </div>
+              </div>
+              <Footer />
+            </>
+          } />
         </Routes>
         </Suspense>
       </div>

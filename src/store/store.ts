@@ -321,10 +321,6 @@ export const useAppStore = create<AppState>()(
           amount = espace.prixHeure * hours
         }
 
-        if (diffHours >= 4) {
-          amount = amount * 0.9
-        }
-
         return Math.round(amount)
       },
 

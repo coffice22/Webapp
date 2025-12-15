@@ -20,6 +20,7 @@ import {
   Gift
 } from 'lucide-react'
 import { useAuthStore } from '../../store/authStore'
+import { useAppStore } from '../../store/store'
 import NotificationCenter from '../ui/NotificationCenter'
 import toast from 'react-hot-toast'
 import Logo from '../Logo'
@@ -33,13 +34,19 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const [refreshing, setRefreshing] = useState(false)
   const location = useLocation()
   const navigate = useNavigate()
-  const { user, logout } = useAuthStore()
+  const { user, logout, loadUser } = useAuthStore()
+  const { loadEspaces, loadReservations, loadAbonnements, loadDemandesDomiciliation } = useAppStore()
 
   const handleRefresh = async () => {
     setRefreshing(true)
     try {
-      // TODO: Implémenter le rafraîchissement des données
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      await Promise.all([
+        loadUser(),
+        loadEspaces(),
+        loadReservations(),
+        loadAbonnements(),
+        loadDemandesDomiciliation()
+      ])
       toast.success('Données actualisées')
     } catch (error) {
       toast.error('Erreur lors de l\'actualisation')
@@ -62,7 +69,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <Link to="/login" className="btn-primary">
+          <Link to="/connexion" className="btn-primary">
             Se connecter
           </Link>
         </div>

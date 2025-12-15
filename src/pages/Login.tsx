@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link, Navigate } from 'react-router-dom'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Mail, Lock, ArrowRight } from 'lucide-react'
 import { useForm } from 'react-hook-form'
@@ -17,6 +17,7 @@ interface LoginForm {
 }
 
 const Login = () => {
+  const navigate = useNavigate()
   const { login, user, isLoading: authLoading } = useAuthStore()
   const [isLoading, setIsLoading] = React.useState(false)
 
@@ -44,7 +45,7 @@ const Login = () => {
     setIsLoading(true)
     try {
       await login(data.email, data.password)
-      // Login réussi - la redirection se fera automatiquement via le Navigate ci-dessous
+      navigate('/app')
     } catch (error) {
       console.error('Login error:', error)
       // L'erreur est déjà affichée par le store via toast
