@@ -1,65 +1,89 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import {
   Settings as SettingsIcon, Building2, DollarSign, Clock, Mail, Bell,
-  Shield, Save, RefreshCw, Database
+  Shield, Save, RefreshCw, Database, CheckCircle
 } from 'lucide-react'
 import Card from '../../../components/ui/Card'
 import Button from '../../../components/ui/Button'
 import Input from '../../../components/ui/Input'
 import toast from 'react-hot-toast'
 
-const Settings = () => {
-  const [activeTab, setActiveTab] = useState<'general' | 'pricing' | 'notifications' | 'security'>('general')
-  const [loading, setLoading] = useState(false)
+const SETTINGS_KEY = 'coffice-admin-settings'
 
-  const [generalSettings, setGeneralSettings] = useState({
+interface GeneralSettings {
+  nom_entreprise: string
+  email: string
+  telephone: string
+  adresse: string
+  horaires_ouverture: string
+  horaires_fermeture: string
+}
+
+interface NotificationSettings {
+  email_nouvelles_reservations: boolean
+  email_nouveaux_utilisateurs: boolean
+  email_expirations_abonnements: boolean
+  notifications_push: boolean
+}
+
+interface AllSettings {
+  general: GeneralSettings
+  notifications: NotificationSettings
+}
+
+const defaultSettings: AllSettings = {
+  general: {
     nom_entreprise: 'COFFICE',
     email: 'contact@coffice.dz',
     telephone: '+213 XXX XXX XXX',
-    adresse: '4ème étage, Mohammadia Mall, Alger',
+    adresse: '4eme etage, Mohammadia Mall, Alger',
     horaires_ouverture: '08:00',
     horaires_fermeture: '20:00'
-  })
-
-  const [pricingSettings, setPricingSettings] = useState({
-    prix_coworking_heure: '1200',
-    prix_coworking_jour: '5000',
-    prix_booth_heure: '1500',
-    prix_booth_jour: '7000',
-    prix_salle_reunion_heure: '2500',
-    prix_salle_reunion_demi_journee: '7000',
-    prix_salle_reunion_journee: '12000',
-    prix_domiciliation_mensuel: '15000',
-    credits_parrainage: '3000'
-  })
-
-  const [notificationSettings, setNotificationSettings] = useState({
+  },
+  notifications: {
     email_nouvelles_reservations: true,
     email_nouveaux_utilisateurs: true,
     email_expirations_abonnements: true,
     notifications_push: false
-  })
+  }
+}
+
+const loadSettings = (): AllSettings => {
+  try {
+    const saved = localStorage.getItem(SETTINGS_KEY)
+    if (saved) {
+      return { ...defaultSettings, ...JSON.parse(saved) }
+    }
+  } catch (e) {
+    console.error('Erreur chargement parametres:', e)
+  }
+  return defaultSettings
+}
+
+const saveSettings = (settings: AllSettings): void => {
+  try {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings))
+  } catch (e) {
+    console.error('Erreur sauvegarde parametres:', e)
+  }
+}
+
+const Settings = () => {
+  const [activeTab, setActiveTab] = useState<'general' | 'notifications' | 'security'>('general')
+  const [loading, setLoading] = useState(false)
+  const [settings, setSettings] = useState<AllSettings>(defaultSettings)
+
+  useEffect(() => {
+    setSettings(loadSettings())
+  }, [])
 
   const handleSaveGeneral = async () => {
     setLoading(true)
     try {
-      // TODO: Appeler l'API pour sauvegarder
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      toast.success('Paramètres généraux mis à jour')
-    } catch (error) {
-      toast.error('Erreur lors de la sauvegarde')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleSavePricing = async () => {
-    setLoading(true)
-    try {
-      // TODO: Appeler l'API pour sauvegarder
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      toast.success('Tarifs mis à jour')
+      saveSettings(settings)
+      await new Promise(resolve => setTimeout(resolve, 300))
+      toast.success('Parametres generaux enregistres')
     } catch (error) {
       toast.error('Erreur lors de la sauvegarde')
     } finally {
@@ -70,9 +94,9 @@ const Settings = () => {
   const handleSaveNotifications = async () => {
     setLoading(true)
     try {
-      // TODO: Appeler l'API pour sauvegarder
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      toast.success('Notifications mises à jour')
+      saveSettings(settings)
+      await new Promise(resolve => setTimeout(resolve, 300))
+      toast.success('Preferences de notification enregistrees')
     } catch (error) {
       toast.error('Erreur lors de la sauvegarde')
     } finally {
@@ -80,24 +104,45 @@ const Settings = () => {
     }
   }
 
+  const handleClearCache = () => {
+    try {
+      localStorage.removeItem('coffice-app-storage')
+      toast.success('Cache efface avec succes')
+      window.location.reload()
+    } catch (error) {
+      toast.error('Erreur lors de la suppression du cache')
+    }
+  }
+
+  const updateGeneral = (field: keyof GeneralSettings, value: string) => {
+    setSettings(prev => ({
+      ...prev,
+      general: { ...prev.general, [field]: value }
+    }))
+  }
+
+  const updateNotifications = (field: keyof NotificationSettings, value: boolean) => {
+    setSettings(prev => ({
+      ...prev,
+      notifications: { ...prev.notifications, [field]: value }
+    }))
+  }
+
   const tabs = [
-    { id: 'general', name: 'Général', icon: Building2 },
-    { id: 'pricing', name: 'Tarification', icon: DollarSign },
+    { id: 'general', name: 'General', icon: Building2 },
     { id: 'notifications', name: 'Notifications', icon: Bell },
-    { id: 'security', name: 'Sécurité', icon: Shield }
+    { id: 'security', name: 'Securite', icon: Shield }
   ]
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-display font-bold text-primary flex items-center gap-3">
           <SettingsIcon className="w-8 h-8" />
-          Paramètres
+          Parametres
         </h1>
       </div>
 
-      {/* Tabs */}
       <div className="flex gap-4 border-b overflow-x-auto">
         {tabs.map((tab) => {
           const Icon = tab.icon
@@ -118,52 +163,51 @@ const Settings = () => {
         })}
       </div>
 
-      {/* General Settings */}
       {activeTab === 'general' && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
           <Card>
-            <h2 className="text-xl font-bold text-primary mb-6">Informations Générales</h2>
+            <h2 className="text-xl font-bold text-primary mb-6">Informations Generales</h2>
             <div className="space-y-4">
               <Input
                 label="Nom de l'entreprise"
-                value={generalSettings.nom_entreprise}
-                onChange={(e) => setGeneralSettings({ ...generalSettings, nom_entreprise: e.target.value })}
+                value={settings.general.nom_entreprise}
+                onChange={(e) => updateGeneral('nom_entreprise', e.target.value)}
               />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Input
                   label="Email de contact"
                   type="email"
-                  value={generalSettings.email}
-                  onChange={(e) => setGeneralSettings({ ...generalSettings, email: e.target.value })}
+                  value={settings.general.email}
+                  onChange={(e) => updateGeneral('email', e.target.value)}
                   icon={<Mail className="w-5 h-5" />}
                 />
                 <Input
-                  label="Téléphone"
-                  value={generalSettings.telephone}
-                  onChange={(e) => setGeneralSettings({ ...generalSettings, telephone: e.target.value })}
+                  label="Telephone"
+                  value={settings.general.telephone}
+                  onChange={(e) => updateGeneral('telephone', e.target.value)}
                 />
               </div>
               <Input
                 label="Adresse"
-                value={generalSettings.adresse}
-                onChange={(e) => setGeneralSettings({ ...generalSettings, adresse: e.target.value })}
+                value={settings.general.adresse}
+                onChange={(e) => updateGeneral('adresse', e.target.value)}
               />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Input
                   label="Heure d'ouverture"
                   type="time"
-                  value={generalSettings.horaires_ouverture}
-                  onChange={(e) => setGeneralSettings({ ...generalSettings, horaires_ouverture: e.target.value })}
+                  value={settings.general.horaires_ouverture}
+                  onChange={(e) => updateGeneral('horaires_ouverture', e.target.value)}
                   icon={<Clock className="w-5 h-5" />}
                 />
                 <Input
                   label="Heure de fermeture"
                   type="time"
-                  value={generalSettings.horaires_fermeture}
-                  onChange={(e) => setGeneralSettings({ ...generalSettings, horaires_fermeture: e.target.value })}
+                  value={settings.general.horaires_fermeture}
+                  onChange={(e) => updateGeneral('horaires_fermeture', e.target.value)}
                 />
               </div>
               <div className="flex justify-end pt-4">
@@ -174,129 +218,36 @@ const Settings = () => {
               </div>
             </div>
           </Card>
-        </motion.div>
-      )}
 
-      {/* Pricing Settings */}
-      {activeTab === 'pricing' && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          <Card>
+          <Card className="mt-6">
             <h2 className="text-xl font-bold text-primary mb-6">Tarification</h2>
-            <div className="space-y-6">
-              {/* Coworking */}
-              <div>
-                <h3 className="font-medium text-gray-700 mb-3">Coworking</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Input
-                    label="Prix à l'heure (DA)"
-                    type="number"
-                    value={pricingSettings.prix_coworking_heure}
-                    onChange={(e) => setPricingSettings({ ...pricingSettings, prix_coworking_heure: e.target.value })}
-                  />
-                  <Input
-                    label="Prix à la journée (DA)"
-                    type="number"
-                    value={pricingSettings.prix_coworking_jour}
-                    onChange={(e) => setPricingSettings({ ...pricingSettings, prix_coworking_jour: e.target.value })}
-                  />
-                </div>
-              </div>
-
-              {/* Booths */}
-              <div>
-                <h3 className="font-medium text-gray-700 mb-3">Private Booths</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Input
-                    label="Prix à l'heure (DA)"
-                    type="number"
-                    value={pricingSettings.prix_booth_heure}
-                    onChange={(e) => setPricingSettings({ ...pricingSettings, prix_booth_heure: e.target.value })}
-                  />
-                  <Input
-                    label="Prix à la journée (DA)"
-                    type="number"
-                    value={pricingSettings.prix_booth_jour}
-                    onChange={(e) => setPricingSettings({ ...pricingSettings, prix_booth_jour: e.target.value })}
-                  />
-                </div>
-              </div>
-
-              {/* Salle de réunion */}
-              <div>
-                <h3 className="font-medium text-gray-700 mb-3">Salle de Réunion</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <Input
-                    label="Prix à l'heure (DA)"
-                    type="number"
-                    value={pricingSettings.prix_salle_reunion_heure}
-                    onChange={(e) => setPricingSettings({ ...pricingSettings, prix_salle_reunion_heure: e.target.value })}
-                  />
-                  <Input
-                    label="Prix demi-journée (DA)"
-                    type="number"
-                    value={pricingSettings.prix_salle_reunion_demi_journee}
-                    onChange={(e) => setPricingSettings({ ...pricingSettings, prix_salle_reunion_demi_journee: e.target.value })}
-                  />
-                  <Input
-                    label="Prix journée complète (DA)"
-                    type="number"
-                    value={pricingSettings.prix_salle_reunion_journee}
-                    onChange={(e) => setPricingSettings({ ...pricingSettings, prix_salle_reunion_journee: e.target.value })}
-                  />
-                </div>
-              </div>
-
-              {/* Autres */}
-              <div>
-                <h3 className="font-medium text-gray-700 mb-3">Autres</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Input
-                    label="Domiciliation mensuelle (DA)"
-                    type="number"
-                    value={pricingSettings.prix_domiciliation_mensuel}
-                    onChange={(e) => setPricingSettings({ ...pricingSettings, prix_domiciliation_mensuel: e.target.value })}
-                  />
-                  <Input
-                    label="Crédits parrainage (DA)"
-                    type="number"
-                    value={pricingSettings.credits_parrainage}
-                    onChange={(e) => setPricingSettings({ ...pricingSettings, credits_parrainage: e.target.value })}
-                  />
-                </div>
-              </div>
-
-              <div className="flex justify-end pt-4">
-                <Button onClick={handleSavePricing} disabled={loading}>
-                  {loading ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-                  Sauvegarder
-                </Button>
-              </div>
+            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-sm text-blue-800">
+                La tarification est geree directement dans la section <strong>Espaces</strong>.
+                Chaque espace peut avoir ses propres tarifs (heure, demi-journee, jour, semaine).
+              </p>
             </div>
           </Card>
         </motion.div>
       )}
 
-      {/* Notifications Settings */}
       {activeTab === 'notifications' && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
           <Card>
-            <h2 className="text-xl font-bold text-primary mb-6">Préférences de Notification</h2>
+            <h2 className="text-xl font-bold text-primary mb-6">Preferences de Notification</h2>
             <div className="space-y-4">
               <label className="flex items-center justify-between p-4 bg-gray-50 rounded-lg cursor-pointer">
                 <div>
-                  <p className="font-medium text-gray-900">Nouvelles réservations</p>
-                  <p className="text-sm text-gray-500">Recevoir un email pour chaque nouvelle réservation</p>
+                  <p className="font-medium text-gray-900">Nouvelles reservations</p>
+                  <p className="text-sm text-gray-500">Recevoir un email pour chaque nouvelle reservation</p>
                 </div>
                 <input
                   type="checkbox"
-                  checked={notificationSettings.email_nouvelles_reservations}
-                  onChange={(e) => setNotificationSettings({ ...notificationSettings, email_nouvelles_reservations: e.target.checked })}
+                  checked={settings.notifications.email_nouvelles_reservations}
+                  onChange={(e) => updateNotifications('email_nouvelles_reservations', e.target.checked)}
                   className="w-5 h-5 text-accent rounded"
                 />
               </label>
@@ -308,8 +259,8 @@ const Settings = () => {
                 </div>
                 <input
                   type="checkbox"
-                  checked={notificationSettings.email_nouveaux_utilisateurs}
-                  onChange={(e) => setNotificationSettings({ ...notificationSettings, email_nouveaux_utilisateurs: e.target.checked })}
+                  checked={settings.notifications.email_nouveaux_utilisateurs}
+                  onChange={(e) => updateNotifications('email_nouveaux_utilisateurs', e.target.checked)}
                   className="w-5 h-5 text-accent rounded"
                 />
               </label>
@@ -321,8 +272,8 @@ const Settings = () => {
                 </div>
                 <input
                   type="checkbox"
-                  checked={notificationSettings.email_expirations_abonnements}
-                  onChange={(e) => setNotificationSettings({ ...notificationSettings, email_expirations_abonnements: e.target.checked })}
+                  checked={settings.notifications.email_expirations_abonnements}
+                  onChange={(e) => updateNotifications('email_expirations_abonnements', e.target.checked)}
                   className="w-5 h-5 text-accent rounded"
                 />
               </label>
@@ -334,8 +285,8 @@ const Settings = () => {
                 </div>
                 <input
                   type="checkbox"
-                  checked={notificationSettings.notifications_push}
-                  onChange={(e) => setNotificationSettings({ ...notificationSettings, notifications_push: e.target.checked })}
+                  checked={settings.notifications.notifications_push}
+                  onChange={(e) => updateNotifications('notifications_push', e.target.checked)}
                   className="w-5 h-5 text-accent rounded"
                 />
               </label>
@@ -351,29 +302,28 @@ const Settings = () => {
         </motion.div>
       )}
 
-      {/* Security Settings */}
       {activeTab === 'security' && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
         >
           <Card>
-            <h2 className="text-xl font-bold text-primary mb-6">Sécurité & Maintenance</h2>
+            <h2 className="text-xl font-bold text-primary mb-6">Securite & Maintenance</h2>
             <div className="space-y-4">
               <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
                 <p className="text-sm text-yellow-800">
-                  <strong>Note:</strong> Ces paramètres affectent la sécurité de l'application.
-                  Effectuez toute modification avec précaution.
+                  <strong>Note:</strong> Ces actions affectent le fonctionnement de l'application.
+                  Effectuez toute modification avec precaution.
                 </p>
               </div>
 
               <div className="space-y-3">
                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                   <div>
-                    <p className="font-medium text-gray-900">Effacer le cache</p>
-                    <p className="text-sm text-gray-500">Vider le cache applicatif</p>
+                    <p className="font-medium text-gray-900">Effacer le cache local</p>
+                    <p className="text-sm text-gray-500">Vider les donnees en cache du navigateur</p>
                   </div>
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" onClick={handleClearCache}>
                     <RefreshCw className="w-4 h-4 mr-2" />
                     Effacer
                   </Button>
@@ -381,13 +331,21 @@ const Settings = () => {
 
                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                   <div>
-                    <p className="font-medium text-gray-900">Sauvegarder la base de données</p>
-                    <p className="text-sm text-gray-500">Créer une sauvegarde manuelle</p>
+                    <p className="font-medium text-gray-900">Etat du systeme</p>
+                    <p className="text-sm text-gray-500">Verifier la connexion a l'API</p>
                   </div>
-                  <Button variant="outline" size="sm">
-                    <Database className="w-4 h-4 mr-2" />
-                    Sauvegarder
-                  </Button>
+                  <div className="flex items-center gap-2 text-green-600">
+                    <CheckCircle className="w-5 h-5" />
+                    <span className="text-sm font-medium">Connecte</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                  <div>
+                    <p className="font-medium text-gray-900">Version</p>
+                    <p className="text-sm text-gray-500">Version actuelle de l'application</p>
+                  </div>
+                  <span className="text-sm font-mono bg-gray-200 px-3 py-1 rounded">v3.0.0</span>
                 </div>
               </div>
             </div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import {
   Building,
@@ -6,11 +6,8 @@ import {
   Edit,
   Trash2,
   Search,
-  Filter,
-  MapPin,
   Users,
   DollarSign,
-  Calendar,
   CheckCircle,
   XCircle,
   Wifi,
@@ -18,7 +15,8 @@ import {
   Coffee,
   Printer,
   Video,
-  Grid
+  Grid,
+  List
 } from 'lucide-react'
 import { useAppStore } from '../../../store/store'
 import Button from '../../../components/ui/Button'
@@ -27,14 +25,23 @@ import Modal from '../../../components/ui/Modal'
 import Input from '../../../components/ui/Input'
 import toast from 'react-hot-toast'
 
+const equipementsList = [
+  { id: 'wifi', label: 'WiFi', icon: Wifi },
+  { id: 'ecran', label: 'Ecran', icon: Monitor },
+  { id: 'cafe', label: 'Cafe', icon: Coffee },
+  { id: 'imprimante', label: 'Imprimante', icon: Printer },
+  { id: 'visio', label: 'Visioconference', icon: Video }
+]
+
 const Spaces = () => {
-  const { espaces, addEspace, updateEspace, deleteEspace } = useAppStore()
+  const { espaces, addEspace, updateEspace, deleteEspace, loadEspaces } = useAppStore()
   const [showModal, setShowModal] = useState(false)
   const [editingSpace, setEditingSpace] = useState<any>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [filterType, setFilterType] = useState<string>('all')
   const [filterStatus, setFilterStatus] = useState<string>('all')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+  const [loading, setLoading] = useState(false)
 
   const [formData, setFormData] = useState({
     nom: '',
@@ -49,34 +56,51 @@ const Spaces = () => {
     disponible: true
   })
 
-  const equipementsList = [
-    { id: 'wifi', label: 'WiFi', icon: Wifi },
-    { id: 'ecran', label: 'Écran', icon: Monitor },
-    { id: 'cafe', label: 'Café', icon: Coffee },
-    { id: 'imprimante', label: 'Imprimante', icon: Printer },
-    { id: 'visio', label: 'Visioconférence', icon: Video }
-  ]
+  useEffect(() => {
+    loadEspaces()
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setLoading(true)
+
     try {
-      if (editingSpace) {
-        await updateEspace(editingSpace.id, formData)
-        toast.success('Espace modifié avec succès')
-      } else {
-        await addEspace({
-          id: `espace-${Date.now()}`,
-          ...formData,
-          image: '/placeholder-space.jpg',
-          createdAt: new Date(),
-          updatedAt: new Date()
-        })
-        toast.success('Espace créé avec succès')
+      const dataToSend = {
+        nom: formData.nom,
+        type: formData.type,
+        capacite: formData.capacite,
+        prix_heure: formData.prixHeure,
+        prix_demi_journee: formData.prixDemiJournee,
+        prix_jour: formData.prixJour,
+        prix_semaine: formData.prixSemaine,
+        description: formData.description,
+        equipements: formData.equipements,
+        disponible: formData.disponible
       }
-      setShowModal(false)
-      resetForm()
-    } catch (error) {
-      toast.error('Erreur lors de l\'opération')
+
+      if (editingSpace) {
+        const result = await updateEspace(editingSpace.id, dataToSend)
+        if (result.success) {
+          toast.success('Espace modifie avec succes')
+          setShowModal(false)
+          resetForm()
+        } else {
+          toast.error(result.error || 'Erreur lors de la modification')
+        }
+      } else {
+        const result = await addEspace(dataToSend)
+        if (result.success) {
+          toast.success('Espace cree avec succes')
+          setShowModal(false)
+          resetForm()
+        } else {
+          toast.error(result.error || 'Erreur lors de la creation')
+        }
+      }
+    } catch (error: any) {
+      toast.error(error.message || 'Erreur lors de l\'operation')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -102,21 +126,29 @@ const Spaces = () => {
       nom: space.nom,
       type: space.type,
       capacite: space.capacite,
-      prixHeure: space.prixHeure,
+      prixHeure: space.prixHeure || 0,
       prixDemiJournee: space.prixDemiJournee || 0,
-      prixJour: space.prixJour,
+      prixJour: space.prixJour || 0,
       prixSemaine: space.prixSemaine || 0,
       description: space.description || '',
       equipements: space.equipements || [],
-      disponible: space.disponible
+      disponible: space.disponible !== false
     })
     setShowModal(true)
   }
 
   const handleDelete = async (id: string) => {
-    if (window.confirm('Êtes-vous sûr de vouloir supprimer cet espace?')) {
-      await deleteEspace(id)
-      toast.success('Espace supprimé avec succès')
+    if (!window.confirm('Etes-vous sur de vouloir supprimer cet espace?')) return
+
+    try {
+      const result = await deleteEspace(id)
+      if (result.success) {
+        toast.success('Espace supprime avec succes')
+      } else {
+        toast.error(result.error || 'Erreur lors de la suppression')
+      }
+    } catch (error: any) {
+      toast.error(error.message || 'Erreur lors de la suppression')
     }
   }
 
@@ -142,14 +174,14 @@ const Spaces = () => {
     total: espaces.length,
     disponibles: espaces.filter(e => e.disponible).length,
     occupes: espaces.filter(e => !e.disponible).length,
-    capaciteTotal: espaces.reduce((sum, e) => sum + e.capacite, 0)
+    capaciteTotal: espaces.reduce((sum, e) => sum + (e.capacite || 0), 0)
   }
 
   const getTypeLabel = (type: string) => {
     switch (type) {
-      case 'box': return 'Box Privé'
+      case 'box': return 'Box Prive'
       case 'open_space': return 'Open Space'
-      case 'salle_reunion': return 'Salle de Réunion'
+      case 'salle_reunion': return 'Salle de Reunion'
       default: return type
     }
   }
@@ -157,7 +189,7 @@ const Spaces = () => {
   const getTypeColor = (type: string) => {
     switch (type) {
       case 'box': return 'bg-blue-100 text-blue-800'
-      case 'open_space': return 'bg-purple-100 text-purple-800'
+      case 'open_space': return 'bg-teal-100 text-teal-800'
       case 'salle_reunion': return 'bg-green-100 text-green-800'
       default: return 'bg-gray-100 text-gray-800'
     }
@@ -168,7 +200,7 @@ const Spaces = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Gestion des Espaces</h1>
-          <p className="text-gray-600 mt-1">Gérez vos espaces de coworking</p>
+          <p className="text-gray-600 mt-1">Gerez vos espaces de coworking</p>
         </div>
         <Button onClick={() => setShowModal(true)} size="lg">
           <Plus className="w-5 h-5 mr-2" />
@@ -207,7 +239,7 @@ const Spaces = () => {
               <XCircle className="w-6 h-6 text-red-600" />
             </div>
             <div>
-              <p className="text-sm text-gray-600">Occupés</p>
+              <p className="text-sm text-gray-600">Occupes</p>
               <p className="text-2xl font-bold text-red-600">{stats.occupes}</p>
             </div>
           </div>
@@ -215,12 +247,12 @@ const Spaces = () => {
 
         <Card className="p-6">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-              <Users className="w-6 h-6 text-purple-600" />
+            <div className="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center">
+              <Users className="w-6 h-6 text-teal-600" />
             </div>
             <div>
-              <p className="text-sm text-gray-600">Capacité Totale</p>
-              <p className="text-2xl font-bold text-purple-600">{stats.capaciteTotal}</p>
+              <p className="text-sm text-gray-600">Capacite Totale</p>
+              <p className="text-2xl font-bold text-teal-600">{stats.capaciteTotal}</p>
             </div>
           </div>
         </Card>
@@ -244,9 +276,9 @@ const Spaces = () => {
               className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
             >
               <option value="all">Tous les types</option>
-              <option value="box">Box Privé</option>
+              <option value="box">Box Prive</option>
               <option value="open_space">Open Space</option>
-              <option value="salle_reunion">Salle de Réunion</option>
+              <option value="salle_reunion">Salle de Reunion</option>
             </select>
 
             <select
@@ -263,7 +295,7 @@ const Spaces = () => {
               onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
               className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
             >
-              <Grid className="w-5 h-5" />
+              {viewMode === 'grid' ? <List className="w-5 h-5" /> : <Grid className="w-5 h-5" />}
             </button>
           </div>
         </div>
@@ -272,16 +304,16 @@ const Spaces = () => {
       {filteredSpaces.length === 0 ? (
         <Card className="p-12 text-center">
           <Building className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">Aucun espace trouvé</h3>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">Aucun espace trouve</h3>
           <p className="text-gray-500 mb-6">
             {searchTerm || filterType !== 'all' || filterStatus !== 'all'
-              ? 'Aucun espace ne correspond à vos critères de recherche.'
-              : 'Commencez par créer votre premier espace de coworking.'}
+              ? 'Aucun espace ne correspond a vos criteres de recherche.'
+              : 'Commencez par creer votre premier espace de coworking.'}
           </p>
           {!searchTerm && filterType === 'all' && filterStatus === 'all' && (
             <Button onClick={() => setShowModal(true)}>
               <Plus className="w-4 h-4 mr-2" />
-              Créer un espace
+              Creer un espace
             </Button>
           )}
         </Card>
@@ -304,7 +336,7 @@ const Spaces = () => {
                       </span>
                     </div>
                     <div className={`px-3 py-1 rounded-full text-xs font-medium ${space.disponible ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                      {space.disponible ? 'Disponible' : 'Occupé'}
+                      {space.disponible ? 'Disponible' : 'Occupe'}
                     </div>
                   </div>
 
@@ -320,7 +352,7 @@ const Spaces = () => {
                     <div className="flex items-center gap-2 text-sm text-gray-600">
                       <DollarSign className="w-4 h-4" />
                       <span className="text-sm">
-                        {space.prixHeure} DA/h • {space.prixDemiJournee} DA/dj • {space.prixJour} DA/j
+                        {space.prixHeure || 0} DA/h - {space.prixDemiJournee || 0} DA/dj - {space.prixJour || 0} DA/j
                       </span>
                     </div>
                   </div>
@@ -387,20 +419,20 @@ const Spaces = () => {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
               required
             >
-              <option value="box">Box Privé</option>
+              <option value="box">Box Prive</option>
               <option value="open_space">Open Space</option>
-              <option value="salle_reunion">Salle de Réunion</option>
+              <option value="salle_reunion">Salle de Reunion</option>
             </select>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <Input
-              label="Capacité"
+              label="Capacite"
               type="number"
               min="1"
               icon={<Users className="w-5 h-5" />}
               value={formData.capacite}
-              onChange={(e) => setFormData({ ...formData, capacite: parseInt(e.target.value) })}
+              onChange={(e) => setFormData({ ...formData, capacite: parseInt(e.target.value) || 1 })}
               required
             />
             <div className="flex items-center gap-3 pt-6">
@@ -412,7 +444,7 @@ const Spaces = () => {
                 className="w-4 h-4 text-accent rounded"
               />
               <label htmlFor="disponible" className="text-sm font-medium text-gray-700">
-                Disponible à la réservation
+                Disponible a la reservation
               </label>
             </div>
           </div>
@@ -422,17 +454,17 @@ const Spaces = () => {
               label="Prix/Heure (DA)"
               type="number"
               min="0"
-              step="0.01"
+              step="1"
               icon={<DollarSign className="w-5 h-5" />}
               value={formData.prixHeure}
               onChange={(e) => setFormData({ ...formData, prixHeure: parseFloat(e.target.value) || 0 })}
               required
             />
             <Input
-              label="Prix/Demi-journée (DA)"
+              label="Prix/Demi-journee (DA)"
               type="number"
               min="0"
-              step="0.01"
+              step="1"
               icon={<DollarSign className="w-5 h-5" />}
               value={formData.prixDemiJournee}
               onChange={(e) => setFormData({ ...formData, prixDemiJournee: parseFloat(e.target.value) || 0 })}
@@ -442,7 +474,7 @@ const Spaces = () => {
               label="Prix/Jour (DA)"
               type="number"
               min="0"
-              step="0.01"
+              step="1"
               icon={<DollarSign className="w-5 h-5" />}
               value={formData.prixJour}
               onChange={(e) => setFormData({ ...formData, prixJour: parseFloat(e.target.value) || 0 })}
@@ -452,7 +484,7 @@ const Spaces = () => {
               label="Prix/Semaine (DA)"
               type="number"
               min="0"
-              step="0.01"
+              step="1"
               icon={<DollarSign className="w-5 h-5" />}
               value={formData.prixSemaine}
               onChange={(e) => setFormData({ ...formData, prixSemaine: parseFloat(e.target.value) || 0 })}
@@ -467,12 +499,12 @@ const Spaces = () => {
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Décrivez brièvement cet espace..."
+              placeholder="Decrivez brievement cet espace..."
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">Équipements</label>
+            <label className="block text-sm font-medium text-gray-700 mb-3">Equipements</label>
             <div className="grid grid-cols-2 gap-3">
               {equipementsList.map((equip) => {
                 const Icon = equip.icon
@@ -497,8 +529,8 @@ const Spaces = () => {
           </div>
 
           <div className="flex gap-3 pt-4">
-            <Button type="submit" className="flex-1">
-              {editingSpace ? 'Modifier l\'espace' : 'Créer l\'espace'}
+            <Button type="submit" className="flex-1" disabled={loading}>
+              {loading ? 'Enregistrement...' : (editingSpace ? 'Modifier l\'espace' : 'Creer l\'espace')}
             </Button>
             <Button
               type="button"
