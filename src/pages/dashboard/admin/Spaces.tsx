@@ -45,7 +45,7 @@ const Spaces = () => {
 
   const [formData, setFormData] = useState({
     nom: '',
-    type: 'box',
+    type: 'box_4',
     capacite: 1,
     prixHeure: 0,
     prixDemiJournee: 0,
@@ -107,7 +107,7 @@ const Spaces = () => {
   const resetForm = () => {
     setFormData({
       nom: '',
-      type: 'box',
+      type: 'box_4',
       capacite: 1,
       prixHeure: 0,
       prixDemiJournee: 0,
@@ -179,18 +179,22 @@ const Spaces = () => {
 
   const getTypeLabel = (type: string) => {
     switch (type) {
-      case 'box': return 'Box Prive'
+      case 'box_4': return 'Box 4 places'
+      case 'box_3': return 'Box 3 places'
       case 'open_space': return 'Open Space'
       case 'salle_reunion': return 'Salle de Reunion'
+      case 'poste_informatique': return 'Poste Informatique'
       default: return type
     }
   }
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case 'box': return 'bg-blue-100 text-blue-800'
+      case 'box_4': return 'bg-blue-100 text-blue-800'
+      case 'box_3': return 'bg-blue-100 text-blue-800'
       case 'open_space': return 'bg-teal-100 text-teal-800'
       case 'salle_reunion': return 'bg-green-100 text-green-800'
+      case 'poste_informatique': return 'bg-amber-100 text-amber-800'
       default: return 'bg-gray-100 text-gray-800'
     }
   }
@@ -276,9 +280,11 @@ const Spaces = () => {
               className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
             >
               <option value="all">Tous les types</option>
-              <option value="box">Box Prive</option>
+              <option value="box_4">Box 4 places</option>
+              <option value="box_3">Box 3 places</option>
               <option value="open_space">Open Space</option>
               <option value="salle_reunion">Salle de Reunion</option>
+              <option value="poste_informatique">Poste Informatique</option>
             </select>
 
             <select
@@ -419,9 +425,11 @@ const Spaces = () => {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
               required
             >
-              <option value="box">Box Prive</option>
+              <option value="box_4">Box 4 places</option>
+              <option value="box_3">Box 3 places</option>
               <option value="open_space">Open Space</option>
               <option value="salle_reunion">Salle de Reunion</option>
+              <option value="poste_informatique">Poste Informatique</option>
             </select>
           </div>
 
