@@ -34,10 +34,11 @@ try {
     $db->beginTransaction();
 
     try {
-        // Récupérer les informations de l'espace
+        // Récupérer les informations de l'espace avec un verrou pour éviter les race conditions
         $query = "SELECT id, nom, prix_heure, prix_jour, prix_semaine, disponible, capacite
                   FROM espaces
-                  WHERE id = :espace_id";
+                  WHERE id = :espace_id
+                  FOR UPDATE";
 
         $stmt = $db->prepare($query);
         $stmt->execute([':espace_id' => $data->espace_id]);
@@ -83,11 +84,23 @@ try {
         // CALCULER LE MONTANT CÔTÉ SERVEUR (ne pas faire confiance au client)
         $debut = new DateTime($data->date_debut);
         $fin = new DateTime($data->date_fin);
+        $now = new DateTime();
+
+        if ($debut < $now) {
+            $db->rollBack();
+            Response::error("La date de début doit être dans le futur", 400);
+        }
+
+        if ($fin < $now) {
+            $db->rollBack();
+            Response::error("La date de fin doit être dans le futur", 400);
+        }
+
         $heures = ($fin->getTimestamp() - $debut->getTimestamp()) / 3600;
 
         if ($heures <= 0) {
             $db->rollBack();
-            Response::error("Dates invalides", 400);
+            Response::error("La date de fin doit être après la date de début", 400);
         }
 
         // Calculer le montant

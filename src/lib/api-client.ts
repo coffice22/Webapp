@@ -3,6 +3,8 @@
  * Remplace complètement Supabase
  */
 
+import { objectToSnakeCase, objectToCamelCase } from '../utils/case-converter'
+
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost/api'
 
 interface ApiResponse<T = any> {
@@ -313,9 +315,10 @@ class ApiClient {
     entreprise?: string
     codeParrainage?: string
   }) {
+    const snakeCaseData = objectToSnakeCase(data)
     return this.request('/auth/register.php', {
       method: 'POST',
-      body: JSON.stringify(data)
+      body: JSON.stringify(snakeCaseData)
     })
   }
 
@@ -455,16 +458,40 @@ class ApiClient {
   }
 
   async createDemandeDomiciliation(data: any) {
+    const transformedData: any = { ...data }
+
+    if (data.representantLegal) {
+      transformedData.representant_nom = data.representantLegal.nom
+      transformedData.representant_prenom = data.representantLegal.prenom
+      transformedData.representant_fonction = data.representantLegal.fonction
+      transformedData.representant_telephone = data.representantLegal.telephone
+      transformedData.representant_email = data.representantLegal.email
+      delete transformedData.representantLegal
+    }
+
+    const snakeCaseData = objectToSnakeCase(transformedData)
     return this.request('/domiciliations/create.php', {
       method: 'POST',
-      body: JSON.stringify(data)
+      body: JSON.stringify(snakeCaseData)
     })
   }
 
   async updateDemandeDomiciliation(id: string, data: any) {
+    const transformedData: any = { id, ...data }
+
+    if (data.representantLegal) {
+      transformedData.representant_nom = data.representantLegal.nom
+      transformedData.representant_prenom = data.representantLegal.prenom
+      transformedData.representant_fonction = data.representantLegal.fonction
+      transformedData.representant_telephone = data.representantLegal.telephone
+      transformedData.representant_email = data.representantLegal.email
+      delete transformedData.representantLegal
+    }
+
+    const snakeCaseData = objectToSnakeCase(transformedData)
     return this.request('/domiciliations/update.php', {
       method: 'PUT',
-      body: JSON.stringify({ id, ...data })
+      body: JSON.stringify(snakeCaseData)
     })
   }
 

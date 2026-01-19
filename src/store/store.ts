@@ -306,19 +306,21 @@ export const useAppStore = create<AppState>()(
 
         const diffMs = dateFin.getTime() - dateDebut.getTime()
         const diffHours = diffMs / (1000 * 60 * 60)
-        const diffDays = diffMs / (1000 * 60 * 60 * 24)
 
         let amount = 0
 
-        if (diffDays >= 7) {
-          const weeks = Math.ceil(diffDays / 7)
-          amount = espace.prixSemaine * weeks
-        } else if (diffDays >= 1) {
-          const days = Math.ceil(diffDays)
-          amount = espace.prixJour * days
+        if (diffHours < 24) {
+          amount = Math.ceil(diffHours) * espace.prixHeure
         } else {
-          const hours = Math.ceil(diffHours)
-          amount = espace.prixHeure * hours
+          const diffDays = Math.ceil(diffHours / 24)
+
+          if (diffDays >= 7 && espace.prixSemaine) {
+            const weeks = Math.floor(diffDays / 7)
+            const remainingDays = diffDays % 7
+            amount = (weeks * espace.prixSemaine) + (remainingDays * espace.prixJour)
+          } else {
+            amount = diffDays * espace.prixJour
+          }
         }
 
         return Math.round(amount)

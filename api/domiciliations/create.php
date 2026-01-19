@@ -15,8 +15,20 @@ try {
 
     $data = json_decode(file_get_contents("php://input"));
 
+    if (!$data || json_last_error() !== JSON_ERROR_NONE) {
+        Response::error("Données JSON invalides", 400);
+    }
+
     if (empty($data->raison_sociale) || empty($data->forme_juridique)) {
         Response::error("Raison sociale et forme juridique requises", 400);
+    }
+
+    if (!empty($data->nif) && strlen($data->nif) !== 20) {
+        Response::error("Le NIF doit contenir exactement 20 caractères", 400);
+    }
+
+    if (!empty($data->nis) && strlen($data->nis) !== 15) {
+        Response::error("Le NIS doit contenir exactement 15 caractères", 400);
     }
 
     $database = Database::getInstance();
@@ -42,14 +54,18 @@ try {
               (id, user_id, raison_sociale, forme_juridique, capital,
                activite_principale, nif, nis, registre_commerce, article_imposition,
                numero_auto_entrepreneur, wilaya, commune, adresse_actuelle,
-               representant_nom, representant_prenom, representant_telephone,
-               representant_email, statut, montant_mensuel)
+               representant_nom, representant_prenom, representant_fonction, representant_telephone,
+               representant_email, domaine_activite, adresse_siege_social,
+               coordonnees_fiscales, coordonnees_administratives, date_creation_entreprise,
+               statut, montant_mensuel)
               VALUES
               (:id, :user_id, :raison_sociale, :forme_juridique, :capital,
                :activite_principale, :nif, :nis, :registre_commerce, :article_imposition,
                :numero_auto_entrepreneur, :wilaya, :commune, :adresse_actuelle,
-               :representant_nom, :representant_prenom, :representant_telephone,
-               :representant_email, 'en_attente', :montant_mensuel)";
+               :representant_nom, :representant_prenom, :representant_fonction, :representant_telephone,
+               :representant_email, :domaine_activite, :adresse_siege_social,
+               :coordonnees_fiscales, :coordonnees_administratives, :date_creation_entreprise,
+               'en_attente', :montant_mensuel)";
 
     $stmt = $db->prepare($query);
     $stmt->execute([
@@ -69,8 +85,14 @@ try {
         ':adresse_actuelle' => $data->adresse_actuelle ?? null,
         ':representant_nom' => $data->representant_nom ?? null,
         ':representant_prenom' => $data->representant_prenom ?? null,
+        ':representant_fonction' => $data->representant_fonction ?? null,
         ':representant_telephone' => $data->representant_telephone ?? null,
         ':representant_email' => $data->representant_email ?? null,
+        ':domaine_activite' => $data->domaine_activite ?? null,
+        ':adresse_siege_social' => $data->adresse_siege_social ?? null,
+        ':coordonnees_fiscales' => $data->coordonnees_fiscales ?? null,
+        ':coordonnees_administratives' => $data->coordonnees_administratives ?? null,
+        ':date_creation_entreprise' => $data->date_creation_entreprise ?? null,
         ':montant_mensuel' => $data->montant_mensuel ?? 5000
     ]);
 

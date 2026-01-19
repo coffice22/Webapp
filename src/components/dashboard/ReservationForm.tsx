@@ -639,7 +639,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ isOpen, onClose, sele
                       <div className="flex items-center justify-between text-sm">
                         <span className="text-gray-600">Sous-total</span>
                         <span className="font-medium text-gray-900">
-                          {(estimatedAmount + discount).toLocaleString()} DA
+                          {estimatedAmount.toLocaleString()} DA
                         </span>
                       </div>
                       {discount > 0 && (
@@ -655,7 +655,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ isOpen, onClose, sele
                         <div className="flex items-center justify-between">
                           <span className="text-lg font-bold text-gray-900">Total</span>
                           <span className="text-2xl font-bold text-accent">
-                            {estimatedAmount.toLocaleString()} DA
+                            {(estimatedAmount - discount).toLocaleString()} DA
                           </span>
                         </div>
                       </div>
