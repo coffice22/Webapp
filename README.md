@@ -1,143 +1,169 @@
-# Coffice - Application de Coworking
+# Coffice - Espace de Coworking
 
-Application complète de gestion d'espace de coworking située au Mohammadia Mall, Alger.
+Application web complète pour la gestion d'espaces de coworking à Mohammadia Mall, Alger.
+
+## Fonctionnalités
+
+### Pour les utilisateurs
+- Inscription et authentification avec système de parrainage
+- Réservation d'espaces (Open Space, Box privés, Salle de réunion)
+- Gestion des abonnements mensuels
+- Demande de domiciliation d'entreprise
+- Tableau de bord personnel
+- Historique des réservations et paiements
+
+### Pour les administrateurs
+- Gestion complète des utilisateurs et espaces
+- Validation et activation des domiciliations
+- Gestion des codes promo et abonnements
+- Statistiques et revenus en temps réel
+- Système de notifications
 
 ## Technologies
 
-**Frontend**
+### Frontend
 - React 18 + TypeScript
-- Vite
+- Vite (build tool)
 - TailwindCSS
-- Zustand (State management)
+- Framer Motion (animations)
+- Zustand (state management)
 - React Router
-- React Query
+- React Hook Form
 
-**Backend**
-- PHP 8+
-- MySQL 8+
-- JWT Authentication
-- PDO
+### Backend
+- PHP 8.1+
+- MySQL 8.0+
+- Architecture REST API
 
 ## Installation
 
 ### Prérequis
 - Node.js 18+
-- PHP 8+
-- MySQL 8+
+- PHP 8.1+
+- MySQL 8.0+
 - Apache/Nginx
 
 ### Configuration
 
-1. **Cloner et installer**
+1. Cloner le repository
 ```bash
-git clone <repository-url>
+git clone [url]
 cd coffice-app
+```
+
+2. Installer les dépendances
+```bash
 npm install
 ```
 
-2. **Base de données**
+3. Configurer la base de données
 ```bash
-mysql -u root -p -e "CREATE DATABASE cofficed_coffice CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-mysql -u root -p cofficed_coffice < database/coffice.sql
+mysql -u root -p < database/coffice.sql
+mysql -u root -p coffice < database/migrations/add_prix_demi_journee.sql
+mysql -u root -p coffice < database/migrations/add_monthly_subscriptions.sql
 ```
 
-3. **Configuration**
+4. Configurer les variables d'environnement
 ```bash
 cp .env.example .env
 # Éditer .env avec vos paramètres
 ```
 
-4. **Créer un administrateur**
+5. Lancer en développement
 ```bash
-php scripts/create_admin_simple.php
+npm run dev
 ```
 
-5. **Build**
+6. Build pour production
 ```bash
 npm run build
 ```
 
-Voir [DEPLOIEMENT.md](DEPLOIEMENT.md) pour plus de détails.
-
-## Structure
+## Structure du projet
 
 ```
 coffice-app/
-├── api/                # Backend PHP
-│   ├── auth/          # Authentification
-│   ├── reservations/  # Réservations
-│   ├── domiciliations/# Domiciliations
-│   ├── codes-promo/   # Codes promo
-│   ├── admin/         # Administration
-│   └── utils/         # Utilitaires
-├── database/          # Schema SQL
-├── src/               # Frontend React
-└── public/            # Assets
+├── api/                    # Backend PHP
+│   ├── auth/              # Authentification
+│   ├── espaces/           # Gestion des espaces
+│   ├── reservations/      # Réservations
+│   ├── domiciliations/    # Domiciliations
+│   ├── users/             # Utilisateurs
+│   └── utils/             # Utilitaires
+├── database/              # Base de données
+│   ├── coffice.sql        # Schema principal
+│   └── migrations/        # Migrations
+├── public/                # Assets statiques
+├── src/                   # Frontend React
+│   ├── components/        # Composants réutilisables
+│   ├── pages/            # Pages de l'application
+│   ├── lib/              # API client
+│   ├── store/            # State management
+│   ├── types/            # Types TypeScript
+│   └── utils/            # Fonctions utilitaires
+└── scripts/              # Scripts d'administration
 ```
 
-## Fonctionnalités
+## Espaces disponibles
 
-### Utilisateurs
-- Inscription/Connexion JWT
-- Gestion profil et entreprise
-- Système de parrainage
+### Open Space (12 places)
+- Journée : 1 200 DA
+- Semaine : 20 000 DA
+- Mois : 15 000 DA
 
-### Réservations
-- Réservation d'espaces (box, open space, salle)
-- Calcul automatique des prix (heure/jour/semaine)
-- Codes promo avec validation
-- Protection race conditions
+### Private Booth Hoggar (2 places)
+- Journée : 6 000 DA
+- Semaine : 40 000 DA
+- Mois : 35 000 DA
 
-### Domiciliations
-- Demandes de domiciliation
-- Upload de documents
-- Suivi administratif
+### Private Booth Aurès (2 places)
+- Journée : 6 000 DA
+- Semaine : 40 000 DA
+- Mois : 45 000 DA
 
-### Administration
-- Dashboard avec statistiques
-- Gestion utilisateurs et espaces
-- Codes promo
-- Rapports financiers
+### Private Booth Atlas (4 places)
+- Journée : 10 000 DA
+- Semaine : 65 000 DA
+- Mois : 45 000 DA
 
-### Sécurité
-- JWT Authentication avec refresh tokens
+### Salle de Réunion Premium (12 places)
+- Heure : 2 500 DA
+- Journée : 12 000 DA
+
+## Abonnements
+
+### Solo - 14 000 DA/mois
+- Accès open space 8h-18h
+- Wi-Fi 50 Mbps
+- Accès communauté
+
+### Pro - 32 000 DA/mois
+- Accès tous espaces 7h-20h
+- Wi-Fi 100 Mbps
+- Salle réunion 2h/mois
+- -25% services additionnels
+
+### Executive - 55 000 DA/mois
+- Accès illimité 24/7
+- Wi-Fi illimité
+- Domiciliation INCLUSE
+- -40% services additionnels
+
+## Sécurité
+
+- Authentification JWT avec refresh tokens
+- Protection CSRF
 - Rate limiting
-- CSRF protection
-- SQL injection protection (PDO)
-- XSS protection (Sanitizer)
-- Transactions SQL avec locks
-- Logging complet
+- Validation des données côté serveur et client
+- Logs de sécurité
 
-## Scripts
+## Support
 
-```bash
-npm run dev          # Développement
-npm run build        # Build production
-npm run preview      # Preview build
-npm run type-check   # Vérifier types
-```
-
-## API Endpoints
-
-### Auth
-- `POST /api/auth/register` - Inscription
-- `POST /api/auth/login` - Connexion
-- `GET /api/auth/me` - Utilisateur connecté
-
-### Réservations
-- `GET /api/reservations` - Liste
-- `POST /api/reservations/create.php` - Créer
-- `PUT /api/reservations/update.php` - Modifier
-- `DELETE /api/reservations/cancel.php` - Annuler
-
-### Domiciliations
-- `GET /api/domiciliations` - Liste
-- `POST /api/domiciliations/create.php` - Créer
-
-### Admin
-- `GET /api/admin/stats.php` - Statistiques
-- `GET /api/admin/revenue.php` - Revenus
+Pour toute question ou problème :
+- Email : contact@coffice.dz
+- Téléphone : +213 XXX XXX XXX
+- Adresse : Mohammadia Mall, 4ème étage, Bureau 1178, Alger
 
 ## Licence
 
-Propriétaire - © 2025 Coffice Coworking
+Propriétaire - Tous droits réservés
