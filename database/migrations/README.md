@@ -1,54 +1,57 @@
-# Migrations de Base de Données
+# Migrations Base de Données
 
-## Migration de correction de structure (fix_structure_prod.sql)
+## Migration Principale
 
-Cette migration corrige les problèmes détectés dans la structure de la base de données en production.
+### 001_coffice_complete.sql
+Migration unique et consolidée contenant toutes les modifications nécessaires pour la version finale de Coffice.
 
-### Problèmes corrigés :
-1. ✅ Conversion du charset de `latin1` vers `utf8mb4` (support complet Unicode)
-2. ✅ Assure la compatibilité des noms de colonnes
-3. ✅ Ajoute les index manquants pour améliorer les performances
-4. ✅ Convertit toutes les tables vers le moteur InnoDB
-5. ✅ Optimise les tables après conversion
+**Inclut :**
+- Ajout des prix demi-journée et mensuels aux espaces
+- Ajout du système de crédit utilisateur pour les parrainages
+- Champs complets pour les domiciliations
+- Nouveaux types de réservation (demi_journee, mois)
+- Abonnements mensuels par espace (Open Space, Hoggar, Atlas, Aurès)
+- Index pour optimisation des performances
 
-### Comment appliquer la migration :
+## Application de la Migration
 
-#### Option 1 : Via phpMyAdmin
-1. Connectez-vous à phpMyAdmin
-2. Sélectionnez la base `cofficed_coffice`
-3. Allez dans l'onglet "SQL"
-4. Copiez-collez le contenu de `fix_structure_prod.sql`
-5. Cliquez sur "Exécuter"
-
-#### Option 2 : Via ligne de commande
+### Première installation
 ```bash
-mysql -u cofficed_user -p cofficed_coffice < database/migrations/fix_structure_prod.sql
+# 1. Créer et importer le schéma principal
+mysql -u root -p < database/coffice.sql
+
+# 2. Appliquer la migration complète
+mysql -u root -p coffice < database/migrations/001_coffice_complete.sql
 ```
 
-#### Option 3 : Via PHP
+### Installation déjà existante
 ```bash
-php -r "
-\$db = new PDO('mysql:host=localhost;dbname=cofficed_coffice', 'cofficed_user', 'votre_password');
-\$sql = file_get_contents('database/migrations/fix_structure_prod.sql');
-\$db->exec(\$sql);
-echo 'Migration appliquée avec succès!';
-"
+# Appliquer uniquement la migration
+mysql -u root -p coffice < database/migrations/001_coffice_complete.sql
 ```
 
-### Vérification après migration :
+## Vérification
 
-Relancez le script de diagnostic pour vérifier que tout est correct :
-```bash
-php scripts/diagnostic.php
+Après l'application, vérifier que :
+1. Tous les espaces ont un `prix_mois` défini
+2. Les nouveaux abonnements mensuels sont créés
+3. Les index sont en place
+
+```sql
+-- Vérifier les espaces
+SELECT nom, type, prix_jour, prix_mois FROM espaces;
+
+-- Vérifier les abonnements mensuels
+SELECT nom, type, prix FROM abonnements WHERE type LIKE '%_monthly';
+
+-- Vérifier les index
+SHOW INDEX FROM espaces;
+SHOW INDEX FROM abonnements;
 ```
 
-### Notes importantes :
-- ⚠️ **Faites une sauvegarde** de la base avant d'appliquer la migration
-- La migration utilise `ALTER TABLE` qui peut prendre du temps selon la taille des tables
-- Aucune donnée ne sera perdue pendant la conversion
-- La migration est idempotente (peut être exécutée plusieurs fois sans problème)
+## Notes Importantes
 
-### Backup avant migration :
-```bash
-mysqldump -u cofficed_user -p cofficed_coffice > backup_$(date +%Y%m%d_%H%M%S).sql
-```
+- Cette migration est **idempotente** : elle peut être exécutée plusieurs fois sans erreur
+- Utilise `ADD COLUMN IF NOT EXISTS` pour éviter les doublons
+- Utilise `ON DUPLICATE KEY UPDATE` pour les insertions sécurisées
+- Tous les changements sont compatibles avec les données existantes

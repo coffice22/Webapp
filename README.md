@@ -58,9 +58,11 @@ npm install
 
 3. Configurer la base de données
 ```bash
+# Créer la base et importer le schéma principal
 mysql -u root -p < database/coffice.sql
-mysql -u root -p coffice < database/migrations/add_prix_demi_journee.sql
-mysql -u root -p coffice < database/migrations/add_monthly_subscriptions.sql
+
+# Appliquer la migration complète
+mysql -u root -p coffice < database/migrations/001_coffice_complete.sql
 ```
 
 4. Configurer les variables d'environnement
