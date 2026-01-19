@@ -179,11 +179,9 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ isOpen, onClose, sele
         espaceId: data.espaceId,
         dateDebut: dateDebut,
         dateFin: dateFin,
-        montantTotal: estimatedAmount - discount,
         notes: data.notes,
         codePromo: data.codePromo,
-        participants: participants,
-        reduction: discount
+        participants: participants
       })
 
       if (result?.success === false) {
