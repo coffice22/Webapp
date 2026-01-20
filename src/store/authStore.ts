@@ -2,38 +2,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { apiClient } from '../lib/api-client'
 import toast from 'react-hot-toast'
-
-interface User {
-  id: string
-  email: string
-  nom: string
-  prenom: string
-  telephone?: string
-  role: 'admin' | 'user'
-  statut?: 'actif' | 'inactif' | 'suspendu'
-  avatar?: string
-  profession?: string
-  entreprise?: string
-  adresse?: string
-  bio?: string
-  wilaya?: string
-  commune?: string
-  typeEntreprise?: string
-  nif?: string
-  nis?: string
-  registreCommerce?: string
-  articleImposition?: string
-  numeroAutoEntrepreneur?: string
-  raisonSociale?: string
-  dateCreationEntreprise?: string
-  capital?: string
-  siegeSocial?: string
-  activitePrincipale?: string
-  formeJuridique?: string
-  derniereConnexion?: string
-  createdAt?: string
-  updatedAt?: string
-}
+import type { User } from '../types'
 
 interface AuthState {
   user: User | null

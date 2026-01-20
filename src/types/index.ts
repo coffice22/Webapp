@@ -166,11 +166,15 @@ export interface DemandeDomiciliation {
   adresseSiegeSocial: string
   capital?: number
   dateCreationEntreprise?: Date
-  statut: 'en_attente' | 'validee' | 'rejetee'
+  statut: 'en_attente' | 'validee' | 'rejetee' | 'active' | 'refusee'
   commentaireAdmin?: string
   dateValidation?: Date
   dateCreation: Date
   updatedAt: Date
+  montantMensuel?: number
+  dateDebut?: Date | string
+  dateFin?: Date | string
+  modePaiement?: string
 }
 
 export interface DomiciliationService {

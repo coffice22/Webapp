@@ -36,12 +36,13 @@ const Parrainage = () => {
       }
 
       try {
-        const response = await apiClient.request('/parrainages/index.php')
+        const response = await apiClient.getParrainages(user.id)
         if (response.success && response.data) {
+          const parrainages = Array.isArray(response.data) ? response.data : []
           setStats({
-            parraines: response.data.filter((p: any) => p.parrainId === user.id).length,
-            daGagnes: response.data.filter((p: any) => p.parrainId === user.id).reduce((sum: number, p: any) => sum + (p.recompenseParrain || 0), 0),
-            codeParrainage: user.codeParrainage
+            parraines: parrainages.length,
+            daGagnes: parrainages.reduce((sum: number, p: any) => sum + (p.recompenseParrain || 0), 0),
+            codeParrainage: user.codeParrainage || ''
           })
         }
       } catch (error) {
