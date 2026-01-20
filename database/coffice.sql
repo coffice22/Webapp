@@ -1,7 +1,8 @@
 -- =====================================================
--- COFFICE - Schema MySQL Complet
+-- COFFICE - Schema MySQL Complet v3.0
 -- Application de Coworking - Mohammadia Mall, Alger
--- Date: 2025-12-14
+-- Date: 2026-01-20
+-- Description: Schema MySQL complet, propre et synchronisé
 -- =====================================================
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -9,11 +10,39 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+01:00";
 
 -- =====================================================
--- TABLES PRINCIPALES
+-- SUPPRESSION DES TABLES EXISTANTES (fresh install)
 -- =====================================================
 
--- Table: users
-CREATE TABLE IF NOT EXISTS users (
+DROP TABLE IF EXISTS utilisations_codes_promo;
+DROP TABLE IF EXISTS parrainages_details;
+DROP TABLE IF EXISTS parrainages;
+DROP TABLE IF EXISTS codes_promo;
+DROP TABLE IF EXISTS documents_uploads;
+DROP TABLE IF EXISTS notifications;
+DROP TABLE IF EXISTS transactions;
+DROP TABLE IF EXISTS domiciliations;
+DROP TABLE IF EXISTS reservations;
+DROP TABLE IF EXISTS abonnements_utilisateurs;
+DROP TABLE IF EXISTS abonnements;
+DROP TABLE IF EXISTS espaces;
+DROP TABLE IF EXISTS csrf_tokens;
+DROP TABLE IF EXISTS activites;
+DROP TABLE IF EXISTS logs;
+DROP TABLE IF EXISTS rate_limits;
+DROP TABLE IF EXISTS users;
+
+-- Suppression des vues
+DROP VIEW IF EXISTS active_reservations;
+DROP VIEW IF EXISTS daily_stats;
+
+-- Suppression des procédures
+DROP PROCEDURE IF EXISTS calculate_occupancy_rate;
+DROP PROCEDURE IF EXISTS cleanup_expired_data;
+
+-- =====================================================
+-- TABLE: users
+-- =====================================================
+CREATE TABLE users (
   id CHAR(36) PRIMARY KEY,
   email VARCHAR(255) UNIQUE NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
@@ -29,6 +58,8 @@ CREATE TABLE IF NOT EXISTS users (
   bio TEXT,
   wilaya VARCHAR(100),
   commune VARCHAR(100),
+
+  -- Informations entreprise
   type_entreprise ENUM('auto_entrepreneur', 'eurl', 'sarl', 'spa', 'snc', 'scs', 'freelance', 'autre'),
   nif VARCHAR(50),
   nis VARCHAR(50),
@@ -41,40 +72,58 @@ CREATE TABLE IF NOT EXISTS users (
   siege_social TEXT,
   activite_principale VARCHAR(200),
   forme_juridique VARCHAR(100),
+
+  -- Parrainage et crédit
+  credit DECIMAL(10,2) DEFAULT 0 COMMENT 'Crédit disponible pour l\'utilisateur (bonus parrainage, etc.)',
+
+  -- Sécurité et gestion
   absences INT DEFAULT 0,
   banned_until DATETIME,
   derniere_connexion DATETIME,
+
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
   INDEX idx_email (email),
   INDEX idx_role (role),
   INDEX idx_role_statut (role, statut),
-  INDEX idx_created_at (created_at)
+  INDEX idx_created_at (created_at),
+  INDEX idx_credit (credit)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Table: espaces
-CREATE TABLE IF NOT EXISTS espaces (
+-- =====================================================
+-- TABLE: espaces
+-- =====================================================
+CREATE TABLE espaces (
   id CHAR(36) PRIMARY KEY,
   nom VARCHAR(100) NOT NULL,
   type ENUM('box_4', 'box_3', 'open_space', 'salle_reunion', 'poste_informatique') NOT NULL,
   capacite INT NOT NULL,
-  prix_heure DECIMAL(10,2) NOT NULL,
+
+  -- Tarification complète
+  prix_heure DECIMAL(10,2) NOT NULL DEFAULT 0,
   prix_demi_journee DECIMAL(10,2) NOT NULL DEFAULT 0,
-  prix_jour DECIMAL(10,2) NOT NULL,
+  prix_jour DECIMAL(10,2) NOT NULL DEFAULT 0,
   prix_semaine DECIMAL(10,2) NOT NULL DEFAULT 0,
+  prix_mois DECIMAL(10,2) NOT NULL DEFAULT 0,
+
   description TEXT,
   equipements JSON,
   disponible BOOLEAN DEFAULT TRUE,
   etage INT DEFAULT 4,
   image_url TEXT,
+
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
   INDEX idx_type (type),
   INDEX idx_disponible (disponible)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Table: abonnements
-CREATE TABLE IF NOT EXISTS abonnements (
+-- =====================================================
+-- TABLE: abonnements
+-- =====================================================
+CREATE TABLE abonnements (
   id CHAR(36) PRIMARY KEY,
   nom VARCHAR(100) NOT NULL,
   type VARCHAR(50) NOT NULL,
@@ -86,14 +135,19 @@ CREATE TABLE IF NOT EXISTS abonnements (
   actif BOOLEAN DEFAULT TRUE,
   statut ENUM('actif', 'inactif', 'archive') NOT NULL DEFAULT 'actif',
   ordre INT DEFAULT 0,
+
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
   INDEX idx_actif (actif),
-  INDEX idx_statut (statut)
+  INDEX idx_statut (statut),
+  INDEX idx_type (type)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Table: abonnements_utilisateurs
-CREATE TABLE IF NOT EXISTS abonnements_utilisateurs (
+-- =====================================================
+-- TABLE: abonnements_utilisateurs
+-- =====================================================
+CREATE TABLE abonnements_utilisateurs (
   id CHAR(36) PRIMARY KEY,
   user_id CHAR(36) NOT NULL,
   abonnement_id CHAR(36) NOT NULL,
@@ -101,38 +155,53 @@ CREATE TABLE IF NOT EXISTS abonnements_utilisateurs (
   date_fin DATETIME NOT NULL,
   statut ENUM('actif', 'expire', 'suspendu', 'annule') NOT NULL DEFAULT 'actif',
   auto_renouvellement BOOLEAN DEFAULT FALSE,
+
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   FOREIGN KEY (abonnement_id) REFERENCES abonnements(id) ON DELETE CASCADE,
+
   INDEX idx_user_id (user_id),
   INDEX idx_statut (statut),
   INDEX idx_dates (date_debut, date_fin)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Table: reservations
-CREATE TABLE IF NOT EXISTS reservations (
+-- =====================================================
+-- TABLE: reservations
+-- =====================================================
+CREATE TABLE reservations (
   id CHAR(36) PRIMARY KEY,
   user_id CHAR(36) NOT NULL,
   espace_id CHAR(36) NOT NULL,
   date_debut DATETIME NOT NULL,
   date_fin DATETIME NOT NULL,
   statut ENUM('confirmee', 'en_attente', 'en_cours', 'annulee', 'terminee') NOT NULL DEFAULT 'en_attente',
-  type_reservation ENUM('heure', 'jour', 'semaine') NOT NULL DEFAULT 'heure',
+
+  -- Types de réservation complets
+  type_reservation ENUM('heure', 'demi_journee', 'jour', 'semaine', 'mois') NOT NULL DEFAULT 'heure',
+
+  -- Montants et paiement
   montant_total DECIMAL(10,2) NOT NULL,
   reduction DECIMAL(10,2) DEFAULT 0,
   code_promo_id CHAR(36),
   montant_paye DECIMAL(10,2) DEFAULT 0,
   mode_paiement VARCHAR(50),
+
   notes TEXT,
   participants INT NOT NULL DEFAULT 1,
+
+  -- Annulation
   annulee_par CHAR(36),
   raison_annulation TEXT,
   date_annulation DATETIME,
+
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   FOREIGN KEY (espace_id) REFERENCES espaces(id) ON DELETE CASCADE,
+
   INDEX idx_user_id (user_id),
   INDEX idx_espace_id (espace_id),
   INDEX idx_statut (statut),
@@ -145,39 +214,64 @@ CREATE TABLE IF NOT EXISTS reservations (
   INDEX idx_annulee_par (annulee_par),
   INDEX idx_code_promo_id (code_promo_id),
   INDEX idx_participants (participants),
+  INDEX idx_type_reservation (type_reservation),
+
   CONSTRAINT chk_participants_positive CHECK (participants > 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Table: domiciliations
-CREATE TABLE IF NOT EXISTS domiciliations (
+-- =====================================================
+-- TABLE: domiciliations
+-- =====================================================
+CREATE TABLE domiciliations (
   id CHAR(36) PRIMARY KEY,
   user_id CHAR(36) NOT NULL,
+
+  -- Informations entreprise
   raison_sociale VARCHAR(200) NOT NULL,
   forme_juridique VARCHAR(100) NOT NULL,
   capital DECIMAL(15,2),
   activite_principale VARCHAR(200),
+  domaine_activite VARCHAR(200) COMMENT 'Domaine d\'activité de l\'entreprise',
+
+  -- Identification fiscale
   nif VARCHAR(50),
   nis VARCHAR(50),
   registre_commerce VARCHAR(50),
   article_imposition VARCHAR(50),
   numero_auto_entrepreneur VARCHAR(50),
+
+  -- Coordonnées
   wilaya VARCHAR(100),
   commune VARCHAR(100),
   adresse_actuelle TEXT,
+  adresse_siege_social TEXT COMMENT 'Adresse du siège social actuel',
+  coordonnees_fiscales TEXT COMMENT 'Coordonnées fiscales de l\'entreprise',
+  coordonnees_administratives TEXT COMMENT 'Coordonnées administratives de l\'entreprise',
+
+  -- Représentant légal
   representant_nom VARCHAR(100),
   representant_prenom VARCHAR(100),
+  representant_fonction VARCHAR(100) COMMENT 'Fonction du représentant légal',
   representant_telephone VARCHAR(20),
   representant_email VARCHAR(255),
+
+  -- Dates et statut
+  date_creation_entreprise DATE COMMENT 'Date de création de l\'entreprise',
   statut ENUM('en_attente', 'en_cours', 'validee', 'active', 'refusee', 'expiree', 'resiliee') NOT NULL DEFAULT 'en_attente',
   date_debut DATETIME,
   date_fin DATETIME,
+
+  -- Paiement et documents
   montant_mensuel DECIMAL(10,2),
   documents JSON,
   notes_admin TEXT,
   visible_sur_site BOOLEAN DEFAULT FALSE,
+
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+
   INDEX idx_user_id (user_id),
   INDEX idx_statut (statut),
   INDEX idx_visible (visible_sur_site),
@@ -185,8 +279,10 @@ CREATE TABLE IF NOT EXISTS domiciliations (
   INDEX idx_dates (date_debut, date_fin)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Table: transactions
-CREATE TABLE IF NOT EXISTS transactions (
+-- =====================================================
+-- TABLE: transactions
+-- =====================================================
+CREATE TABLE transactions (
   id CHAR(36) PRIMARY KEY,
   user_id CHAR(36) NOT NULL,
   type ENUM('abonnement', 'reservation', 'domiciliation', 'remboursement') NOT NULL,
@@ -197,9 +293,12 @@ CREATE TABLE IF NOT EXISTS transactions (
   description TEXT,
   metadata JSON,
   date_paiement DATETIME,
+
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+
   INDEX idx_user_id (user_id),
   INDEX idx_type (type),
   INDEX idx_statut (statut),
@@ -208,8 +307,10 @@ CREATE TABLE IF NOT EXISTS transactions (
   INDEX idx_date_paiement (date_paiement)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Table: codes_promo
-CREATE TABLE IF NOT EXISTS codes_promo (
+-- =====================================================
+-- TABLE: codes_promo
+-- =====================================================
+CREATE TABLE codes_promo (
   id CHAR(36) PRIMARY KEY,
   code VARCHAR(50) UNIQUE NOT NULL,
   type ENUM('pourcentage', 'montant_fixe') NOT NULL,
@@ -223,16 +324,20 @@ CREATE TABLE IF NOT EXISTS codes_promo (
   conditions TEXT,
   types_application JSON,
   actif BOOLEAN DEFAULT TRUE,
+
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
   INDEX idx_code (code),
   INDEX idx_actif (actif),
   INDEX idx_dates (date_debut, date_fin),
   INDEX idx_actif_dates (actif, date_debut, date_fin)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Table: utilisations_codes_promo
-CREATE TABLE IF NOT EXISTS utilisations_codes_promo (
+-- =====================================================
+-- TABLE: utilisations_codes_promo
+-- =====================================================
+CREATE TABLE utilisations_codes_promo (
   id CHAR(36) PRIMARY KEY,
   code_promo_id CHAR(36) NOT NULL,
   user_id CHAR(36) NOT NULL,
@@ -243,12 +348,15 @@ CREATE TABLE IF NOT EXISTS utilisations_codes_promo (
   montant_avant DECIMAL(10,2) NOT NULL,
   montant_apres DECIMAL(10,2) NOT NULL,
   type_utilisation ENUM('reservation', 'abonnement', 'domiciliation') NOT NULL,
+
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
   FOREIGN KEY (code_promo_id) REFERENCES codes_promo(id) ON DELETE CASCADE,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   FOREIGN KEY (reservation_id) REFERENCES reservations(id) ON DELETE SET NULL,
   FOREIGN KEY (abonnement_id) REFERENCES abonnements_utilisateurs(id) ON DELETE SET NULL,
   FOREIGN KEY (domiciliation_id) REFERENCES domiciliations(id) ON DELETE SET NULL,
+
   INDEX idx_code_promo_id (code_promo_id),
   INDEX idx_user_id (user_id),
   INDEX idx_reservation_id (reservation_id),
@@ -258,22 +366,29 @@ CREATE TABLE IF NOT EXISTS utilisations_codes_promo (
   INDEX idx_created_at (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Table: parrainages
-CREATE TABLE IF NOT EXISTS parrainages (
+-- =====================================================
+-- TABLE: parrainages
+-- =====================================================
+CREATE TABLE parrainages (
   id CHAR(36) PRIMARY KEY,
   parrain_id CHAR(36) NOT NULL,
   code_parrain VARCHAR(50) UNIQUE NOT NULL,
   parraines INT DEFAULT 0,
   recompenses_totales DECIMAL(10,2) DEFAULT 0,
+
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
   FOREIGN KEY (parrain_id) REFERENCES users(id) ON DELETE CASCADE,
+
   INDEX idx_parrain_id (parrain_id),
   INDEX idx_code_parrain (code_parrain)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Table: parrainages_details
-CREATE TABLE IF NOT EXISTS parrainages_details (
+-- =====================================================
+-- TABLE: parrainages_details
+-- =====================================================
+CREATE TABLE parrainages_details (
   id CHAR(36) PRIMARY KEY,
   parrainage_id CHAR(36) NOT NULL,
   filleul_id CHAR(36) NOT NULL,
@@ -282,15 +397,19 @@ CREATE TABLE IF NOT EXISTS parrainages_details (
   statut ENUM('en_attente', 'valide', 'paye') NOT NULL DEFAULT 'en_attente',
   date_inscription DATETIME DEFAULT CURRENT_TIMESTAMP,
   date_validation DATETIME,
+
   FOREIGN KEY (parrainage_id) REFERENCES parrainages(id) ON DELETE CASCADE,
   FOREIGN KEY (filleul_id) REFERENCES users(id) ON DELETE CASCADE,
+
   INDEX idx_parrainage_id (parrainage_id),
   INDEX idx_filleul_id (filleul_id),
   INDEX idx_parrainage_filleul (parrainage_id, filleul_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Table: notifications
-CREATE TABLE IF NOT EXISTS notifications (
+-- =====================================================
+-- TABLE: notifications
+-- =====================================================
+CREATE TABLE notifications (
   id CHAR(36) PRIMARY KEY,
   user_id CHAR(36) NOT NULL,
   type ENUM('reservation', 'abonnement', 'domiciliation', 'paiement', 'promo', 'parrainage', 'systeme') NOT NULL,
@@ -298,15 +417,20 @@ CREATE TABLE IF NOT EXISTS notifications (
   message TEXT NOT NULL,
   lue BOOLEAN DEFAULT FALSE,
   metadata JSON,
+
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+
   INDEX idx_user_id (user_id),
   INDEX idx_lue (lue),
   INDEX idx_user_lu_created (user_id, lue, created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Table: documents_uploads
-CREATE TABLE IF NOT EXISTS documents_uploads (
+-- =====================================================
+-- TABLE: documents_uploads
+-- =====================================================
+CREATE TABLE documents_uploads (
   id CHAR(36) PRIMARY KEY,
   user_id CHAR(36) NOT NULL,
   entity_type ENUM('domiciliation', 'user', 'reservation', 'autre') NOT NULL,
@@ -316,42 +440,48 @@ CREATE TABLE IF NOT EXISTS documents_uploads (
   type_fichier VARCHAR(100),
   taille INT,
   chemin_fichier TEXT NOT NULL,
+
   uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+
   INDEX idx_user_id (user_id),
   INDEX idx_entity (entity_type, entity_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =====================================================
--- TABLES AVANCEES
+-- TABLES TECHNIQUES
 -- =====================================================
 
 -- Table: rate_limits
-CREATE TABLE IF NOT EXISTS rate_limits (
+CREATE TABLE rate_limits (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   key_name VARCHAR(255) NOT NULL,
   attempts INT NOT NULL DEFAULT 0,
   expires_at DATETIME NOT NULL,
+
   UNIQUE KEY key_name (key_name),
   INDEX idx_expires_at (expires_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table: logs
-CREATE TABLE IF NOT EXISTS logs (
+CREATE TABLE logs (
   id CHAR(36) PRIMARY KEY,
   level ENUM('info','warning','error','security') NOT NULL,
   message TEXT NOT NULL,
   context JSON DEFAULT NULL,
   user_id CHAR(36) DEFAULT NULL,
   ip_address VARCHAR(45) DEFAULT NULL,
+
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
   INDEX idx_level (level),
   INDEX idx_user_id (user_id),
   INDEX idx_created_at (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table: activites
-CREATE TABLE IF NOT EXISTS activites (
+CREATE TABLE activites (
   id CHAR(36) PRIMARY KEY,
   user_id CHAR(36) NOT NULL,
   type VARCHAR(100) NOT NULL,
@@ -359,24 +489,30 @@ CREATE TABLE IF NOT EXISTS activites (
   metadata JSON DEFAULT NULL,
   ip_address VARCHAR(45) DEFAULT NULL,
   user_agent TEXT,
+
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
   INDEX idx_user_id (user_id),
   INDEX idx_type (type),
   INDEX idx_created_at (created_at),
+
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table: csrf_tokens
-CREATE TABLE IF NOT EXISTS csrf_tokens (
+CREATE TABLE csrf_tokens (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   token VARCHAR(64) NOT NULL UNIQUE,
   user_id CHAR(36) NOT NULL,
   expires_at DATETIME NOT NULL,
   used BOOLEAN DEFAULT FALSE,
+
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
   INDEX idx_token (token),
   INDEX idx_user_id (user_id),
   INDEX idx_expires_at (expires_at),
+
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -384,7 +520,6 @@ CREATE TABLE IF NOT EXISTS csrf_tokens (
 -- VUES
 -- =====================================================
 
-DROP VIEW IF EXISTS active_reservations;
 CREATE VIEW active_reservations AS
 SELECT
     r.id,
@@ -398,6 +533,7 @@ SELECT
     r.date_debut,
     r.date_fin,
     r.statut,
+    r.type_reservation,
     r.montant_total,
     r.reduction,
     r.participants
@@ -407,7 +543,6 @@ INNER JOIN espaces e ON r.espace_id = e.id
 WHERE r.statut IN ('confirmee', 'en_cours')
 AND r.date_fin >= NOW();
 
-DROP VIEW IF EXISTS daily_stats;
 CREATE VIEW daily_stats AS
 SELECT
     DATE(created_at) as date,
@@ -425,7 +560,6 @@ GROUP BY DATE(created_at);
 
 DELIMITER $$
 
-DROP PROCEDURE IF EXISTS calculate_occupancy_rate$$
 CREATE PROCEDURE calculate_occupancy_rate(
     IN p_date_debut DATE,
     IN p_date_fin DATE
@@ -443,7 +577,6 @@ BEGIN
     ORDER BY date;
 END$$
 
-DROP PROCEDURE IF EXISTS cleanup_expired_data$$
 CREATE PROCEDURE cleanup_expired_data()
 BEGIN
     DELETE FROM rate_limits WHERE expires_at < NOW();
@@ -459,23 +592,38 @@ DELIMITER ;
 -- DONNEES INITIALES
 -- =====================================================
 
--- Espaces avec nouvelles images
-INSERT INTO espaces (id, nom, type, capacite, prix_heure, prix_jour, prix_semaine, description, equipements, image_url) VALUES
-(UUID(), 'Open Space', 'open_space', 12, 0, 1200, 20000, 'Espace de travail collaboratif 80m², 12 postes équipés', '["Wi-Fi 50-100 Mbps", "Accès communauté", "Café/thé", "Climatisation"]', '/espace_de_cowoking_vue_.jpeg'),
-(UUID(), 'Private Booth Aurès', 'box_3', 2, 0, 6000, 40000, 'Box privé 2 places idéal pour duo ou consulting', '["Wi-Fi haut débit", "Table/chaises", "Climatisation", "Insonorisation"]', '/private_booth_aurès.jpeg'),
-(UUID(), 'Private Booth Hoggar', 'box_3', 2, 0, 6000, 40000, 'Box privé 2 places confortable et climatisé', '["Wi-Fi haut débit", "Table/chaises", "Climatisation", "Insonorisation"]', '/private_booth_hoggar.jpeg'),
-(UUID(), 'Private Booth Atlas', 'box_4', 4, 0, 10000, 65000, 'Box privé 4 places spacieux, accès 7h-20h', '["Wi-Fi haut débit", "Table/chaises", "Climatisation", "Écran de présentation"]', '/private_booth_atlas_2.jpeg'),
-(UUID(), 'Salle de Réunion Premium', 'salle_reunion', 12, 2500, 12000, 0, 'Salle 35-40m² avec terrasse panoramique, TV 80"', '["TV 80 pouces", "Système audio", "Tableau blanc", "Terrasse", "Wi-Fi", "Eau", "Climatisation"]', '/salle_de_réunion_5.jpeg')
-ON DUPLICATE KEY UPDATE nom=VALUES(nom);
+-- Espaces avec tarification complète
+INSERT INTO espaces (id, nom, type, capacite, prix_heure, prix_demi_journee, prix_jour, prix_semaine, prix_mois, description, equipements, image_url) VALUES
+(UUID(), 'Open Space', 'open_space', 12, 0, 0, 1200, 20000, 15000, 'Espace de travail collaboratif 80m², 12 postes équipés', '["Wi-Fi 50-100 Mbps", "Accès communauté", "Café/thé", "Climatisation", "12 postes de travail"]', '/espace-coworking.jpeg'),
+(UUID(), 'Private Booth Aurès', 'box_3', 2, 0, 0, 6000, 40000, 45000, 'Box privé 2 places idéal pour duo ou consulting', '["Wi-Fi haut débit", "Table/chaises", "Climatisation", "Insonorisation", "Accès 7h-20h"]', '/booth-aures.jpeg'),
+(UUID(), 'Private Booth Hoggar', 'box_3', 2, 0, 0, 6000, 40000, 35000, 'Box privé 2 places confortable et climatisé', '["Wi-Fi haut débit", "Table/chaises", "Climatisation", "Insonorisation", "Accès 7h-20h"]', '/booth-hoggar.jpeg'),
+(UUID(), 'Private Booth Atlas', 'box_4', 4, 0, 0, 10000, 65000, 45000, 'Box privé 4 places spacieux, accès 7h-20h', '["Wi-Fi haut débit", "Table/chaises", "Climatisation", "Écran de présentation", "4 places", "Accès 7h-20h"]', '/booth-atlas.jpeg'),
+(UUID(), 'Salle de Réunion Premium', 'salle_reunion', 12, 2500, 5000, 12000, 0, 0, 'Salle 35-40m² avec terrasse panoramique, TV 80"', '["TV 80 pouces", "Système audio", "Tableau blanc", "Terrasse panoramique", "Wi-Fi haut débit", "Eau minérale", "Climatisation", "12 places assises"]', '/salle-reunion.jpeg');
 
--- Abonnements
-INSERT INTO abonnements (id, nom, type, prix, prix_avec_domiciliation, description, avantages, actif, statut, ordre) VALUES
-(UUID(), 'Solo', 'solo', 14000, NULL, 'Pour freelances et indépendants', '["Accès open space 8h-18h", "Wi-Fi 50 Mbps", "Accès communauté"]', TRUE, 'actif', 1),
-(UUID(), 'Pro', 'pro', 32000, NULL, 'Startups et consultants', '["Accès tous espaces 7h-20h", "Wi-Fi 100 Mbps", "Salle réunion 2h/mois", "-25% services additionnels"]', TRUE, 'actif', 2),
-(UUID(), 'Executive', 'entreprise', 55000, NULL, 'Entreprises et PME', '["Accès illimité 24/7", "Wi-Fi illimité", "Domiciliation INCLUSE", "-40% services additionnels"]', TRUE, 'actif', 3)
-ON DUPLICATE KEY UPDATE nom=VALUES(nom);
+-- Abonnements standards
+INSERT INTO abonnements (id, nom, type, prix, prix_avec_domiciliation, duree_mois, description, avantages, actif, statut, ordre) VALUES
+(UUID(), 'Solo', 'solo', 14000, NULL, 1, 'Pour freelances et indépendants', '["Accès open space 8h-18h", "Wi-Fi 50 Mbps", "Accès communauté", "Café/thé inclus"]', TRUE, 'actif', 1),
+(UUID(), 'Pro', 'pro', 32000, NULL, 1, 'Startups et consultants', '["Accès tous espaces 7h-20h", "Wi-Fi 100 Mbps", "Salle réunion 2h/mois", "-25% services additionnels", "Accès communauté"]', TRUE, 'actif', 2),
+(UUID(), 'Executive', 'entreprise', 55000, NULL, 1, 'Entreprises et PME', '["Accès illimité 24/7", "Wi-Fi illimité", "Domiciliation INCLUSE", "-40% services additionnels", "Support prioritaire"]', TRUE, 'actif', 3),
+(UUID(), 'Open Space Mensuel', 'open_space_monthly', 15000, NULL, 1, 'Accès mensuel à l\'espace de coworking open space', '["Accès open space 8h-18h", "Wi-Fi haut débit", "Café/thé inclus", "12 postes disponibles"]', TRUE, 'actif', 10),
+(UUID(), 'Hoggar Mensuel', 'booth_hoggar_monthly', 35000, NULL, 1, 'Box privé Hoggar 2 places - Abonnement mensuel', '["Accès 7h-20h", "Wi-Fi haut débit", "Climatisation", "Insonorisation", "2 places"]', TRUE, 'actif', 11),
+(UUID(), 'Atlas Mensuel', 'booth_atlas_monthly', 45000, NULL, 1, 'Box privé Atlas 4 places - Abonnement mensuel', '["Accès 7h-20h", "Wi-Fi haut débit", "Climatisation", "Écran présentation", "4 places"]', TRUE, 'actif', 12),
+(UUID(), 'Aurès Mensuel', 'booth_aures_monthly', 45000, NULL, 1, 'Box privé Aurès 2 places - Abonnement mensuel', '["Accès 7h-20h", "Wi-Fi haut débit", "Climatisation", "Insonorisation", "2 places"]', TRUE, 'actif', 13);
+
+-- =====================================================
+-- ACTIVATION DES CONTRAINTES
+-- =====================================================
 
 SET FOREIGN_KEY_CHECKS=1;
+
+-- =====================================================
+-- VERIFICATION ET STATS
+-- =====================================================
+
+SELECT 'Base de données Coffice créée avec succès!' as message;
+SELECT CONCAT('Espaces créés: ', COUNT(*)) as info FROM espaces;
+SELECT CONCAT('Abonnements créés: ', COUNT(*)) as info FROM abonnements;
+SELECT 'Schema v3.0 - Prêt pour la production' as status;
 
 -- =====================================================
 -- FIN DU SCHEMA
