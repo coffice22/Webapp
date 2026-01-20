@@ -1,4 +1,6 @@
 export * from './espaces'
+export * from './messages'
+export * from './algeria'
 
 export const RESERVATION_STATUTS = {
   CONFIRMEE: 'confirmee',

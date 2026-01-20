@@ -40,12 +40,13 @@ export const formatDateTime = (date: Date | string): string => {
   return dateStr && timeStr ? `${dateStr} à ${timeStr}` : ''
 }
 
-export const formatCurrency = (amount: number, currency: string = 'DZD'): string => {
-  if (typeof amount !== 'number' || isNaN(amount)) return '0 DZD'
-  return `${numberFormatter.format(amount)} ${currency}`
+export const formatCurrency = (amount: number, currency: string = 'DA'): string => {
+  if (typeof amount !== 'number' || isNaN(amount)) return '0 DA'
+  const formatted = numberFormatter.format(amount)
+  return `${formatted} ${currency}`
 }
 
-export const formatPrice = (amount: number, showTTC: boolean = true): string => {
+export const formatPrice = (amount: number, showTTC: boolean = false): string => {
   if (typeof amount !== 'number' || isNaN(amount)) return '0 DA'
   const formatted = numberFormatter.format(amount)
   return showTTC ? `${formatted} DA TTC` : `${formatted} DA`
@@ -77,10 +78,23 @@ export const formatFileSize = (bytes: number): string => {
 }
 
 export const formatPhoneNumber = (phone: string): string => {
-  const cleaned = phone.replace(/\D/g, '')
-  const match = cleaned.match(/^(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/)
-  if (match) {
-    return `${match[1]} ${match[2]} ${match[3]} ${match[4]} ${match[5]}`
+  if (!phone) return ''
+
+  const cleaned = phone.replace(/[\s\-\(\)]/g, '')
+
+  // Format algérien avec +213
+  if (cleaned.startsWith('+213')) {
+    const number = cleaned.substring(4)
+    if (number.length === 9) {
+      return `+213 ${number.substring(0, 1)} ${number.substring(1, 3)} ${number.substring(3, 6)} ${number.substring(6)}`
+    }
+    return cleaned
   }
+
+  // Format algérien avec 0
+  if (cleaned.startsWith('0') && cleaned.length === 10) {
+    return `${cleaned.substring(0, 2)} ${cleaned.substring(2, 4)} ${cleaned.substring(4, 6)} ${cleaned.substring(6, 8)} ${cleaned.substring(8)}`
+  }
+
   return phone
 }

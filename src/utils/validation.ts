@@ -3,6 +3,9 @@
  * Utilisé avec react-hook-form pour garantir la cohérence
  */
 
+import { NIF_VALIDATION, NIS_VALIDATION, RC_VALIDATION, validateNIF, validateNIS, validateAlgerianPhone } from '../constants/algeria'
+import { VALIDATION_MESSAGES } from '../constants/messages'
+
 export const validationRules = {
   email: {
     required: 'Email requis',
@@ -32,15 +35,35 @@ export const validationRules = {
   phone: {
     pattern: {
       value: /^(\+213|0)?[5-7][0-9]{8}$/,
-      message: 'Numéro de téléphone invalide (format: +213XXXXXXXXX ou 0XXXXXXXXX)'
-    }
+      message: VALIDATION_MESSAGES.PHONE.INVALID
+    },
+    validate: (value: string) => !value || validateAlgerianPhone(value) || VALIDATION_MESSAGES.PHONE.INVALID
   },
 
   phoneRequired: {
-    required: 'Téléphone requis',
+    required: VALIDATION_MESSAGES.PHONE.REQUIRED,
     pattern: {
       value: /^(\+213|0)?[5-7][0-9]{8}$/,
-      message: 'Numéro de téléphone invalide (format: +213XXXXXXXXX ou 0XXXXXXXXX)'
+      message: VALIDATION_MESSAGES.PHONE.INVALID
+    },
+    validate: (value: string) => validateAlgerianPhone(value) || VALIDATION_MESSAGES.PHONE.INVALID
+  },
+
+  nif: {
+    required: VALIDATION_MESSAGES.NIF.REQUIRED,
+    validate: (value: string) => validateNIF(value) || VALIDATION_MESSAGES.NIF.INVALID
+  },
+
+  nis: {
+    required: VALIDATION_MESSAGES.NIS.REQUIRED,
+    validate: (value: string) => validateNIS(value) || VALIDATION_MESSAGES.NIS.INVALID
+  },
+
+  rc: {
+    required: VALIDATION_MESSAGES.RC.REQUIRED,
+    pattern: {
+      value: RC_VALIDATION.PATTERN,
+      message: VALIDATION_MESSAGES.RC.INVALID
     }
   },
 
@@ -129,9 +152,7 @@ export function isValidEmail(email: string): boolean {
  * Valider manuellement un téléphone algérien
  */
 export function isValidPhone(phone: string): boolean {
-  const cleaned = phone.replace(/[\s\-\(\)]/g, '')
-  const pattern = /^(\+213|0)?[5-7][0-9]{8}$/
-  return pattern.test(cleaned)
+  return validateAlgerianPhone(phone)
 }
 
 /**
@@ -145,27 +166,8 @@ export function isValidPassword(password: string): boolean {
  * Nettoyer un numéro de téléphone pour l'envoyer à l'API
  */
 export function cleanPhoneNumber(phone: string): string {
+  if (!phone) return ''
   return phone.replace(/[\s\-\(\)]/g, '')
-}
-
-/**
- * Formater un numéro de téléphone pour l'affichage
- */
-export function formatPhoneNumber(phone: string): string {
-  const cleaned = cleanPhoneNumber(phone)
-
-  // Si commence par +213
-  if (cleaned.startsWith('+213')) {
-    const number = cleaned.substring(4)
-    return `+213 ${number.substring(0, 2)} ${number.substring(2, 5)} ${number.substring(5)}`
-  }
-
-  // Si commence par 0
-  if (cleaned.startsWith('0')) {
-    return `${cleaned.substring(0, 2)} ${cleaned.substring(2, 4)} ${cleaned.substring(4, 7)} ${cleaned.substring(7)}`
-  }
-
-  return phone
 }
 
 /**
