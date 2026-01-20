@@ -10,6 +10,7 @@ import Reservations from './dashboard/Reservations'
 import Profile from './dashboard/Profile'
 import Domiciliation from './dashboard/Domiciliation'
 import MyCompany from './dashboard/MyCompany'
+import Parrainage from './dashboard/Parrainage'
 import CodesPromo from './dashboard/CodesPromo'
 // Admin pages
 import AdminUsers from './dashboard/admin/Users'
@@ -39,8 +40,8 @@ const Dashboard = () => {
           {/* Routes utilisateur standard */}
           <Route path="reservations" element={<Reservations />} />
           <Route path="domiciliation" element={<Domiciliation />} />
-          <Route path="codes-promo" element={<CodesPromo />} />
           <Route path="mon-entreprise" element={<MyCompany />} />
+          <Route path="parrainage" element={<Parrainage />} />
           <Route path="profil" element={<Profile />} />
 
           {/* Routes admin */}

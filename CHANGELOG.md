@@ -1,5 +1,26 @@
 # Changelog - Coffice Application
 
+## [3.0.1] - 2026-01-20
+
+### Corrections
+- **Domiciliation** : Correction du problème de mise à jour des informations d'entreprise
+- Ajout de l'onglet "Mon Entreprise" au menu utilisateur pour permettre l'accès au formulaire
+- Amélioration de la gestion des erreurs dans la mise à jour du profil utilisateur
+- Correction de la fonction handleSubmit dans MyCompany.tsx pour gérer les appels directs
+
+### Ajouts
+- **Nouvelle page Parrainage** : Interface complète avec code unique, statistiques et partage social
+- Ajout de "Mon Entreprise" dans le menu de navigation utilisateur
+- Ajout de "Parrainage" dans le menu de navigation utilisateur
+
+### Suppressions
+- Suppression de l'onglet "Codes Promo" pour les utilisateurs normaux (conservé uniquement pour les admins)
+
+### Améliorations
+- Meilleure expérience utilisateur pour le flux de domiciliation complet
+- Interface de parrainage moderne avec bouton de copie et partage social natif
+- Navigation simplifiée et plus intuitive pour les utilisateurs
+
 ## [3.0.0] - 2026-01-20
 
 ### Schema MySQL Consolidé

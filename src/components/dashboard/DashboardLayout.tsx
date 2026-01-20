@@ -81,7 +81,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     { name: 'Tableau de bord', href: '/app', icon: Home },
     { name: 'Réservations', href: '/app/reservations', icon: Calendar },
     { name: 'Domiciliation', href: '/app/domiciliation', icon: Building },
-    { name: 'Codes Promo', href: '/app/codes-promo', icon: Tag },
+    { name: 'Mon Entreprise', href: '/app/mon-entreprise', icon: FileText },
+    { name: 'Parrainage', href: '/app/parrainage', icon: Gift },
     { name: 'Profil', href: '/app/profil', icon: User },
   ]
 

@@ -67,17 +67,18 @@ const MyCompany = () => {
     }
   }, [user])
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault()
     if (!user) return
 
     try {
-      await updateUser(user.id, formData)
+      const result = await updateUser(user.id, formData)
       await useAuthStore.getState().loadUser()
       toast.success('Informations de l\'entreprise mises à jour avec succès')
       setIsEditing(false)
-    } catch (error) {
-      toast.error('Erreur lors de la mise à jour')
+    } catch (error: any) {
+      console.error('Erreur mise à jour:', error)
+      toast.error(error.message || 'Erreur lors de la mise à jour')
     }
   }
 
