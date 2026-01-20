@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { BarChart3, TrendingUp, DollarSign, Users, Calendar, Building, Clock, AlertCircle, CheckCircle, ArrowUpRight, Briefcase, FileText, Package, PenTool as Tool, Bell } from 'lucide-react';
+import { BarChart3, TrendingUp, TrendingDown, DollarSign, Users, Calendar, Building, Clock, AlertCircle, CheckCircle, ArrowUpRight, ArrowDownRight, Briefcase, FileText, Package, PenTool as Tool, Bell, Activity } from 'lucide-react';
 import Card from '../ui/Card';
 import Button from '../ui/Button';
 import Badge from '../ui/Badge';
@@ -8,13 +8,62 @@ import { useERPStore } from '../../store/erpStore';
 import { formatCurrency, formatDate } from '../../utils/formatters';
 import { apiClient } from '../../lib/api-client';
 
+interface StatCardProps {
+  title: string;
+  value: string | number;
+  icon: React.ReactNode;
+  trend?: number;
+  trendLabel?: string;
+  color: 'green' | 'blue' | 'purple' | 'orange' | 'red';
+  delay?: number;
+}
+
+const StatCard = ({ title, value, icon, trend, trendLabel, color, delay = 0 }: StatCardProps) => {
+  const colorClasses = {
+    green: 'bg-green-100 text-green-600',
+    blue: 'bg-blue-100 text-blue-600',
+    purple: 'bg-purple-100 text-purple-600',
+    orange: 'bg-orange-100 text-orange-600',
+    red: 'bg-red-100 text-red-600'
+  };
+
+  const isPositive = trend && trend >= 0;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay }}
+    >
+      <Card className="p-6 hover:shadow-lg transition-shadow">
+        <div className="flex items-center justify-between mb-4">
+          <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${colorClasses[color]}`}>
+            {icon}
+          </div>
+          {trend !== undefined && (
+            <div className={`flex items-center gap-1 text-sm font-semibold ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
+              {isPositive ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
+              {Math.abs(trend)}%
+            </div>
+          )}
+        </div>
+        <p className="text-sm text-gray-600 mb-1">{title}</p>
+        <p className="text-2xl font-bold text-primary">{value}</p>
+        {trendLabel && (
+          <p className="text-xs text-gray-500 mt-2">{trendLabel}</p>
+        )}
+      </Card>
+    </motion.div>
+  );
+};
+
 const ERPDashboard = () => {
-  const { 
-    spaces, reservations, members, subscriptions, invoices, 
+  const {
+    spaces, reservations, members, subscriptions, invoices,
     maintenanceRequests, inventory, generateAnalytics, analytics,
     getLowStockItems
   } = useERPStore();
-  
+
   const [loading, setLoading] = useState(true);
   const [period, setPeriod] = useState<'day' | 'week' | 'month' | 'year'>('month');
   const [adminStats, setAdminStats] = useState<any>(null);
@@ -39,21 +88,22 @@ const ERPDashboard = () => {
     loadData();
   }, [period]);
 
-  // Calcul des statistiques
+  const availableSpaces = spaces.filter(s => s.available).length;
   const stats = {
     totalSpaces: spaces.length,
-    availableSpaces: spaces.filter(s => s.available).length,
+    availableSpaces,
     totalMembers: members.length,
     activeMembers: members.filter(m => m.status === 'active').length,
     totalReservations: reservations.length,
-    todayReservations: reservations.filter(r => 
+    todayReservations: reservations.filter(r =>
       new Date(r.startDate).toDateString() === new Date().toDateString()
     ).length,
     pendingInvoices: invoices.filter(i => i.status === 'sent' || i.status === 'draft').length,
     overdueInvoices: invoices.filter(i => i.status === 'overdue').length,
     activeSubscriptions: subscriptions.filter(s => s.status === 'active').length,
     lowStockItems: getLowStockItems().length,
-    pendingMaintenance: maintenanceRequests.filter(r => r.status === 'pending').length
+    pendingMaintenance: maintenanceRequests.filter(r => r.status === 'pending').length,
+    occupancyRate: spaces.length > 0 ? Math.round(((spaces.length - availableSpaces) / spaces.length) * 100) : 0
   };
 
   if (loading) {
@@ -64,437 +114,220 @@ const ERPDashboard = () => {
     );
   }
 
+  const recentActivities = [
+    ...(reservations.slice(0, 3).map(r => ({
+      type: 'reservation',
+      message: `Nouvelle réservation pour ${r.spaceId || 'un espace'}`,
+      time: r.createdAt || new Date().toISOString(),
+      icon: <Calendar className="w-4 h-4" />
+    }))),
+    ...(maintenanceRequests.slice(0, 2).map(m => ({
+      type: 'maintenance',
+      message: `Demande de maintenance: ${m.description}`,
+      time: m.createdAt || new Date().toISOString(),
+      icon: <Tool className="w-4 h-4" />
+    })))
+  ].sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()).slice(0, 5);
+
   return (
     <div className="space-y-8">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-display font-bold text-primary mb-2">
-          Tableau de bord ERP
-        </h1>
-        <p className="text-gray-600">
-          Vue d'ensemble de votre espace de coworking
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-display font-bold text-primary mb-2">
+            Tableau de bord ERP
+          </h1>
+          <p className="text-gray-600">
+            Vue d'ensemble et métriques en temps réel
+          </p>
+        </div>
+
+        <div className="flex gap-2">
+          {(['day', 'week', 'month', 'year'] as const).map((p) => (
+            <Button
+              key={p}
+              variant={period === p ? 'primary' : 'outline'}
+              size="sm"
+              onClick={() => setPeriod(p)}
+            >
+              {p === 'day' ? 'Jour' : p === 'week' ? 'Semaine' : p === 'month' ? 'Mois' : 'Année'}
+            </Button>
+          ))}
+        </div>
       </div>
 
-      {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-        >
-          <Card className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Revenus ce mois</p>
-                <p className="text-2xl font-bold text-primary">
-                  {formatCurrency(adminStats?.revenue?.month || analytics?.financialSummary.revenue || 0)}
-                </p>
-                {adminStats?.revenue?.growth !== undefined && (
-                  <p className={`text-sm mt-1 ${adminStats.revenue.growth >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                    {adminStats.revenue.growth >= 0 ? '+' : ''}{adminStats.revenue.growth}% vs mois dernier
-                  </p>
-                )}
-              </div>
-              <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
-                <DollarSign className="w-6 h-6 text-green-600" />
-              </div>
-            </div>
-          </Card>
-        </motion.div>
+        <StatCard
+          title="Revenus ce mois"
+          value={formatCurrency(adminStats?.revenue?.month || analytics?.financialSummary.revenue || 0)}
+          icon={<DollarSign className="w-6 h-6" />}
+          trend={adminStats?.revenue?.growth}
+          trendLabel="vs mois dernier"
+          color="green"
+          delay={0.1}
+        />
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-        >
-          <Card className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Taux d'occupation</p>
-                <p className="text-2xl font-bold text-primary">{adminStats?.occupancy?.rate || analytics?.occupancyRate || 0}%</p>
-                {adminStats?.occupancy?.growth !== undefined && (
-                  <p className={`text-sm mt-1 ${adminStats.occupancy.growth >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                    {adminStats.occupancy.growth >= 0 ? '+' : ''}{adminStats.occupancy.growth}% vs mois dernier
-                  </p>
-                )}
-              </div>
-              <div className="w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center">
-                <Building className="w-6 h-6 text-accent" />
-              </div>
-            </div>
-          </Card>
-        </motion.div>
+        <StatCard
+          title="Membres actifs"
+          value={`${stats.activeMembers} / ${stats.totalMembers}`}
+          icon={<Users className="w-6 h-6" />}
+          trend={adminStats?.members?.growth}
+          trendLabel="nouveaux ce mois"
+          color="blue"
+          delay={0.2}
+        />
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
-          <Card className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Membres actifs</p>
-                <p className="text-2xl font-bold text-primary">{adminStats?.users?.active || stats.activeMembers}</p>
-                {adminStats?.users?.growth !== undefined && (
-                  <p className={`text-sm mt-1 ${adminStats.users.growth >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                    {adminStats.users.growth >= 0 ? '+' : ''}{adminStats.users.growth}% vs mois dernier
-                  </p>
-                )}
-              </div>
-              <div className="w-12 h-12 bg-teal/10 rounded-xl flex items-center justify-center">
-                <Users className="w-6 h-6 text-teal" />
-              </div>
-            </div>
-          </Card>
-        </motion.div>
+        <StatCard
+          title="Taux d'occupation"
+          value={`${stats.occupancyRate}%`}
+          icon={<Building className="w-6 h-6" />}
+          trend={adminStats?.occupancy?.growth}
+          trendLabel={`${stats.totalSpaces - stats.availableSpaces}/${stats.totalSpaces} espaces`}
+          color="purple"
+          delay={0.3}
+        />
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-        >
-          <Card className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Réservations aujourd'hui</p>
-                <p className="text-2xl font-bold text-primary">{adminStats?.reservations?.today || stats.todayReservations}</p>
-                {adminStats?.reservations?.growth !== undefined && (
-                  <p className={`text-sm mt-1 ${adminStats.reservations.growth >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                    {adminStats.reservations.growth >= 0 ? '+' : ''}{adminStats.reservations.growth} vs hier
-                  </p>
-                )}
-              </div>
-              <div className="w-12 h-12 bg-warm/10 rounded-xl flex items-center justify-center">
-                <Calendar className="w-6 h-6 text-warm" />
-              </div>
-            </div>
-          </Card>
-        </motion.div>
+        <StatCard
+          title="Réservations aujourd'hui"
+          value={stats.todayReservations}
+          icon={<Calendar className="w-6 h-6" />}
+          trendLabel={`${stats.totalReservations} ce mois`}
+          color="orange"
+          delay={0.4}
+        />
       </div>
 
-      {/* Alerts Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-      >
-        <Card className="p-6">
-          <h2 className="text-lg font-display font-bold text-primary mb-4">
-            Alertes et notifications
-          </h2>
-          
-          <div className="space-y-4">
-            {stats.overdueInvoices > 0 && (
-              <div className="flex items-center justify-between p-4 bg-red-50 rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-                    <AlertCircle className="w-5 h-5 text-red-600" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-primary">{stats.overdueInvoices} factures en retard</p>
-                    <p className="text-sm text-gray-600">Nécessite votre attention</p>
-                  </div>
-                </div>
-                <Button variant="outline" size="sm">
-                  Voir les factures
-                </Button>
-              </div>
-            )}
-            
-            {stats.pendingMaintenance > 0 && (
-              <div className="flex items-center justify-between p-4 bg-yellow-50 rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
-                    <Tool className="w-5 h-5 text-yellow-600" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-primary">{stats.pendingMaintenance} demandes de maintenance en attente</p>
-                    <p className="text-sm text-gray-600">Nécessite une intervention</p>
-                  </div>
-                </div>
-                <Button variant="outline" size="sm">
-                  Voir les demandes
-                </Button>
-              </div>
-            )}
-            
-            {stats.lowStockItems > 0 && (
-              <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                    <Package className="w-5 h-5 text-blue-600" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-primary">{stats.lowStockItems} articles en stock bas</p>
-                    <p className="text-sm text-gray-600">Réapprovisionnement nécessaire</p>
-                  </div>
-                </div>
-                <Button variant="outline" size="sm">
-                  Voir l'inventaire
-                </Button>
-              </div>
-            )}
-            
-            {stats.pendingInvoices > 0 && (
-              <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                    <FileText className="w-5 h-5 text-blue-600" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-primary">{stats.pendingInvoices} factures en attente</p>
-                    <p className="text-sm text-gray-600">A envoyer aux clients</p>
-                  </div>
-                </div>
-                <Button variant="outline" size="sm">
-                  Gerer les factures
-                </Button>
-              </div>
-            )}
-          </div>
-        </Card>
-      </motion.div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="lg:col-span-2"
+        >
+          <Card className="p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold text-primary flex items-center gap-2">
+                <BarChart3 className="w-5 h-5" />
+                Indicateurs clés
+              </h2>
+            </div>
 
-      {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Revenue Chart */}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <div className="p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <FileText className="w-4 h-4 text-gray-600" />
+                  <p className="text-sm text-gray-600">Factures en attente</p>
+                </div>
+                <p className="text-2xl font-bold text-primary">{stats.pendingInvoices}</p>
+              </div>
+
+              <div className="p-4 bg-red-50 rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <AlertCircle className="w-4 h-4 text-red-600" />
+                  <p className="text-sm text-red-600">Factures en retard</p>
+                </div>
+                <p className="text-2xl font-bold text-red-600">{stats.overdueInvoices}</p>
+              </div>
+
+              <div className="p-4 bg-green-50 rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <CheckCircle className="w-4 h-4 text-green-600" />
+                  <p className="text-sm text-green-600">Abonnements actifs</p>
+                </div>
+                <p className="text-2xl font-bold text-green-600">{stats.activeSubscriptions}</p>
+              </div>
+
+              <div className="p-4 bg-orange-50 rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <Package className="w-4 h-4 text-orange-600" />
+                  <p className="text-sm text-orange-600">Stock faible</p>
+                </div>
+                <p className="text-2xl font-bold text-orange-600">{stats.lowStockItems}</p>
+              </div>
+
+              <div className="p-4 bg-yellow-50 rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <Tool className="w-4 h-4 text-yellow-600" />
+                  <p className="text-sm text-yellow-600">Maintenance</p>
+                </div>
+                <p className="text-2xl font-bold text-yellow-600">{stats.pendingMaintenance}</p>
+              </div>
+
+              <div className="p-4 bg-blue-50 rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <Briefcase className="w-4 h-4 text-blue-600" />
+                  <p className="text-sm text-blue-600">Espaces disponibles</p>
+                </div>
+                <p className="text-2xl font-bold text-blue-600">{stats.availableSpaces}</p>
+              </div>
+            </div>
+          </Card>
+        </motion.div>
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
         >
-          <Card className="p-6">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-lg font-display font-bold text-primary">
-                Évolution des revenus
-              </h3>
-              <div className="flex space-x-2">
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  className={period === 'month' ? 'bg-accent/10 text-accent' : ''}
-                  onClick={() => setPeriod('month')}
-                >
-                  Mois
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  className={period === 'year' ? 'bg-accent/10 text-accent' : ''}
-                  onClick={() => setPeriod('year')}
-                >
-                  Année
-                </Button>
-              </div>
+          <Card className="p-6 h-full">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold text-primary flex items-center gap-2">
+                <Activity className="w-5 h-5" />
+                Activités récentes
+              </h2>
+              <Bell className="w-5 h-5 text-gray-400" />
             </div>
-            
-            <div className="space-y-4">
-              {analytics?.membershipGrowth.map((item, index) => (
-                <div key={index} className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">{item.period}</span>
-                  <div className="flex items-center space-x-4">
-                    <div className="w-32 bg-gray-200 rounded-full h-2">
-                      <div 
-                        className="bg-accent h-2 rounded-full" 
-                        style={{ width: `${(item.count / 100) * 100}%` }}
-                      />
-                    </div>
-                    <span className="text-sm font-medium text-primary w-20 text-right">
-                      {item.count} membres
-                    </span>
-                    <span className={`text-sm w-16 text-right ${item.growth >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                      {item.growth >= 0 ? '+' : ''}{item.growth}%
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Card>
-        </motion.div>
 
-        {/* Top Spaces */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
-        >
-          <Card className="p-6">
-            <h3 className="text-lg font-display font-bold text-primary mb-6">
-              Espaces les plus populaires
-            </h3>
             <div className="space-y-4">
-              {analytics?.topSpaces.map((space, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <div>
-                    <p className="font-medium text-primary">{space.name}</p>
-                    <p className="text-sm text-gray-600">{space.bookings} réservations</p>
+              {recentActivities.length > 0 ? (
+                recentActivities.map((activity, index) => (
+                  <div key={index} className="flex gap-3 p-3 bg-gray-50 rounded-lg">
+                    <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center text-gray-600">
+                      {activity.icon}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-gray-900 truncate">{activity.message}</p>
+                      <p className="text-xs text-gray-500">{formatDate(activity.time)}</p>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <p className="font-semibold text-primary">{formatCurrency(space.revenue)}</p>
-                    <p className="text-sm text-green-600">
-                      <ArrowUpRight className="w-3 h-3 inline mr-1" />
-                      {Math.round((space.revenue / analytics.financialSummary.revenue) * 100)}% du CA
-                    </p>
-                  </div>
+                ))
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <Activity className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                  <p>Aucune activité récente</p>
                 </div>
-              ))}
+              )}
             </div>
           </Card>
         </motion.div>
       </div>
 
-      {/* Recent Activity */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.8 }}
-      >
-        <Card className="p-6">
-          <h3 className="text-lg font-display font-bold text-primary mb-4">
-            Activité récente
-          </h3>
-          
-          <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 bg-green-50 border border-green-200 rounded-lg">
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                </div>
-                <div>
-                  <p className="font-medium text-primary">Nouvelle réservation confirmée</p>
-                  <p className="text-sm text-gray-600">Salle de Réunion - {formatDate(new Date())}</p>
-                </div>
-              </div>
-              <Badge variant="success">Confirmée</Badge>
-            </div>
-            
-            <div className="flex items-center justify-between p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                  <Users className="w-4 h-4 text-blue-600" />
-                </div>
-                <div>
-                  <p className="font-medium text-primary">Nouvel abonnement</p>
-                  <p className="text-sm text-gray-600">Plan Standard - Ahmed Benali</p>
-                </div>
-              </div>
-              <span className="text-blue-600 font-semibold">{formatCurrency(25000)}</span>
-            </div>
-            
-            <div className="flex items-center justify-between p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
-                  <Bell className="w-4 h-4 text-yellow-600" />
-                </div>
-                <div>
-                  <p className="font-medium text-primary">Rappel de maintenance</p>
-                  <p className="text-sm text-gray-600">Climatisation Zone Principale - Demain</p>
-                </div>
-              </div>
-              <Badge variant="warning">Planifié</Badge>
-            </div>
-          </div>
-        </Card>
-      </motion.div>
-
-      {/* Financial Summary */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.9 }}
-      >
-        <Card className="p-6">
-          <h3 className="text-lg font-display font-bold text-primary mb-6">
-            Résumé financier
-          </h3>
-          
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-accent mb-1">
-                {formatCurrency(analytics?.financialSummary.revenue || 0)}
-              </div>
-              <div className="text-sm text-gray-600">Revenus</div>
-            </div>
-            
-            <div className="text-center">
-              <div className="text-2xl font-bold text-rose mb-1">
-                {formatCurrency(analytics?.financialSummary.expenses || 0)}
-              </div>
-              <div className="text-sm text-gray-600">Dépenses</div>
-            </div>
-            
-            <div className="text-center">
-              <div className="text-2xl font-bold text-green-600 mb-1">
-                {formatCurrency(analytics?.financialSummary.profit || 0)}
-              </div>
-              <div className="text-sm text-gray-600">Bénéfice</div>
-            </div>
-            
-            <div className="text-center">
-              <div className="text-2xl font-bold text-yellow-600 mb-1">
-                {formatCurrency(analytics?.financialSummary.outstandingInvoices || 0)}
-              </div>
-              <div className="text-sm text-gray-600">Factures impayées</div>
-            </div>
-          </div>
-          
-          <div className="mt-6 pt-6 border-t border-gray-200">
-            <div className="flex justify-between items-center">
-              <h4 className="font-medium text-primary">Répartition des revenus</h4>
-              <Button variant="outline" size="sm">
-                <FileText className="w-4 h-4 mr-2" />
-                Rapport complet
-              </Button>
-            </div>
-            
-            <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <h5 className="text-sm font-medium text-gray-600 mb-2">Par espace</h5>
-                <div className="space-y-2">
-                  {analytics?.topSpaces.map((space, index) => (
-                    <div key={index} className="flex items-center justify-between">
-                      <span className="text-sm text-gray-700">{space.name}</span>
-                      <div className="flex items-center">
-                        <div className="w-24 bg-gray-200 rounded-full h-2 mr-2">
-                          <div 
-                            className="bg-teal h-2 rounded-full" 
-                            style={{ width: `${(space.revenue / analytics.financialSummary.revenue) * 100}%` }}
-                          />
-                        </div>
-                        <span className="text-sm text-gray-700">{Math.round((space.revenue / analytics.financialSummary.revenue) * 100)}%</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              
-              <div>
-                <h5 className="text-sm font-medium text-gray-600 mb-2">Par abonnement</h5>
-                <div className="space-y-2">
-                  {Object.entries(analytics?.revenueByMembership || {}).map(([key, value], index) => (
-                    <div key={index} className="flex items-center justify-between">
-                      <span className="text-sm text-gray-700">
-                        {key === 'membership-1' ? 'Starter' : 
-                         key === 'membership-2' ? 'Standard' : 'Premium'}
-                      </span>
-                      <div className="flex items-center">
-                        <div className="w-24 bg-gray-200 rounded-full h-2 mr-2">
-                          <div 
-                            className="bg-warm h-2 rounded-full" 
-                            style={{ width: `${(value / analytics.financialSummary.revenue) * 100}%` }}
-                          />
-                        </div>
-                        <span className="text-sm text-gray-700">{Math.round((value / analytics.financialSummary.revenue) * 100)}%</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+      {(stats.overdueInvoices > 0 || stats.lowStockItems > 0 || stats.pendingMaintenance > 0) && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
+        >
+          <Card className="p-6 bg-yellow-50 border-yellow-200">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="w-6 h-6 text-yellow-600 flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <h3 className="font-semibold text-yellow-900 mb-2">Actions requises</h3>
+                <ul className="space-y-1 text-sm text-yellow-800">
+                  {stats.overdueInvoices > 0 && (
+                    <li>• {stats.overdueInvoices} facture(s) en retard nécessitent votre attention</li>
+                  )}
+                  {stats.lowStockItems > 0 && (
+                    <li>• {stats.lowStockItems} article(s) en stock faible à réapprovisionner</li>
+                  )}
+                  {stats.pendingMaintenance > 0 && (
+                    <li>• {stats.pendingMaintenance} demande(s) de maintenance en attente</li>
+                  )}
+                </ul>
               </div>
             </div>
-          </div>
-        </Card>
-      </motion.div>
+          </Card>
+        </motion.div>
+      )}
     </div>
   );
 };
