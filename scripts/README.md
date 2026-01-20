@@ -2,14 +2,49 @@
 
 ## Scripts disponibles
 
-### test_all_features.js
-Script de test complet de toutes les fonctionnalités de l'application.
+### test_api.sh (Recommandé)
+Script de test complet en Bash - **NOUVEAU**
 
 **Usage :**
 ```bash
+# Test de production
 npm run test
+
+# Test local
+npm run test:local
+
+# Ou directement
+bash scripts/test_api.sh https://coffice.dz/api
+bash scripts/test_api.sh http://localhost:8080/api
+```
+
+**Avantages :**
+- Ne nécessite pas Node.js
+- Utilise curl (disponible partout)
+- Plus rapide et léger
+- Couleurs dans le terminal
+
+---
+
+### test_api.bat
+Script de test pour Windows (CMD/Batch)
+
+**Usage :**
+```cmd
+scripts\test_api.bat https://coffice.dz/api
+scripts\test_api.bat http://localhost:8080/api
+```
+
+---
+
+### test_all_features.js
+Script de test complet en JavaScript (ancien)
+
+**Usage :**
+```bash
+npm run test:js
 # ou avec URL personnalisée
-API_URL=https://votre-domaine.com/api npm run test
+API_URL=https://votre-domaine.com/api node scripts/test_all_features.js
 ```
 
 **Teste :**

@@ -9,8 +9,9 @@
     "type-check": "tsc --noEmit",
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "test": "node scripts/test_all_features.js",
-    "test:local": "API_URL=http://localhost:8080/api node scripts/test_all_features.js"
+    "test": "bash scripts/test_api.sh https://coffice.dz/api",
+    "test:local": "bash scripts/test_api.sh http://localhost:8080/api",
+    "test:js": "node scripts/test_all_features.js"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.83.0",
