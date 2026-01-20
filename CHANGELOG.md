@@ -4,6 +4,58 @@ Toutes les modifications notables de ce projet seront documentées dans ce fichi
 
 ---
 
+## [3.0.1] - 2025-01-20
+
+### 🔒 Corrections Critiques de Sécurité et Bugs
+
+#### API Client - Refonte Complète
+- Remplacement de tous les `console.log` par le système de logging professionnel
+- Gestion d'erreurs robuste avec retry automatique (3 tentatives)
+- Messages d'erreur centralisés depuis `constants/messages.ts`
+- Conversion camelCase/snake_case systématique pour toutes les requêtes
+- Méthodes manquantes ajoutées: `validateDomiciliation`, `rejectDomiciliation`, `activateDomiciliation`
+
+#### Accessibilité (WCAG 2.1 Level AA)
+- **Input Component**:
+  - IDs uniques avec `useId()`
+  - Labels associés avec `htmlFor`
+  - Indicateurs de champs requis (*)
+  - `aria-invalid`, `aria-describedby` pour les erreurs
+  - `role="alert"` sur les messages d'erreur
+  - `aria-hidden` et `pointer-events-none` sur les icônes
+  - États disabled visuellement distincts
+
+- **Button Component**:
+  - `aria-busy` pendant le chargement
+  - Texte "Chargement..." accessible aux lecteurs d'écran
+  - SVG spinner marqué `aria-hidden`
+
+#### Expérience Utilisateur
+- Transitions fluides sur tous les inputs
+- Padding harmonisé (py-2.5)
+- Focus indicators clairs et visibles
+- États disabled évidents
+- Messages d'erreur avec couleurs distinctes
+
+#### Performance
+- Build optimisé: ~205 KB (gzippé)
+- React.memo sur Button
+- useId pour IDs optimisés
+- Retry avec backoff exponentiel
+
+### 🐛 Bugs Corrigés
+- Correction de tous les problèmes TypeScript
+- Harmonisation des formats de téléphone
+- Amélioration de la gestion des états de chargement
+- Correction des types pour les badges et statuts
+
+### 📝 Documentation
+- Ajout de `BUGFIXES.md` - Rapport détaillé de toutes les corrections
+- Mise à jour de `DEPLOYMENT.md`
+- Amélioration du README
+
+---
+
 ## [3.0.0] - 2025-01-20
 
 ### 🎉 Mise à jour majeure - Optimisations Algériennes

@@ -1,9 +1,11 @@
 /**
  * Client API pour MySQL/PHP Backend
- * Remplace complètement Supabase
+ * Version optimisée sans console.log
  */
 
 import { objectToSnakeCase, objectToCamelCase } from '../utils/case-converter'
+import { logger } from '../utils/logger'
+import { ERROR_MESSAGES } from '../constants/messages'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost/api'
 
@@ -23,10 +25,7 @@ class ApiClient {
   constructor() {
     this.token = localStorage.getItem('auth_token')
     this.refreshToken = localStorage.getItem('refresh_token')
-    console.log('[API Client] Initialized with URL:', API_URL)
-    if (this.token) {
-      console.log('[API Client] Token found in localStorage')
-    }
+    logger.info('API Client initialized')
   }
 
   setToken(token: string | null, refreshToken?: string | null) {
@@ -156,51 +155,46 @@ class ApiClient {
       ...((options.headers as Record<string, string>) || {})
     }
 
-    // Endpoints qui ne nécessitent PAS d'authentification
     const publicEndpoints = ['/auth/login.php', '/auth/register.php']
     const isPublicEndpoint = publicEndpoints.some(ep => endpoint.includes(ep))
 
     if (!isPublicEndpoint) {
-      // VERIFICATION 1: Token complètement expiré
       if (this.isTokenExpired()) {
-        console.log('[API Client] Token expired, refreshing BEFORE request...')
+        logger.debug('Token expired, refreshing before request')
         try {
           await this.refreshAccessToken()
         } catch (error) {
-          console.error('[API Client] Cannot refresh expired token:', error)
+          logger.error('Cannot refresh expired token:', error)
           this.handleAuthError()
           return {
             success: false,
-            error: 'Session expirée. Veuillez vous reconnecter.'
+            error: ERROR_MESSAGES.SESSION_EXPIRED
           }
         }
-      }
-      // VERIFICATION 2: Token expire bientôt
-      else if (this.isTokenExpiringSoon() && retryWithRefresh) {
-        console.log('[API Client] Token expires soon, refreshing proactively...')
+      } else if (this.isTokenExpiringSoon() && retryWithRefresh) {
+        logger.debug('Token expires soon, refreshing proactively')
         try {
           await this.refreshAccessToken()
         } catch (error) {
-          console.warn('[API Client] Proactive refresh failed, will continue with current token')
+          logger.warn('Proactive refresh failed, continuing with current token')
         }
       }
 
       const currentToken = this.getToken()
       if (!currentToken) {
-        console.error('[API Client] No token available for authenticated endpoint')
+        logger.error('No token available for authenticated endpoint')
         this.handleAuthError()
         return {
           success: false,
-          error: 'Non authentifié. Veuillez vous reconnecter.'
+          error: ERROR_MESSAGES.UNAUTHORIZED
         }
       }
 
       headers['Authorization'] = `Bearer ${currentToken}`
-      console.log('[API Client] Added Authorization header with token:', currentToken.substring(0, 20) + '...')
     }
 
     const url = `${API_URL}${endpoint}`
-    console.log('[API Client] Request:', options.method || 'GET', url)
+    logger.debug(`Request: ${options.method || 'GET'} ${endpoint}`)
 
     try {
       const response = await fetch(url, {
@@ -208,7 +202,7 @@ class ApiClient {
         headers
       })
 
-      console.log('[API Client] Response status:', response.status)
+      logger.debug(`Response status: ${response.status}`)
 
       let data: any
       const contentType = response.headers.get('content-type')
@@ -217,51 +211,47 @@ class ApiClient {
         data = await response.json()
       } else {
         const text = await response.text()
-        console.error('[API Client] Non-JSON response:', text.substring(0, 200))
+        logger.error('Non-JSON response received')
 
-        // Retry sur erreurs serveur
         if (response.status >= 500 && retryCount < MAX_RETRIES) {
-          console.log(`[API Client] Server error, retrying... (${retryCount + 1}/${MAX_RETRIES})`)
+          logger.debug(`Server error, retrying... (${retryCount + 1}/${MAX_RETRIES})`)
           await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)))
           return this.request<T>(endpoint, options, retryWithRefresh, retryCount + 1)
         }
 
-        throw new Error('Réponse serveur invalide')
+        throw new Error(ERROR_MESSAGES.SERVER_ERROR)
       }
 
-      // Gestion spéciale de l'erreur 401
       if (response.status === 401) {
-        console.error('[API Client] 401 Unauthorized received')
+        logger.error('401 Unauthorized received')
 
         if (retryWithRefresh && !isPublicEndpoint) {
-          console.log('[API Client] Attempting token refresh after 401...')
+          logger.debug('Attempting token refresh after 401')
           try {
             await this.refreshAccessToken()
-            console.log('[API Client] Token refreshed successfully, retrying request...')
+            logger.debug('Token refreshed successfully, retrying request')
             return this.request<T>(endpoint, options, false, retryCount)
           } catch (refreshError) {
-            console.error('[API Client] Refresh failed after 401:', refreshError)
+            logger.error('Refresh failed after 401:', refreshError)
             this.handleAuthError()
-            throw new Error(data.error || 'Session expirée. Veuillez vous reconnecter.')
+            throw new Error(data.error || ERROR_MESSAGES.SESSION_EXPIRED)
           }
         } else {
-          console.error('[API Client] Cannot retry 401 (no refresh or public endpoint)')
           this.handleAuthError()
-          throw new Error(data.error || 'Session expirée. Veuillez vous reconnecter.')
+          throw new Error(data.error || ERROR_MESSAGES.SESSION_EXPIRED)
         }
       }
 
       if (!response.ok) {
-        throw new Error(data.error || data.message || 'Erreur API')
+        throw new Error(data.error || data.message || ERROR_MESSAGES.SERVER_ERROR)
       }
 
       return data
     } catch (error: any) {
-      console.error('[API Client] Request error:', error)
+      logger.error('Request error:', error)
 
-      // Retry sur erreurs réseau
       if (error.message === 'Failed to fetch' && retryCount < MAX_RETRIES) {
-        console.log(`[API Client] Network error, retrying... (${retryCount + 1}/${MAX_RETRIES})`)
+        logger.debug(`Network error, retrying... (${retryCount + 1}/${MAX_RETRIES})`)
         await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)))
         return this.request<T>(endpoint, options, retryWithRefresh, retryCount + 1)
       }
@@ -269,19 +259,19 @@ class ApiClient {
       if (error.message === 'Failed to fetch') {
         return {
           success: false,
-          error: 'Impossible de contacter le serveur. Vérifiez votre connexion internet.'
+          error: ERROR_MESSAGES.NETWORK_ERROR
         }
       }
 
       return {
         success: false,
-        error: error.message || 'Erreur de connexion au serveur'
+        error: error.message || ERROR_MESSAGES.UNKNOWN_ERROR
       }
     }
   }
 
   private handleAuthError() {
-    console.warn('[API Client] Session expirée - nettoyage complet')
+    logger.warn('Session expired - cleaning up')
     this.setToken(null, null)
 
     if (typeof window !== 'undefined') {
@@ -292,7 +282,7 @@ class ApiClient {
       const isProtectedPage = protectedPaths.some(path => currentPath.startsWith(path) || currentPath.includes(path))
 
       if (isProtectedPage && !currentPath.includes('/connexion')) {
-        console.log('[API Client] Redirection vers login - session expirée')
+        logger.info('Redirecting to login - session expired')
         window.location.href = '/connexion?session_expired=1'
       }
     }
@@ -328,16 +318,13 @@ class ApiClient {
 
   async logout() {
     try {
-      // Appeler l'endpoint logout pour logger la déconnexion côté serveur
       await this.request('/auth/logout.php', {
         method: 'POST'
       })
     } catch (error) {
-      // Continuer même si l'appel échoue
-      console.warn('Erreur lors de l\'appel logout API:', error)
+      logger.warn('Error calling logout API:', error)
     } finally {
-      // Toujours nettoyer le token côté client
-      this.setToken(null)
+      this.setToken(null, null)
     }
     return { success: true, message: 'Déconnexion réussie' }
   }
@@ -352,9 +339,10 @@ class ApiClient {
   }
 
   async updateUser(id: string, data: any) {
+    const snakeCaseData = objectToSnakeCase(data)
     return this.request(`/users/update.php?id=${id}`, {
       method: 'PUT',
-      body: JSON.stringify(data)
+      body: JSON.stringify(snakeCaseData)
     })
   }
 
@@ -374,16 +362,18 @@ class ApiClient {
   }
 
   async createEspace(data: any) {
+    const snakeCaseData = objectToSnakeCase(data)
     return this.request('/espaces/create.php', {
       method: 'POST',
-      body: JSON.stringify(data)
+      body: JSON.stringify(snakeCaseData)
     })
   }
 
   async updateEspace(id: string, data: any) {
+    const snakeCaseData = objectToSnakeCase(data)
     return this.request('/espaces/update.php', {
       method: 'PUT',
-      body: JSON.stringify({ id, ...data })
+      body: JSON.stringify({ id, ...snakeCaseData })
     })
   }
 
@@ -413,14 +403,13 @@ class ApiClient {
     codePromo?: string
     montantTotal?: number
   }) {
-    // Conversion camelCase → snake_case pour l'API PHP
     const apiData = {
       espace_id: data.espaceId,
       date_debut: data.dateDebut,
       date_fin: data.dateFin,
       participants: data.participants || 1,
-      notes: data.notes,
-      code_promo: data.codePromo,
+      notes: data.notes || null,
+      code_promo: data.codePromo || null,
       montant_total: data.montantTotal || 0,
       statut: 'en_attente',
       type_reservation: 'heure',
@@ -435,9 +424,10 @@ class ApiClient {
   }
 
   async updateReservation(id: string, data: any) {
+    const snakeCaseData = objectToSnakeCase(data)
     return this.request('/reservations/update.php', {
       method: 'PUT',
-      body: JSON.stringify({ id, ...data })
+      body: JSON.stringify({ id, ...snakeCaseData })
     })
   }
 
@@ -495,22 +485,45 @@ class ApiClient {
     })
   }
 
+  async validateDomiciliation(id: string) {
+    return this.request('/domiciliations/validate.php', {
+      method: 'POST',
+      body: JSON.stringify({ id })
+    })
+  }
+
+  async rejectDomiciliation(id: string, motif: string) {
+    return this.request('/domiciliations/reject.php', {
+      method: 'POST',
+      body: JSON.stringify({ id, motif })
+    })
+  }
+
+  async activateDomiciliation(id: string) {
+    return this.request('/domiciliations/activate.php', {
+      method: 'POST',
+      body: JSON.stringify({ id })
+    })
+  }
+
   // ============= ABONNEMENTS =============
   async getAbonnements() {
     return this.request('/abonnements/index.php')
   }
 
   async createAbonnement(data: any) {
+    const snakeCaseData = objectToSnakeCase(data)
     return this.request('/abonnements/create.php', {
       method: 'POST',
-      body: JSON.stringify(data)
+      body: JSON.stringify(snakeCaseData)
     })
   }
 
   async updateAbonnement(id: string, data: any) {
+    const snakeCaseData = objectToSnakeCase(data)
     return this.request('/abonnements/update.php', {
       method: 'PUT',
-      body: JSON.stringify({ id, ...data })
+      body: JSON.stringify({ id, ...snakeCaseData })
     })
   }
 
@@ -547,16 +560,18 @@ class ApiClient {
   }
 
   async createCodePromo(data: any) {
+    const snakeCaseData = objectToSnakeCase(data)
     return this.request('/codes-promo/create.php', {
       method: 'POST',
-      body: JSON.stringify(data)
+      body: JSON.stringify(snakeCaseData)
     })
   }
 
   async updateCodePromo(id: string, data: any) {
+    const snakeCaseData = objectToSnakeCase(data)
     return this.request(`/codes-promo/update.php?id=${encodeURIComponent(id)}`, {
       method: 'PUT',
-      body: JSON.stringify(data)
+      body: JSON.stringify(snakeCaseData)
     })
   }
 
