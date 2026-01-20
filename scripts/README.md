@@ -2,6 +2,30 @@
 
 ## Scripts disponibles
 
+### test_all_features.js
+Script de test complet de toutes les fonctionnalités de l'application.
+
+**Usage :**
+```bash
+npm run test
+# ou avec URL personnalisée
+API_URL=https://votre-domaine.com/api npm run test
+```
+
+**Teste :**
+- ✅ Authentification (inscription, connexion, déconnexion)
+- ✅ Gestion des espaces (liste, détails, création admin)
+- ✅ Réservations (création, liste, détails, annulation)
+- ✅ Domiciliation (mise à jour entreprise, demande, validation)
+- ✅ Codes promo (création, liste, validation)
+- ✅ Gestion utilisateurs admin (liste, détails, stats, revenus)
+- ✅ Notifications (liste, marquage comme lu)
+- ✅ Parrainage (liste, vérification code)
+
+**Résultat :** Affiche un rapport détaillé avec taux de réussite et liste des tests réussis/échoués.
+
+---
+
 ### create_admin_simple.php
 Création d'un compte administrateur via ligne de commande.
 
