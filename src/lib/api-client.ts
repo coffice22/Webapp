@@ -25,6 +25,13 @@ class ApiClient {
   constructor() {
     this.token = localStorage.getItem('auth_token')
     this.refreshToken = localStorage.getItem('refresh_token')
+
+    if (!import.meta.env.VITE_API_URL) {
+      console.warn('[API] VITE_API_URL non configuré, utilisation de:', API_URL)
+    } else {
+      console.log('[API] URL configurée:', API_URL)
+    }
+
     logger.info('API Client initialized')
   }
 
@@ -194,7 +201,7 @@ class ApiClient {
     }
 
     const url = `${API_URL}${endpoint}`
-    logger.debug(`Request: ${options.method || 'GET'} ${endpoint}`)
+    logger.debug(`Request: ${options.method || 'GET'} ${url}`)
 
     try {
       const response = await fetch(url, {
@@ -211,6 +218,12 @@ class ApiClient {
         data = await response.json()
       } else {
         const text = await response.text()
+        console.error('[API] Non-JSON response:', {
+          url,
+          status: response.status,
+          contentType,
+          preview: text.substring(0, 200)
+        })
         logger.error('Non-JSON response received')
 
         if (response.status >= 500 && retryCount < MAX_RETRIES) {
@@ -219,7 +232,7 @@ class ApiClient {
           return this.request<T>(endpoint, options, retryWithRefresh, retryCount + 1)
         }
 
-        throw new Error(ERROR_MESSAGES.SERVER_ERROR)
+        throw new Error(`Erreur serveur (${response.status}): Le serveur n'a pas renvoyé de réponse JSON valide`)
       }
 
       if (response.status === 401) {
@@ -248,6 +261,11 @@ class ApiClient {
 
       return data
     } catch (error: any) {
+      console.error('[API] Request failed:', {
+        url,
+        method: options.method || 'GET',
+        error: error.message
+      })
       logger.error('Request error:', error)
 
       if (error.message === 'Failed to fetch' && retryCount < MAX_RETRIES) {
@@ -259,7 +277,7 @@ class ApiClient {
       if (error.message === 'Failed to fetch') {
         return {
           success: false,
-          error: ERROR_MESSAGES.NETWORK_ERROR
+          error: `Impossible de contacter l'API (${API_URL}). Vérifiez que le serveur est accessible.`
         }
       }
 
