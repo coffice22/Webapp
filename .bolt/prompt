@@ -14,8 +14,9 @@ L’espace comprend :
 1 kitchenette entièrement équipée.
 
 
-L'application doit être aux normes de nexudus
+L'application doit être aux normes d'une application pleinement fonctionnelle. 
 - Tu dois supprimer tout ce qui est lié à boltdatabase ou supabase pour le remplacer par un mysql propre et sécurisé. 
 - Tu dois optimiser l'environnement pour fonctionner en mysql. 
 - Toutes les fonctionnalités doivent être actionnables et utilisables. 
 - Fais attention aux fonctionnalités qui existent dans le code mais ne sont pas apparente dans l'application.
+- A chaque demande, ne laisse qu'un seul fichier de documentation et mets le à jour. Ne laisse pas de documentation en plus.
