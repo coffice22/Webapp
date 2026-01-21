@@ -86,8 +86,10 @@ coffice-app/
 ### Administrateurs
 - Gestion complète des utilisateurs
 - CRUD espaces de coworking
-- Validation des domiciliations
-- Gestion codes promo et abonnements
+- Création et gestion des abonnements
+- Création manuelle de domiciliations
+- Validation et activation des domiciliations
+- Gestion codes promo et parrainages
 - Statistiques et revenus en temps réel
 - Système ERP intégré
 
@@ -242,6 +244,29 @@ Vérifier RewriteEngine (Apache) ou try_files (Nginx)
 tail -f /var/log/apache2/error.log
 tail -f /var/log/nginx/error.log
 ```
+
+## Nouveautés v3.1.0
+
+### Améliorations Admin
+
+**Page Abonnements Admin (Nouvelle)**
+- Création, modification et suppression des types d'abonnements
+- Gestion complète des avantages et tarifs
+- Activation/désactivation en un clic
+- Export CSV des données
+- Statistiques en temps réel
+
+**Page Domiciliations Admin (Améliorée)**
+- Création manuelle de domiciliations pour n'importe quel utilisateur
+- Formulaire complet avec toutes les informations entreprise
+- Création directe avec statut actif
+- Génération automatique de transaction
+- Sélection de l'utilisateur depuis la liste
+
+**Optimisations API**
+- Endpoint de création de domiciliation amélioré pour les admins
+- Permissions étendues pour création admin
+- Validation renforcée des données
 
 ## Support
 

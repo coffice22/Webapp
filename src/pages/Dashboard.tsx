@@ -21,6 +21,7 @@ import AdminDomiciliations from './dashboard/admin/Domiciliations'
 import AdminCodesPromo from './dashboard/admin/CodesPromo'
 import AdminParrainages from './dashboard/admin/Parrainages'
 import AdminSettings from './dashboard/admin/Settings'
+import AdminAbonnements from './dashboard/admin/Abonnements'
 
 const Dashboard = () => {
   const { user } = useAuthStore()
@@ -51,6 +52,7 @@ const Dashboard = () => {
               <Route path="admin/spaces" element={<AdminSpaces />} />
               <Route path="admin/reservations" element={<AdminReservations />} />
               <Route path="admin/domiciliations" element={<AdminDomiciliations />} />
+              <Route path="admin/abonnements" element={<AdminAbonnements />} />
               <Route path="admin/codes-promo" element={<AdminCodesPromo />} />
               <Route path="admin/parrainages" element={<AdminParrainages />} />
               <Route path="admin/reports" element={<AdminReports />} />

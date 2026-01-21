@@ -34,21 +34,38 @@ try {
     $database = Database::getInstance();
     $db = $database->getConnection();
 
-    // Vérifier si l'utilisateur a déjà une domiciliation active
-    $query = "SELECT id FROM domiciliations
-              WHERE user_id = :user_id
-              AND statut IN ('en_attente', 'en_cours', 'validee', 'active')";
+    $target_user_id = $auth['id'];
+    $is_admin_creation = false;
 
-    $stmt = $db->prepare($query);
-    $stmt->bindParam(':user_id', $auth['id']);
-    $stmt->execute();
+    if ($auth['role'] === 'admin' && !empty($data->user_id)) {
+        $target_user_id = $data->user_id;
+        $is_admin_creation = true;
 
-    if ($stmt->rowCount() > 0) {
-        Response::error("Vous avez déjà une demande de domiciliation en cours ou active", 400);
+        $query = "SELECT id FROM users WHERE id = :user_id";
+        $stmt = $db->prepare($query);
+        $stmt->execute([':user_id' => $target_user_id]);
+        if (!$stmt->fetch()) {
+            Response::error("Utilisateur introuvable", 404);
+        }
     }
 
-    // Créer la demande
+    if (!$is_admin_creation) {
+        $query = "SELECT id FROM domiciliations
+                  WHERE user_id = :user_id
+                  AND statut IN ('en_attente', 'en_cours', 'validee', 'active')";
+
+        $stmt = $db->prepare($query);
+        $stmt->bindParam(':user_id', $target_user_id);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            Response::error("Vous avez déjà une demande de domiciliation en cours ou active", 400);
+        }
+    }
+
     $id = UuidHelper::generate();
+
+    $statut_initial = $is_admin_creation && !empty($data->statut) ? $data->statut : 'en_attente';
 
     $query = "INSERT INTO domiciliations
               (id, user_id, raison_sociale, forme_juridique, capital,
@@ -57,7 +74,7 @@ try {
                representant_nom, representant_prenom, representant_fonction, representant_telephone,
                representant_email, domaine_activite, adresse_siege_social,
                coordonnees_fiscales, coordonnees_administratives, date_creation_entreprise,
-               statut, montant_mensuel)
+               statut, montant_mensuel, date_debut, date_fin, notes_admin)
               VALUES
               (:id, :user_id, :raison_sociale, :forme_juridique, :capital,
                :activite_principale, :nif, :nis, :registre_commerce, :article_imposition,
@@ -65,12 +82,12 @@ try {
                :representant_nom, :representant_prenom, :representant_fonction, :representant_telephone,
                :representant_email, :domaine_activite, :adresse_siege_social,
                :coordonnees_fiscales, :coordonnees_administratives, :date_creation_entreprise,
-               'en_attente', :montant_mensuel)";
+               :statut, :montant_mensuel, :date_debut, :date_fin, :notes_admin)";
 
     $stmt = $db->prepare($query);
     $stmt->execute([
         ':id' => $id,
-        ':user_id' => $auth['id'],
+        ':user_id' => $target_user_id,
         ':raison_sociale' => $data->raison_sociale,
         ':forme_juridique' => $data->forme_juridique,
         ':capital' => $data->capital ?? null,
@@ -93,8 +110,30 @@ try {
         ':coordonnees_fiscales' => $data->coordonnees_fiscales ?? null,
         ':coordonnees_administratives' => $data->coordonnees_administratives ?? null,
         ':date_creation_entreprise' => $data->date_creation_entreprise ?? null,
-        ':montant_mensuel' => $data->montant_mensuel ?? 5000
+        ':statut' => $statut_initial,
+        ':montant_mensuel' => $data->montant_mensuel ?? 15000,
+        ':date_debut' => $data->date_debut ?? null,
+        ':date_fin' => $data->date_fin ?? null,
+        ':notes_admin' => $data->notes_admin ?? null
     ]);
+
+    if ($is_admin_creation && $statut_initial === 'active' && !empty($data->montant_mensuel)) {
+        $transaction_id = UuidHelper::generate();
+        $query = "INSERT INTO transactions
+                  (id, user_id, type, montant, statut, mode_paiement, reference, description, date_paiement)
+                  VALUES
+                  (:id, :user_id, 'domiciliation', :montant, 'completee', :mode_paiement, :reference, :description, NOW())";
+
+        $stmt = $db->prepare($query);
+        $stmt->execute([
+            ':id' => $transaction_id,
+            ':user_id' => $target_user_id,
+            ':montant' => $data->montant_mensuel,
+            ':mode_paiement' => $data->mode_paiement ?? 'cash',
+            ':reference' => 'DOM-' . date('YmdHis'),
+            ':description' => 'Domiciliation - ' . $data->raison_sociale
+        ]);
+    }
 
     Response::success(['id' => $id], "Demande de domiciliation créée avec succès", 201);
 

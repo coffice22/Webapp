@@ -45,6 +45,7 @@ const AdminDomiciliations = () => {
   const [selectedDemande, setSelectedDemande] = useState<DemandeDomiciliation | null>(null)
   const [showDetailModal, setShowDetailModal] = useState(false)
   const [showActionModal, setShowActionModal] = useState(false)
+  const [showCreateModal, setShowCreateModal] = useState(false)
   const [actionType, setActionType] = useState<'valider' | 'rejeter' | 'activer'>('valider')
   const [commentaire, setCommentaire] = useState('')
   const [montantMensuel, setMontantMensuel] = useState(15000)
@@ -52,10 +53,54 @@ const AdminDomiciliations = () => {
   const [dateFin, setDateFin] = useState('')
   const [modePaiement, setModePaiement] = useState('cash')
   const [loading, setLoading] = useState(false)
+  const [users, setUsers] = useState<any[]>([])
+  const [createFormData, setCreateFormData] = useState<any>({
+    user_id: '',
+    raison_sociale: '',
+    forme_juridique: 'SARL',
+    nif: '',
+    nis: '',
+    registre_commerce: '',
+    article_imposition: '',
+    numero_auto_entrepreneur: '',
+    capital: '',
+    activite_principale: '',
+    domaine_activite: '',
+    wilaya: '',
+    commune: '',
+    adresse_actuelle: '',
+    adresse_siege_social: '',
+    representant_nom: '',
+    representant_prenom: '',
+    representant_fonction: '',
+    representant_telephone: '',
+    representant_email: '',
+    coordonnees_fiscales: '',
+    coordonnees_administratives: '',
+    date_creation_entreprise: '',
+    statut: 'active',
+    montant_mensuel: 15000,
+    date_debut: new Date().toISOString().split('T')[0],
+    date_fin: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    mode_paiement: 'cash',
+    notes_admin: ''
+  })
 
   useEffect(() => {
     loadDemandesDomiciliation()
+    loadUsers()
   }, [])
+
+  const loadUsers = async () => {
+    try {
+      const response = await apiClient.get('/api/users/index.php')
+      if (response.success) {
+        setUsers(response.data || [])
+      }
+    } catch (error) {
+      console.error('Erreur chargement utilisateurs:', error)
+    }
+  }
 
   const filteredDemandes = demandesDomiciliation.filter(demande => {
     const matchesSearch =
@@ -172,6 +217,68 @@ const AdminDomiciliations = () => {
     }
   }
 
+  const handleCreateDomiciliation = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!createFormData.user_id || !createFormData.raison_sociale || !createFormData.forme_juridique) {
+      toast.error('Veuillez remplir tous les champs obligatoires')
+      return
+    }
+
+    setLoading(true)
+    try {
+      const response = await apiClient.post('/api/domiciliations/create.php', {
+        ...createFormData,
+        capital: createFormData.capital ? parseFloat(createFormData.capital) : null,
+        montant_mensuel: parseFloat(createFormData.montant_mensuel)
+      })
+
+      if (response.success) {
+        toast.success('Domiciliation créée avec succès')
+        setShowCreateModal(false)
+        setCreateFormData({
+          user_id: '',
+          raison_sociale: '',
+          forme_juridique: 'SARL',
+          nif: '',
+          nis: '',
+          registre_commerce: '',
+          article_imposition: '',
+          numero_auto_entrepreneur: '',
+          capital: '',
+          activite_principale: '',
+          domaine_activite: '',
+          wilaya: '',
+          commune: '',
+          adresse_actuelle: '',
+          adresse_siege_social: '',
+          representant_nom: '',
+          representant_prenom: '',
+          representant_fonction: '',
+          representant_telephone: '',
+          representant_email: '',
+          coordonnees_fiscales: '',
+          coordonnees_administratives: '',
+          date_creation_entreprise: '',
+          statut: 'active',
+          montant_mensuel: 15000,
+          date_debut: new Date().toISOString().split('T')[0],
+          date_fin: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          mode_paiement: 'cash',
+          notes_admin: ''
+        })
+        await loadDemandesDomiciliation()
+      } else {
+        toast.error(response.message || 'Erreur lors de la création')
+      }
+    } catch (error: any) {
+      console.error('Create domiciliation error:', error)
+      toast.error(error.response?.data?.message || 'Erreur lors de la création de la domiciliation')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const exportToCSV = () => {
     const csvContent = [
       ['Raison Sociale', 'NIF', 'NIS', 'Forme Juridique', 'Statut', 'Date Création', 'Représentant', 'Email', 'Téléphone', 'Montant Mensuel'],
@@ -205,10 +312,16 @@ const AdminDomiciliations = () => {
           <h1 className="text-3xl font-bold text-gray-900">Gestion des Domiciliations</h1>
           <p className="text-gray-600 mt-1">Administration des demandes de domiciliation d'entreprises</p>
         </div>
-        <Button onClick={exportToCSV} variant="outline">
-          <Download className="w-4 h-4 mr-2" />
-          Exporter CSV
-        </Button>
+        <div className="flex gap-3">
+          <Button onClick={exportToCSV} variant="outline">
+            <Download className="w-4 h-4 mr-2" />
+            Exporter CSV
+          </Button>
+          <Button onClick={() => setShowCreateModal(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            Nouvelle Domiciliation
+          </Button>
+        </div>
       </div>
 
       {/* Stats Cards */}
@@ -687,6 +800,319 @@ const AdminDomiciliations = () => {
             </Button>
           </div>
         </div>
+      </Modal>
+
+      <Modal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        title="Créer une nouvelle domiciliation"
+      >
+        <form onSubmit={handleCreateDomiciliation} className="space-y-6 max-h-[70vh] overflow-y-auto px-1">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <p className="text-sm text-blue-800">
+              <AlertCircle className="w-4 h-4 inline mr-2" />
+              Créez directement une domiciliation active pour un utilisateur existant
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Utilisateur <span className="text-red-500">*</span>
+            </label>
+            <select
+              value={createFormData.user_id}
+              onChange={(e) => setCreateFormData({ ...createFormData, user_id: e.target.value })}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+              required
+            >
+              <option value="">Sélectionner un utilisateur</option>
+              {users.map(user => (
+                <option key={user.id} value={user.id}>
+                  {user.prenom} {user.nom} - {user.email}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="space-y-4 border-t pt-4">
+            <h3 className="font-bold text-lg flex items-center">
+              <Building className="w-5 h-5 mr-2 text-accent" />
+              Informations Entreprise
+            </h3>
+
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                label="Raison Sociale"
+                value={createFormData.raison_sociale}
+                onChange={(e) => setCreateFormData({ ...createFormData, raison_sociale: e.target.value })}
+                required
+              />
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Forme Juridique <span className="text-red-500">*</span>
+                </label>
+                <select
+                  value={createFormData.forme_juridique}
+                  onChange={(e) => setCreateFormData({ ...createFormData, forme_juridique: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+                  required
+                >
+                  <option value="EURL">EURL</option>
+                  <option value="SARL">SARL</option>
+                  <option value="SPA">SPA</option>
+                  <option value="SNC">SNC</option>
+                  <option value="SCS">SCS</option>
+                  <option value="Auto-Entrepreneur">Auto-Entrepreneur</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-4">
+              <Input
+                label="NIF"
+                value={createFormData.nif}
+                onChange={(e) => setCreateFormData({ ...createFormData, nif: e.target.value })}
+                maxLength={20}
+                placeholder="20 caractères"
+              />
+              <Input
+                label="NIS"
+                value={createFormData.nis}
+                onChange={(e) => setCreateFormData({ ...createFormData, nis: e.target.value })}
+                maxLength={15}
+                placeholder="15 caractères"
+              />
+              <Input
+                label="Registre Commerce"
+                value={createFormData.registre_commerce}
+                onChange={(e) => setCreateFormData({ ...createFormData, registre_commerce: e.target.value })}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                label="Article Imposition"
+                value={createFormData.article_imposition}
+                onChange={(e) => setCreateFormData({ ...createFormData, article_imposition: e.target.value })}
+              />
+              <Input
+                label="Numéro Auto-Entrepreneur"
+                value={createFormData.numero_auto_entrepreneur}
+                onChange={(e) => setCreateFormData({ ...createFormData, numero_auto_entrepreneur: e.target.value })}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                label="Capital (DA)"
+                type="number"
+                value={createFormData.capital}
+                onChange={(e) => setCreateFormData({ ...createFormData, capital: e.target.value })}
+                min="0"
+                step="1000"
+              />
+              <Input
+                label="Domaine d'Activité"
+                value={createFormData.domaine_activite}
+                onChange={(e) => setCreateFormData({ ...createFormData, domaine_activite: e.target.value })}
+              />
+            </div>
+
+            <Input
+              label="Activité Principale"
+              value={createFormData.activite_principale}
+              onChange={(e) => setCreateFormData({ ...createFormData, activite_principale: e.target.value })}
+            />
+
+            <Input
+              label="Date de Création Entreprise"
+              type="date"
+              value={createFormData.date_creation_entreprise}
+              onChange={(e) => setCreateFormData({ ...createFormData, date_creation_entreprise: e.target.value })}
+            />
+          </div>
+
+          <div className="space-y-4 border-t pt-4">
+            <h3 className="font-bold text-lg flex items-center">
+              <User className="w-5 h-5 mr-2 text-blue-600" />
+              Représentant Légal
+            </h3>
+
+            <div className="grid grid-cols-3 gap-4">
+              <Input
+                label="Nom"
+                value={createFormData.representant_nom}
+                onChange={(e) => setCreateFormData({ ...createFormData, representant_nom: e.target.value })}
+              />
+              <Input
+                label="Prénom"
+                value={createFormData.representant_prenom}
+                onChange={(e) => setCreateFormData({ ...createFormData, representant_prenom: e.target.value })}
+              />
+              <Input
+                label="Fonction"
+                value={createFormData.representant_fonction}
+                onChange={(e) => setCreateFormData({ ...createFormData, representant_fonction: e.target.value })}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                label="Email"
+                type="email"
+                value={createFormData.representant_email}
+                onChange={(e) => setCreateFormData({ ...createFormData, representant_email: e.target.value })}
+              />
+              <Input
+                label="Téléphone"
+                value={createFormData.representant_telephone}
+                onChange={(e) => setCreateFormData({ ...createFormData, representant_telephone: e.target.value })}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-4 border-t pt-4">
+            <h3 className="font-bold text-lg flex items-center">
+              <MapPin className="w-5 h-5 mr-2 text-green-600" />
+              Adresses
+            </h3>
+
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                label="Wilaya"
+                value={createFormData.wilaya}
+                onChange={(e) => setCreateFormData({ ...createFormData, wilaya: e.target.value })}
+              />
+              <Input
+                label="Commune"
+                value={createFormData.commune}
+                onChange={(e) => setCreateFormData({ ...createFormData, commune: e.target.value })}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Adresse Actuelle
+              </label>
+              <textarea
+                value={createFormData.adresse_actuelle}
+                onChange={(e) => setCreateFormData({ ...createFormData, adresse_actuelle: e.target.value })}
+                rows={2}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Adresse Siège Social
+              </label>
+              <textarea
+                value={createFormData.adresse_siege_social}
+                onChange={(e) => setCreateFormData({ ...createFormData, adresse_siege_social: e.target.value })}
+                rows={2}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-4 border-t pt-4">
+            <h3 className="font-bold text-lg flex items-center">
+              <DollarSign className="w-5 h-5 mr-2 text-purple-600" />
+              Informations Contrat
+            </h3>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Statut
+                </label>
+                <select
+                  value={createFormData.statut}
+                  onChange={(e) => setCreateFormData({ ...createFormData, statut: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+                >
+                  <option value="en_attente">En attente</option>
+                  <option value="validee">Validée</option>
+                  <option value="active">Active</option>
+                </select>
+              </div>
+              <Input
+                label="Montant Mensuel (DA)"
+                type="number"
+                value={createFormData.montant_mensuel}
+                onChange={(e) => setCreateFormData({ ...createFormData, montant_mensuel: e.target.value })}
+                required
+                min="0"
+                step="1000"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                label="Date Début"
+                type="date"
+                value={createFormData.date_debut}
+                onChange={(e) => setCreateFormData({ ...createFormData, date_debut: e.target.value })}
+                required
+              />
+              <Input
+                label="Date Fin"
+                type="date"
+                value={createFormData.date_fin}
+                onChange={(e) => setCreateFormData({ ...createFormData, date_fin: e.target.value })}
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Mode de Paiement
+              </label>
+              <select
+                value={createFormData.mode_paiement}
+                onChange={(e) => setCreateFormData({ ...createFormData, mode_paiement: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+              >
+                <option value="cash">Espèces</option>
+                <option value="cheque">Chèque</option>
+                <option value="virement">Virement</option>
+                <option value="carte">Carte bancaire</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Notes Admin
+              </label>
+              <textarea
+                value={createFormData.notes_admin}
+                onChange={(e) => setCreateFormData({ ...createFormData, notes_admin: e.target.value })}
+                rows={3}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+                placeholder="Notes internes..."
+              />
+            </div>
+          </div>
+
+          <div className="flex gap-3 pt-4 border-t sticky bottom-0 bg-white">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setShowCreateModal(false)}
+              className="flex-1"
+              disabled={loading}
+            >
+              Annuler
+            </Button>
+            <Button
+              type="submit"
+              disabled={loading}
+              className="flex-1"
+            >
+              {loading ? 'Création...' : 'Créer la Domiciliation'}
+            </Button>
+          </div>
+        </form>
       </Modal>
     </div>
   )
