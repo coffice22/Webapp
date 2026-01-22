@@ -1,78 +1,83 @@
-import React, { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { Tag, Copy, CheckCircle, Gift, Search } from 'lucide-react'
-import { apiClient } from '../../lib/api-client'
-import Card from '../../components/ui/Card'
-import Badge from '../../components/ui/Badge'
-import Button from '../../components/ui/Button'
-import Input from '../../components/ui/Input'
-import LoadingSpinner from '../../components/ui/LoadingSpinner'
-import toast from 'react-hot-toast'
-import { format } from 'date-fns'
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { Tag, Copy, CheckCircle, Gift, Search } from "lucide-react";
+import { apiClient } from "../../lib/api-client";
+import Card from "../../components/ui/Card";
+import Badge from "../../components/ui/Badge";
+import Button from "../../components/ui/Button";
+import Input from "../../components/ui/Input";
+import LoadingSpinner from "../../components/ui/LoadingSpinner";
+import toast from "react-hot-toast";
+import { format } from "date-fns";
 
 const CodesPromo = () => {
-  const [codes, setCodes] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-  const [verifyCode, setVerifyCode] = useState('')
-  const [verifying, setVerifying] = useState(false)
+  const [codes, setCodes] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [verifyCode, setVerifyCode] = useState("");
+  const [verifying, setVerifying] = useState(false);
 
   useEffect(() => {
-    loadCodes()
-  }, [])
+    loadCodes();
+  }, []);
 
   const loadCodes = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const response = await apiClient.getCodesPromo()
-      const data = (response.data || []) as any[]
+      const response = await apiClient.getCodesPromo();
+      const data = (response.data || []) as any[];
       // Filtrer uniquement les codes actifs et non expirés
-      const activeCodes = data.filter((code: any) =>
-        code.actif &&
-        new Date(code.date_fin) > new Date() &&
-        code.utilisations_actuelles < code.utilisations_max
-      )
-      setCodes(activeCodes)
+      const activeCodes = data.filter(
+        (code: any) =>
+          code.actif &&
+          new Date(code.date_fin) > new Date() &&
+          code.utilisations_actuelles < code.utilisations_max,
+      );
+      setCodes(activeCodes);
     } catch (error) {
-      console.error('Erreur chargement codes:', error)
-      toast.error('Erreur lors du chargement')
+      console.error("Erreur chargement codes:", error);
+      toast.error("Erreur lors du chargement");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleVerifyCode = async () => {
     if (!verifyCode.trim()) {
-      toast.error('Veuillez entrer un code')
-      return
+      toast.error("Veuillez entrer un code");
+      return;
     }
 
-    setVerifying(true)
+    setVerifying(true);
     try {
-      const result = await apiClient.validateCodePromo(verifyCode.toUpperCase(), 0, 'reservation')
+      const result = await apiClient.validateCodePromo(
+        verifyCode.toUpperCase(),
+        0,
+        "reservation",
+      );
       if (result.valid) {
-        toast.success(`Code valide ! Réduction de ${result.reduction} DA`)
+        toast.success(`Code valide ! Réduction de ${result.reduction} DA`);
       } else {
-        toast.error(result.error || 'Code invalide')
+        toast.error(result.error || "Code invalide");
       }
-      setVerifyCode('')
+      setVerifyCode("");
     } catch (error) {
-      toast.error('Erreur lors de la vérification')
+      toast.error("Erreur lors de la vérification");
     } finally {
-      setVerifying(false)
+      setVerifying(false);
     }
-  }
+  };
 
   const copyCode = (code: string) => {
-    navigator.clipboard.writeText(code)
-    toast.success('Code copié !')
-  }
+    navigator.clipboard.writeText(code);
+    toast.success("Code copié !");
+  };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
         <LoadingSpinner size="lg" />
       </div>
-    )
+    );
   }
 
   return (
@@ -89,7 +94,9 @@ const CodesPromo = () => {
 
       {/* Verify Code */}
       <Card>
-        <h2 className="text-xl font-bold text-primary mb-4">Vérifier un Code</h2>
+        <h2 className="text-xl font-bold text-primary mb-4">
+          Vérifier un Code
+        </h2>
         <div className="flex gap-3">
           <Input
             value={verifyCode}
@@ -97,21 +104,27 @@ const CodesPromo = () => {
             placeholder="Entrez votre code promo"
             icon={<Tag className="w-5 h-5" />}
             className="flex-1"
-            onKeyPress={(e) => e.key === 'Enter' && handleVerifyCode()}
+            onKeyPress={(e) => e.key === "Enter" && handleVerifyCode()}
           />
-          <Button onClick={handleVerifyCode} disabled={verifying || !verifyCode.trim()}>
-            {verifying ? 'Vérification...' : 'Vérifier'}
+          <Button
+            onClick={handleVerifyCode}
+            disabled={verifying || !verifyCode.trim()}
+          >
+            {verifying ? "Vérification..." : "Vérifier"}
           </Button>
         </div>
         <p className="text-sm text-gray-500 mt-2">
-          Entrez un code promo pour vérifier sa validité et voir la réduction associée
+          Entrez un code promo pour vérifier sa validité et voir la réduction
+          associée
         </p>
       </Card>
 
       {/* Available Codes */}
       {codes.length > 0 && (
         <div>
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Codes Disponibles</h2>
+          <h2 className="text-xl font-bold text-gray-900 mb-4">
+            Codes Disponibles
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {codes.map((code) => (
               <motion.div
@@ -125,7 +138,9 @@ const CodesPromo = () => {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Tag className="w-5 h-5 text-accent" />
-                        <code className="text-lg font-bold text-primary">{code.code}</code>
+                        <code className="text-lg font-bold text-primary">
+                          {code.code}
+                        </code>
                       </div>
                       <button
                         onClick={() => copyCode(code.code)}
@@ -138,14 +153,16 @@ const CodesPromo = () => {
 
                     {/* Description */}
                     {code.description && (
-                      <p className="text-sm text-gray-600">{code.description}</p>
+                      <p className="text-sm text-gray-600">
+                        {code.description}
+                      </p>
                     )}
 
                     {/* Value */}
                     <div className="p-4 bg-accent/5 rounded-lg">
                       <p className="text-sm text-gray-600 mb-1">Réduction</p>
                       <p className="text-2xl font-bold text-accent">
-                        {code.type_reduction === 'pourcentage' ? (
+                        {code.type_reduction === "pourcentage" ? (
                           <span>-{code.valeur}%</span>
                         ) : (
                           <span>-{code.valeur} DA</span>
@@ -158,17 +175,21 @@ const CodesPromo = () => {
                       <div className="flex justify-between">
                         <span className="text-gray-600">Valide jusqu'au:</span>
                         <span className="font-medium">
-                          {format(new Date(code.date_fin), 'dd/MM/yyyy')}
+                          {format(new Date(code.date_fin), "dd/MM/yyyy")}
                         </span>
                       </div>
                       {code.montant_min_commande > 0 && (
                         <div className="flex justify-between">
                           <span className="text-gray-600">Montant min:</span>
-                          <span className="font-medium">{code.montant_min_commande} DA</span>
+                          <span className="font-medium">
+                            {code.montant_min_commande} DA
+                          </span>
                         </div>
                       )}
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Utilisations restantes:</span>
+                        <span className="text-gray-600">
+                          Utilisations restantes:
+                        </span>
                         <span className="font-medium">
                           {code.utilisations_max - code.utilisations_actuelles}
                         </span>
@@ -177,12 +198,17 @@ const CodesPromo = () => {
 
                     {/* Applicable */}
                     <div className="pt-4 border-t">
-                      <p className="text-xs text-gray-500 mb-2">Applicable à:</p>
+                      <p className="text-xs text-gray-500 mb-2">
+                        Applicable à:
+                      </p>
                       <Badge variant="default" className="text-xs">
-                        {code.type_applicable === 'tous' ? 'Tous les services' :
-                         code.type_applicable === 'reservation' ? 'Réservations' :
-                         code.type_applicable === 'abonnement' ? 'Abonnements' :
-                         'Domiciliation'}
+                        {code.type_applicable === "tous"
+                          ? "Tous les services"
+                          : code.type_applicable === "reservation"
+                            ? "Réservations"
+                            : code.type_applicable === "abonnement"
+                              ? "Abonnements"
+                              : "Domiciliation"}
                       </Badge>
                     </div>
                   </div>
@@ -220,16 +246,21 @@ const CodesPromo = () => {
           </li>
           <li className="flex gap-2">
             <span className="font-bold text-accent">2.</span>
-            <span>Lors de votre réservation ou souscription, entrez le code dans le champ prévu</span>
+            <span>
+              Lors de votre réservation ou souscription, entrez le code dans le
+              champ prévu
+            </span>
           </li>
           <li className="flex gap-2">
             <span className="font-bold text-accent">3.</span>
-            <span>La réduction sera automatiquement appliquée à votre commande</span>
+            <span>
+              La réduction sera automatiquement appliquée à votre commande
+            </span>
           </li>
         </ol>
       </Card>
     </div>
-  )
-}
+  );
+};
 
-export default CodesPromo
+export default CodesPromo;

@@ -1,69 +1,90 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import React from "react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
-  Users, Calendar, Headphones, Gift, ArrowRight, Check, Coffee, Presentation, Mic,
-  Wifi, Clock, Shield, Target, Zap, Star, MapPin, Building2, Phone, Mail
-} from 'lucide-react'
-import { useSEO } from '../hooks/useSEO'
-import { IMAGES } from '../config/images'
+  Users,
+  Calendar,
+  Headphones,
+  Gift,
+  ArrowRight,
+  Check,
+  Coffee,
+  Presentation,
+  Mic,
+  Wifi,
+  Clock,
+  Shield,
+  Target,
+  Zap,
+  Star,
+  MapPin,
+  Building2,
+  Phone,
+  Mail,
+} from "lucide-react";
+import { useSEO } from "../hooks/useSEO";
+import { IMAGES } from "../config/images";
 
 const Home = () => {
-  useSEO()
+  useSEO();
 
   const features = [
     {
       icon: Wifi,
-      title: 'WiFi Haut Débit',
-      description: 'Connexion internet performante pour une productivité maximale'
+      title: "WiFi Haut Débit",
+      description:
+        "Connexion internet performante pour une productivité maximale",
     },
     {
       icon: Coffee,
-      title: 'Café & Collations',
-      description: 'Café, thé et collations disponibles pour votre confort'
+      title: "Café & Collations",
+      description: "Café, thé et collations disponibles pour votre confort",
     },
     {
       icon: Clock,
-      title: 'Accès Flexible',
-      description: 'Horaires étendus et formules adaptées à votre rythme'
+      title: "Accès Flexible",
+      description: "Horaires étendus et formules adaptées à votre rythme",
     },
     {
       icon: Shield,
-      title: 'Sécurisé 24/7',
-      description: 'Sécurité assurée et casiers personnels disponibles'
+      title: "Sécurisé 24/7",
+      description: "Sécurité assurée et casiers personnels disponibles",
     },
     {
       icon: Users,
-      title: 'Communauté Active',
-      description: 'Réseau d\'entrepreneurs et opportunités de collaboration'
+      title: "Communauté Active",
+      description: "Réseau d'entrepreneurs et opportunités de collaboration",
     },
     {
       icon: Target,
-      title: 'Support Dédié',
-      description: 'Équipe disponible pour vous accompagner au quotidien'
-    }
-  ]
+      title: "Support Dédié",
+      description: "Équipe disponible pour vous accompagner au quotidien",
+    },
+  ];
 
   const testimonials = [
     {
-      name: 'Karim B.',
-      role: 'CEO, StartupTech',
-      content: 'Coffice a transformé ma manière de travailler. L\'ambiance, les équipements et la communauté sont exceptionnels!',
-      rating: 5
+      name: "Karim B.",
+      role: "CEO, StartupTech",
+      content:
+        "Coffice a transformé ma manière de travailler. L'ambiance, les équipements et la communauté sont exceptionnels!",
+      rating: 5,
     },
     {
-      name: 'Yasmine M.',
-      role: 'Designer Freelance',
-      content: 'Enfin un espace de coworking moderne à Alger! L\'ambiance et les équipements sont parfaits pour mes projets.',
-      rating: 5
+      name: "Yasmine M.",
+      role: "Designer Freelance",
+      content:
+        "Enfin un espace de coworking moderne à Alger! L'ambiance et les équipements sont parfaits pour mes projets.",
+      rating: 5,
     },
     {
-      name: 'Sofiane K.',
-      role: 'Consultant',
-      content: 'La flexibilité des formules et la qualité du service font de Coffice mon bureau préféré.',
-      rating: 5
-    }
-  ]
+      name: "Sofiane K.",
+      role: "Consultant",
+      content:
+        "La flexibilité des formules et la qualité du service font de Coffice mon bureau préféré.",
+      rating: 5,
+    },
+  ];
 
   return (
     <div className="min-h-screen">
@@ -111,8 +132,9 @@ const Home = () => {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed"
           >
-            L'espace de coworking nouvelle génération qui redéfinit votre manière de travailler.
-            Bureaux flexibles, équipements premium, communauté dynamique.
+            L'espace de coworking nouvelle génération qui redéfinit votre
+            manière de travailler. Bureaux flexibles, équipements premium,
+            communauté dynamique.
           </motion.p>
 
           <motion.div
@@ -121,10 +143,16 @@ const Home = () => {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
-            <Link to="/espaces" className="px-8 py-4 bg-white text-primary rounded-lg font-bold text-lg hover:bg-gray-100 transition-all shadow-xl hover:shadow-2xl hover:scale-105 transform">
+            <Link
+              to="/espaces"
+              className="px-8 py-4 bg-white text-primary rounded-lg font-bold text-lg hover:bg-gray-100 transition-all shadow-xl hover:shadow-2xl hover:scale-105 transform"
+            >
               Réserver maintenant
             </Link>
-            <Link to="/espaces" className="px-8 py-4 border-2 border-white text-white rounded-lg font-bold text-lg hover:bg-white hover:text-primary transition-all">
+            <Link
+              to="/espaces"
+              className="px-8 py-4 border-2 border-white text-white rounded-lg font-bold text-lg hover:bg-white hover:text-primary transition-all"
+            >
               Découvrir nos espaces
             </Link>
           </motion.div>
@@ -173,7 +201,8 @@ const Home = () => {
               Tout pour votre réussite
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Des équipements de pointe et des services premium pour booster votre productivité
+              Des équipements de pointe et des services premium pour booster
+              votre productivité
             </p>
           </div>
 
@@ -190,7 +219,9 @@ const Home = () => {
                 <div className="w-14 h-14 bg-gradient-to-br from-accent to-teal rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <feature.icon className="w-7 h-7 text-white" />
                 </div>
-                <h3 className="text-xl font-bold text-primary mb-3">{feature.title}</h3>
+                <h3 className="text-xl font-bold text-primary mb-3">
+                  {feature.title}
+                </h3>
                 <p className="text-gray-600">{feature.description}</p>
               </motion.div>
             ))}
@@ -231,8 +262,13 @@ const Home = () => {
                 </div>
               </div>
               <div className="p-6 flex-grow flex flex-col">
-                <h3 className="text-2xl font-display font-bold text-primary mb-3">Espaces de Coworking</h3>
-                <p className="text-gray-600 mb-4 flex-grow">Travaillez dans un environnement stimulant avec tous les équipements nécessaires</p>
+                <h3 className="text-2xl font-display font-bold text-primary mb-3">
+                  Espaces de Coworking
+                </h3>
+                <p className="text-gray-600 mb-4 flex-grow">
+                  Travaillez dans un environnement stimulant avec tous les
+                  équipements nécessaires
+                </p>
                 <ul className="space-y-2 mb-6">
                   <li className="flex items-center text-sm text-gray-600">
                     <Check className="w-4 h-4 text-teal mr-2 flex-shrink-0" />
@@ -248,8 +284,13 @@ const Home = () => {
                   </li>
                 </ul>
                 <div className="pt-4 border-t">
-                  <p className="text-2xl font-bold text-accent mb-3">À partir de 1 200 DA TTC/jour</p>
-                  <Link to="/espaces" className="btn-primary w-full text-center">
+                  <p className="text-2xl font-bold text-accent mb-3">
+                    À partir de 1 200 DA TTC/jour
+                  </p>
+                  <Link
+                    to="/espaces"
+                    className="btn-primary w-full text-center"
+                  >
                     Découvrir
                     <ArrowRight className="w-4 h-4 ml-2 inline" />
                   </Link>
@@ -278,8 +319,12 @@ const Home = () => {
                 </div>
               </div>
               <div className="p-6 flex-grow flex flex-col">
-                <h3 className="text-2xl font-display font-bold text-primary mb-3">Private Booths</h3>
-                <p className="text-gray-600 mb-4 flex-grow">Bureaux privés équipés pour une concentration maximale</p>
+                <h3 className="text-2xl font-display font-bold text-primary mb-3">
+                  Private Booths
+                </h3>
+                <p className="text-gray-600 mb-4 flex-grow">
+                  Bureaux privés équipés pour une concentration maximale
+                </p>
                 <ul className="space-y-2 mb-6">
                   <li className="flex items-center text-sm text-gray-600">
                     <Check className="w-4 h-4 text-teal mr-2 flex-shrink-0" />
@@ -295,8 +340,13 @@ const Home = () => {
                   </li>
                 </ul>
                 <div className="pt-4 border-t">
-                  <p className="text-2xl font-bold text-accent mb-3">À partir de 1 500 DA TTC/jour</p>
-                  <Link to="/espaces" className="btn-primary w-full text-center">
+                  <p className="text-2xl font-bold text-accent mb-3">
+                    À partir de 1 500 DA TTC/jour
+                  </p>
+                  <Link
+                    to="/espaces"
+                    className="btn-primary w-full text-center"
+                  >
                     Réserver
                     <ArrowRight className="w-4 h-4 ml-2 inline" />
                   </Link>
@@ -325,8 +375,12 @@ const Home = () => {
                 </div>
               </div>
               <div className="p-6 flex-grow flex flex-col">
-                <h3 className="text-2xl font-display font-bold text-primary mb-3">Salles de Réunion</h3>
-                <p className="text-gray-600 mb-4 flex-grow">Organisez vos réunions dans des espaces professionnels équipés</p>
+                <h3 className="text-2xl font-display font-bold text-primary mb-3">
+                  Salles de Réunion
+                </h3>
+                <p className="text-gray-600 mb-4 flex-grow">
+                  Organisez vos réunions dans des espaces professionnels équipés
+                </p>
                 <ul className="space-y-2 mb-6">
                   <li className="flex items-center text-sm text-gray-600">
                     <Check className="w-4 h-4 text-teal mr-2 flex-shrink-0" />
@@ -342,15 +396,19 @@ const Home = () => {
                   </li>
                 </ul>
                 <div className="pt-4 border-t">
-                  <p className="text-2xl font-bold text-teal mb-3">2 500 DA TTC/h</p>
-                  <Link to="/espaces" className="btn-primary w-full text-center">
+                  <p className="text-2xl font-bold text-teal mb-3">
+                    2 500 DA TTC/h
+                  </p>
+                  <Link
+                    to="/espaces"
+                    className="btn-primary w-full text-center"
+                  >
                     Réserver
                     <ArrowRight className="w-4 h-4 ml-2 inline" />
                   </Link>
                 </div>
               </div>
             </motion.div>
-
           </div>
         </div>
       </section>
@@ -379,10 +437,15 @@ const Home = () => {
               >
                 <div className="flex items-center mb-4">
                   {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
+                    <Star
+                      key={i}
+                      className="w-5 h-5 text-yellow-400 fill-current"
+                    />
                   ))}
                 </div>
-                <p className="text-gray-700 mb-6 italic">"{testimonial.content}"</p>
+                <p className="text-gray-700 mb-6 italic">
+                  "{testimonial.content}"
+                </p>
                 <div className="flex items-center">
                   <div className="w-12 h-12 bg-gradient-to-br from-accent to-teal rounded-full flex items-center justify-center mr-3">
                     <span className="text-white font-bold text-lg">
@@ -417,14 +480,21 @@ const Home = () => {
               Prêt à rejoindre Coffice ?
             </h2>
             <p className="text-xl text-white/90 mb-10">
-              Réservez votre espace dès maintenant et profitez d'une offre de lancement exceptionnelle
+              Réservez votre espace dès maintenant et profitez d'une offre de
+              lancement exceptionnelle
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/espaces" className="px-8 py-4 bg-white text-primary rounded-lg font-bold text-lg hover:bg-gray-100 transition-all shadow-xl hover:shadow-2xl">
+              <Link
+                to="/espaces"
+                className="px-8 py-4 bg-white text-primary rounded-lg font-bold text-lg hover:bg-gray-100 transition-all shadow-xl hover:shadow-2xl"
+              >
                 Voir les tarifs
                 <ArrowRight className="w-5 h-5 ml-2 inline" />
               </Link>
-              <a href="tel:+213555123456" className="px-8 py-4 border-2 border-white text-white rounded-lg font-bold text-lg hover:bg-white hover:text-primary transition-all">
+              <a
+                href="tel:+213555123456"
+                className="px-8 py-4 border-2 border-white text-white rounded-lg font-bold text-lg hover:bg-white hover:text-primary transition-all"
+              >
                 <Phone className="w-5 h-5 mr-2 inline" />
                 Nous appeler
               </a>
@@ -435,29 +505,29 @@ const Home = () => {
               <div className="flex flex-col items-center">
                 <MapPin className="w-8 h-8 mb-3" />
                 <p className="text-white/90 text-sm">
-                  Centre Commercial Mohammadia Mall<br />
+                  Centre Commercial Mohammadia Mall
+                  <br />
                   4ème étage, Bureau 1178
                 </p>
               </div>
               <div className="flex flex-col items-center">
                 <Phone className="w-8 h-8 mb-3" />
                 <p className="text-white/90 text-sm">
-                  +213 23 804 924<br />
+                  +213 23 804 924
+                  <br />
                   Dim - Jeu: 09h - 17h
                 </p>
               </div>
               <div className="flex flex-col items-center">
                 <Mail className="w-8 h-8 mb-3" />
-                <p className="text-white/90 text-sm">
-                  desk@coffice.dz
-                </p>
+                <p className="text-white/90 text-sm">desk@coffice.dz</p>
               </div>
             </div>
           </motion.div>
         </div>
       </section>
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

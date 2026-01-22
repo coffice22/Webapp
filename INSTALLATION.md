@@ -20,11 +20,13 @@
 ### Étape 2: Configuration du fichier .env
 
 2. **Copier et configurer .env**
+
    ```bash
    cp .env.example .env
    ```
 
 3. **Éditer le fichier .env** avec vos vraies valeurs:
+
    ```env
    # URL de l'API Backend
    VITE_API_URL=https://coffice.dz/api
@@ -56,6 +58,7 @@
    ```
 
 4. **Générer une clé JWT secrète**
+
    ```bash
    # Sur Linux/Mac
    openssl rand -base64 64
@@ -63,6 +66,7 @@
    # Sur Windows (PowerShell)
    [Convert]::ToBase64String((1..64 | ForEach-Object { Get-Random -Maximum 256 }))
    ```
+
    Copiez le résultat dans `JWT_SECRET=`
 
 ### Étape 3: Installation automatique de la base de données
@@ -90,11 +94,13 @@
 ### Étape 4: Créer un compte administrateur
 
 8. **Via le script PHP**
+
    ```bash
    php scripts/create_admin_web.php
    ```
 
    Ou via ligne de commande:
+
    ```bash
    php scripts/create_admin_simple.php
    ```
@@ -122,6 +128,7 @@ npm run build
 2. **Configuration Apache (.htaccess)**
 
    Fichier `.htaccess` racine (déjà inclus):
+
    ```apache
    RewriteEngine On
    RewriteBase /
@@ -150,13 +157,16 @@ npm run build
 ### Tests manuels
 
 1. **Test API**
+
    ```bash
    curl https://coffice.dz/api/auth/debug.php
    ```
+
    Devrait retourner: `{"success":true,"message":"API PHP fonctionnelle"}`
 
 2. **Test connexion base de données**
    Créez un fichier temporaire `api/test_db.php`:
+
    ```php
    <?php
    require_once 'config/database.php';
@@ -164,6 +174,7 @@ npm run build
    echo json_encode(['success' => true, 'message' => 'Connexion DB OK']);
    ?>
    ```
+
    Visitez: `https://coffice.dz/api/test_db.php`
    Puis supprimez le fichier!
 
@@ -257,6 +268,7 @@ coffice/
 ## Support
 
 Pour toute question ou problème:
+
 - Email: contact@coffice.dz
 - Documentation complète: `README.md`
 - Logs PHP: `/var/log/php-errors.log` ou cPanel > Logs

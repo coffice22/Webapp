@@ -1,79 +1,93 @@
-import React, { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { Gift, Users, TrendingUp, Award, DollarSign, Calendar, Search, Download } from 'lucide-react'
-import { apiClient } from '../../../lib/api-client'
-import Card from '../../../components/ui/Card'
-import Badge from '../../../components/ui/Badge'
-import Input from '../../../components/ui/Input'
-import Button from '../../../components/ui/Button'
-import LoadingSpinner from '../../../components/ui/LoadingSpinner'
-import toast from 'react-hot-toast'
-import { format } from 'date-fns'
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import {
+  Gift,
+  Users,
+  TrendingUp,
+  Award,
+  DollarSign,
+  Calendar,
+  Search,
+  Download,
+} from "lucide-react";
+import { apiClient } from "../../../lib/api-client";
+import Card from "../../../components/ui/Card";
+import Badge from "../../../components/ui/Badge";
+import Input from "../../../components/ui/Input";
+import Button from "../../../components/ui/Button";
+import LoadingSpinner from "../../../components/ui/LoadingSpinner";
+import toast from "react-hot-toast";
+import { format } from "date-fns";
 
 interface Parrainage {
-  id: string
-  parrain_id: string
-  parrain_nom: string
-  parrain_prenom: string
-  parrain_email: string
-  filleul_id: string
-  filleul_nom: string
-  filleul_prenom: string
-  filleul_email: string
-  statut: string
-  credits_accordes: number
-  date_parrainage: string
+  id: string;
+  parrain_id: string;
+  parrain_nom: string;
+  parrain_prenom: string;
+  parrain_email: string;
+  filleul_id: string;
+  filleul_nom: string;
+  filleul_prenom: string;
+  filleul_email: string;
+  statut: string;
+  credits_accordes: number;
+  date_parrainage: string;
 }
 
 interface Stats {
-  total_parrainages: number
-  total_credits_distribues: number
-  parrainages_actifs: number
-  meilleurs_parrains: any[]
+  total_parrainages: number;
+  total_credits_distribues: number;
+  parrainages_actifs: number;
+  meilleurs_parrains: any[];
 }
 
 const Parrainages = () => {
-  const [parrainages, setParrainages] = useState<Parrainage[]>([])
+  const [parrainages, setParrainages] = useState<Parrainage[]>([]);
   const [stats, setStats] = useState<Stats>({
     total_parrainages: 0,
     total_credits_distribues: 0,
     parrainages_actifs: 0,
-    meilleurs_parrains: []
-  })
-  const [loading, setLoading] = useState(true)
-  const [searchQuery, setSearchQuery] = useState('')
+    meilleurs_parrains: [],
+  });
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    loadData()
-  }, [])
+    loadData();
+  }, []);
 
   const loadData = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const response = await apiClient.getParrainages()
-      const data = (response.data || []) as any[]
-      setParrainages(data)
+      const response = await apiClient.getParrainages();
+      const data = (response.data || []) as any[];
+      setParrainages(data);
 
       // Calculer les stats
       const statsData = {
         total_parrainages: data.length,
-        total_credits_distribues: data.reduce((sum: number, p: Parrainage) => sum + p.credits_accordes, 0),
-        parrainages_actifs: data.filter((p: Parrainage) => p.statut === 'valide').length,
-        meilleurs_parrains: calculateTopSponsors(data)
-      }
-      setStats(statsData)
+        total_credits_distribues: data.reduce(
+          (sum: number, p: Parrainage) => sum + p.credits_accordes,
+          0,
+        ),
+        parrainages_actifs: data.filter(
+          (p: Parrainage) => p.statut === "valide",
+        ).length,
+        meilleurs_parrains: calculateTopSponsors(data),
+      };
+      setStats(statsData);
     } catch (error) {
-      console.error('Erreur chargement parrainages:', error)
-      toast.error('Erreur lors du chargement')
+      console.error("Erreur chargement parrainages:", error);
+      toast.error("Erreur lors du chargement");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const calculateTopSponsors = (data: Parrainage[]) => {
-    const sponsorMap = new Map()
+    const sponsorMap = new Map();
 
-    data.forEach(p => {
+    data.forEach((p) => {
       if (!sponsorMap.has(p.parrain_id)) {
         sponsorMap.set(p.parrain_id, {
           id: p.parrain_id,
@@ -81,56 +95,67 @@ const Parrainages = () => {
           prenom: p.parrain_prenom,
           email: p.parrain_email,
           count: 0,
-          credits: 0
-        })
+          credits: 0,
+        });
       }
-      const sponsor = sponsorMap.get(p.parrain_id)
-      sponsor.count++
-      sponsor.credits += p.credits_accordes
-    })
+      const sponsor = sponsorMap.get(p.parrain_id);
+      sponsor.count++;
+      sponsor.credits += p.credits_accordes;
+    });
 
     return Array.from(sponsorMap.values())
       .sort((a, b) => b.count - a.count)
-      .slice(0, 5)
-  }
+      .slice(0, 5);
+  };
 
-  const filteredParrainages = parrainages.filter(p =>
-    p.parrain_nom?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    p.parrain_email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    p.filleul_nom?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    p.filleul_email?.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  const filteredParrainages = parrainages.filter(
+    (p) =>
+      p.parrain_nom?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.parrain_email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.filleul_nom?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.filleul_email?.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
 
   const exportData = () => {
     const csv = [
-      ['Parrain', 'Email Parrain', 'Filleul', 'Email Filleul', 'Date', 'Crédits', 'Statut'],
-      ...filteredParrainages.map(p => [
+      [
+        "Parrain",
+        "Email Parrain",
+        "Filleul",
+        "Email Filleul",
+        "Date",
+        "Crédits",
+        "Statut",
+      ],
+      ...filteredParrainages.map((p) => [
         `${p.parrain_prenom} ${p.parrain_nom}`,
         p.parrain_email,
         `${p.filleul_prenom} ${p.filleul_nom}`,
         p.filleul_email,
-        format(new Date(p.date_parrainage), 'dd/MM/yyyy HH:mm'),
+        format(new Date(p.date_parrainage), "dd/MM/yyyy HH:mm"),
         `${p.credits_accordes} DA`,
-        p.statut
-      ])
-    ].map(row => row.join(',')).join('\n')
+        p.statut,
+      ]),
+    ]
+      .map((row) => row.join(","))
+      .join("\n");
 
-    const blob = new Blob([csv], { type: 'text/csv' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `parrainages_${format(new Date(), 'yyyy-MM-dd')}.csv`
-    a.click()
-    URL.revokeObjectURL(url)
-    toast.success('Export réussi')
-  }
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `parrainages_${format(new Date(), "yyyy-MM-dd")}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success("Export réussi");
+  };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
         <LoadingSpinner size="lg" />
       </div>
-    )
+    );
   }
 
   return (
@@ -155,7 +180,9 @@ const Parrainages = () => {
             </div>
             <div>
               <p className="text-sm text-gray-600">Total Parrainages</p>
-              <p className="text-2xl font-bold text-primary">{stats.total_parrainages}</p>
+              <p className="text-2xl font-bold text-primary">
+                {stats.total_parrainages}
+              </p>
             </div>
           </div>
         </Card>
@@ -167,7 +194,9 @@ const Parrainages = () => {
             </div>
             <div>
               <p className="text-sm text-gray-600">Crédits Distribués</p>
-              <p className="text-2xl font-bold text-primary">{stats.total_credits_distribues} DA</p>
+              <p className="text-2xl font-bold text-primary">
+                {stats.total_credits_distribues} DA
+              </p>
             </div>
           </div>
         </Card>
@@ -179,7 +208,9 @@ const Parrainages = () => {
             </div>
             <div>
               <p className="text-sm text-gray-600">Parrainages Actifs</p>
-              <p className="text-2xl font-bold text-primary">{stats.parrainages_actifs}</p>
+              <p className="text-2xl font-bold text-primary">
+                {stats.parrainages_actifs}
+              </p>
             </div>
           </div>
         </Card>
@@ -199,12 +230,17 @@ const Parrainages = () => {
                 className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
               >
                 <div className="flex items-center gap-4">
-                  <div className={`w-8 h-8 flex items-center justify-center rounded-full font-bold ${
-                    index === 0 ? 'bg-yellow-400 text-yellow-900' :
-                    index === 1 ? 'bg-gray-300 text-gray-700' :
-                    index === 2 ? 'bg-orange-400 text-orange-900' :
-                    'bg-gray-200 text-gray-600'
-                  }`}>
+                  <div
+                    className={`w-8 h-8 flex items-center justify-center rounded-full font-bold ${
+                      index === 0
+                        ? "bg-yellow-400 text-yellow-900"
+                        : index === 1
+                          ? "bg-gray-300 text-gray-700"
+                          : index === 2
+                            ? "bg-orange-400 text-orange-900"
+                            : "bg-gray-200 text-gray-600"
+                    }`}
+                  >
                     {index + 1}
                   </div>
                   <div>
@@ -215,8 +251,12 @@ const Parrainages = () => {
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold text-accent">{sponsor.count} parrainages</p>
-                  <p className="text-sm text-gray-600">{sponsor.credits} DA distribués</p>
+                  <p className="font-bold text-accent">
+                    {sponsor.count} parrainages
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    {sponsor.credits} DA distribués
+                  </p>
                 </div>
               </div>
             ))}
@@ -268,7 +308,9 @@ const Parrainages = () => {
                       <div className="font-medium text-gray-900">
                         {parrainage.parrain_prenom} {parrainage.parrain_nom}
                       </div>
-                      <div className="text-sm text-gray-500">{parrainage.parrain_email}</div>
+                      <div className="text-sm text-gray-500">
+                        {parrainage.parrain_email}
+                      </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -276,17 +318,28 @@ const Parrainages = () => {
                       <div className="font-medium text-gray-900">
                         {parrainage.filleul_prenom} {parrainage.filleul_nom}
                       </div>
-                      <div className="text-sm text-gray-500">{parrainage.filleul_email}</div>
+                      <div className="text-sm text-gray-500">
+                        {parrainage.filleul_email}
+                      </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {format(new Date(parrainage.date_parrainage), 'dd/MM/yyyy HH:mm')}
+                    {format(
+                      new Date(parrainage.date_parrainage),
+                      "dd/MM/yyyy HH:mm",
+                    )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="font-bold text-accent">{parrainage.credits_accordes} DA</span>
+                    <span className="font-bold text-accent">
+                      {parrainage.credits_accordes} DA
+                    </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <Badge variant={parrainage.statut === 'valide' ? 'success' : 'warning'}>
+                    <Badge
+                      variant={
+                        parrainage.statut === "valide" ? "success" : "warning"
+                      }
+                    >
                       {parrainage.statut}
                     </Badge>
                   </td>
@@ -304,7 +357,7 @@ const Parrainages = () => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default Parrainages
+export default Parrainages;

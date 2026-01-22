@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Calendar,
   Clock,
@@ -13,39 +13,49 @@ import {
   Info,
   Tag,
   X,
-  CheckCircle2
-} from 'lucide-react'
-import { useForm } from 'react-hook-form'
-import toast from 'react-hot-toast'
-import Modal from '../ui/Modal'
-import Button from '../ui/Button'
-import Input from '../ui/Input'
-import Card from '../ui/Card'
-import DateTimePicker from '../ui/DateTimePicker'
-import { useAppStore } from '../../store/store'
-import { useAuthStore } from '../../store/authStore'
-import { ReservationForm as ReservationFormType, Espace } from '../../types'
-import { format, addHours, isAfter, isBefore } from 'date-fns'
-import { fr } from 'date-fns/locale'
-import { apiClient } from '../../lib/api-client'
+  CheckCircle2,
+} from "lucide-react";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import Modal from "../ui/Modal";
+import Button from "../ui/Button";
+import Input from "../ui/Input";
+import Card from "../ui/Card";
+import DateTimePicker from "../ui/DateTimePicker";
+import { useAppStore } from "../../store/store";
+import { useAuthStore } from "../../store/authStore";
+import { ReservationForm as ReservationFormType, Espace } from "../../types";
+import { format, addHours, isAfter, isBefore } from "date-fns";
+import { fr } from "date-fns/locale";
+import { apiClient } from "../../lib/api-client";
 
 interface ReservationFormProps {
-  isOpen: boolean
-  onClose: () => void
-  selectedEspace?: Espace
+  isOpen: boolean;
+  onClose: () => void;
+  selectedEspace?: Espace;
 }
 
-const ReservationForm: React.FC<ReservationFormProps> = ({ isOpen, onClose, selectedEspace }) => {
-  const { user } = useAuthStore()
-  const { espaces, createReservation, calculateReservationAmount } = useAppStore()
-  const [currentStep, setCurrentStep] = useState(1)
-  const [estimatedAmount, setEstimatedAmount] = useState(0)
-  const [discount, setDiscount] = useState(0)
-  const [validatedPromoCode, setValidatedPromoCode] = useState<{codePromoId: string, reduction: number} | null>(null)
-  const [isValidatingCode, setIsValidatingCode] = useState(false)
-  const [codePromoValid, setCodePromoValid] = useState<boolean | null>(null)
-  const [selectedSpace, setSelectedSpace] = useState<Espace | undefined>(selectedEspace)
-  const [duration, setDuration] = useState<number>(0)
+const ReservationForm: React.FC<ReservationFormProps> = ({
+  isOpen,
+  onClose,
+  selectedEspace,
+}) => {
+  const { user } = useAuthStore();
+  const { espaces, createReservation, calculateReservationAmount } =
+    useAppStore();
+  const [currentStep, setCurrentStep] = useState(1);
+  const [estimatedAmount, setEstimatedAmount] = useState(0);
+  const [discount, setDiscount] = useState(0);
+  const [validatedPromoCode, setValidatedPromoCode] = useState<{
+    codePromoId: string;
+    reduction: number;
+  } | null>(null);
+  const [isValidatingCode, setIsValidatingCode] = useState(false);
+  const [codePromoValid, setCodePromoValid] = useState<boolean | null>(null);
+  const [selectedSpace, setSelectedSpace] = useState<Espace | undefined>(
+    selectedEspace,
+  );
+  const [duration, setDuration] = useState<number>(0);
 
   const {
     register,
@@ -54,123 +64,136 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ isOpen, onClose, sele
     setValue,
     formState: { errors, isSubmitting },
     reset,
-    trigger
-  } = useForm<ReservationFormType>()
+    trigger,
+  } = useForm<ReservationFormType>();
 
-  const watchedFields = watch()
+  const watchedFields = watch();
 
   useEffect(() => {
     if (selectedEspace) {
-      setValue('espaceId', selectedEspace.id)
-      setSelectedSpace(selectedEspace)
+      setValue("espaceId", selectedEspace.id);
+      setSelectedSpace(selectedEspace);
     }
-  }, [selectedEspace, setValue])
+  }, [selectedEspace, setValue]);
 
   useEffect(() => {
     if (watchedFields.espaceId) {
-      const space = espaces.find(e => e.id === watchedFields.espaceId)
-      setSelectedSpace(space)
+      const space = espaces.find((e) => e.id === watchedFields.espaceId);
+      setSelectedSpace(space);
     }
-  }, [watchedFields.espaceId, espaces])
+  }, [watchedFields.espaceId, espaces]);
 
   useEffect(() => {
-    if (watchedFields.espaceId && watchedFields.dateDebut && watchedFields.dateFin) {
+    if (
+      watchedFields.espaceId &&
+      watchedFields.dateDebut &&
+      watchedFields.dateFin
+    ) {
       try {
-        const dateDebut = new Date(watchedFields.dateDebut)
-        const dateFin = new Date(watchedFields.dateFin)
+        const dateDebut = new Date(watchedFields.dateDebut);
+        const dateFin = new Date(watchedFields.dateFin);
 
         if (isAfter(dateFin, dateDebut)) {
-          const hours = (dateFin.getTime() - dateDebut.getTime()) / (1000 * 60 * 60)
-          setDuration(hours)
+          const hours =
+            (dateFin.getTime() - dateDebut.getTime()) / (1000 * 60 * 60);
+          setDuration(hours);
 
           const amount = calculateReservationAmount(
             watchedFields.espaceId,
             dateDebut,
             dateFin,
-            watchedFields.codePromo
-          )
-          setEstimatedAmount(amount)
+            watchedFields.codePromo,
+          );
+          setEstimatedAmount(amount);
         }
       } catch (error) {
-        console.error('Erreur calcul montant:', error)
+        console.error("Erreur calcul montant:", error);
       }
     }
-  }, [watchedFields.espaceId, watchedFields.dateDebut, watchedFields.dateFin, watchedFields.codePromo, calculateReservationAmount])
+  }, [
+    watchedFields.espaceId,
+    watchedFields.dateDebut,
+    watchedFields.dateFin,
+    watchedFields.codePromo,
+    calculateReservationAmount,
+  ]);
 
   const validatePromoCode = async () => {
-    if (!watchedFields.codePromo || !estimatedAmount || !user) return
+    if (!watchedFields.codePromo || !estimatedAmount || !user) return;
 
-    setIsValidatingCode(true)
-    setCodePromoValid(null)
-    setDiscount(0)
-    setValidatedPromoCode(null)
+    setIsValidatingCode(true);
+    setCodePromoValid(null);
+    setDiscount(0);
+    setValidatedPromoCode(null);
 
     try {
       const result = await apiClient.validateCodePromo(
         watchedFields.codePromo,
         estimatedAmount,
-        'reservation'
-      )
+        "reservation",
+      );
 
       if (result.valid && result.codePromoId) {
-        setCodePromoValid(true)
-        setDiscount(result.reduction)
+        setCodePromoValid(true);
+        setDiscount(result.reduction);
         setValidatedPromoCode({
           codePromoId: result.codePromoId,
-          reduction: result.reduction
-        })
-        toast.success(`Code promo appliqué! -${result.reduction.toLocaleString()} DA`)
+          reduction: result.reduction,
+        });
+        toast.success(
+          `Code promo appliqué! -${result.reduction.toLocaleString()} DA`,
+        );
       } else {
-        setCodePromoValid(false)
-        setDiscount(0)
-        setValidatedPromoCode(null)
-        toast.error(result.error || 'Code promo invalide')
+        setCodePromoValid(false);
+        setDiscount(0);
+        setValidatedPromoCode(null);
+        toast.error(result.error || "Code promo invalide");
       }
     } catch (error) {
-      setCodePromoValid(false)
-      setDiscount(0)
-      setValidatedPromoCode(null)
-      toast.error('Erreur lors de la validation du code')
+      setCodePromoValid(false);
+      setDiscount(0);
+      setValidatedPromoCode(null);
+      toast.error("Erreur lors de la validation du code");
     } finally {
-      setIsValidatingCode(false)
+      setIsValidatingCode(false);
     }
-  }
+  };
 
   const onSubmit = async (data: ReservationFormType) => {
     if (!user) {
-      toast.error('Vous devez être connecté pour réserver')
-      return
+      toast.error("Vous devez être connecté pour réserver");
+      return;
     }
 
     // Validation finale avant envoi
     if (!data.espaceId) {
-      toast.error('Veuillez sélectionner un espace')
-      return
+      toast.error("Veuillez sélectionner un espace");
+      return;
     }
 
     if (!data.dateDebut || !data.dateFin) {
-      toast.error('Veuillez sélectionner les dates')
-      return
+      toast.error("Veuillez sélectionner les dates");
+      return;
     }
 
-    const dateDebut = new Date(data.dateDebut)
-    const dateFin = new Date(data.dateFin)
+    const dateDebut = new Date(data.dateDebut);
+    const dateFin = new Date(data.dateFin);
 
     if (!isAfter(dateFin, dateDebut)) {
-      toast.error('La date de fin doit être après la date de début')
-      return
+      toast.error("La date de fin doit être après la date de début");
+      return;
     }
 
-    const now = new Date()
+    const now = new Date();
     if (isBefore(dateDebut, now)) {
-      toast.error('La date de début doit être dans le futur')
-      return
+      toast.error("La date de début doit être dans le futur");
+      return;
     }
 
-    const participants = Number(data.participants) || 1
+    const participants = Number(data.participants) || 1;
     if (selectedSpace && participants > selectedSpace.capacite) {
-      toast.error(`Capacité maximale: ${selectedSpace.capacite} personnes`)
-      return
+      toast.error(`Capacité maximale: ${selectedSpace.capacite} personnes`);
+      return;
     }
 
     try {
@@ -181,117 +204,126 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ isOpen, onClose, sele
         dateFin: dateFin,
         notes: data.notes,
         codePromo: data.codePromo,
-        participants: participants
-      })
+        participants: participants,
+      });
 
       if (result?.success === false) {
-        const errorMsg = result.error || 'Erreur lors de la création'
-        toast.error(errorMsg)
-        return
+        const errorMsg = result.error || "Erreur lors de la création";
+        toast.error(errorMsg);
+        return;
       }
 
       if (!result || !result.id) {
-        toast.error('Erreur: réponse invalide du serveur')
-        return
+        toast.error("Erreur: réponse invalide du serveur");
+        return;
       }
 
-      toast.success('Réservation créée avec succès!')
-      handleClose()
+      toast.success("Réservation créée avec succès!");
+      handleClose();
     } catch (error: any) {
-      console.error('Erreur réservation:', error)
-      const errorMsg = error?.message || error?.error || 'Erreur lors de la création de la réservation'
-      toast.error(errorMsg)
+      console.error("Erreur réservation:", error);
+      const errorMsg =
+        error?.message ||
+        error?.error ||
+        "Erreur lors de la création de la réservation";
+      toast.error(errorMsg);
     }
-  }
+  };
 
   const handleClose = () => {
-    reset()
-    setCurrentStep(1)
-    setEstimatedAmount(0)
-    setDiscount(0)
-    setCodePromoValid(null)
-    setValidatedPromoCode(null)
-    setSelectedSpace(undefined)
-    setDuration(0)
-    onClose()
-  }
+    reset();
+    setCurrentStep(1);
+    setEstimatedAmount(0);
+    setDiscount(0);
+    setCodePromoValid(null);
+    setValidatedPromoCode(null);
+    setSelectedSpace(undefined);
+    setDuration(0);
+    onClose();
+  };
 
   const nextStep = async () => {
-    let isValid = false
+    let isValid = false;
 
     if (currentStep === 1) {
-      isValid = await trigger('espaceId')
+      isValid = await trigger("espaceId");
     } else if (currentStep === 2) {
-      isValid = await trigger(['dateDebut', 'dateFin'])
+      isValid = await trigger(["dateDebut", "dateFin"]);
 
       if (isValid && watchedFields.dateDebut && watchedFields.dateFin) {
-        const dateDebut = new Date(watchedFields.dateDebut)
-        const dateFin = new Date(watchedFields.dateFin)
+        const dateDebut = new Date(watchedFields.dateDebut);
+        const dateFin = new Date(watchedFields.dateFin);
 
         if (!isAfter(dateFin, dateDebut)) {
-          toast.error('La date de fin doit être après la date de début')
-          return
+          toast.error("La date de fin doit être après la date de début");
+          return;
         }
 
-        const now = new Date()
+        const now = new Date();
         if (isBefore(dateDebut, now)) {
-          toast.error('La date de début doit être dans le futur')
-          return
+          toast.error("La date de début doit être dans le futur");
+          return;
         }
 
-        const diffHours = (dateFin.getTime() - dateDebut.getTime()) / (1000 * 60 * 60)
+        const diffHours =
+          (dateFin.getTime() - dateDebut.getTime()) / (1000 * 60 * 60);
         if (diffHours < 1) {
-          toast.error('La réservation doit être d\'au moins 1 heure')
-          return
+          toast.error("La réservation doit être d'au moins 1 heure");
+          return;
         }
 
         if (diffHours > 24 * 7) {
-          toast.error('La réservation ne peut pas dépasser 7 jours')
-          return
+          toast.error("La réservation ne peut pas dépasser 7 jours");
+          return;
         }
 
-        const participants = Number(watchedFields.participants) || 1
+        const participants = Number(watchedFields.participants) || 1;
         if (selectedSpace && participants > selectedSpace.capacite) {
-          toast.error(`Capacité maximale: ${selectedSpace.capacite} personnes`)
-          return
+          toast.error(`Capacité maximale: ${selectedSpace.capacite} personnes`);
+          return;
         }
       }
     }
 
     if (isValid && currentStep < 3) {
-      setCurrentStep(currentStep + 1)
+      setCurrentStep(currentStep + 1);
     }
-  }
+  };
 
   const prevStep = () => {
     if (currentStep > 1) {
-      setCurrentStep(currentStep - 1)
+      setCurrentStep(currentStep - 1);
     }
-  }
+  };
 
   const steps = [
-    { number: 1, title: 'Espace', icon: MapPin },
-    { number: 2, title: 'Date & Heure', icon: Calendar },
-    { number: 3, title: 'Confirmation', icon: CheckCircle2 }
-  ]
+    { number: 1, title: "Espace", icon: MapPin },
+    { number: 2, title: "Date & Heure", icon: Calendar },
+    { number: 3, title: "Confirmation", icon: CheckCircle2 },
+  ];
 
   const getMinDateTime = () => {
-    const now = new Date()
-    now.setMinutes(now.getMinutes() + 30)
-    return format(now, "yyyy-MM-dd'T'HH:mm")
-  }
+    const now = new Date();
+    now.setMinutes(now.getMinutes() + 30);
+    return format(now, "yyyy-MM-dd'T'HH:mm");
+  };
 
   const getMinEndDateTime = () => {
     if (watchedFields.dateDebut) {
-      const start = new Date(watchedFields.dateDebut)
-      start.setHours(start.getHours() + 1)
-      return format(start, "yyyy-MM-dd'T'HH:mm")
+      const start = new Date(watchedFields.dateDebut);
+      start.setHours(start.getHours() + 1);
+      return format(start, "yyyy-MM-dd'T'HH:mm");
     }
-    return getMinDateTime()
-  }
+    return getMinDateTime();
+  };
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} title="Nouvelle Réservation" size="xl">
+    <Modal
+      isOpen={isOpen}
+      onClose={handleClose}
+      title="Nouvelle Réservation"
+      size="xl"
+    >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Indicateur d'étapes */}
         <div className="relative">
@@ -302,19 +334,21 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ isOpen, onClose, sele
                   <div
                     className={`w-12 h-12 rounded-full flex items-center justify-center font-medium transition-all duration-300 ${
                       currentStep >= step.number
-                        ? 'bg-accent text-white shadow-lg scale-110'
-                        : 'bg-gray-200 text-gray-600'
+                        ? "bg-accent text-white shadow-lg scale-110"
+                        : "bg-gray-200 text-gray-600"
                     }`}
                   >
                     {currentStep > step.number ? (
                       <Check className="w-6 h-6" />
                     ) : (
-                      React.createElement(step.icon, { className: 'w-6 h-6' })
+                      React.createElement(step.icon, { className: "w-6 h-6" })
                     )}
                   </div>
                   <span
                     className={`text-sm font-medium mt-2 ${
-                      currentStep >= step.number ? 'text-accent' : 'text-gray-500'
+                      currentStep >= step.number
+                        ? "text-accent"
+                        : "text-gray-500"
                     }`}
                   >
                     {step.title}
@@ -323,7 +357,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ isOpen, onClose, sele
                 {index < steps.length - 1 && (
                   <div
                     className={`flex-1 h-1 mx-4 -mt-6 rounded transition-all duration-300 ${
-                      currentStep > step.number ? 'bg-accent' : 'bg-gray-200'
+                      currentStep > step.number ? "bg-accent" : "bg-gray-200"
                     }`}
                   />
                 )}
@@ -343,8 +377,12 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ isOpen, onClose, sele
               className="space-y-4"
             >
               <div className="mb-4">
-                <h3 className="text-lg font-bold text-gray-900 mb-1">Choisissez votre espace</h3>
-                <p className="text-sm text-gray-600">Sélectionnez l'espace qui correspond à vos besoins</p>
+                <h3 className="text-lg font-bold text-gray-900 mb-1">
+                  Choisissez votre espace
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Sélectionnez l'espace qui correspond à vos besoins
+                </p>
               </div>
 
               <div className="grid grid-cols-1 gap-4 max-h-[400px] overflow-y-auto pr-2">
@@ -357,17 +395,17 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ isOpen, onClose, sele
                     <Card
                       className={`p-4 cursor-pointer transition-all border-2 ${
                         watchedFields.espaceId === espace.id
-                          ? 'border-accent bg-accent/5'
-                          : 'border-gray-200 hover:border-accent/50'
+                          ? "border-accent bg-accent/5"
+                          : "border-gray-200 hover:border-accent/50"
                       }`}
-                      onClick={() => setValue('espaceId', espace.id)}
+                      onClick={() => setValue("espaceId", espace.id)}
                     >
                       <div className="flex items-start gap-4">
                         <div
                           className={`w-16 h-16 rounded-xl flex items-center justify-center flex-shrink-0 ${
                             watchedFields.espaceId === espace.id
-                              ? 'bg-accent text-white'
-                              : 'bg-gray-100 text-gray-600'
+                              ? "bg-accent text-white"
+                              : "bg-gray-100 text-gray-600"
                           }`}
                         >
                           <MapPin className="w-8 h-8" />
@@ -375,8 +413,12 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ isOpen, onClose, sele
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between mb-2">
                             <div>
-                              <h4 className="font-bold text-gray-900">{espace.nom}</h4>
-                              <p className="text-sm text-gray-600 line-clamp-2">{espace.description}</p>
+                              <h4 className="font-bold text-gray-900">
+                                {espace.nom}
+                              </h4>
+                              <p className="text-sm text-gray-600 line-clamp-2">
+                                {espace.description}
+                              </p>
                             </div>
                             {watchedFields.espaceId === espace.id && (
                               <Check className="w-6 h-6 text-accent flex-shrink-0 ml-2" />
@@ -394,23 +436,26 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ isOpen, onClose, sele
                               </span>
                             </div>
                           </div>
-                          {espace.equipements && espace.equipements.length > 0 && (
-                            <div className="flex flex-wrap gap-1 mt-2">
-                              {espace.equipements.slice(0, 3).map((equip, idx) => (
-                                <span
-                                  key={idx}
-                                  className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded"
-                                >
-                                  {equip}
-                                </span>
-                              ))}
-                              {espace.equipements.length > 3 && (
-                                <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded">
-                                  +{espace.equipements.length - 3}
-                                </span>
-                              )}
-                            </div>
-                          )}
+                          {espace.equipements &&
+                            espace.equipements.length > 0 && (
+                              <div className="flex flex-wrap gap-1 mt-2">
+                                {espace.equipements
+                                  .slice(0, 3)
+                                  .map((equip, idx) => (
+                                    <span
+                                      key={idx}
+                                      className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded"
+                                    >
+                                      {equip}
+                                    </span>
+                                  ))}
+                                {espace.equipements.length > 3 && (
+                                  <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded">
+                                    +{espace.equipements.length - 3}
+                                  </span>
+                                )}
+                              </div>
+                            )}
                         </div>
                       </div>
                     </Card>
@@ -436,8 +481,12 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ isOpen, onClose, sele
               className="space-y-6"
             >
               <div className="mb-4">
-                <h3 className="text-lg font-bold text-gray-900 mb-1">Choisissez vos dates</h3>
-                <p className="text-sm text-gray-600">Sélectionnez la période de votre réservation</p>
+                <h3 className="text-lg font-bold text-gray-900 mb-1">
+                  Choisissez vos dates
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Sélectionnez la période de votre réservation
+                </p>
               </div>
 
               {selectedSpace && (
@@ -447,7 +496,9 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ isOpen, onClose, sele
                       <MapPin className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                      <p className="font-semibold text-gray-900">{selectedSpace.nom}</p>
+                      <p className="font-semibold text-gray-900">
+                        {selectedSpace.nom}
+                      </p>
                       <p className="text-sm text-gray-600">
                         {selectedSpace.prixHeure.toLocaleString()} DA/heure
                       </p>
@@ -457,18 +508,24 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ isOpen, onClose, sele
               )}
 
               <DateTimePicker
-                selectedStart={watchedFields.dateDebut ? new Date(watchedFields.dateDebut) : null}
-                selectedEnd={watchedFields.dateFin ? new Date(watchedFields.dateFin) : null}
+                selectedStart={
+                  watchedFields.dateDebut
+                    ? new Date(watchedFields.dateDebut)
+                    : null
+                }
+                selectedEnd={
+                  watchedFields.dateFin ? new Date(watchedFields.dateFin) : null
+                }
                 onDateChange={(start, end) => {
                   if (start) {
-                    setValue('dateDebut', start.toISOString())
+                    setValue("dateDebut", start.toISOString());
                   } else {
-                    setValue('dateDebut', '')
+                    setValue("dateDebut", "");
                   }
                   if (end) {
-                    setValue('dateFin', end.toISOString())
+                    setValue("dateFin", end.toISOString());
                   } else {
-                    setValue('dateFin', '')
+                    setValue("dateFin", "");
                   }
                 }}
               />
@@ -482,15 +539,18 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ isOpen, onClose, sele
                     <div className="flex items-start gap-3">
                       <Info className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
                       <div className="flex-1">
-                        <p className="font-medium text-blue-900 mb-1">Durée de la réservation</p>
+                        <p className="font-medium text-blue-900 mb-1">
+                          Durée de la réservation
+                        </p>
                         <p className="text-sm text-blue-700">
                           {duration < 1
                             ? `${Math.round(duration * 60)} minutes`
-                            : `${duration.toFixed(1)} heure${duration > 1 ? 's' : ''}`}
+                            : `${duration.toFixed(1)} heure${duration > 1 ? "s" : ""}`}
                         </p>
                         {duration >= 4 && (
                           <p className="text-xs text-blue-600 mt-1">
-                            🎉 Réduction automatique appliquée pour réservation longue durée!
+                            🎉 Réduction automatique appliquée pour réservation
+                            longue durée!
                           </p>
                         )}
                       </div>
@@ -507,11 +567,14 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ isOpen, onClose, sele
                   min={1}
                   max={selectedSpace?.capacite || 10}
                   defaultValue={1}
-                  {...register('participants', {
-                    required: 'Le nombre de participants est requis',
-                    min: { value: 1, message: 'Minimum 1 participant' },
-                    max: { value: selectedSpace?.capacite || 100, message: `Maximum ${selectedSpace?.capacite || 100} participants` },
-                    valueAsNumber: true
+                  {...register("participants", {
+                    required: "Le nombre de participants est requis",
+                    min: { value: 1, message: "Minimum 1 participant" },
+                    max: {
+                      value: selectedSpace?.capacite || 100,
+                      message: `Maximum ${selectedSpace?.capacite || 100} participants`,
+                    },
+                    valueAsNumber: true,
                   })}
                   placeholder={`Max ${selectedSpace?.capacite || 10} personnes`}
                   error={errors.participants?.message}
@@ -523,7 +586,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ isOpen, onClose, sele
                   Notes ou demandes spéciales (optionnel)
                 </label>
                 <textarea
-                  {...register('notes')}
+                  {...register("notes")}
                   rows={3}
                   className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-accent focus:outline-none resize-none"
                   placeholder="Équipements spéciaux, configuration de la salle, besoins particuliers..."
@@ -542,8 +605,12 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ isOpen, onClose, sele
               className="space-y-6"
             >
               <div className="mb-4">
-                <h3 className="text-lg font-bold text-gray-900 mb-1">Vérifiez votre réservation</h3>
-                <p className="text-sm text-gray-600">Confirmez les détails avant de finaliser</p>
+                <h3 className="text-lg font-bold text-gray-900 mb-1">
+                  Vérifiez votre réservation
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Confirmez les détails avant de finaliser
+                </p>
               </div>
 
               {/* Résumé de la réservation */}
@@ -554,8 +621,12 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ isOpen, onClose, sele
                       <MapPin className="w-6 h-6 text-white" />
                     </div>
                     <div className="flex-1">
-                      <h4 className="font-bold text-gray-900">{selectedSpace?.nom}</h4>
-                      <p className="text-sm text-gray-600">{selectedSpace?.description}</p>
+                      <h4 className="font-bold text-gray-900">
+                        {selectedSpace?.nom}
+                      </h4>
+                      <p className="text-sm text-gray-600">
+                        {selectedSpace?.description}
+                      </p>
                     </div>
                   </div>
 
@@ -564,27 +635,42 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ isOpen, onClose, sele
                       <div className="flex items-center gap-3 text-sm">
                         <Calendar className="w-5 h-5 text-accent" />
                         <div>
-                          <p className="font-medium text-gray-900">Date de début</p>
+                          <p className="font-medium text-gray-900">
+                            Date de début
+                          </p>
                           <p className="text-gray-600">
-                            {format(new Date(watchedFields.dateDebut), "EEEE d MMMM yyyy 'à' HH:mm", { locale: fr })}
+                            {format(
+                              new Date(watchedFields.dateDebut),
+                              "EEEE d MMMM yyyy 'à' HH:mm",
+                              { locale: fr },
+                            )}
                           </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3 text-sm">
                         <Clock className="w-5 h-5 text-accent" />
                         <div>
-                          <p className="font-medium text-gray-900">Date de fin</p>
+                          <p className="font-medium text-gray-900">
+                            Date de fin
+                          </p>
                           <p className="text-gray-600">
-                            {format(new Date(watchedFields.dateFin), "EEEE d MMMM yyyy 'à' HH:mm", { locale: fr })}
+                            {format(
+                              new Date(watchedFields.dateFin),
+                              "EEEE d MMMM yyyy 'à' HH:mm",
+                              { locale: fr },
+                            )}
                           </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3 text-sm">
                         <Users className="w-5 h-5 text-accent" />
                         <div>
-                          <p className="font-medium text-gray-900">Participants</p>
+                          <p className="font-medium text-gray-900">
+                            Participants
+                          </p>
                           <p className="text-gray-600">
-                            {watchedFields.participants || 1} personne{(watchedFields.participants || 1) > 1 ? 's' : ''}
+                            {watchedFields.participants || 1} personne
+                            {(watchedFields.participants || 1) > 1 ? "s" : ""}
                           </p>
                         </div>
                       </div>
@@ -603,7 +689,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ isOpen, onClose, sele
                     <Input
                       icon={<Tag className="w-5 h-5" />}
                       placeholder="Entrez votre code promo"
-                      {...register('codePromo')}
+                      {...register("codePromo")}
                     />
                     {codePromoValid !== null && (
                       <div className="absolute right-3 top-1/2 -translate-y-1/2">
@@ -621,7 +707,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ isOpen, onClose, sele
                     onClick={validatePromoCode}
                     disabled={!watchedFields.codePromo || isValidatingCode}
                   >
-                    {isValidatingCode ? 'Vérification...' : 'Appliquer'}
+                    {isValidatingCode ? "Vérification..." : "Appliquer"}
                   </Button>
                 </div>
               </div>
@@ -646,12 +732,16 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ isOpen, onClose, sele
                             <Tag className="w-4 h-4" />
                             Réduction
                           </span>
-                          <span className="font-medium text-green-600">-{discount.toLocaleString()} DA</span>
+                          <span className="font-medium text-green-600">
+                            -{discount.toLocaleString()} DA
+                          </span>
                         </div>
                       )}
                       <div className="pt-3 border-t border-gray-300">
                         <div className="flex items-center justify-between">
-                          <span className="text-lg font-bold text-gray-900">Total</span>
+                          <span className="text-lg font-bold text-gray-900">
+                            Total
+                          </span>
                           <span className="text-2xl font-bold text-accent">
                             {(estimatedAmount - discount).toLocaleString()} DA
                           </span>
@@ -664,7 +754,9 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ isOpen, onClose, sele
 
               {watchedFields.notes && (
                 <Card className="p-4 bg-gray-50">
-                  <p className="text-sm font-medium text-gray-900 mb-2">Notes</p>
+                  <p className="text-sm font-medium text-gray-900 mb-2">
+                    Notes
+                  </p>
                   <p className="text-sm text-gray-600">{watchedFields.notes}</p>
                 </Card>
               )}
@@ -675,13 +767,22 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ isOpen, onClose, sele
         {/* Navigation */}
         <div className="flex gap-3 pt-4 border-t">
           {currentStep > 1 && (
-            <Button type="button" variant="outline" onClick={prevStep} className="flex-1">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={prevStep}
+              className="flex-1"
+            >
               <ChevronLeft className="w-4 h-4 mr-2" />
               Précédent
             </Button>
           )}
           {currentStep < 3 ? (
-            <Button type="button" onClick={nextStep} className={currentStep === 1 ? 'w-full' : 'flex-1'}>
+            <Button
+              type="button"
+              onClick={nextStep}
+              className={currentStep === 1 ? "w-full" : "flex-1"}
+            >
               Suivant
               <ChevronRight className="w-4 h-4 ml-2" />
             </Button>
@@ -694,7 +795,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({ isOpen, onClose, sele
         </div>
       </form>
     </Modal>
-  )
-}
+  );
+};
 
-export default ReservationForm
+export default ReservationForm;

@@ -1,52 +1,52 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react'
-import { AlertTriangle, RefreshCw, Home } from 'lucide-react'
-import Button from './ui/Button'
-import Card from './ui/Card'
-import { logger } from '../utils/logger'
+import React, { Component, ErrorInfo, ReactNode } from "react";
+import { AlertTriangle, RefreshCw, Home } from "lucide-react";
+import Button from "./ui/Button";
+import Card from "./ui/Card";
+import { logger } from "../utils/logger";
 
 interface Props {
-  children: ReactNode
-  fallback?: ReactNode
+  children: ReactNode;
+  fallback?: ReactNode;
 }
 
 interface State {
-  hasError: boolean
-  error?: Error
-  errorInfo?: ErrorInfo
+  hasError: boolean;
+  error?: Error;
+  errorInfo?: ErrorInfo;
 }
 
 class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
-    super(props)
-    this.state = { hasError: false }
+    super(props);
+    this.state = { hasError: false };
   }
 
   static getDerivedStateFromError(error: Error): State {
-    return { hasError: true, error }
+    return { hasError: true, error };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    this.setState({ error, errorInfo })
+    this.setState({ error, errorInfo });
 
-    logger.error('ErrorBoundary caught an error', {
+    logger.error("ErrorBoundary caught an error", {
       error: error.message,
       stack: error.stack,
-      componentStack: errorInfo.componentStack
-    })
+      componentStack: errorInfo.componentStack,
+    });
   }
 
   handleReload = () => {
-    window.location.reload()
-  }
+    window.location.reload();
+  };
 
   handleGoHome = () => {
-    window.location.href = '/'
-  }
+    window.location.href = "/";
+  };
 
   render() {
     if (this.state.hasError) {
       if (this.props.fallback) {
-        return this.props.fallback
+        return this.props.fallback;
       }
 
       return (
@@ -55,16 +55,16 @@ class ErrorBoundary extends Component<Props, State> {
             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <AlertTriangle className="w-8 h-8 text-red-600" />
             </div>
-            
+
             <h1 className="text-2xl font-display font-bold text-primary mb-4">
               Oups ! Une erreur est survenue
             </h1>
-            
+
             <p className="text-gray-600 mb-6">
-              Nous sommes désolés, quelque chose s'est mal passé. 
-              Veuillez réessayer ou retourner à l'accueil.
+              Nous sommes désolés, quelque chose s'est mal passé. Veuillez
+              réessayer ou retourner à l'accueil.
             </p>
-            
+
             {import.meta.env.DEV && this.state.error && (
               <details className="text-left mb-6 p-4 bg-gray-100 rounded-lg">
                 <summary className="cursor-pointer font-medium text-sm text-gray-700 mb-2">
@@ -76,7 +76,7 @@ class ErrorBoundary extends Component<Props, State> {
                 </pre>
               </details>
             )}
-            
+
             <div className="flex gap-3">
               <Button
                 variant="outline"
@@ -86,21 +86,18 @@ class ErrorBoundary extends Component<Props, State> {
                 <Home className="w-4 h-4 mr-2" />
                 Accueil
               </Button>
-              <Button
-                onClick={this.handleReload}
-                className="flex-1"
-              >
+              <Button onClick={this.handleReload} className="flex-1">
                 <RefreshCw className="w-4 h-4 mr-2" />
                 Recharger
               </Button>
             </div>
           </Card>
         </div>
-      )
+      );
     }
 
-    return this.props.children
+    return this.props.children;
   }
 }
 
-export default ErrorBoundary
+export default ErrorBoundary;

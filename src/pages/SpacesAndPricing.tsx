@@ -1,161 +1,185 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-  ArrowRight, Users, Wifi, Coffee, Presentation, Volume2, PenTool,
-  Monitor, Clock, Star, Zap, Shield, TrendingUp, Calendar, Check,
-  ChevronRight, Sparkles, Gift, Target, Headphones, Building2
-} from 'lucide-react'
-import { useSEO } from '../hooks/useSEO'
-import { IMAGES } from '../config/images'
+  ArrowRight,
+  Users,
+  Wifi,
+  Coffee,
+  Presentation,
+  Volume2,
+  PenTool,
+  Monitor,
+  Clock,
+  Star,
+  Zap,
+  Shield,
+  TrendingUp,
+  Calendar,
+  Check,
+  ChevronRight,
+  Sparkles,
+  Gift,
+  Target,
+  Headphones,
+  Building2,
+} from "lucide-react";
+import { useSEO } from "../hooks/useSEO";
+import { IMAGES } from "../config/images";
 
 const SpacesAndPricing = () => {
   useSEO({
-    title: 'Espaces & Tarifs | Coffice Coworking Alger',
-    description: 'Découvrez nos espaces de coworking (200m²) et nos formules d\'abonnement flexibles. Private booths, salle de réunion et tarifs adaptés aux entrepreneurs.'
-  })
+    title: "Espaces & Tarifs | Coffice Coworking Alger",
+    description:
+      "Découvrez nos espaces de coworking (200m²) et nos formules d'abonnement flexibles. Private booths, salle de réunion et tarifs adaptés aux entrepreneurs.",
+  });
 
-  const [activeSpace, setActiveSpace] = useState<string>('coworking')
+  const [activeSpace, setActiveSpace] = useState<string>("coworking");
 
   // ============ ESPACES ============
   const spaces = [
     {
-      id: 'coworking',
-      name: 'Espace Coworking',
-      tagline: 'Votre bureau flexible au coeur d\'Alger',
-      description: 'Un environnement dynamique de 200m² avec 24 postes open space',
+      id: "coworking",
+      name: "Espace Coworking",
+      tagline: "Votre bureau flexible au coeur d'Alger",
+      description:
+        "Un environnement dynamique de 200m² avec 24 postes open space",
       image: IMAGES.spaces.coworking.url,
-      price: '1 200 DA TTC / jour',
+      price: "1 200 DA TTC / jour",
       priceValue: 1200,
-      period: 'jour',
-      priceFullDay: '1 200 DA TTC',
-      color: 'from-blue-500 to-cyan-500',
-      textColor: 'text-blue-600',
-      bgColor: 'bg-blue-50',
+      period: "jour",
+      priceFullDay: "1 200 DA TTC",
+      color: "from-blue-500 to-cyan-500",
+      textColor: "text-blue-600",
+      bgColor: "bg-blue-50",
       features: [
-        { icon: Users, text: '24 postes open space' },
-        { icon: Wifi, text: 'WiFi haut débit' },
-        { icon: Coffee, text: 'Café, thé et collations disponibles' },
-        { icon: Monitor, text: '2 postes informatiques puissants' },
-        { icon: Zap, text: 'Prises électriques et USB à chaque poste' },
-        { icon: Shield, text: 'Casiers de rangement sécurisés' }
+        { icon: Users, text: "24 postes open space" },
+        { icon: Wifi, text: "WiFi haut débit" },
+        { icon: Coffee, text: "Café, thé et collations disponibles" },
+        { icon: Monitor, text: "2 postes informatiques puissants" },
+        { icon: Zap, text: "Prises électriques et USB à chaque poste" },
+        { icon: Shield, text: "Casiers de rangement sécurisés" },
       ],
       stats: [
-        { label: 'Postes disponibles', value: '24' },
-        { label: 'Capacité max', value: '24 pers.' },
-        { label: 'Surface', value: '200m²' }
-      ]
+        { label: "Postes disponibles", value: "24" },
+        { label: "Capacité max", value: "24 pers." },
+        { label: "Surface", value: "200m²" },
+      ],
     },
     {
-      id: 'meeting',
-      name: 'Salle de Réunion',
-      tagline: 'L\'espace parfait pour vos rencontres pros',
-      description: 'Équipée pour vos présentations, formations et réunions d\'équipe',
+      id: "meeting",
+      name: "Salle de Réunion",
+      tagline: "L'espace parfait pour vos rencontres pros",
+      description:
+        "Équipée pour vos présentations, formations et réunions d'équipe",
       image: IMAGES.spaces.meeting.url,
-      price: '2 500 DA TTC / heure',
+      price: "2 500 DA TTC / heure",
       priceValue: 2500,
-      period: 'heure',
-      priceHour: '2 500 DA TTC',
-      priceHalfDay: '7 000 DA TTC',
-      priceFullDay: '12 000 DA TTC',
-      color: 'from-emerald-500 to-teal-500',
-      textColor: 'text-emerald-600',
-      bgColor: 'bg-emerald-50',
+      period: "heure",
+      priceHour: "2 500 DA TTC",
+      priceHalfDay: "7 000 DA TTC",
+      priceFullDay: "12 000 DA TTC",
+      color: "from-emerald-500 to-teal-500",
+      textColor: "text-emerald-600",
+      bgColor: "bg-emerald-50",
       features: [
-        { icon: Users, text: 'Jusqu\'à 12 personnes' },
+        { icon: Users, text: "Jusqu'à 12 personnes" },
         { icon: Presentation, text: 'TV 75" et tableau blanc' },
-        { icon: Volume2, text: 'Système audio professionnel' },
-        { icon: PenTool, text: 'Tableau blanc interactif' },
-        { icon: Presentation, text: 'Système visioconférence HD' },
-        { icon: Coffee, text: 'Service café et eau minérale' }
+        { icon: Volume2, text: "Système audio professionnel" },
+        { icon: PenTool, text: "Tableau blanc interactif" },
+        { icon: Presentation, text: "Système visioconférence HD" },
+        { icon: Coffee, text: "Service café et eau minérale" },
       ],
       stats: [
-        { label: 'Capacité', value: '12 pers.' },
-        { label: 'Écran', value: '75"' },
-        { label: 'Terrasse', value: 'Privée' }
-      ]
+        { label: "Capacité", value: "12 pers." },
+        { label: "Écran", value: '75"' },
+        { label: "Terrasse", value: "Privée" },
+      ],
     },
     {
-      id: 'booths',
-      name: 'Private Booths',
-      tagline: 'Bureaux privés pour concentration maximale',
-      description: '3 espaces privatifs pour 2 à 4 personnes : Aurès et Atlas (6m² chacun pour 2-4 personnes) et Hoogar (5m² pour 2 personnes)',
+      id: "booths",
+      name: "Private Booths",
+      tagline: "Bureaux privés pour concentration maximale",
+      description:
+        "3 espaces privatifs pour 2 à 4 personnes : Aurès et Atlas (6m² chacun pour 2-4 personnes) et Hoogar (5m² pour 2 personnes)",
       image: IMAGES.booths.atlas.url,
-      price: 'À partir de 5 000 DA TTC',
+      price: "À partir de 5 000 DA TTC",
       priceValue: 5000,
-      period: 'jour',
-      color: 'from-amber-500 to-amber-600',
-      textColor: 'text-amber-600',
-      bgColor: 'bg-amber-50',
+      period: "jour",
+      color: "from-amber-500 to-amber-600",
+      textColor: "text-amber-600",
+      bgColor: "bg-amber-50",
       features: [
-        { icon: Building2, text: 'Aurès : 6m² pour 2-4 personnes' },
-        { icon: Building2, text: 'Atlas : 6m² pour 2-4 personnes' },
-        { icon: Building2, text: 'Hoogar : 5m² pour 2 personnes' },
-        { icon: Shield, text: 'Espaces 100% privés et sécurisés' },
-        { icon: Wifi, text: 'WiFi dédié très haut débit' },
-        { icon: Monitor, text: 'Écran et mobilier premium' }
+        { icon: Building2, text: "Aurès : 6m² pour 2-4 personnes" },
+        { icon: Building2, text: "Atlas : 6m² pour 2-4 personnes" },
+        { icon: Building2, text: "Hoogar : 5m² pour 2 personnes" },
+        { icon: Shield, text: "Espaces 100% privés et sécurisés" },
+        { icon: Wifi, text: "WiFi dédié très haut débit" },
+        { icon: Monitor, text: "Écran et mobilier premium" },
       ],
       stats: [
-        { label: 'Booths disponibles', value: '3' },
-        { label: 'Capacité totale', value: '10 pers.' },
-        { label: 'Surface', value: '5-6m²' }
+        { label: "Booths disponibles", value: "3" },
+        { label: "Capacité totale", value: "10 pers." },
+        { label: "Surface", value: "5-6m²" },
       ],
       booths: [
         {
-          name: 'Aurès',
-          surface: '6m²',
-          capacity: '2-4 personnes',
+          name: "Aurès",
+          surface: "6m²",
+          capacity: "2-4 personnes",
           image: IMAGES.booths.aures.url,
-          description: 'Booth spacieux idéal pour petites équipes et réunions confidentielles',
-          priceFullDay: '6 000 DA TTC',
-          priceHalfDay: '3 500 DA TTC'
+          description:
+            "Booth spacieux idéal pour petites équipes et réunions confidentielles",
+          priceFullDay: "6 000 DA TTC",
+          priceHalfDay: "3 500 DA TTC",
         },
         {
-          name: 'Atlas',
-          surface: '6m²',
-          capacity: '2-4 personnes',
+          name: "Atlas",
+          surface: "6m²",
+          capacity: "2-4 personnes",
           image: IMAGES.booths.atlas.url,
-          description: 'Espace privé confortable avec vue panoramique',
-          priceFullDay: '6 000 DA TTC',
-          priceHalfDay: '3 500 DA TTC'
+          description: "Espace privé confortable avec vue panoramique",
+          priceFullDay: "6 000 DA TTC",
+          priceHalfDay: "3 500 DA TTC",
         },
         {
-          name: 'Hoogar',
-          surface: '5m²',
-          capacity: '2 personnes',
+          name: "Hoogar",
+          surface: "5m²",
+          capacity: "2 personnes",
           image: IMAGES.booths.hoggar.url,
-          description: 'Booth intimiste parfait pour le travail concentré ou les entretiens',
-          priceFullDay: '5 000 DA TTC',
-          priceHalfDay: '3 000 DA TTC'
-        }
-      ]
-    }
-  ]
+          description:
+            "Booth intimiste parfait pour le travail concentré ou les entretiens",
+          priceFullDay: "5 000 DA TTC",
+          priceHalfDay: "3 000 DA TTC",
+        },
+      ],
+    },
+  ];
 
-  const activeSpaceData = spaces.find(s => s.id === activeSpace) || spaces[0]
+  const activeSpaceData = spaces.find((s) => s.id === activeSpace) || spaces[0];
 
   const benefits = [
     {
       icon: Clock,
-      title: 'Flexibilité totale',
-      description: 'Réservez à l\'heure, au jour, au mois selon vos besoins'
+      title: "Flexibilité totale",
+      description: "Réservez à l'heure, au jour, au mois selon vos besoins",
     },
     {
       icon: TrendingUp,
-      title: 'Boost productivité',
-      description: 'Environnement conçu pour optimiser votre efficacité'
+      title: "Boost productivité",
+      description: "Environnement conçu pour optimiser votre efficacité",
     },
     {
       icon: Users,
-      title: 'Communauté pro',
-      description: 'Réseau d\'entrepreneurs et freelances actifs'
+      title: "Communauté pro",
+      description: "Réseau d'entrepreneurs et freelances actifs",
     },
     {
       icon: Star,
-      title: 'Services premium',
-      description: 'Équipements et accompagnement de qualité'
-    }
-  ]
+      title: "Services premium",
+      description: "Équipements et accompagnement de qualité",
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white">
@@ -183,7 +207,8 @@ const SpacesAndPricing = () => {
             </h1>
 
             <p className="text-xl md:text-2xl text-blue-100 mb-12 max-w-3xl mx-auto leading-relaxed">
-              Coworking, salles de réunion et accompagnement complet au coeur d'Alger
+              Coworking, salles de réunion et accompagnement complet au coeur
+              d'Alger
             </p>
 
             <div className="flex flex-wrap justify-center gap-4">
@@ -211,11 +236,14 @@ const SpacesAndPricing = () => {
             className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-20"
           >
             {[
-              { value: '200m²', label: 'Surface totale' },
-              { value: '24', label: 'Postes coworking' },
-              { value: '24/7', label: 'Accès sécurisé' }
+              { value: "200m²", label: "Surface totale" },
+              { value: "24", label: "Postes coworking" },
+              { value: "24/7", label: "Accès sécurisé" },
             ].map((stat, idx) => (
-              <div key={idx} className="text-center p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10">
+              <div
+                key={idx}
+                className="text-center p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10"
+              >
                 <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-2">
                   {stat.value}
                 </div>
@@ -252,7 +280,7 @@ const SpacesAndPricing = () => {
                 className={`px-6 py-3 rounded-full font-semibold transition-all ${
                   activeSpace === space.id
                     ? `bg-gradient-to-r ${space.color} text-white shadow-lg`
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                 }`}
               >
                 {space.name}
@@ -270,7 +298,7 @@ const SpacesAndPricing = () => {
               transition={{ duration: 0.3 }}
             >
               {/* Regular Spaces Display (Coworking & Meeting) */}
-              {activeSpace !== 'booths' && (
+              {activeSpace !== "booths" && (
                 <div className="grid md:grid-cols-2 gap-8 items-center">
                   <div className="relative rounded-2xl overflow-hidden shadow-2xl">
                     <img
@@ -279,7 +307,9 @@ const SpacesAndPricing = () => {
                       className="w-full h-[400px] object-cover"
                       loading="lazy"
                     />
-                    <div className={`absolute top-4 right-4 px-4 py-2 bg-gradient-to-r ${activeSpaceData.color} text-white rounded-full font-bold`}>
+                    <div
+                      className={`absolute top-4 right-4 px-4 py-2 bg-gradient-to-r ${activeSpaceData.color} text-white rounded-full font-bold`}
+                    >
                       {activeSpaceData.price}
                     </div>
                   </div>
@@ -295,7 +325,9 @@ const SpacesAndPricing = () => {
                     <div className="space-y-3 mb-8">
                       {activeSpaceData.features.map((feature, idx) => (
                         <div key={idx} className="flex items-start">
-                          <feature.icon className={`w-5 h-5 ${activeSpaceData.textColor} mt-0.5 mr-3 flex-shrink-0`} />
+                          <feature.icon
+                            className={`w-5 h-5 ${activeSpaceData.textColor} mt-0.5 mr-3 flex-shrink-0`}
+                          />
                           <span className="text-gray-700">{feature.text}</span>
                         </div>
                       ))}
@@ -304,37 +336,53 @@ const SpacesAndPricing = () => {
                     <div className="grid grid-cols-3 gap-4 p-4 bg-gray-50 rounded-xl mb-6">
                       {activeSpaceData.stats.map((stat, idx) => (
                         <div key={idx} className="text-center">
-                          <div className="text-2xl font-bold text-primary">{stat.value}</div>
-                          <div className="text-sm text-gray-600">{stat.label}</div>
+                          <div className="text-2xl font-bold text-primary">
+                            {stat.value}
+                          </div>
+                          <div className="text-sm text-gray-600">
+                            {stat.label}
+                          </div>
                         </div>
                       ))}
                     </div>
 
                     {/* Pricing Details */}
-                    {activeSpace === 'coworking' && (
+                    {activeSpace === "coworking" && (
                       <div className="mb-6 p-4 bg-blue-50 rounded-xl border-2 border-blue-200">
                         <h4 className="font-bold text-primary mb-3">Tarif :</h4>
                         <div className="flex justify-center items-center">
-                          <span className="text-2xl font-bold text-blue-600">{activeSpaceData.priceFullDay}</span>
+                          <span className="text-2xl font-bold text-blue-600">
+                            {activeSpaceData.priceFullDay}
+                          </span>
                         </div>
                       </div>
                     )}
 
-                    {activeSpace === 'meeting' && (
+                    {activeSpace === "meeting" && (
                       <div className="mb-6 p-4 bg-emerald-50 rounded-xl border-2 border-emerald-200">
-                        <h4 className="font-bold text-primary mb-3">Tarifs de location :</h4>
+                        <h4 className="font-bold text-primary mb-3">
+                          Tarifs de location :
+                        </h4>
                         <div className="space-y-2">
                           <div className="flex justify-between items-center">
                             <span className="text-gray-700">À l'heure</span>
-                            <span className="font-bold text-emerald-600">{activeSpaceData.priceHour}</span>
+                            <span className="font-bold text-emerald-600">
+                              {activeSpaceData.priceHour}
+                            </span>
                           </div>
                           <div className="flex justify-between items-center">
                             <span className="text-gray-700">Demi-journée</span>
-                            <span className="font-bold text-emerald-600">{activeSpaceData.priceHalfDay}</span>
+                            <span className="font-bold text-emerald-600">
+                              {activeSpaceData.priceHalfDay}
+                            </span>
                           </div>
                           <div className="flex justify-between items-center">
-                            <span className="text-gray-700">Journée complète</span>
-                            <span className="font-bold text-emerald-600">{activeSpaceData.priceFullDay}</span>
+                            <span className="text-gray-700">
+                              Journée complète
+                            </span>
+                            <span className="font-bold text-emerald-600">
+                              {activeSpaceData.priceFullDay}
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -352,7 +400,7 @@ const SpacesAndPricing = () => {
               )}
 
               {/* Private Booths Display */}
-              {activeSpace === 'booths' && (
+              {activeSpace === "booths" && (
                 <div>
                   <div className="mb-12 text-center">
                     <h3 className="text-3xl font-display font-bold text-primary mb-4">
@@ -364,8 +412,12 @@ const SpacesAndPricing = () => {
                     <div className="flex justify-center gap-8 mb-8">
                       {activeSpaceData.stats.map((stat, idx) => (
                         <div key={idx} className="text-center">
-                          <div className="text-3xl font-bold text-primary">{stat.value}</div>
-                          <div className="text-sm text-gray-600">{stat.label}</div>
+                          <div className="text-3xl font-bold text-primary">
+                            {stat.value}
+                          </div>
+                          <div className="text-sm text-gray-600">
+                            {stat.label}
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -387,26 +439,42 @@ const SpacesAndPricing = () => {
                             className="w-full h-full object-cover"
                             loading="lazy"
                           />
-                          <div className={`absolute top-4 right-4 px-4 py-2 bg-gradient-to-r ${activeSpaceData.color} text-white rounded-full font-bold text-sm`}>
+                          <div
+                            className={`absolute top-4 right-4 px-4 py-2 bg-gradient-to-r ${activeSpaceData.color} text-white rounded-full font-bold text-sm`}
+                          >
                             {booth.surface}
                           </div>
                         </div>
                         <div className="p-6">
-                          <h4 className="text-2xl font-bold text-primary mb-2">{booth.name}</h4>
+                          <h4 className="text-2xl font-bold text-primary mb-2">
+                            {booth.name}
+                          </h4>
                           <div className="flex items-center gap-2 text-gray-600 mb-4">
                             <Users className="w-4 h-4" />
-                            <span className="text-sm font-medium">{booth.capacity}</span>
+                            <span className="text-sm font-medium">
+                              {booth.capacity}
+                            </span>
                           </div>
-                          <p className="text-gray-600 text-sm mb-4">{booth.description}</p>
+                          <p className="text-gray-600 text-sm mb-4">
+                            {booth.description}
+                          </p>
 
                           <div className="mb-6 p-3 bg-amber-50 rounded-lg">
                             <div className="flex justify-between items-center mb-2">
-                              <span className="text-sm text-gray-600">Journee complete</span>
-                              <span className="font-bold text-amber-600">{booth.priceFullDay}</span>
+                              <span className="text-sm text-gray-600">
+                                Journee complete
+                              </span>
+                              <span className="font-bold text-amber-600">
+                                {booth.priceFullDay}
+                              </span>
                             </div>
                             <div className="flex justify-between items-center">
-                              <span className="text-sm text-gray-600">Demi-journee</span>
-                              <span className="font-bold text-amber-600">{booth.priceHalfDay}</span>
+                              <span className="text-sm text-gray-600">
+                                Demi-journee
+                              </span>
+                              <span className="font-bold text-amber-600">
+                                {booth.priceHalfDay}
+                              </span>
                             </div>
                           </div>
 
@@ -422,12 +490,18 @@ const SpacesAndPricing = () => {
                   </div>
 
                   <div className="mt-10 p-6 bg-amber-50 rounded-xl border-2 border-amber-200">
-                    <h4 className="font-bold text-primary mb-4 text-lg">Équipements inclus dans tous les booths :</h4>
+                    <h4 className="font-bold text-primary mb-4 text-lg">
+                      Équipements inclus dans tous les booths :
+                    </h4>
                     <div className="grid md:grid-cols-2 gap-3">
                       {activeSpaceData.features.map((feature, idx) => (
                         <div key={idx} className="flex items-start">
-                          <feature.icon className={`w-5 h-5 ${activeSpaceData.textColor} mt-0.5 mr-3 flex-shrink-0`} />
-                          <span className="text-gray-700 text-sm">{feature.text}</span>
+                          <feature.icon
+                            className={`w-5 h-5 ${activeSpaceData.textColor} mt-0.5 mr-3 flex-shrink-0`}
+                          />
+                          <span className="text-gray-700 text-sm">
+                            {feature.text}
+                          </span>
                         </div>
                       ))}
                     </div>
@@ -455,7 +529,9 @@ const SpacesAndPricing = () => {
                 <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <benefit.icon className="w-6 h-6 text-accent" />
                 </div>
-                <h3 className="font-semibold text-primary mb-2">{benefit.title}</h3>
+                <h3 className="font-semibold text-primary mb-2">
+                  {benefit.title}
+                </h3>
                 <p className="text-sm text-gray-600">{benefit.description}</p>
               </motion.div>
             ))}
@@ -483,7 +559,7 @@ const SpacesAndPricing = () => {
         </div>
       </section>
     </div>
-  )
-}
+  );
+};
 
-export default SpacesAndPricing
+export default SpacesAndPricing;

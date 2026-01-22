@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import {
   Building,
   FileText,
@@ -13,108 +13,110 @@ import {
   DollarSign,
   Hash,
   AlertCircle,
-  CheckCircle
-} from 'lucide-react'
-import { useAuthStore } from '../../store/authStore'
-import { useAppStore } from '../../store/store'
-import Card from '../../components/ui/Card'
-import Button from '../../components/ui/Button'
-import Input from '../../components/ui/Input'
-import toast from 'react-hot-toast'
-import { wilayas } from '../../data/wilayas'
+  CheckCircle,
+} from "lucide-react";
+import { useAuthStore } from "../../store/authStore";
+import { useAppStore } from "../../store/store";
+import Card from "../../components/ui/Card";
+import Button from "../../components/ui/Button";
+import Input from "../../components/ui/Input";
+import toast from "react-hot-toast";
+import { wilayas } from "../../data/wilayas";
 
 const MyCompany = () => {
-  const { user } = useAuthStore()
-  const { updateUser } = useAppStore()
-  const [isEditing, setIsEditing] = useState(false)
+  const { user } = useAuthStore();
+  const { updateUser } = useAppStore();
+  const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    raisonSociale: user?.raisonSociale || '',
-    formeJuridique: user?.formeJuridique || '',
-    typeEntreprise: user?.typeEntreprise || '',
-    nif: user?.nif || '',
-    nis: user?.nis || '',
-    registreCommerce: user?.registreCommerce || '',
-    articleImposition: user?.articleImposition || '',
-    numeroAutoEntrepreneur: user?.numeroAutoEntrepreneur || '',
-    activitePrincipale: user?.activitePrincipale || '',
-    siegeSocial: user?.siegeSocial || '',
-    capital: user?.capital || '',
-    dateCreationEntreprise: user?.dateCreationEntreprise || '',
-    wilaya: user?.wilaya || '',
-    commune: user?.commune || ''
-  })
+    raisonSociale: user?.raisonSociale || "",
+    formeJuridique: user?.formeJuridique || "",
+    typeEntreprise: user?.typeEntreprise || "",
+    nif: user?.nif || "",
+    nis: user?.nis || "",
+    registreCommerce: user?.registreCommerce || "",
+    articleImposition: user?.articleImposition || "",
+    numeroAutoEntrepreneur: user?.numeroAutoEntrepreneur || "",
+    activitePrincipale: user?.activitePrincipale || "",
+    siegeSocial: user?.siegeSocial || "",
+    capital: user?.capital || "",
+    dateCreationEntreprise: user?.dateCreationEntreprise || "",
+    wilaya: user?.wilaya || "",
+    commune: user?.commune || "",
+  });
 
-  const hasCompanyInfo = user?.raisonSociale || user?.nif || user?.nis
+  const hasCompanyInfo = user?.raisonSociale || user?.nif || user?.nis;
 
   useEffect(() => {
     if (user) {
       setFormData({
-        raisonSociale: user.raisonSociale || '',
-        formeJuridique: user.formeJuridique || '',
-        typeEntreprise: user.typeEntreprise || '',
-        nif: user.nif || '',
-        nis: user.nis || '',
-        registreCommerce: user.registreCommerce || '',
-        articleImposition: user.articleImposition || '',
-        numeroAutoEntrepreneur: user.numeroAutoEntrepreneur || '',
-        activitePrincipale: user.activitePrincipale || '',
-        siegeSocial: user.siegeSocial || '',
-        capital: user.capital || '',
-        dateCreationEntreprise: user.dateCreationEntreprise || '',
-        wilaya: user.wilaya || '',
-        commune: user.commune || ''
-      })
+        raisonSociale: user.raisonSociale || "",
+        formeJuridique: user.formeJuridique || "",
+        typeEntreprise: user.typeEntreprise || "",
+        nif: user.nif || "",
+        nis: user.nis || "",
+        registreCommerce: user.registreCommerce || "",
+        articleImposition: user.articleImposition || "",
+        numeroAutoEntrepreneur: user.numeroAutoEntrepreneur || "",
+        activitePrincipale: user.activitePrincipale || "",
+        siegeSocial: user.siegeSocial || "",
+        capital: user.capital || "",
+        dateCreationEntreprise: user.dateCreationEntreprise || "",
+        wilaya: user.wilaya || "",
+        commune: user.commune || "",
+      });
     }
-  }, [user])
+  }, [user]);
 
   const handleSubmit = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault()
-    if (!user) return
+    if (e) e.preventDefault();
+    if (!user) return;
 
     try {
-      const result = await updateUser(user.id, formData)
-      await useAuthStore.getState().loadUser()
-      toast.success('Informations de l\'entreprise mises à jour avec succès')
-      setIsEditing(false)
+      const result = await updateUser(user.id, formData);
+      await useAuthStore.getState().loadUser();
+      toast.success("Informations de l'entreprise mises à jour avec succès");
+      setIsEditing(false);
     } catch (error: any) {
-      console.error('Erreur mise à jour:', error)
-      toast.error(error.message || 'Erreur lors de la mise à jour')
+      console.error("Erreur mise à jour:", error);
+      toast.error(error.message || "Erreur lors de la mise à jour");
     }
-  }
+  };
 
   const handleCancel = () => {
-    setIsEditing(false)
+    setIsEditing(false);
     if (user) {
       setFormData({
-        raisonSociale: user.raisonSociale || '',
-        formeJuridique: user.formeJuridique || '',
-        typeEntreprise: user.typeEntreprise || '',
-        nif: user.nif || '',
-        nis: user.nis || '',
-        registreCommerce: user.registreCommerce || '',
-        articleImposition: user.articleImposition || '',
-        numeroAutoEntrepreneur: user.numeroAutoEntrepreneur || '',
-        activitePrincipale: user.activitePrincipale || '',
-        siegeSocial: user.siegeSocial || '',
-        capital: user.capital || '',
-        dateCreationEntreprise: user.dateCreationEntreprise || '',
-        wilaya: user.wilaya || '',
-        commune: user.commune || ''
-      })
+        raisonSociale: user.raisonSociale || "",
+        formeJuridique: user.formeJuridique || "",
+        typeEntreprise: user.typeEntreprise || "",
+        nif: user.nif || "",
+        nis: user.nis || "",
+        registreCommerce: user.registreCommerce || "",
+        articleImposition: user.articleImposition || "",
+        numeroAutoEntrepreneur: user.numeroAutoEntrepreneur || "",
+        activitePrincipale: user.activitePrincipale || "",
+        siegeSocial: user.siegeSocial || "",
+        capital: user.capital || "",
+        dateCreationEntreprise: user.dateCreationEntreprise || "",
+        wilaya: user.wilaya || "",
+        commune: user.commune || "",
+      });
     }
-  }
+  };
 
-  const selectedWilaya = wilayas.find(w => w.code === formData.wilaya)
-  const communes = selectedWilaya?.communes || []
+  const selectedWilaya = wilayas.find((w) => w.code === formData.wilaya);
+  const communes = selectedWilaya?.communes || [];
 
-  if (!user) return null
+  if (!user) return null;
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Mon Entreprise</h1>
-          <p className="text-gray-600 mt-1">Gérez les informations de votre entreprise</p>
+          <p className="text-gray-600 mt-1">
+            Gérez les informations de votre entreprise
+          </p>
         </div>
         {hasCompanyInfo && !isEditing && (
           <Button onClick={() => setIsEditing(true)}>
@@ -143,9 +145,12 @@ const MyCompany = () => {
         >
           <Card className="p-12 text-center">
             <Building className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Aucune information d'entreprise</h3>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">
+              Aucune information d'entreprise
+            </h3>
             <p className="text-gray-600 mb-6">
-              Ajoutez les informations de votre entreprise pour faciliter vos démarches et demandes de domiciliation.
+              Ajoutez les informations de votre entreprise pour faciliter vos
+              démarches et demandes de domiciliation.
             </p>
             <Button size="lg" onClick={() => setIsEditing(true)}>
               <Building className="w-5 h-5 mr-2" />
@@ -161,8 +166,12 @@ const MyCompany = () => {
                 <Building className="w-5 h-5 text-accent" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-gray-900">Informations Générales</h2>
-                <p className="text-sm text-gray-500">Détails de votre entreprise</p>
+                <h2 className="text-xl font-bold text-gray-900">
+                  Informations Générales
+                </h2>
+                <p className="text-sm text-gray-500">
+                  Détails de votre entreprise
+                </p>
               </div>
             </div>
 
@@ -171,7 +180,9 @@ const MyCompany = () => {
                 label="Raison Sociale"
                 icon={<Building className="w-5 h-5" />}
                 value={formData.raisonSociale}
-                onChange={(e) => setFormData({ ...formData, raisonSociale: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, raisonSociale: e.target.value })
+                }
                 disabled={!isEditing}
                 placeholder="Ex: SARL Innovation Tech"
                 required={isEditing}
@@ -180,18 +191,28 @@ const MyCompany = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Type d'Entreprise {isEditing && <span className="text-red-500">*</span>}
+                    Type d'Entreprise{" "}
+                    {isEditing && <span className="text-red-500">*</span>}
                   </label>
                   <select
                     value={formData.typeEntreprise}
-                    onChange={(e) => setFormData({ ...formData, typeEntreprise: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        typeEntreprise: e.target.value,
+                      })
+                    }
                     disabled={!isEditing}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent disabled:bg-gray-50"
                     required={isEditing}
                   >
                     <option value="">Sélectionnez un type</option>
-                    <option value="SARL">SARL - Société à Responsabilité Limitée</option>
-                    <option value="EURL">EURL - Entreprise Unipersonnelle à Responsabilité Limitée</option>
+                    <option value="SARL">
+                      SARL - Société à Responsabilité Limitée
+                    </option>
+                    <option value="EURL">
+                      EURL - Entreprise Unipersonnelle à Responsabilité Limitée
+                    </option>
                     <option value="SPA">SPA - Société Par Actions</option>
                     <option value="SNC">SNC - Société en Nom Collectif</option>
                     <option value="EI">EI - Entreprise Individuelle</option>
@@ -205,7 +226,12 @@ const MyCompany = () => {
                   </label>
                   <select
                     value={formData.formeJuridique}
-                    onChange={(e) => setFormData({ ...formData, formeJuridique: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        formeJuridique: e.target.value,
+                      })
+                    }
                     disabled={!isEditing}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent disabled:bg-gray-50"
                   >
@@ -225,7 +251,12 @@ const MyCompany = () => {
                   label="Activité Principale"
                   icon={<Briefcase className="w-5 h-5" />}
                   value={formData.activitePrincipale}
-                  onChange={(e) => setFormData({ ...formData, activitePrincipale: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      activitePrincipale: e.target.value,
+                    })
+                  }
                   disabled={!isEditing}
                   placeholder="Ex: Développement logiciel"
                 />
@@ -235,7 +266,12 @@ const MyCompany = () => {
                   type="date"
                   icon={<Calendar className="w-5 h-5" />}
                   value={formData.dateCreationEntreprise}
-                  onChange={(e) => setFormData({ ...formData, dateCreationEntreprise: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      dateCreationEntreprise: e.target.value,
+                    })
+                  }
                   disabled={!isEditing}
                 />
               </div>
@@ -245,7 +281,9 @@ const MyCompany = () => {
                 type="number"
                 icon={<DollarSign className="w-5 h-5" />}
                 value={formData.capital}
-                onChange={(e) => setFormData({ ...formData, capital: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, capital: e.target.value })
+                }
                 disabled={!isEditing}
                 placeholder="Ex: 100000"
               />
@@ -258,8 +296,12 @@ const MyCompany = () => {
                 <Hash className="w-5 h-5 text-blue-600" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-gray-900">Identifications Officielles</h2>
-                <p className="text-sm text-gray-500">Numéros d'identification et registres</p>
+                <h2 className="text-xl font-bold text-gray-900">
+                  Identifications Officielles
+                </h2>
+                <p className="text-sm text-gray-500">
+                  Numéros d'identification et registres
+                </p>
               </div>
             </div>
 
@@ -269,7 +311,9 @@ const MyCompany = () => {
                   label="NIF (Numéro d'Identification Fiscale)"
                   icon={<Hash className="w-5 h-5" />}
                   value={formData.nif}
-                  onChange={(e) => setFormData({ ...formData, nif: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, nif: e.target.value })
+                  }
                   disabled={!isEditing}
                   placeholder="Ex: 099012345678901"
                 />
@@ -278,7 +322,9 @@ const MyCompany = () => {
                   label="NIS (Numéro d'Identification Statistique)"
                   icon={<Hash className="w-5 h-5" />}
                   value={formData.nis}
-                  onChange={(e) => setFormData({ ...formData, nis: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, nis: e.target.value })
+                  }
                   disabled={!isEditing}
                   placeholder="Ex: 123456789012345"
                 />
@@ -289,7 +335,12 @@ const MyCompany = () => {
                   label="Registre de Commerce"
                   icon={<FileText className="w-5 h-5" />}
                   value={formData.registreCommerce}
-                  onChange={(e) => setFormData({ ...formData, registreCommerce: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      registreCommerce: e.target.value,
+                    })
+                  }
                   disabled={!isEditing}
                   placeholder="Ex: 16/00-1234567A23"
                 />
@@ -298,18 +349,28 @@ const MyCompany = () => {
                   label="Article d'Imposition"
                   icon={<FileText className="w-5 h-5" />}
                   value={formData.articleImposition}
-                  onChange={(e) => setFormData({ ...formData, articleImposition: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      articleImposition: e.target.value,
+                    })
+                  }
                   disabled={!isEditing}
                   placeholder="Ex: 16123456789"
                 />
               </div>
 
-              {formData.typeEntreprise === 'AUTO' && (
+              {formData.typeEntreprise === "AUTO" && (
                 <Input
                   label="Numéro Auto-Entrepreneur"
                   icon={<Hash className="w-5 h-5" />}
                   value={formData.numeroAutoEntrepreneur}
-                  onChange={(e) => setFormData({ ...formData, numeroAutoEntrepreneur: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      numeroAutoEntrepreneur: e.target.value,
+                    })
+                  }
                   disabled={!isEditing}
                   placeholder="Ex: AE-123456"
                 />
@@ -323,7 +384,9 @@ const MyCompany = () => {
                 <MapPin className="w-5 h-5 text-green-600" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-gray-900">Localisation</h2>
+                <h2 className="text-xl font-bold text-gray-900">
+                  Localisation
+                </h2>
                 <p className="text-sm text-gray-500">Adresse du siège social</p>
               </div>
             </div>
@@ -331,11 +394,17 @@ const MyCompany = () => {
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Wilaya</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Wilaya
+                  </label>
                   <select
                     value={formData.wilaya}
                     onChange={(e) => {
-                      setFormData({ ...formData, wilaya: e.target.value, commune: '' })
+                      setFormData({
+                        ...formData,
+                        wilaya: e.target.value,
+                        commune: "",
+                      });
                     }}
                     disabled={!isEditing}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent disabled:bg-gray-50"
@@ -350,10 +419,14 @@ const MyCompany = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Commune</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Commune
+                  </label>
                   <select
                     value={formData.commune}
-                    onChange={(e) => setFormData({ ...formData, commune: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, commune: e.target.value })
+                    }
                     disabled={!isEditing || !formData.wilaya}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent disabled:bg-gray-50"
                   >
@@ -371,7 +444,9 @@ const MyCompany = () => {
                 label="Adresse complète du siège social"
                 icon={<MapPin className="w-5 h-5" />}
                 value={formData.siegeSocial}
-                onChange={(e) => setFormData({ ...formData, siegeSocial: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, siegeSocial: e.target.value })
+                }
                 disabled={!isEditing}
                 placeholder="Ex: 12 Rue Didouche Mourad, Alger"
               />
@@ -383,11 +458,20 @@ const MyCompany = () => {
               <div className="flex items-start gap-3">
                 <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5" />
                 <div>
-                  <h4 className="font-medium text-blue-900 mb-1">Informations importantes</h4>
+                  <h4 className="font-medium text-blue-900 mb-1">
+                    Informations importantes
+                  </h4>
                   <ul className="text-sm text-blue-700 space-y-1">
-                    <li>• Ces informations seront utilisées pour vos demandes de domiciliation</li>
-                    <li>• Assurez-vous que toutes les informations sont exactes</li>
-                    <li>• Vous pourrez modifier ces informations à tout moment</li>
+                    <li>
+                      • Ces informations seront utilisées pour vos demandes de
+                      domiciliation
+                    </li>
+                    <li>
+                      • Assurez-vous que toutes les informations sont exactes
+                    </li>
+                    <li>
+                      • Vous pourrez modifier ces informations à tout moment
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -399,7 +483,8 @@ const MyCompany = () => {
               <div className="flex items-center gap-3">
                 <CheckCircle className="w-5 h-5 text-green-600" />
                 <p className="text-sm text-green-700">
-                  Vos informations d'entreprise sont complètes. Vous pouvez maintenant faire une demande de domiciliation.
+                  Vos informations d'entreprise sont complètes. Vous pouvez
+                  maintenant faire une demande de domiciliation.
                 </p>
               </div>
             </div>
@@ -407,7 +492,7 @@ const MyCompany = () => {
         </form>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default MyCompany
+export default MyCompany;

@@ -1,58 +1,83 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { 
-  Package, Plus, Edit, Trash2, Eye, Search, Filter, ArrowUpDown, 
-  CheckCircle, AlertCircle, Download, Upload, BarChart3, RefreshCw,
-  ShoppingCart, Truck, Tag, Clipboard, QrCode, Printer, FileText,
-  Camera, Share2, HelpCircle
-} from 'lucide-react';
-import Button from '../ui/Button';
-import Card from '../ui/Card';
-import Badge from '../ui/Badge';
-import Input from '../ui/Input';
-import Modal from '../ui/Modal';
-import { useERPStore } from '../../store/erpStore';
-import { formatDate, formatCurrency } from '../../utils/formatters';
-import { Inventory } from '../../types/erp';
-import toast from 'react-hot-toast';
-import { QRCodeSVG } from 'qrcode.react';
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import {
+  Package,
+  Plus,
+  Edit,
+  Trash2,
+  Eye,
+  Search,
+  Filter,
+  ArrowUpDown,
+  CheckCircle,
+  AlertCircle,
+  Download,
+  Upload,
+  BarChart3,
+  RefreshCw,
+  ShoppingCart,
+  Truck,
+  Tag,
+  Clipboard,
+  QrCode,
+  Printer,
+  FileText,
+  Camera,
+  Share2,
+  HelpCircle,
+} from "lucide-react";
+import Button from "../ui/Button";
+import Card from "../ui/Card";
+import Badge from "../ui/Badge";
+import Input from "../ui/Input";
+import Modal from "../ui/Modal";
+import { useERPStore } from "../../store/erpStore";
+import { formatDate, formatCurrency } from "../../utils/formatters";
+import { Inventory } from "../../types/erp";
+import toast from "react-hot-toast";
+import { QRCodeSVG } from "qrcode.react";
 
 const InventoryManagement = () => {
-  const { 
-    inventory, addInventoryItem, updateInventoryItem, deleteInventoryItem,
-    getInventoryItemById, adjustInventoryQuantity, getLowStockItems
+  const {
+    inventory,
+    addInventoryItem,
+    updateInventoryItem,
+    deleteInventoryItem,
+    getInventoryItemById,
+    adjustInventoryQuantity,
+    getLowStockItems,
   } = useERPStore();
-  
+
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('all');
-  const [stockFilter, setStockFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [stockFilter, setStockFilter] = useState("all");
   const [selectedItem, setSelectedItem] = useState<Inventory | null>(null);
   const [showItemModal, setShowItemModal] = useState(false);
   const [showAdjustModal, setShowAdjustModal] = useState(false);
   const [showQRModal, setShowQRModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [sortBy, setSortBy] = useState('name');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [sortBy, setSortBy] = useState("name");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  
+
   const [formData, setFormData] = useState({
-    name: '',
-    category: '',
+    name: "",
+    category: "",
     quantity: 0,
-    unit: 'pièce',
+    unit: "pièce",
     minQuantity: 0,
-    location: '',
+    location: "",
     purchasePrice: 0,
-    supplier: '',
-    notes: ''
+    supplier: "",
+    notes: "",
   });
-  
+
   const [adjustData, setAdjustData] = useState({
     adjustment: 0,
-    reason: '',
-    reference: ''
+    reason: "",
+    reference: "",
   });
 
   useEffect(() => {
@@ -61,70 +86,77 @@ const InventoryManagement = () => {
   }, []);
 
   const filteredItems = inventory
-    .filter(item => {
-      const matchesSearch = 
+    .filter((item) => {
+      const matchesSearch =
         item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.supplier.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      const matchesCategory = categoryFilter === 'all' || item.category === categoryFilter;
-      
-      const matchesStock = 
-        stockFilter === 'all' || 
-        (stockFilter === 'low' && item.quantity <= item.minQuantity) ||
-        (stockFilter === 'out' && item.quantity === 0) ||
-        (stockFilter === 'normal' && item.quantity > item.minQuantity);
-      
+
+      const matchesCategory =
+        categoryFilter === "all" || item.category === categoryFilter;
+
+      const matchesStock =
+        stockFilter === "all" ||
+        (stockFilter === "low" && item.quantity <= item.minQuantity) ||
+        (stockFilter === "out" && item.quantity === 0) ||
+        (stockFilter === "normal" && item.quantity > item.minQuantity);
+
       return matchesSearch && matchesCategory && matchesStock;
     })
     .sort((a, b) => {
       let comparison = 0;
-      
+
       switch (sortBy) {
-        case 'name':
+        case "name":
           comparison = a.name.localeCompare(b.name);
           break;
-        case 'category':
+        case "category":
           comparison = a.category.localeCompare(b.category);
           break;
-        case 'quantity':
+        case "quantity":
           comparison = a.quantity - b.quantity;
           break;
-        case 'price':
-          comparison = (a.purchasePrice || a.cost || 0) - (b.purchasePrice || b.cost || 0);
+        case "price":
+          comparison =
+            (a.purchasePrice || a.cost || 0) - (b.purchasePrice || b.cost || 0);
           break;
         default:
           comparison = 0;
       }
-      
-      return sortOrder === 'asc' ? comparison : -comparison;
+
+      return sortOrder === "asc" ? comparison : -comparison;
     });
 
   const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
   const paginatedItems = filteredItems.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
 
-  const categories = Array.from(new Set(inventory.map(item => item.category)));
+  const categories = Array.from(
+    new Set(inventory.map((item) => item.category)),
+  );
 
   const getStockStatusVariant = (item: Inventory) => {
-    if (item.quantity === 0) return 'error';
-    if (item.quantity <= item.minQuantity) return 'warning';
-    return 'success';
+    if (item.quantity === 0) return "error";
+    if (item.quantity <= item.minQuantity) return "warning";
+    return "success";
   };
 
   const getStockStatusLabel = (item: Inventory) => {
-    if (item.quantity === 0) return 'Rupture';
-    if (item.quantity <= item.minQuantity) return 'Stock bas';
-    return 'En stock';
+    if (item.quantity === 0) return "Rupture";
+    if (item.quantity <= item.minQuantity) return "Stock bas";
+    return "En stock";
   };
 
   const handleCreateItem = () => {
     const quantity = formData.quantity;
-    const status: 'in_stock' | 'low_stock' | 'out_of_stock' =
-      quantity === 0 ? 'out_of_stock' :
-      quantity <= formData.minQuantity ? 'low_stock' : 'in_stock';
+    const status: "in_stock" | "low_stock" | "out_of_stock" =
+      quantity === 0
+        ? "out_of_stock"
+        : quantity <= formData.minQuantity
+          ? "low_stock"
+          : "in_stock";
 
     const newItem: Inventory = {
       id: `inv-${Date.now()}`,
@@ -142,13 +174,13 @@ const InventoryManagement = () => {
       status,
       notes: formData.notes,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     addInventoryItem(newItem);
     resetForm();
     setShowItemModal(false);
-    toast.success('Article ajouté avec succès');
+    toast.success("Article ajouté avec succès");
   };
 
   const handleUpdateItem = () => {
@@ -164,56 +196,58 @@ const InventoryManagement = () => {
       purchasePrice: formData.purchasePrice,
       supplier: formData.supplier,
       notes: formData.notes,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     });
 
     resetForm();
     setShowItemModal(false);
     setIsEditing(false);
     setSelectedItem(null);
-    toast.success('Article mis à jour avec succès');
+    toast.success("Article mis à jour avec succès");
   };
 
   const handleDeleteItem = (itemId: string) => {
-    if (window.confirm('Êtes-vous sûr de vouloir supprimer cet article ?')) {
+    if (window.confirm("Êtes-vous sûr de vouloir supprimer cet article ?")) {
       deleteInventoryItem(itemId);
-      toast.success('Article supprimé avec succès');
+      toast.success("Article supprimé avec succès");
     }
   };
 
   const handleAdjustQuantity = () => {
     if (!selectedItem) return;
-    
+
     const result = adjustInventoryQuantity(
-      selectedItem.id, 
-      adjustData.adjustment, 
-      `${adjustData.reason}${adjustData.reference ? ` (Réf: ${adjustData.reference})` : ''}`
+      selectedItem.id,
+      adjustData.adjustment,
+      `${adjustData.reason}${adjustData.reference ? ` (Réf: ${adjustData.reference})` : ""}`,
     );
-    
+
     if (result.success) {
-      toast.success(`Quantité ajustée avec succès (${adjustData.adjustment > 0 ? '+' : ''}${adjustData.adjustment} ${selectedItem.unit})`);
+      toast.success(
+        `Quantité ajustée avec succès (${adjustData.adjustment > 0 ? "+" : ""}${adjustData.adjustment} ${selectedItem.unit})`,
+      );
       setShowAdjustModal(false);
       setAdjustData({
         adjustment: 0,
-        reason: '',
-        reference: ''
+        reason: "",
+        reference: "",
       });
     } else {
-      toast.error(result.error || 'Erreur lors de l\'ajustement');
+      toast.error(result.error || "Erreur lors de l'ajustement");
     }
   };
 
   const resetForm = () => {
     setFormData({
-      name: '',
-      category: '',
+      name: "",
+      category: "",
       quantity: 0,
-      unit: 'pièce',
+      unit: "pièce",
       minQuantity: 0,
-      location: '',
+      location: "",
       purchasePrice: 0,
-      supplier: '',
-      notes: ''
+      supplier: "",
+      notes: "",
     });
     setSelectedItem(null);
     setIsEditing(false);
@@ -221,15 +255,15 @@ const InventoryManagement = () => {
 
   const toggleSort = (field: string) => {
     if (sortBy === field) {
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
     } else {
       setSortBy(field);
-      setSortOrder('asc');
+      setSortOrder("asc");
     }
   };
 
   const exportInventory = () => {
-    const inventoryData = filteredItems.map(item => ({
+    const inventoryData = filteredItems.map((item) => ({
       id: item.id,
       name: item.name,
       category: item.category,
@@ -240,29 +274,29 @@ const InventoryManagement = () => {
       purchasePrice: formatCurrency(item.purchasePrice),
       supplier: item.supplier,
       lastRestockDate: formatDate(item.lastRestockDate),
-      notes: item.notes || '',
-      status: getStockStatusLabel(item)
+      notes: item.notes || "",
+      status: getStockStatusLabel(item),
     }));
-    
+
     const dataStr = JSON.stringify(inventoryData, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const dataBlob = new Blob([dataStr], { type: "application/json" });
     const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
-    link.download = `coffice-inventory-${new Date().toISOString().split('T')[0]}.json`;
+    link.download = `coffice-inventory-${new Date().toISOString().split("T")[0]}.json`;
     link.click();
-    toast.success('Inventaire exporté avec succès');
+    toast.success("Inventaire exporté avec succès");
   };
 
   const printQRCode = () => {
     if (!selectedItem) return;
-    
-    const printWindow = window.open('', '_blank');
+
+    const printWindow = window.open("", "_blank");
     if (!printWindow) {
-      toast.error('Veuillez autoriser les popups pour imprimer');
+      toast.error("Veuillez autoriser les popups pour imprimer");
       return;
     }
-    
+
     printWindow.document.write(`
       <html>
         <head>
@@ -283,7 +317,7 @@ const InventoryManagement = () => {
               <p><strong>Emplacement:</strong> ${selectedItem.location}</p>
             </div>
             <div class="qr-code">
-              <img src="${document.getElementById('qr-code-to-print')?.querySelector('canvas')?.toDataURL()}" />
+              <img src="${document.getElementById("qr-code-to-print")?.querySelector("canvas")?.toDataURL()}" />
             </div>
           </div>
           <script>
@@ -292,7 +326,7 @@ const InventoryManagement = () => {
         </body>
       </html>
     `);
-    
+
     printWindow.document.close();
   };
 
@@ -309,7 +343,9 @@ const InventoryManagement = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-display font-bold text-primary">Gestion de l'Inventaire</h1>
+          <h1 className="text-3xl font-display font-bold text-primary">
+            Gestion de l'Inventaire
+          </h1>
           <p className="text-gray-600">Gérez votre stock et vos fournitures</p>
         </div>
         <div className="flex gap-3">
@@ -333,7 +369,9 @@ const InventoryManagement = () => {
             </div>
             <div className="ml-4">
               <p className="text-sm text-gray-600">Total Articles</p>
-              <p className="text-2xl font-bold text-primary">{inventory.length}</p>
+              <p className="text-2xl font-bold text-primary">
+                {inventory.length}
+              </p>
             </div>
           </div>
         </Card>
@@ -346,7 +384,7 @@ const InventoryManagement = () => {
             <div className="ml-4">
               <p className="text-sm text-gray-600">En Stock</p>
               <p className="text-2xl font-bold text-primary">
-                {inventory.filter(i => i.quantity > i.minQuantity).length}
+                {inventory.filter((i) => i.quantity > i.minQuantity).length}
               </p>
             </div>
           </div>
@@ -360,7 +398,11 @@ const InventoryManagement = () => {
             <div className="ml-4">
               <p className="text-sm text-gray-600">Stock Bas</p>
               <p className="text-2xl font-bold text-primary">
-                {inventory.filter(i => i.quantity > 0 && i.quantity <= i.minQuantity).length}
+                {
+                  inventory.filter(
+                    (i) => i.quantity > 0 && i.quantity <= i.minQuantity,
+                  ).length
+                }
               </p>
             </div>
           </div>
@@ -374,7 +416,7 @@ const InventoryManagement = () => {
             <div className="ml-4">
               <p className="text-sm text-gray-600">Rupture</p>
               <p className="text-2xl font-bold text-primary">
-                {inventory.filter(i => i.quantity === 0).length}
+                {inventory.filter((i) => i.quantity === 0).length}
               </p>
             </div>
           </div>
@@ -390,15 +432,17 @@ const InventoryManagement = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          
+
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
             className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-accent focus:outline-none"
           >
             <option value="all">Toutes les catégories</option>
-            {categories.map(category => (
-              <option key={category} value={category}>{category}</option>
+            {categories.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
             ))}
           </select>
 
@@ -426,35 +470,35 @@ const InventoryManagement = () => {
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
-                <th 
+                <th
                   className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                  onClick={() => toggleSort('name')}
+                  onClick={() => toggleSort("name")}
                 >
                   <div className="flex items-center">
                     Article
-                    {sortBy === 'name' && (
+                    {sortBy === "name" && (
                       <ArrowUpDown className="w-4 h-4 ml-1" />
                     )}
                   </div>
                 </th>
-                <th 
+                <th
                   className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                  onClick={() => toggleSort('category')}
+                  onClick={() => toggleSort("category")}
                 >
                   <div className="flex items-center">
                     Catégorie
-                    {sortBy === 'category' && (
+                    {sortBy === "category" && (
                       <ArrowUpDown className="w-4 h-4 ml-1" />
                     )}
                   </div>
                 </th>
-                <th 
+                <th
                   className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                  onClick={() => toggleSort('quantity')}
+                  onClick={() => toggleSort("quantity")}
                 >
                   <div className="flex items-center">
                     Quantité
-                    {sortBy === 'quantity' && (
+                    {sortBy === "quantity" && (
                       <ArrowUpDown className="w-4 h-4 ml-1" />
                     )}
                   </div>
@@ -462,13 +506,13 @@ const InventoryManagement = () => {
                 <th className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                   Statut
                 </th>
-                <th 
+                <th
                   className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                  onClick={() => toggleSort('price')}
+                  onClick={() => toggleSort("price")}
                 >
                   <div className="flex items-center">
                     Prix
-                    {sortBy === 'price' && (
+                    {sortBy === "price" && (
                       <ArrowUpDown className="w-4 h-4 ml-1" />
                     )}
                   </div>
@@ -496,8 +540,12 @@ const InventoryManagement = () => {
                         <Package className="w-5 h-5 text-accent" />
                       </div>
                       <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{item.name}</div>
-                        <div className="text-xs text-gray-500">{item.supplier}</div>
+                        <div className="text-sm font-medium text-gray-900">
+                          {item.name}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {item.supplier}
+                        </div>
                       </div>
                     </div>
                   </td>
@@ -539,7 +587,7 @@ const InventoryManagement = () => {
                             location: item.location,
                             purchasePrice: item.purchasePrice,
                             supplier: item.supplier,
-                            notes: item.notes || ''
+                            notes: item.notes || "",
                           });
                           setIsEditing(true);
                           setShowItemModal(true);
@@ -547,7 +595,7 @@ const InventoryManagement = () => {
                       >
                         <Eye className="w-4 h-4" />
                       </Button>
-                      
+
                       <Button
                         variant="outline"
                         size="sm"
@@ -558,7 +606,7 @@ const InventoryManagement = () => {
                       >
                         <RefreshCw className="w-4 h-4" />
                       </Button>
-                      
+
                       <Button
                         variant="outline"
                         size="sm"
@@ -569,7 +617,7 @@ const InventoryManagement = () => {
                       >
                         <QrCode className="w-4 h-4" />
                       </Button>
-                      
+
                       <Button
                         variant="outline"
                         size="sm"
@@ -589,13 +637,15 @@ const InventoryManagement = () => {
         {totalPages > 1 && (
           <div className="px-6 py-4 border-t border-gray-200 flex justify-between items-center">
             <div className="text-sm text-gray-500">
-              Affichage de {(currentPage - 1) * itemsPerPage + 1} à {Math.min(currentPage * itemsPerPage, filteredItems.length)} sur {filteredItems.length} articles
+              Affichage de {(currentPage - 1) * itemsPerPage + 1} à{" "}
+              {Math.min(currentPage * itemsPerPage, filteredItems.length)} sur{" "}
+              {filteredItems.length} articles
             </div>
             <div className="flex space-x-2">
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
               >
                 Précédent
@@ -603,7 +653,9 @@ const InventoryManagement = () => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
                 disabled={currentPage === totalPages}
               >
                 Suivant
@@ -620,7 +672,7 @@ const InventoryManagement = () => {
           setShowItemModal(false);
           resetForm();
         }}
-        title={isEditing ? 'Détails de l\'article' : 'Nouvel article'}
+        title={isEditing ? "Détails de l'article" : "Nouvel article"}
         size="lg"
       >
         <div className="space-y-6">
@@ -628,24 +680,30 @@ const InventoryManagement = () => {
             <Input
               label="Nom de l'article"
               value={formData.name}
-              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, name: e.target.value }))
+              }
               placeholder="Ex: Cartouche d'encre"
-              disabled={isEditing && selectedItem?.id.includes('system-')}
+              disabled={isEditing && selectedItem?.id.includes("system-")}
             />
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Catégorie
               </label>
               <select
                 value={formData.category}
-                onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, category: e.target.value }))
+                }
                 className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-accent focus:outline-none"
-                disabled={isEditing && selectedItem?.id.includes('system-')}
+                disabled={isEditing && selectedItem?.id.includes("system-")}
               >
                 <option value="">Sélectionner une catégorie</option>
-                {categories.map(category => (
-                  <option key={category} value={category}>{category}</option>
+                {categories.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
                 ))}
                 <option value="new">+ Nouvelle catégorie</option>
               </select>
@@ -658,25 +716,37 @@ const InventoryManagement = () => {
               type="number"
               min="0"
               value={formData.quantity}
-              onChange={(e) => setFormData(prev => ({ ...prev, quantity: parseInt(e.target.value) || 0 }))}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  quantity: parseInt(e.target.value) || 0,
+                }))
+              }
               disabled={isEditing}
             />
-            
+
             <Input
               label="Quantité minimale"
               type="number"
               min="0"
               value={formData.minQuantity}
-              onChange={(e) => setFormData(prev => ({ ...prev, minQuantity: parseInt(e.target.value) || 0 }))}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  minQuantity: parseInt(e.target.value) || 0,
+                }))
+              }
             />
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Unité
               </label>
               <select
                 value={formData.unit}
-                onChange={(e) => setFormData(prev => ({ ...prev, unit: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, unit: e.target.value }))
+                }
                 className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-accent focus:outline-none"
               >
                 <option value="pièce">Pièce</option>
@@ -695,13 +765,20 @@ const InventoryManagement = () => {
               type="number"
               min="0"
               value={formData.purchasePrice}
-              onChange={(e) => setFormData(prev => ({ ...prev, purchasePrice: parseFloat(e.target.value) || 0 }))}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  purchasePrice: parseFloat(e.target.value) || 0,
+                }))
+              }
             />
-            
+
             <Input
               label="Fournisseur"
               value={formData.supplier}
-              onChange={(e) => setFormData(prev => ({ ...prev, supplier: e.target.value }))}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, supplier: e.target.value }))
+              }
               placeholder="Nom du fournisseur"
             />
           </div>
@@ -709,7 +786,9 @@ const InventoryManagement = () => {
           <Input
             label="Emplacement"
             value={formData.location}
-            onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, location: e.target.value }))
+            }
             placeholder="Ex: Étagère A, Rangée 3"
           />
 
@@ -719,7 +798,9 @@ const InventoryManagement = () => {
             </label>
             <textarea
               value={formData.notes}
-              onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, notes: e.target.value }))
+              }
               rows={3}
               className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-accent focus:outline-none resize-none"
               placeholder="Notes additionnelles..."
@@ -728,11 +809,17 @@ const InventoryManagement = () => {
 
           {isEditing && selectedItem && (
             <div className="p-4 bg-gray-50 rounded-lg">
-              <h4 className="font-medium text-primary mb-3">Informations supplémentaires</h4>
+              <h4 className="font-medium text-primary mb-3">
+                Informations supplémentaires
+              </h4>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-gray-600">Dernier réapprovisionnement</p>
-                  <p className="font-medium">{formatDate(selectedItem.lastRestockDate)}</p>
+                  <p className="text-sm text-gray-600">
+                    Dernier réapprovisionnement
+                  </p>
+                  <p className="font-medium">
+                    {formatDate(selectedItem.lastRestockDate)}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Statut</p>
@@ -742,11 +829,17 @@ const InventoryManagement = () => {
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Valeur totale</p>
-                  <p className="font-medium">{formatCurrency(selectedItem.quantity * selectedItem.purchasePrice)}</p>
+                  <p className="font-medium">
+                    {formatCurrency(
+                      selectedItem.quantity * selectedItem.purchasePrice,
+                    )}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Date de création</p>
-                  <p className="font-medium">{formatDate(selectedItem.createdAt)}</p>
+                  <p className="font-medium">
+                    {formatDate(selectedItem.createdAt)}
+                  </p>
                 </div>
               </div>
             </div>
@@ -793,8 +886,8 @@ const InventoryManagement = () => {
             setShowAdjustModal(false);
             setAdjustData({
               adjustment: 0,
-              reason: '',
-              reference: ''
+              reason: "",
+              reference: "",
             });
           }}
           title="Ajuster la quantité"
@@ -802,10 +895,14 @@ const InventoryManagement = () => {
         >
           <div className="space-y-6">
             <div className="p-4 bg-gray-50 rounded-lg">
-              <h4 className="font-medium text-primary mb-2">{selectedItem.name}</h4>
+              <h4 className="font-medium text-primary mb-2">
+                {selectedItem.name}
+              </h4>
               <div className="flex justify-between items-center">
                 <p className="text-sm text-gray-600">Quantité actuelle</p>
-                <p className="font-medium">{selectedItem.quantity} {selectedItem.unit}</p>
+                <p className="font-medium">
+                  {selectedItem.quantity} {selectedItem.unit}
+                </p>
               </div>
             </div>
 
@@ -813,7 +910,12 @@ const InventoryManagement = () => {
               label="Ajustement"
               type="number"
               value={adjustData.adjustment}
-              onChange={(e) => setAdjustData(prev => ({ ...prev, adjustment: parseInt(e.target.value) || 0 }))}
+              onChange={(e) =>
+                setAdjustData((prev) => ({
+                  ...prev,
+                  adjustment: parseInt(e.target.value) || 0,
+                }))
+              }
               placeholder="Ex: 10 pour ajouter, -5 pour retirer"
             />
 
@@ -823,11 +925,15 @@ const InventoryManagement = () => {
               </label>
               <select
                 value={adjustData.reason}
-                onChange={(e) => setAdjustData(prev => ({ ...prev, reason: e.target.value }))}
+                onChange={(e) =>
+                  setAdjustData((prev) => ({ ...prev, reason: e.target.value }))
+                }
                 className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-accent focus:outline-none"
               >
                 <option value="">Sélectionner une raison</option>
-                <option value="Réception de commande">Réception de commande</option>
+                <option value="Réception de commande">
+                  Réception de commande
+                </option>
                 <option value="Utilisation">Utilisation</option>
                 <option value="Inventaire physique">Inventaire physique</option>
                 <option value="Perte/Dommage">Perte/Dommage</option>
@@ -840,7 +946,12 @@ const InventoryManagement = () => {
             <Input
               label="Référence (optionnel)"
               value={adjustData.reference}
-              onChange={(e) => setAdjustData(prev => ({ ...prev, reference: e.target.value }))}
+              onChange={(e) =>
+                setAdjustData((prev) => ({
+                  ...prev,
+                  reference: e.target.value,
+                }))
+              }
               placeholder="Ex: Numéro de commande, bon de livraison..."
             />
 
@@ -852,8 +963,8 @@ const InventoryManagement = () => {
                   setShowAdjustModal(false);
                   setAdjustData({
                     adjustment: 0,
-                    reason: '',
-                    reference: ''
+                    reason: "",
+                    reference: "",
                   });
                 }}
                 className="flex-1"
@@ -882,9 +993,12 @@ const InventoryManagement = () => {
         >
           <div className="space-y-6">
             <div className="p-4 bg-gray-50 rounded-lg">
-              <h4 className="font-medium text-primary mb-2">{selectedItem.name}</h4>
+              <h4 className="font-medium text-primary mb-2">
+                {selectedItem.name}
+              </h4>
               <p className="text-sm text-gray-600 mb-2">
-                Catégorie: {selectedItem.category} | Emplacement: {selectedItem.location}
+                Catégorie: {selectedItem.category} | Emplacement:{" "}
+                {selectedItem.location}
               </p>
               <Badge variant={getStockStatusVariant(selectedItem)}>
                 {getStockStatusLabel(selectedItem)}
@@ -892,12 +1006,12 @@ const InventoryManagement = () => {
             </div>
 
             <div className="flex justify-center" id="qr-code-to-print">
-              <QRCodeSVG 
+              <QRCodeSVG
                 value={JSON.stringify({
                   id: selectedItem.id,
                   name: selectedItem.name,
                   category: selectedItem.category,
-                  location: selectedItem.location
+                  location: selectedItem.location,
                 })}
                 size={200}
                 level="H"
@@ -913,10 +1027,7 @@ const InventoryManagement = () => {
               >
                 Fermer
               </Button>
-              <Button
-                onClick={printQRCode}
-                className="flex-1"
-              >
+              <Button onClick={printQRCode} className="flex-1">
                 <Printer className="w-4 h-4 mr-2" />
                 Imprimer
               </Button>
@@ -942,41 +1053,52 @@ const InventoryManagement = () => {
                   Alerte de Stock Bas
                 </h3>
                 <p className="text-yellow-700">
-                  {getLowStockItems().length} article(s) nécessite(nt) un réapprovisionnement
+                  {getLowStockItems().length} article(s) nécessite(nt) un
+                  réapprovisionnement
                 </p>
               </div>
             </div>
-            
+
             <div className="space-y-3">
-              {getLowStockItems().slice(0, 3).map((item, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-white rounded-lg">
-                  <div className="flex items-center">
-                    <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
-                      <Package className="w-5 h-5 text-yellow-600" />
+              {getLowStockItems()
+                .slice(0, 3)
+                .map((item, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-3 bg-white rounded-lg"
+                  >
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
+                        <Package className="w-5 h-5 text-yellow-600" />
+                      </div>
+                      <div className="ml-3">
+                        <p className="font-medium text-gray-900">{item.name}</p>
+                        <p className="text-sm text-gray-600">{item.category}</p>
+                      </div>
                     </div>
-                    <div className="ml-3">
-                      <p className="font-medium text-gray-900">{item.name}</p>
-                      <p className="text-sm text-gray-600">{item.category}</p>
+                    <div className="text-right">
+                      <p className="font-medium text-red-600">
+                        {item.quantity} / {item.minQuantity} {item.unit}
+                      </p>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedItem(item);
+                          setShowAdjustModal(true);
+                          setAdjustData((prev) => ({
+                            ...prev,
+                            adjustment: item.minQuantity * 2 - item.quantity,
+                          }));
+                        }}
+                      >
+                        <ShoppingCart className="w-4 h-4 mr-1" />
+                        Commander
+                      </Button>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="font-medium text-red-600">{item.quantity} / {item.minQuantity} {item.unit}</p>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => {
-                        setSelectedItem(item);
-                        setShowAdjustModal(true);
-                        setAdjustData(prev => ({ ...prev, adjustment: item.minQuantity * 2 - item.quantity }));
-                      }}
-                    >
-                      <ShoppingCart className="w-4 h-4 mr-1" />
-                      Commander
-                    </Button>
-                  </div>
-                </div>
-              ))}
-              
+                ))}
+
               {getLowStockItems().length > 3 && (
                 <Button variant="outline" className="w-full">
                   Voir tous les articles en stock bas
@@ -997,7 +1119,7 @@ const InventoryManagement = () => {
           <h3 className="text-lg font-display font-bold text-primary mb-6">
             Valeur de l'Inventaire
           </h3>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="p-4 bg-gray-50 rounded-lg">
               <div className="flex items-center justify-between mb-2">
@@ -1005,42 +1127,47 @@ const InventoryManagement = () => {
                 <Tag className="w-5 h-5 text-accent" />
               </div>
               <p className="text-2xl font-bold text-accent">
-                {formatCurrency(inventory.reduce((sum, item) => sum + (item.quantity * item.purchasePrice), 0))}
+                {formatCurrency(
+                  inventory.reduce(
+                    (sum, item) => sum + item.quantity * item.purchasePrice,
+                    0,
+                  ),
+                )}
               </p>
               <p className="text-sm text-gray-600 mt-1">
                 Basé sur les prix d'achat
               </p>
             </div>
-            
+
             <div className="p-4 bg-gray-50 rounded-lg">
               <div className="flex items-center justify-between mb-2">
                 <h4 className="font-medium text-primary">Articles Actifs</h4>
                 <Package className="w-5 h-5 text-teal" />
               </div>
               <p className="text-2xl font-bold text-teal">
-                {inventory.filter(i => i.quantity > 0).length}
+                {inventory.filter((i) => i.quantity > 0).length}
               </p>
               <p className="text-sm text-gray-600 mt-1">
                 Sur {inventory.length} articles au total
               </p>
             </div>
-            
+
             <div className="p-4 bg-gray-50 rounded-lg">
               <div className="flex items-center justify-between mb-2">
                 <h4 className="font-medium text-primary">Taux de Rotation</h4>
                 <RefreshCw className="w-5 h-5 text-warm" />
               </div>
-              <p className="text-2xl font-bold text-warm">
-                3.2
-              </p>
+              <p className="text-2xl font-bold text-warm">3.2</p>
               <p className="text-sm text-gray-600 mt-1">
                 Rotations par an (simulé)
               </p>
             </div>
           </div>
-          
+
           <div className="mt-6">
-            <h4 className="font-medium text-primary mb-4">Valeur par catégorie</h4>
+            <h4 className="font-medium text-primary mb-4">
+              Valeur par catégorie
+            </h4>
             <div className="bg-gray-50 h-48 rounded-lg flex items-center justify-center">
               <BarChart3 className="w-12 h-12 text-gray-300" />
               <p className="text-gray-500 ml-2">Graphique (simulé)</p>
@@ -1059,47 +1186,56 @@ const InventoryManagement = () => {
           <h3 className="text-lg font-display font-bold text-primary mb-6">
             Actions Rapides
           </h3>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="p-4 bg-gray-50 rounded-lg">
               <div className="flex items-center mb-3">
                 <div className="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center">
                   <ShoppingCart className="w-5 h-5 text-accent" />
                 </div>
-                <h4 className="font-medium text-primary ml-3">Commander des articles</h4>
+                <h4 className="font-medium text-primary ml-3">
+                  Commander des articles
+                </h4>
               </div>
               <p className="text-sm text-gray-600 mb-3">
-                Générez automatiquement des bons de commande pour les articles en stock bas.
+                Générez automatiquement des bons de commande pour les articles
+                en stock bas.
               </p>
               <Button variant="outline" size="sm" className="w-full">
                 Générer des commandes
               </Button>
             </div>
-            
+
             <div className="p-4 bg-gray-50 rounded-lg">
               <div className="flex items-center mb-3">
                 <div className="w-10 h-10 bg-teal/10 rounded-full flex items-center justify-center">
                   <Clipboard className="w-5 h-5 text-teal" />
                 </div>
-                <h4 className="font-medium text-primary ml-3">Inventaire physique</h4>
+                <h4 className="font-medium text-primary ml-3">
+                  Inventaire physique
+                </h4>
               </div>
               <p className="text-sm text-gray-600 mb-3">
-                Lancez un processus d'inventaire physique pour vérifier les stocks.
+                Lancez un processus d'inventaire physique pour vérifier les
+                stocks.
               </p>
               <Button variant="outline" size="sm" className="w-full">
                 Démarrer l'inventaire
               </Button>
             </div>
-            
+
             <div className="p-4 bg-gray-50 rounded-lg">
               <div className="flex items-center mb-3">
                 <div className="w-10 h-10 bg-warm/10 rounded-full flex items-center justify-center">
                   <Truck className="w-5 h-5 text-warm" />
                 </div>
-                <h4 className="font-medium text-primary ml-3">Réception de commande</h4>
+                <h4 className="font-medium text-primary ml-3">
+                  Réception de commande
+                </h4>
               </div>
               <p className="text-sm text-gray-600 mb-3">
-                Enregistrez la réception d'une commande et mettez à jour l'inventaire.
+                Enregistrez la réception d'une commande et mettez à jour
+                l'inventaire.
               </p>
               <Button variant="outline" size="sm" className="w-full">
                 Enregistrer une réception
@@ -1125,34 +1261,44 @@ const InventoryManagement = () => {
               Tous les rapports
             </Button>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="p-4 bg-gray-50 rounded-lg">
               <div className="flex items-center justify-between mb-3">
-                <h4 className="font-medium text-primary">Rapport de Valorisation</h4>
+                <h4 className="font-medium text-primary">
+                  Rapport de Valorisation
+                </h4>
                 <Download className="w-5 h-5 text-gray-500" />
               </div>
               <p className="text-sm text-gray-600 mb-3">
-                Analyse complète de la valeur de l'inventaire par catégorie et par article.
+                Analyse complète de la valeur de l'inventaire par catégorie et
+                par article.
               </p>
               <div className="flex justify-between items-center">
-                <span className="text-xs text-gray-500">Dernière génération: {formatDate(new Date())}</span>
+                <span className="text-xs text-gray-500">
+                  Dernière génération: {formatDate(new Date())}
+                </span>
                 <Button variant="outline" size="sm">
                   Générer
                 </Button>
               </div>
             </div>
-            
+
             <div className="p-4 bg-gray-50 rounded-lg">
               <div className="flex items-center justify-between mb-3">
-                <h4 className="font-medium text-primary">Rapport de Mouvements</h4>
+                <h4 className="font-medium text-primary">
+                  Rapport de Mouvements
+                </h4>
                 <Download className="w-5 h-5 text-gray-500" />
               </div>
               <p className="text-sm text-gray-600 mb-3">
-                Historique des entrées et sorties de stock sur une période donnée.
+                Historique des entrées et sorties de stock sur une période
+                donnée.
               </p>
               <div className="flex justify-between items-center">
-                <span className="text-xs text-gray-500">Dernière génération: {formatDate(new Date())}</span>
+                <span className="text-xs text-gray-500">
+                  Dernière génération: {formatDate(new Date())}
+                </span>
                 <Button variant="outline" size="sm">
                   Générer
                 </Button>
@@ -1178,13 +1324,12 @@ const InventoryManagement = () => {
                 Optimisez votre gestion d'inventaire
               </h3>
               <p className="text-gray-600 mb-4">
-                Découvrez comment optimiser votre gestion d'inventaire avec nos meilleures pratiques.
-                Réduisez les ruptures de stock, améliorez la rotation des stocks et minimisez les coûts de stockage.
+                Découvrez comment optimiser votre gestion d'inventaire avec nos
+                meilleures pratiques. Réduisez les ruptures de stock, améliorez
+                la rotation des stocks et minimisez les coûts de stockage.
               </p>
               <div className="flex space-x-3">
-                <Button>
-                  Consulter le guide
-                </Button>
+                <Button>Consulter le guide</Button>
                 <Button variant="outline">
                   <Share2 className="w-4 h-4 mr-2" />
                   Partager

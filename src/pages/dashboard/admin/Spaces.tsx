@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import {
   Building,
   Plus,
@@ -16,60 +16,61 @@ import {
   Printer,
   Video,
   Grid,
-  List
-} from 'lucide-react'
-import { useAppStore } from '../../../store/store'
-import Button from '../../../components/ui/Button'
-import Card from '../../../components/ui/Card'
-import Modal from '../../../components/ui/Modal'
-import Input from '../../../components/ui/Input'
-import toast from 'react-hot-toast'
+  List,
+} from "lucide-react";
+import { useAppStore } from "../../../store/store";
+import Button from "../../../components/ui/Button";
+import Card from "../../../components/ui/Card";
+import Modal from "../../../components/ui/Modal";
+import Input from "../../../components/ui/Input";
+import toast from "react-hot-toast";
 import {
   ESPACE_TYPE_OPTIONS,
   DEFAULT_ESPACE_TYPE,
   getEspaceTypeLabel,
   getEspaceTypeColor,
-  type EspaceType
-} from '../../../constants'
+  type EspaceType,
+} from "../../../constants";
 
 const equipementsList = [
-  { id: 'wifi', label: 'WiFi', icon: Wifi },
-  { id: 'ecran', label: 'Ecran', icon: Monitor },
-  { id: 'cafe', label: 'Cafe', icon: Coffee },
-  { id: 'imprimante', label: 'Imprimante', icon: Printer },
-  { id: 'visio', label: 'Visioconference', icon: Video }
-]
+  { id: "wifi", label: "WiFi", icon: Wifi },
+  { id: "ecran", label: "Ecran", icon: Monitor },
+  { id: "cafe", label: "Cafe", icon: Coffee },
+  { id: "imprimante", label: "Imprimante", icon: Printer },
+  { id: "visio", label: "Visioconference", icon: Video },
+];
 
 const Spaces = () => {
-  const { espaces, addEspace, updateEspace, deleteEspace, loadEspaces } = useAppStore()
-  const [showModal, setShowModal] = useState(false)
-  const [editingSpace, setEditingSpace] = useState<any>(null)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [filterType, setFilterType] = useState<string>('all')
-  const [filterStatus, setFilterStatus] = useState<string>('all')
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
-  const [loading, setLoading] = useState(false)
+  const { espaces, addEspace, updateEspace, deleteEspace, loadEspaces } =
+    useAppStore();
+  const [showModal, setShowModal] = useState(false);
+  const [editingSpace, setEditingSpace] = useState<any>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterType, setFilterType] = useState<string>("all");
+  const [filterStatus, setFilterStatus] = useState<string>("all");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
-    nom: '',
+    nom: "",
     type: DEFAULT_ESPACE_TYPE as EspaceType,
     capacite: 1,
     prixHeure: 0,
     prixDemiJournee: 0,
     prixJour: 0,
     prixSemaine: 0,
-    description: '',
+    description: "",
     equipements: [] as string[],
-    disponible: true
-  })
+    disponible: true,
+  });
 
   useEffect(() => {
-    loadEspaces()
-  }, [])
+    loadEspaces();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
+    e.preventDefault();
+    setLoading(true);
 
     try {
       const dataToSend = {
@@ -82,53 +83,53 @@ const Spaces = () => {
         prix_semaine: formData.prixSemaine,
         description: formData.description,
         equipements: formData.equipements,
-        disponible: formData.disponible
-      }
+        disponible: formData.disponible,
+      };
 
       if (editingSpace) {
-        const result = await updateEspace(editingSpace.id, dataToSend)
+        const result = await updateEspace(editingSpace.id, dataToSend);
         if (result.success) {
-          toast.success('Espace modifie avec succes')
-          setShowModal(false)
-          resetForm()
+          toast.success("Espace modifie avec succes");
+          setShowModal(false);
+          resetForm();
         } else {
-          toast.error(result.error || 'Erreur lors de la modification')
+          toast.error(result.error || "Erreur lors de la modification");
         }
       } else {
-        const result = await addEspace(dataToSend)
+        const result = await addEspace(dataToSend);
         if (result.success) {
-          toast.success('Espace cree avec succes')
-          setShowModal(false)
-          resetForm()
+          toast.success("Espace cree avec succes");
+          setShowModal(false);
+          resetForm();
         } else {
-          toast.error(result.error || 'Erreur lors de la creation')
+          toast.error(result.error || "Erreur lors de la creation");
         }
       }
     } catch (error: any) {
-      toast.error(error.message || 'Erreur lors de l\'operation')
+      toast.error(error.message || "Erreur lors de l'operation");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const resetForm = () => {
     setFormData({
-      nom: '',
+      nom: "",
       type: DEFAULT_ESPACE_TYPE as EspaceType,
       capacite: 1,
       prixHeure: 0,
       prixDemiJournee: 0,
       prixJour: 0,
       prixSemaine: 0,
-      description: '',
+      description: "",
       equipements: [],
-      disponible: true
-    })
-    setEditingSpace(null)
-  }
+      disponible: true,
+    });
+    setEditingSpace(null);
+  };
 
   const handleEdit = (space: any) => {
-    setEditingSpace(space)
+    setEditingSpace(space);
     setFormData({
       nom: space.nom,
       type: space.type,
@@ -137,59 +138,64 @@ const Spaces = () => {
       prixDemiJournee: space.prixDemiJournee || 0,
       prixJour: space.prixJour || 0,
       prixSemaine: space.prixSemaine || 0,
-      description: space.description || '',
+      description: space.description || "",
       equipements: space.equipements || [],
-      disponible: space.disponible !== false
-    })
-    setShowModal(true)
-  }
+      disponible: space.disponible !== false,
+    });
+    setShowModal(true);
+  };
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm('Etes-vous sur de vouloir supprimer cet espace?')) return
+    if (!window.confirm("Etes-vous sur de vouloir supprimer cet espace?"))
+      return;
 
     try {
-      const result = await deleteEspace(id)
+      const result = await deleteEspace(id);
       if (result.success) {
-        toast.success('Espace supprime avec succes')
+        toast.success("Espace supprime avec succes");
       } else {
-        toast.error(result.error || 'Erreur lors de la suppression')
+        toast.error(result.error || "Erreur lors de la suppression");
       }
     } catch (error: any) {
-      toast.error(error.message || 'Erreur lors de la suppression')
+      toast.error(error.message || "Erreur lors de la suppression");
     }
-  }
+  };
 
   const toggleEquipement = (equipId: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       equipements: prev.equipements.includes(equipId)
-        ? prev.equipements.filter(e => e !== equipId)
-        : [...prev.equipements, equipId]
-    }))
-  }
+        ? prev.equipements.filter((e) => e !== equipId)
+        : [...prev.equipements, equipId],
+    }));
+  };
 
-  const filteredSpaces = espaces.filter(space => {
-    const matchSearch = space.nom.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchType = filterType === 'all' || space.type === filterType
-    const matchStatus = filterStatus === 'all' ||
-      (filterStatus === 'disponible' && space.disponible) ||
-      (filterStatus === 'indisponible' && !space.disponible)
-    return matchSearch && matchType && matchStatus
-  })
+  const filteredSpaces = espaces.filter((space) => {
+    const matchSearch = space.nom
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchType = filterType === "all" || space.type === filterType;
+    const matchStatus =
+      filterStatus === "all" ||
+      (filterStatus === "disponible" && space.disponible) ||
+      (filterStatus === "indisponible" && !space.disponible);
+    return matchSearch && matchType && matchStatus;
+  });
 
   const stats = {
     total: espaces.length,
-    disponibles: espaces.filter(e => e.disponible).length,
-    occupes: espaces.filter(e => !e.disponible).length,
-    capaciteTotal: espaces.reduce((sum, e) => sum + (e.capacite || 0), 0)
-  }
-
+    disponibles: espaces.filter((e) => e.disponible).length,
+    occupes: espaces.filter((e) => !e.disponible).length,
+    capaciteTotal: espaces.reduce((sum, e) => sum + (e.capacite || 0), 0),
+  };
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Gestion des Espaces</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Gestion des Espaces
+          </h1>
           <p className="text-gray-600 mt-1">Gerez vos espaces de coworking</p>
         </div>
         <Button onClick={() => setShowModal(true)} size="lg">
@@ -218,7 +224,9 @@ const Spaces = () => {
             </div>
             <div>
               <p className="text-sm text-gray-600">Disponibles</p>
-              <p className="text-2xl font-bold text-green-600">{stats.disponibles}</p>
+              <p className="text-2xl font-bold text-green-600">
+                {stats.disponibles}
+              </p>
             </div>
           </div>
         </Card>
@@ -242,7 +250,9 @@ const Spaces = () => {
             </div>
             <div>
               <p className="text-sm text-gray-600">Capacite Totale</p>
-              <p className="text-2xl font-bold text-teal-600">{stats.capaciteTotal}</p>
+              <p className="text-2xl font-bold text-teal-600">
+                {stats.capaciteTotal}
+              </p>
             </div>
           </div>
         </Card>
@@ -266,8 +276,10 @@ const Spaces = () => {
               className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
             >
               <option value="all">Tous les types</option>
-              {ESPACE_TYPE_OPTIONS.map(opt => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              {ESPACE_TYPE_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
               ))}
             </select>
 
@@ -282,10 +294,14 @@ const Spaces = () => {
             </select>
 
             <button
-              onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
+              onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
               className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
             >
-              {viewMode === 'grid' ? <List className="w-5 h-5" /> : <Grid className="w-5 h-5" />}
+              {viewMode === "grid" ? (
+                <List className="w-5 h-5" />
+              ) : (
+                <Grid className="w-5 h-5" />
+              )}
             </button>
           </div>
         </div>
@@ -294,13 +310,15 @@ const Spaces = () => {
       {filteredSpaces.length === 0 ? (
         <Card className="p-12 text-center">
           <Building className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">Aucun espace trouve</h3>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            Aucun espace trouve
+          </h3>
           <p className="text-gray-500 mb-6">
-            {searchTerm || filterType !== 'all' || filterStatus !== 'all'
-              ? 'Aucun espace ne correspond a vos criteres de recherche.'
-              : 'Commencez par creer votre premier espace de coworking.'}
+            {searchTerm || filterType !== "all" || filterStatus !== "all"
+              ? "Aucun espace ne correspond a vos criteres de recherche."
+              : "Commencez par creer votre premier espace de coworking."}
           </p>
-          {!searchTerm && filterType === 'all' && filterStatus === 'all' && (
+          {!searchTerm && filterType === "all" && filterStatus === "all" && (
             <Button onClick={() => setShowModal(true)}>
               <Plus className="w-4 h-4 mr-2" />
               Creer un espace
@@ -308,7 +326,13 @@ const Spaces = () => {
           )}
         </Card>
       ) : (
-        <div className={viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-4'}>
+        <div
+          className={
+            viewMode === "grid"
+              ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              : "space-y-4"
+          }
+        >
           {filteredSpaces.map((space) => (
             <motion.div
               key={space.id}
@@ -320,13 +344,19 @@ const Spaces = () => {
                 <div className="space-y-4">
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
-                      <h3 className="font-bold text-lg text-gray-900">{space.nom}</h3>
-                      <span className={`inline-block px-2 py-1 rounded text-xs font-medium mt-1 ${getEspaceTypeColor(space.type)}`}>
+                      <h3 className="font-bold text-lg text-gray-900">
+                        {space.nom}
+                      </h3>
+                      <span
+                        className={`inline-block px-2 py-1 rounded text-xs font-medium mt-1 ${getEspaceTypeColor(space.type)}`}
+                      >
                         {getEspaceTypeLabel(space.type)}
                       </span>
                     </div>
-                    <div className={`px-3 py-1 rounded-full text-xs font-medium ${space.disponible ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                      {space.disponible ? 'Disponible' : 'Occupe'}
+                    <div
+                      className={`px-3 py-1 rounded-full text-xs font-medium ${space.disponible ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}
+                    >
+                      {space.disponible ? "Disponible" : "Occupe"}
                     </div>
                   </div>
 
@@ -337,12 +367,16 @@ const Spaces = () => {
                   <div className="space-y-2">
                     <div className="flex items-center gap-2 text-sm text-gray-600">
                       <Users className="w-4 h-4" />
-                      <span>{space.capacite} personne{space.capacite > 1 ? 's' : ''}</span>
+                      <span>
+                        {space.capacite} personne{space.capacite > 1 ? "s" : ""}
+                      </span>
                     </div>
                     <div className="flex items-center gap-2 text-sm text-gray-600">
                       <DollarSign className="w-4 h-4" />
                       <span className="text-sm">
-                        {space.prixHeure || 0} DA/h - {space.prixDemiJournee || 0} DA/dj - {space.prixJour || 0} DA/j
+                        {space.prixHeure || 0} DA/h -{" "}
+                        {space.prixDemiJournee || 0} DA/dj -{" "}
+                        {space.prixJour || 0} DA/j
                       </span>
                     </div>
                   </div>
@@ -350,9 +384,11 @@ const Spaces = () => {
                   {space.equipements && space.equipements.length > 0 && (
                     <div className="flex flex-wrap gap-2">
                       {space.equipements.map((equipId: string) => {
-                        const equip = equipementsList.find(e => e.id === equipId)
-                        if (!equip) return null
-                        const Icon = equip.icon
+                        const equip = equipementsList.find(
+                          (e) => e.id === equipId,
+                        );
+                        if (!equip) return null;
+                        const Icon = equip.icon;
                         return (
                           <div
                             key={equipId}
@@ -362,17 +398,26 @@ const Spaces = () => {
                             <Icon className="w-3 h-3" />
                             <span>{equip.label}</span>
                           </div>
-                        )
+                        );
                       })}
                     </div>
                   )}
 
                   <div className="flex gap-2 pt-4 border-t border-gray-100">
-                    <Button size="sm" variant="outline" onClick={() => handleEdit(space)} className="flex-1">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleEdit(space)}
+                      className="flex-1"
+                    >
                       <Edit className="w-4 h-4 mr-2" />
                       Modifier
                     </Button>
-                    <Button size="sm" variant="danger" onClick={() => handleDelete(space.id)}>
+                    <Button
+                      size="sm"
+                      variant="danger"
+                      onClick={() => handleDelete(space.id)}
+                    >
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>
@@ -386,10 +431,10 @@ const Spaces = () => {
       <Modal
         isOpen={showModal}
         onClose={() => {
-          setShowModal(false)
-          resetForm()
+          setShowModal(false);
+          resetForm();
         }}
-        title={editingSpace ? 'Modifier l\'Espace' : 'Nouvel Espace'}
+        title={editingSpace ? "Modifier l'Espace" : "Nouvel Espace"}
       >
         <form onSubmit={handleSubmit} className="space-y-6">
           <Input
@@ -402,15 +447,21 @@ const Spaces = () => {
           />
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Type d'espace</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Type d'espace
+            </label>
             <select
               value={formData.type}
-              onChange={(e) => setFormData({ ...formData, type: e.target.value as EspaceType })}
+              onChange={(e) =>
+                setFormData({ ...formData, type: e.target.value as EspaceType })
+              }
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
               required
             >
-              {ESPACE_TYPE_OPTIONS.map(opt => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              {ESPACE_TYPE_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
               ))}
             </select>
           </div>
@@ -422,7 +473,12 @@ const Spaces = () => {
               min="1"
               icon={<Users className="w-5 h-5" />}
               value={formData.capacite}
-              onChange={(e) => setFormData({ ...formData, capacite: parseInt(e.target.value) || 1 })}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  capacite: parseInt(e.target.value) || 1,
+                })
+              }
               required
             />
             <div className="flex items-center gap-3 pt-6">
@@ -430,10 +486,15 @@ const Spaces = () => {
                 type="checkbox"
                 id="disponible"
                 checked={formData.disponible}
-                onChange={(e) => setFormData({ ...formData, disponible: e.target.checked })}
+                onChange={(e) =>
+                  setFormData({ ...formData, disponible: e.target.checked })
+                }
                 className="w-4 h-4 text-accent rounded"
               />
-              <label htmlFor="disponible" className="text-sm font-medium text-gray-700">
+              <label
+                htmlFor="disponible"
+                className="text-sm font-medium text-gray-700"
+              >
                 Disponible a la reservation
               </label>
             </div>
@@ -447,7 +508,12 @@ const Spaces = () => {
               step="1"
               icon={<DollarSign className="w-5 h-5" />}
               value={formData.prixHeure}
-              onChange={(e) => setFormData({ ...formData, prixHeure: parseFloat(e.target.value) || 0 })}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  prixHeure: parseFloat(e.target.value) || 0,
+                })
+              }
               required
             />
             <Input
@@ -457,7 +523,12 @@ const Spaces = () => {
               step="1"
               icon={<DollarSign className="w-5 h-5" />}
               value={formData.prixDemiJournee}
-              onChange={(e) => setFormData({ ...formData, prixDemiJournee: parseFloat(e.target.value) || 0 })}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  prixDemiJournee: parseFloat(e.target.value) || 0,
+                })
+              }
               required
             />
             <Input
@@ -467,7 +538,12 @@ const Spaces = () => {
               step="1"
               icon={<DollarSign className="w-5 h-5" />}
               value={formData.prixJour}
-              onChange={(e) => setFormData({ ...formData, prixJour: parseFloat(e.target.value) || 0 })}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  prixJour: parseFloat(e.target.value) || 0,
+                })
+              }
               required
             />
             <Input
@@ -477,28 +553,39 @@ const Spaces = () => {
               step="1"
               icon={<DollarSign className="w-5 h-5" />}
               value={formData.prixSemaine}
-              onChange={(e) => setFormData({ ...formData, prixSemaine: parseFloat(e.target.value) || 0 })}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  prixSemaine: parseFloat(e.target.value) || 0,
+                })
+              }
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Description
+            </label>
             <textarea
               rows={3}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
               placeholder="Decrivez brievement cet espace..."
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">Equipements</label>
+            <label className="block text-sm font-medium text-gray-700 mb-3">
+              Equipements
+            </label>
             <div className="grid grid-cols-2 gap-3">
               {equipementsList.map((equip) => {
-                const Icon = equip.icon
-                const isSelected = formData.equipements.includes(equip.id)
+                const Icon = equip.icon;
+                const isSelected = formData.equipements.includes(equip.id);
                 return (
                   <button
                     key={equip.id}
@@ -506,28 +593,32 @@ const Spaces = () => {
                     onClick={() => toggleEquipement(equip.id)}
                     className={`flex items-center gap-2 px-4 py-3 border rounded-lg transition-all ${
                       isSelected
-                        ? 'border-accent bg-accent/5 text-accent'
-                        : 'border-gray-300 hover:border-gray-400'
+                        ? "border-accent bg-accent/5 text-accent"
+                        : "border-gray-300 hover:border-gray-400"
                     }`}
                   >
                     <Icon className="w-5 h-5" />
                     <span className="text-sm font-medium">{equip.label}</span>
                   </button>
-                )
+                );
               })}
             </div>
           </div>
 
           <div className="flex gap-3 pt-4">
             <Button type="submit" className="flex-1" disabled={loading}>
-              {loading ? 'Enregistrement...' : (editingSpace ? 'Modifier l\'espace' : 'Creer l\'espace')}
+              {loading
+                ? "Enregistrement..."
+                : editingSpace
+                  ? "Modifier l'espace"
+                  : "Creer l'espace"}
             </Button>
             <Button
               type="button"
               variant="outline"
               onClick={() => {
-                setShowModal(false)
-                resetForm()
+                setShowModal(false);
+                resetForm();
               }}
             >
               Annuler
@@ -536,7 +627,7 @@ const Spaces = () => {
         </form>
       </Modal>
     </div>
-  )
-}
+  );
+};
 
-export default Spaces
+export default Spaces;

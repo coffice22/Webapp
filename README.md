@@ -35,12 +35,14 @@ npm run test:local
 ## Architecture
 
 ### Stack Technique
+
 - **Frontend:** React 18 + TypeScript + Vite + TailwindCSS
 - **Backend:** PHP 8.1 + MySQL REST API
 - **State:** Zustand + React Query
 - **Auth:** JWT avec refresh tokens
 
 ### Structure
+
 ```
 coffice-app/
 ├── api/                  # Backend PHP
@@ -63,6 +65,7 @@ coffice-app/
 ## 📦 Version Actuelle: v3.1.0
 
 ### Nouveautés v3.1.0
+
 - ✅ **Configuration MySQL pure**: Suppression complète de Supabase, migration vers MySQL
 - ✅ **Script d'installation automatique**: Installation en un clic via `api/install.php`
 - ✅ **Page Abonnements Admin complète**: CRUD complet avec stats, export CSV, filtres
@@ -73,6 +76,7 @@ coffice-app/
 ## Fonctionnalités
 
 ### Utilisateurs
+
 - Inscription/connexion avec système de parrainage
 - Réservation d'espaces (hourly/daily/weekly)
 - Gestion des abonnements mensuels
@@ -81,6 +85,7 @@ coffice-app/
 - Historique et notifications
 
 ### Administrateurs
+
 - Gestion complète des utilisateurs
 - CRUD espaces de coworking
 - **NOUVEAU:** Page Abonnements complète avec stats, recherche, export CSV
@@ -96,34 +101,43 @@ coffice-app/
 ## Espaces & Tarifs
 
 ### Open Space (12 places)
+
 - Journée: 1 200 DA | Semaine: 20 000 DA | Mois: 15 000 DA
 
 ### Private Booth Hoggar (2 places)
+
 - Journée: 6 000 DA | Semaine: 40 000 DA | Mois: 35 000 DA
 
 ### Private Booth Aurès (2 places)
+
 - Journée: 6 000 DA | Semaine: 40 000 DA | Mois: 45 000 DA
 
 ### Private Booth Atlas (4 places)
+
 - Journée: 10 000 DA | Semaine: 65 000 DA | Mois: 45 000 DA
 
 ### Salle de Réunion Premium (12 places)
+
 - Heure: 2 500 DA | Journée: 12 000 DA
 
 ## Abonnements
 
 ### Solo - 14 000 DA/mois
+
 - Accès open space 8h-18h | Wi-Fi 50 Mbps | Accès communauté
 
 ### Pro - 32 000 DA/mois
+
 - Accès tous espaces 7h-20h | Wi-Fi 100 Mbps | 2h salle réunion/mois | -25% services
 
 ### Executive - 55 000 DA/mois
+
 - Accès illimité 24/7 | Wi-Fi illimité | Domiciliation incluse | -40% services
 
 ## Configuration Serveur
 
 ### Apache (.htaccess)
+
 ```apache
 RewriteEngine On
 RewriteBase /
@@ -134,6 +148,7 @@ RewriteRule . /index.html [L]
 ```
 
 ### Nginx
+
 ```nginx
 server {
     listen 80;
@@ -216,21 +231,25 @@ VITE_API_URL=https://votre-domaine.com/api
 ## Dépannage
 
 ### API ne répond pas
+
 ```bash
 systemctl status php8.1-fpm
 chmod -R 755 api/
 ```
 
 ### Erreur de connexion DB
+
 ```bash
 systemctl status mysql
 # Vérifier .env credentials
 ```
 
 ### Routes React 404
+
 Vérifier RewriteEngine (Apache) ou try_files (Nginx)
 
 ### Erreur 500
+
 ```bash
 tail -f /var/log/apache2/error.log
 tail -f /var/log/nginx/error.log
@@ -241,6 +260,7 @@ tail -f /var/log/nginx/error.log
 ### Améliorations Admin
 
 **Page Abonnements Admin (Nouvelle)**
+
 - Création, modification et suppression des types d'abonnements
 - Gestion complète des avantages et tarifs
 - Activation/désactivation en un clic
@@ -248,6 +268,7 @@ tail -f /var/log/nginx/error.log
 - Statistiques en temps réel
 
 **Page Domiciliations Admin (Améliorée)**
+
 - Création manuelle de domiciliations pour n'importe quel utilisateur
 - Formulaire complet avec toutes les informations entreprise
 - Création directe avec statut actif
@@ -255,6 +276,7 @@ tail -f /var/log/nginx/error.log
 - Sélection de l'utilisateur depuis la liste
 
 **Optimisations API**
+
 - Endpoint de création de domiciliation amélioré pour les admins
 - Permissions étendues pour création admin
 - Validation renforcée des données

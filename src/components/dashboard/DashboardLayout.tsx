@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import React, { useState, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
   Home,
   Calendar,
@@ -17,53 +17,58 @@ import {
   UserCog,
   RefreshCw,
   Tag,
-  Gift
-} from 'lucide-react'
-import { useAuthStore } from '../../store/authStore'
-import { useAppStore } from '../../store/store'
-import NotificationCenter from '../ui/NotificationCenter'
-import toast from 'react-hot-toast'
-import Logo from '../Logo'
+  Gift,
+} from "lucide-react";
+import { useAuthStore } from "../../store/authStore";
+import { useAppStore } from "../../store/store";
+import NotificationCenter from "../ui/NotificationCenter";
+import toast from "react-hot-toast";
+import Logo from "../Logo";
 
 interface DashboardLayoutProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [refreshing, setRefreshing] = useState(false)
-  const location = useLocation()
-  const navigate = useNavigate()
-  const { user, logout, loadUser } = useAuthStore()
-  const { loadEspaces, loadReservations, loadAbonnements, loadDemandesDomiciliation } = useAppStore()
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout, loadUser } = useAuthStore();
+  const {
+    loadEspaces,
+    loadReservations,
+    loadAbonnements,
+    loadDemandesDomiciliation,
+  } = useAppStore();
 
   const handleRefresh = async () => {
-    setRefreshing(true)
+    setRefreshing(true);
     try {
       await Promise.all([
         loadUser(),
         loadEspaces(),
         loadReservations(),
         loadAbonnements(),
-        loadDemandesDomiciliation()
-      ])
-      toast.success('Données actualisées')
+        loadDemandesDomiciliation(),
+      ]);
+      toast.success("Données actualisées");
     } catch (error) {
-      toast.error('Erreur lors de l\'actualisation')
+      toast.error("Erreur lors de l'actualisation");
     } finally {
-      setRefreshing(false)
+      setRefreshing(false);
     }
-  }
+  };
 
   const handleLogout = async () => {
     try {
-      await logout()
-      navigate('/connexion', { replace: true })
+      await logout();
+      navigate("/connexion", { replace: true });
     } catch (error) {
-      console.error('Erreur déconnexion:', error)
-      navigate('/connexion', { replace: true })
+      console.error("Erreur déconnexion:", error);
+      navigate("/connexion", { replace: true });
     }
-  }
+  };
 
   if (!user) {
     return (
@@ -74,43 +79,47 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           </Link>
         </div>
       </div>
-    )
+    );
   }
 
   const userNavigation = [
-    { name: 'Tableau de bord', href: '/app', icon: Home },
-    { name: 'Réservations', href: '/app/reservations', icon: Calendar },
-    { name: 'Domiciliation', href: '/app/domiciliation', icon: Building },
-    { name: 'Mon Entreprise', href: '/app/mon-entreprise', icon: FileText },
-    { name: 'Parrainage', href: '/app/parrainage', icon: Gift },
-    { name: 'Profil', href: '/app/profil', icon: User },
-  ]
+    { name: "Tableau de bord", href: "/app", icon: Home },
+    { name: "Réservations", href: "/app/reservations", icon: Calendar },
+    { name: "Domiciliation", href: "/app/domiciliation", icon: Building },
+    { name: "Mon Entreprise", href: "/app/mon-entreprise", icon: FileText },
+    { name: "Parrainage", href: "/app/parrainage", icon: Gift },
+    { name: "Profil", href: "/app/profil", icon: User },
+  ];
 
   const adminNavigation = [
-    { name: 'Tableau de bord', href: '/app', icon: Home },
-    { name: 'Utilisateurs', href: '/app/admin/users', icon: Users },
-    { name: 'Espaces', href: '/app/admin/spaces', icon: Building },
-    { name: 'Réservations', href: '/app/admin/reservations', icon: Calendar },
-    { name: 'Domiciliations', href: '/app/admin/domiciliations', icon: FileText },
-    { name: 'Abonnements', href: '/app/admin/abonnements', icon: CreditCard },
-    { name: 'Codes Promo', href: '/app/admin/codes-promo', icon: Tag },
-    { name: 'Parrainages', href: '/app/admin/parrainages', icon: Gift },
-    { name: 'Rapports', href: '/app/admin/reports', icon: BarChart3 },
-    { name: 'Paramètres', href: '/app/admin/settings', icon: Settings },
-  ]
+    { name: "Tableau de bord", href: "/app", icon: Home },
+    { name: "Utilisateurs", href: "/app/admin/users", icon: Users },
+    { name: "Espaces", href: "/app/admin/spaces", icon: Building },
+    { name: "Réservations", href: "/app/admin/reservations", icon: Calendar },
+    {
+      name: "Domiciliations",
+      href: "/app/admin/domiciliations",
+      icon: FileText,
+    },
+    { name: "Abonnements", href: "/app/admin/abonnements", icon: CreditCard },
+    { name: "Codes Promo", href: "/app/admin/codes-promo", icon: Tag },
+    { name: "Parrainages", href: "/app/admin/parrainages", icon: Gift },
+    { name: "Rapports", href: "/app/admin/reports", icon: BarChart3 },
+    { name: "Paramètres", href: "/app/admin/settings", icon: Settings },
+  ];
 
-  const navigation = user.role === 'admin' ? adminNavigation : userNavigation
+  const navigation = user.role === "admin" ? adminNavigation : userNavigation;
 
   const isActive = (path: string) => {
-    if (path === '/app') {
-      return location.pathname === '/app'
+    if (path === "/app") {
+      return location.pathname === "/app";
     }
-    return location.pathname.startsWith(path)
-  }
+    return location.pathname.startsWith(path);
+  };
 
   const getInitials = (prenom: string, nom: string) => {
-    return `${prenom?.charAt(0) || ''}${nom?.charAt(0) || ''}`.toUpperCase()
-  }
+    return `${prenom?.charAt(0) || ""}${nom?.charAt(0) || ""}`.toUpperCase();
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
@@ -121,11 +130,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         />
       )}
 
-      <div className={`
+      <div
+        className={`
         fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out
         lg:translate-x-0 lg:static lg:inset-0
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-      `}>
+        ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+      `}
+      >
         <div className="flex h-full flex-col">
           <div className="flex items-center justify-between p-6 border-b">
             <Link to="/" className="flex items-center">
@@ -141,8 +152,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
           <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
             {navigation.map((item) => {
-              const Icon = item.icon
-              const active = isActive(item.href)
+              const Icon = item.icon;
+              const active = isActive(item.href);
               return (
                 <Link
                   key={item.name}
@@ -150,16 +161,17 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   onClick={() => setSidebarOpen(false)}
                   className={`
                     flex items-center px-4 py-3 rounded-xl font-medium transition-all duration-200
-                    ${active
-                      ? 'bg-accent text-white shadow-lg'
-                      : 'text-gray-700 hover:bg-gray-100 hover:text-accent'
+                    ${
+                      active
+                        ? "bg-accent text-white shadow-lg"
+                        : "text-gray-700 hover:bg-gray-100 hover:text-accent"
                     }
                   `}
                 >
                   <Icon className="w-5 h-5 mr-3" />
                   {item.name}
                 </Link>
-              )
+              );
             })}
           </nav>
 
@@ -175,7 +187,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   {user.prenom} {user.nom}
                 </p>
                 <p className="text-xs text-gray-500 truncate">{user.email}</p>
-                {user.role === 'admin' && (
+                {user.role === "admin" && (
                   <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-accent text-white mt-1">
                     Admin
                   </span>
@@ -208,7 +220,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 <span>Coffice</span>
                 <span>/</span>
                 <span className="text-primary font-medium">
-                  {user.role === 'admin' ? 'Administration' : 'Dashboard'}
+                  {user.role === "admin" ? "Administration" : "Dashboard"}
                 </span>
               </div>
             </div>
@@ -220,19 +232,19 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 className="p-2 rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50"
                 title="Actualiser les données"
               >
-                <RefreshCw className={`w-5 h-5 text-gray-600 ${refreshing ? 'animate-spin' : ''}`} />
+                <RefreshCw
+                  className={`w-5 h-5 text-gray-600 ${refreshing ? "animate-spin" : ""}`}
+                />
               </button>
               <NotificationCenter />
             </div>
           </div>
         </header>
 
-        <main className="flex-1 p-6 overflow-auto">
-          {children}
-        </main>
+        <main className="flex-1 p-6 overflow-auto">{children}</main>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default DashboardLayout
+export default DashboardLayout;

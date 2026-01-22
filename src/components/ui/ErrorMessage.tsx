@@ -1,50 +1,50 @@
-import React from 'react'
-import { AlertTriangle, XCircle, Info, AlertCircle } from 'lucide-react'
+import React from "react";
+import { AlertTriangle, XCircle, Info, AlertCircle } from "lucide-react";
 
 interface ErrorMessageProps {
-  title?: string
-  message: string
-  type?: 'error' | 'warning' | 'info' | 'danger'
-  onClose?: () => void
-  className?: string
+  title?: string;
+  message: string;
+  type?: "error" | "warning" | "info" | "danger";
+  onClose?: () => void;
+  className?: string;
 }
 
 const ErrorMessage: React.FC<ErrorMessageProps> = ({
   title,
   message,
-  type = 'error',
+  type = "error",
   onClose,
-  className = ''
+  className = "",
 }) => {
   const styles = {
     error: {
-      bg: 'bg-red-50 border-red-200',
-      text: 'text-red-800',
+      bg: "bg-red-50 border-red-200",
+      text: "text-red-800",
       icon: XCircle,
-      iconColor: 'text-red-500'
+      iconColor: "text-red-500",
     },
     warning: {
-      bg: 'bg-yellow-50 border-yellow-200',
-      text: 'text-yellow-800',
+      bg: "bg-yellow-50 border-yellow-200",
+      text: "text-yellow-800",
       icon: AlertTriangle,
-      iconColor: 'text-yellow-500'
+      iconColor: "text-yellow-500",
     },
     info: {
-      bg: 'bg-blue-50 border-blue-200',
-      text: 'text-blue-800',
+      bg: "bg-blue-50 border-blue-200",
+      text: "text-blue-800",
       icon: Info,
-      iconColor: 'text-blue-500'
+      iconColor: "text-blue-500",
     },
     danger: {
-      bg: 'bg-red-50 border-red-200',
-      text: 'text-red-800',
+      bg: "bg-red-50 border-red-200",
+      text: "text-red-800",
       icon: AlertCircle,
-      iconColor: 'text-red-500'
-    }
-  }
+      iconColor: "text-red-500",
+    },
+  };
 
-  const style = styles[type]
-  const Icon = style.icon
+  const style = styles[type];
+  const Icon = style.icon;
 
   return (
     <div className={`${style.bg} border rounded-lg p-4 ${className}`}>
@@ -53,13 +53,9 @@ const ErrorMessage: React.FC<ErrorMessageProps> = ({
 
         <div className="flex-1">
           {title && (
-            <h4 className={`font-semibold mb-1 ${style.text}`}>
-              {title}
-            </h4>
+            <h4 className={`font-semibold mb-1 ${style.text}`}>{title}</h4>
           )}
-          <p className={style.text}>
-            {message}
-          </p>
+          <p className={style.text}>{message}</p>
         </div>
 
         {onClose && (
@@ -72,7 +68,7 @@ const ErrorMessage: React.FC<ErrorMessageProps> = ({
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ErrorMessage
+export default ErrorMessage;

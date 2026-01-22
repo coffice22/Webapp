@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Building,
   Search,
@@ -25,292 +25,374 @@ import {
   PlayCircle,
   RefreshCw,
   CheckCheck,
-  XOctagon
-} from 'lucide-react'
-import Card from '../../../components/ui/Card'
-import Button from '../../../components/ui/Button'
-import Badge from '../../../components/ui/Badge'
-import Input from '../../../components/ui/Input'
-import Modal from '../../../components/ui/Modal'
-import { useAppStore } from '../../../store/store'
-import { formatDate, formatCurrency } from '../../../utils/formatters'
-import toast from 'react-hot-toast'
-import type { DemandeDomiciliation } from '../../../types'
-import { apiClient } from '../../../lib/api-client'
+  XOctagon,
+} from "lucide-react";
+import Card from "../../../components/ui/Card";
+import Button from "../../../components/ui/Button";
+import Badge from "../../../components/ui/Badge";
+import Input from "../../../components/ui/Input";
+import Modal from "../../../components/ui/Modal";
+import { useAppStore } from "../../../store/store";
+import { formatDate, formatCurrency } from "../../../utils/formatters";
+import toast from "react-hot-toast";
+import type { DemandeDomiciliation } from "../../../types";
+import { apiClient } from "../../../lib/api-client";
 
 const AdminDomiciliations = () => {
-  const { demandesDomiciliation, loadDemandesDomiciliation } = useAppStore()
-  const [searchTerm, setSearchTerm] = useState('')
-  const [statusFilter, setStatusFilter] = useState<string>('tous')
-  const [selectedDemande, setSelectedDemande] = useState<DemandeDomiciliation | null>(null)
-  const [showDetailModal, setShowDetailModal] = useState(false)
-  const [showActionModal, setShowActionModal] = useState(false)
-  const [showCreateModal, setShowCreateModal] = useState(false)
-  const [actionType, setActionType] = useState<'valider' | 'rejeter' | 'activer'>('valider')
-  const [commentaire, setCommentaire] = useState('')
-  const [montantMensuel, setMontantMensuel] = useState(15000)
-  const [dateDebut, setDateDebut] = useState('')
-  const [dateFin, setDateFin] = useState('')
-  const [modePaiement, setModePaiement] = useState('cash')
-  const [loading, setLoading] = useState(false)
-  const [users, setUsers] = useState<any[]>([])
+  const { demandesDomiciliation, loadDemandesDomiciliation } = useAppStore();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("tous");
+  const [selectedDemande, setSelectedDemande] =
+    useState<DemandeDomiciliation | null>(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [showActionModal, setShowActionModal] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [actionType, setActionType] = useState<
+    "valider" | "rejeter" | "activer"
+  >("valider");
+  const [commentaire, setCommentaire] = useState("");
+  const [montantMensuel, setMontantMensuel] = useState(15000);
+  const [dateDebut, setDateDebut] = useState("");
+  const [dateFin, setDateFin] = useState("");
+  const [modePaiement, setModePaiement] = useState("cash");
+  const [loading, setLoading] = useState(false);
+  const [users, setUsers] = useState<any[]>([]);
   const [createFormData, setCreateFormData] = useState<any>({
-    user_id: '',
-    raison_sociale: '',
-    forme_juridique: 'SARL',
-    nif: '',
-    nis: '',
-    registre_commerce: '',
-    article_imposition: '',
-    numero_auto_entrepreneur: '',
-    capital: '',
-    activite_principale: '',
-    domaine_activite: '',
-    wilaya: '',
-    commune: '',
-    adresse_actuelle: '',
-    adresse_siege_social: '',
-    representant_nom: '',
-    representant_prenom: '',
-    representant_fonction: '',
-    representant_telephone: '',
-    representant_email: '',
-    coordonnees_fiscales: '',
-    coordonnees_administratives: '',
-    date_creation_entreprise: '',
-    statut: 'active',
+    user_id: "",
+    raison_sociale: "",
+    forme_juridique: "SARL",
+    nif: "",
+    nis: "",
+    registre_commerce: "",
+    article_imposition: "",
+    numero_auto_entrepreneur: "",
+    capital: "",
+    activite_principale: "",
+    domaine_activite: "",
+    wilaya: "",
+    commune: "",
+    adresse_actuelle: "",
+    adresse_siege_social: "",
+    representant_nom: "",
+    representant_prenom: "",
+    representant_fonction: "",
+    representant_telephone: "",
+    representant_email: "",
+    coordonnees_fiscales: "",
+    coordonnees_administratives: "",
+    date_creation_entreprise: "",
+    statut: "active",
     montant_mensuel: 15000,
-    date_debut: new Date().toISOString().split('T')[0],
-    date_fin: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    mode_paiement: 'cash',
-    notes_admin: ''
-  })
+    date_debut: new Date().toISOString().split("T")[0],
+    date_fin: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+      .toISOString()
+      .split("T")[0],
+    mode_paiement: "cash",
+    notes_admin: "",
+  });
 
   useEffect(() => {
-    loadDemandesDomiciliation()
-    loadUsers()
-  }, [])
+    loadDemandesDomiciliation();
+    loadUsers();
+  }, []);
 
   const loadUsers = async () => {
     try {
-      const response = await apiClient.get('/api/users/index.php')
+      const response = await apiClient.get("/api/users/index.php");
       if (response.success) {
-        setUsers(response.data || [])
+        setUsers(response.data || []);
       }
     } catch (error) {
-      console.error('Erreur chargement utilisateurs:', error)
+      console.error("Erreur chargement utilisateurs:", error);
     }
-  }
+  };
 
-  const filteredDemandes = demandesDomiciliation.filter(demande => {
+  const filteredDemandes = demandesDomiciliation.filter((demande) => {
     const matchesSearch =
       demande.raisonSociale.toLowerCase().includes(searchTerm.toLowerCase()) ||
       demande.nif?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      demande.representantLegal.nom.toLowerCase().includes(searchTerm.toLowerCase())
+      demande.representantLegal.nom
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
 
-    const matchesStatus = statusFilter === 'tous' || demande.statut === statusFilter
+    const matchesStatus =
+      statusFilter === "tous" || demande.statut === statusFilter;
 
-    return matchesSearch && matchesStatus
-  })
+    return matchesSearch && matchesStatus;
+  });
 
   const stats = {
     total: demandesDomiciliation.length,
-    enAttente: demandesDomiciliation.filter(d => d.statut === 'en_attente').length,
-    validees: demandesDomiciliation.filter(d => d.statut === 'validee').length,
-    actives: demandesDomiciliation.filter(d => d.statut === 'active').length,
-    refusees: demandesDomiciliation.filter(d => d.statut === 'refusee').length,
+    enAttente: demandesDomiciliation.filter((d) => d.statut === "en_attente")
+      .length,
+    validees: demandesDomiciliation.filter((d) => d.statut === "validee")
+      .length,
+    actives: demandesDomiciliation.filter((d) => d.statut === "active").length,
+    refusees: demandesDomiciliation.filter((d) => d.statut === "refusee")
+      .length,
     revenuMensuel: demandesDomiciliation
-      .filter(d => d.statut === 'active')
-      .reduce((sum, d) => sum + (d.montantMensuel || 0), 0)
-  }
+      .filter((d) => d.statut === "active")
+      .reduce((sum, d) => sum + (d.montantMensuel || 0), 0),
+  };
 
   const getStatusBadge = (statut: string) => {
-    const badges: Record<string, { variant: 'warning' | 'success' | 'danger' | 'default', icon: React.ReactNode, label: string }> = {
-      en_attente: { variant: 'warning', icon: <Clock className="w-3 h-3 mr-1" />, label: 'En attente' },
-      validee: { variant: 'success', icon: <CheckCircle className="w-3 h-3 mr-1" />, label: 'Validée' },
-      active: { variant: 'success', icon: <PlayCircle className="w-3 h-3 mr-1" />, label: 'Active' },
-      refusee: { variant: 'danger', icon: <XCircle className="w-3 h-3 mr-1" />, label: 'Refusée' },
-      resiliee: { variant: 'danger', icon: <Ban className="w-3 h-3 mr-1" />, label: 'Résiliée' },
-      expiree: { variant: 'default', icon: <AlertCircle className="w-3 h-3 mr-1" />, label: 'Expirée' }
+    const badges: Record<
+      string,
+      {
+        variant: "warning" | "success" | "danger" | "default";
+        icon: React.ReactNode;
+        label: string;
+      }
+    > = {
+      en_attente: {
+        variant: "warning",
+        icon: <Clock className="w-3 h-3 mr-1" />,
+        label: "En attente",
+      },
+      validee: {
+        variant: "success",
+        icon: <CheckCircle className="w-3 h-3 mr-1" />,
+        label: "Validée",
+      },
+      active: {
+        variant: "success",
+        icon: <PlayCircle className="w-3 h-3 mr-1" />,
+        label: "Active",
+      },
+      refusee: {
+        variant: "danger",
+        icon: <XCircle className="w-3 h-3 mr-1" />,
+        label: "Refusée",
+      },
+      resiliee: {
+        variant: "danger",
+        icon: <Ban className="w-3 h-3 mr-1" />,
+        label: "Résiliée",
+      },
+      expiree: {
+        variant: "default",
+        icon: <AlertCircle className="w-3 h-3 mr-1" />,
+        label: "Expirée",
+      },
+    };
+
+    const badge = badges[statut] || badges.en_attente;
+    return (
+      <Badge variant={badge.variant}>
+        {badge.icon}
+        {badge.label}
+      </Badge>
+    );
+  };
+
+  const handleAction = (
+    demande: DemandeDomiciliation,
+    action: "valider" | "rejeter" | "activer",
+  ) => {
+    setSelectedDemande(demande);
+    setActionType(action);
+    setCommentaire("");
+
+    if (action === "activer") {
+      setMontantMensuel(15000);
+      const debut = new Date();
+      const fin = new Date();
+      fin.setFullYear(fin.getFullYear() + 1);
+      setDateDebut(debut.toISOString().split("T")[0]);
+      setDateFin(fin.toISOString().split("T")[0]);
+      setModePaiement("cash");
     }
 
-    const badge = badges[statut] || badges.en_attente
-    return <Badge variant={badge.variant}>{badge.icon}{badge.label}</Badge>
-  }
-
-  const handleAction = (demande: DemandeDomiciliation, action: 'valider' | 'rejeter' | 'activer') => {
-    setSelectedDemande(demande)
-    setActionType(action)
-    setCommentaire('')
-
-    if (action === 'activer') {
-      setMontantMensuel(15000)
-      const debut = new Date()
-      const fin = new Date()
-      fin.setFullYear(fin.getFullYear() + 1)
-      setDateDebut(debut.toISOString().split('T')[0])
-      setDateFin(fin.toISOString().split('T')[0])
-      setModePaiement('cash')
-    }
-
-    setShowActionModal(true)
-  }
+    setShowActionModal(true);
+  };
 
   const handleViewDetails = (demande: DemandeDomiciliation) => {
-    setSelectedDemande(demande)
-    setShowDetailModal(true)
-  }
+    setSelectedDemande(demande);
+    setShowDetailModal(true);
+  };
 
   const submitAction = async () => {
-    if (!selectedDemande) return
+    if (!selectedDemande) return;
 
-    if (actionType === 'rejeter' && !commentaire.trim()) {
-      toast.error('Veuillez préciser la raison du rejet')
-      return
+    if (actionType === "rejeter" && !commentaire.trim()) {
+      toast.error("Veuillez préciser la raison du rejet");
+      return;
     }
 
-    if (actionType === 'activer' && montantMensuel <= 0) {
-      toast.error('Le montant mensuel doit être supérieur à 0')
-      return
+    if (actionType === "activer" && montantMensuel <= 0) {
+      toast.error("Le montant mensuel doit être supérieur à 0");
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
     try {
-      let endpoint = ''
-      let payload: any = { domiciliation_id: selectedDemande.id }
+      let endpoint = "";
+      let payload: any = { domiciliation_id: selectedDemande.id };
 
-      if (actionType === 'valider') {
-        endpoint = '/api/domiciliations/validate.php'
-        payload.commentaire = commentaire
-      } else if (actionType === 'rejeter') {
-        endpoint = '/api/domiciliations/reject.php'
-        payload.commentaire = commentaire
-      } else if (actionType === 'activer') {
-        endpoint = '/api/domiciliations/activate.php'
+      if (actionType === "valider") {
+        endpoint = "/api/domiciliations/validate.php";
+        payload.commentaire = commentaire;
+      } else if (actionType === "rejeter") {
+        endpoint = "/api/domiciliations/reject.php";
+        payload.commentaire = commentaire;
+      } else if (actionType === "activer") {
+        endpoint = "/api/domiciliations/activate.php";
         payload = {
           ...payload,
           montant_mensuel: montantMensuel,
           date_debut: dateDebut,
           date_fin: dateFin,
-          mode_paiement: modePaiement
-        }
+          mode_paiement: modePaiement,
+        };
       }
 
-      const response = await apiClient.post(endpoint, payload)
+      const response = await apiClient.post(endpoint, payload);
 
       if (response.success) {
         toast.success(
-          actionType === 'valider' ? 'Demande validée avec succès' :
-          actionType === 'rejeter' ? 'Demande rejetée' :
-          'Domiciliation activée avec succès'
-        )
-        setShowActionModal(false)
-        await loadDemandesDomiciliation()
+          actionType === "valider"
+            ? "Demande validée avec succès"
+            : actionType === "rejeter"
+              ? "Demande rejetée"
+              : "Domiciliation activée avec succès",
+        );
+        setShowActionModal(false);
+        await loadDemandesDomiciliation();
       } else {
-        toast.error(response.message || 'Une erreur est survenue')
+        toast.error(response.message || "Une erreur est survenue");
       }
     } catch (error) {
-      console.error('Action error:', error)
-      toast.error('Erreur lors du traitement de la demande')
+      console.error("Action error:", error);
+      toast.error("Erreur lors du traitement de la demande");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleCreateDomiciliation = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    if (!createFormData.user_id || !createFormData.raison_sociale || !createFormData.forme_juridique) {
-      toast.error('Veuillez remplir tous les champs obligatoires')
-      return
+    if (
+      !createFormData.user_id ||
+      !createFormData.raison_sociale ||
+      !createFormData.forme_juridique
+    ) {
+      toast.error("Veuillez remplir tous les champs obligatoires");
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
     try {
-      const response = await apiClient.post('/api/domiciliations/create.php', {
+      const response = await apiClient.post("/api/domiciliations/create.php", {
         ...createFormData,
-        capital: createFormData.capital ? parseFloat(createFormData.capital) : null,
-        montant_mensuel: parseFloat(createFormData.montant_mensuel)
-      })
+        capital: createFormData.capital
+          ? parseFloat(createFormData.capital)
+          : null,
+        montant_mensuel: parseFloat(createFormData.montant_mensuel),
+      });
 
       if (response.success) {
-        toast.success('Domiciliation créée avec succès')
-        setShowCreateModal(false)
+        toast.success("Domiciliation créée avec succès");
+        setShowCreateModal(false);
         setCreateFormData({
-          user_id: '',
-          raison_sociale: '',
-          forme_juridique: 'SARL',
-          nif: '',
-          nis: '',
-          registre_commerce: '',
-          article_imposition: '',
-          numero_auto_entrepreneur: '',
-          capital: '',
-          activite_principale: '',
-          domaine_activite: '',
-          wilaya: '',
-          commune: '',
-          adresse_actuelle: '',
-          adresse_siege_social: '',
-          representant_nom: '',
-          representant_prenom: '',
-          representant_fonction: '',
-          representant_telephone: '',
-          representant_email: '',
-          coordonnees_fiscales: '',
-          coordonnees_administratives: '',
-          date_creation_entreprise: '',
-          statut: 'active',
+          user_id: "",
+          raison_sociale: "",
+          forme_juridique: "SARL",
+          nif: "",
+          nis: "",
+          registre_commerce: "",
+          article_imposition: "",
+          numero_auto_entrepreneur: "",
+          capital: "",
+          activite_principale: "",
+          domaine_activite: "",
+          wilaya: "",
+          commune: "",
+          adresse_actuelle: "",
+          adresse_siege_social: "",
+          representant_nom: "",
+          representant_prenom: "",
+          representant_fonction: "",
+          representant_telephone: "",
+          representant_email: "",
+          coordonnees_fiscales: "",
+          coordonnees_administratives: "",
+          date_creation_entreprise: "",
+          statut: "active",
           montant_mensuel: 15000,
-          date_debut: new Date().toISOString().split('T')[0],
-          date_fin: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-          mode_paiement: 'cash',
-          notes_admin: ''
-        })
-        await loadDemandesDomiciliation()
+          date_debut: new Date().toISOString().split("T")[0],
+          date_fin: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+            .toISOString()
+            .split("T")[0],
+          mode_paiement: "cash",
+          notes_admin: "",
+        });
+        await loadDemandesDomiciliation();
       } else {
-        toast.error(response.message || 'Erreur lors de la création')
+        toast.error(response.message || "Erreur lors de la création");
       }
     } catch (error: any) {
-      console.error('Create domiciliation error:', error)
-      toast.error(error.response?.data?.message || 'Erreur lors de la création de la domiciliation')
+      console.error("Create domiciliation error:", error);
+      toast.error(
+        error.response?.data?.message ||
+          "Erreur lors de la création de la domiciliation",
+      );
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const exportToCSV = () => {
     const csvContent = [
-      ['Raison Sociale', 'NIF', 'NIS', 'Forme Juridique', 'Statut', 'Date Création', 'Représentant', 'Email', 'Téléphone', 'Montant Mensuel'],
-      ...filteredDemandes.map(d => [
+      [
+        "Raison Sociale",
+        "NIF",
+        "NIS",
+        "Forme Juridique",
+        "Statut",
+        "Date Création",
+        "Représentant",
+        "Email",
+        "Téléphone",
+        "Montant Mensuel",
+      ],
+      ...filteredDemandes.map((d) => [
         d.raisonSociale,
-        d.nif || '',
-        d.nis || '',
+        d.nif || "",
+        d.nis || "",
         d.formeJuridique,
         d.statut,
         formatDate(d.dateCreation),
         `${d.representantLegal.prenom} ${d.representantLegal.nom}`,
-        d.representantLegal.email || '',
-        d.representantLegal.telephone || '',
-        d.montantMensuel ? formatCurrency(d.montantMensuel) : 'N/A'
-      ])
-    ].map(row => row.join(',')).join('\n')
+        d.representantLegal.email || "",
+        d.representantLegal.telephone || "",
+        d.montantMensuel ? formatCurrency(d.montantMensuel) : "N/A",
+      ]),
+    ]
+      .map((row) => row.join(","))
+      .join("\n");
 
-    const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' })
-    const url = window.URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `domiciliations_${new Date().toISOString().split('T')[0]}.csv`
-    a.click()
-    window.URL.revokeObjectURL(url)
-  }
+    const blob = new Blob(["\uFEFF" + csvContent], {
+      type: "text/csv;charset=utf-8;",
+    });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `domiciliations_${new Date().toISOString().split("T")[0]}.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Gestion des Domiciliations</h1>
-          <p className="text-gray-600 mt-1">Administration des demandes de domiciliation d'entreprises</p>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Gestion des Domiciliations
+          </h1>
+          <p className="text-gray-600 mt-1">
+            Administration des demandes de domiciliation d'entreprises
+          </p>
         </div>
         <div className="flex gap-3">
           <Button onClick={exportToCSV} variant="outline">
@@ -340,7 +422,9 @@ const AdminDomiciliations = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-amber-600 font-medium">En Attente</p>
-              <p className="text-3xl font-bold text-amber-900">{stats.enAttente}</p>
+              <p className="text-3xl font-bold text-amber-900">
+                {stats.enAttente}
+              </p>
             </div>
             <Clock className="w-10 h-10 text-amber-600 opacity-50" />
           </div>
@@ -350,7 +434,9 @@ const AdminDomiciliations = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-green-600 font-medium">Validées</p>
-              <p className="text-3xl font-bold text-green-900">{stats.validees}</p>
+              <p className="text-3xl font-bold text-green-900">
+                {stats.validees}
+              </p>
             </div>
             <CheckCircle className="w-10 h-10 text-green-600 opacity-50" />
           </div>
@@ -360,7 +446,9 @@ const AdminDomiciliations = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-emerald-600 font-medium">Actives</p>
-              <p className="text-3xl font-bold text-emerald-900">{stats.actives}</p>
+              <p className="text-3xl font-bold text-emerald-900">
+                {stats.actives}
+              </p>
             </div>
             <PlayCircle className="w-10 h-10 text-emerald-600 opacity-50" />
           </div>
@@ -452,22 +540,33 @@ const AdminDomiciliations = () => {
                   >
                     <td className="px-6 py-4">
                       <div>
-                        <p className="font-medium text-gray-900">{demande.raisonSociale}</p>
-                        <p className="text-sm text-gray-500">{demande.formeJuridique}</p>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="text-sm">
-                        <p className="text-gray-900">NIF: {demande.nif || 'N/A'}</p>
-                        <p className="text-gray-500">NIS: {demande.nis || 'N/A'}</p>
+                        <p className="font-medium text-gray-900">
+                          {demande.raisonSociale}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          {demande.formeJuridique}
+                        </p>
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="text-sm">
                         <p className="text-gray-900">
-                          {demande.representantLegal.prenom} {demande.representantLegal.nom}
+                          NIF: {demande.nif || "N/A"}
                         </p>
-                        <p className="text-gray-500">{demande.representantLegal.email}</p>
+                        <p className="text-gray-500">
+                          NIS: {demande.nis || "N/A"}
+                        </p>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="text-sm">
+                        <p className="text-gray-900">
+                          {demande.representantLegal.prenom}{" "}
+                          {demande.representantLegal.nom}
+                        </p>
+                        <p className="text-gray-500">
+                          {demande.representantLegal.email}
+                        </p>
                       </div>
                     </td>
                     <td className="px-6 py-4">
@@ -496,11 +595,11 @@ const AdminDomiciliations = () => {
                           <Eye className="w-4 h-4" />
                         </Button>
 
-                        {demande.statut === 'en_attente' && (
+                        {demande.statut === "en_attente" && (
                           <>
                             <Button
                               size="sm"
-                              onClick={() => handleAction(demande, 'valider')}
+                              onClick={() => handleAction(demande, "valider")}
                               title="Valider la demande"
                               className="bg-green-600 hover:bg-green-700"
                             >
@@ -509,7 +608,7 @@ const AdminDomiciliations = () => {
                             <Button
                               size="sm"
                               variant="outline"
-                              onClick={() => handleAction(demande, 'rejeter')}
+                              onClick={() => handleAction(demande, "rejeter")}
                               title="Rejeter la demande"
                               className="text-red-600 hover:text-red-700 hover:bg-red-50"
                             >
@@ -518,10 +617,10 @@ const AdminDomiciliations = () => {
                           </>
                         )}
 
-                        {demande.statut === 'validee' && (
+                        {demande.statut === "validee" && (
                           <Button
                             size="sm"
-                            onClick={() => handleAction(demande, 'activer')}
+                            onClick={() => handleAction(demande, "activer")}
                             title="Activer la domiciliation"
                             className="bg-emerald-600 hover:bg-emerald-700"
                           >
@@ -560,32 +659,46 @@ const AdminDomiciliations = () => {
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Forme Juridique</p>
-                  <p className="font-medium">{selectedDemande.formeJuridique}</p>
+                  <p className="font-medium">
+                    {selectedDemande.formeJuridique}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">NIF</p>
-                  <p className="font-medium">{selectedDemande.nif || 'Non renseigné'}</p>
+                  <p className="font-medium">
+                    {selectedDemande.nif || "Non renseigné"}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">NIS</p>
-                  <p className="font-medium">{selectedDemande.nis || 'Non renseigné'}</p>
+                  <p className="font-medium">
+                    {selectedDemande.nis || "Non renseigné"}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">RC</p>
-                  <p className="font-medium">{selectedDemande.registreCommerce || 'Non renseigné'}</p>
+                  <p className="font-medium">
+                    {selectedDemande.registreCommerce || "Non renseigné"}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Article Imposition</p>
-                  <p className="font-medium">{selectedDemande.articleImposition || 'Non renseigné'}</p>
+                  <p className="font-medium">
+                    {selectedDemande.articleImposition || "Non renseigné"}
+                  </p>
                 </div>
                 <div className="col-span-2">
                   <p className="text-sm text-gray-600">Domaine d'Activité</p>
-                  <p className="font-medium">{selectedDemande.domaineActivite || 'Non renseigné'}</p>
+                  <p className="font-medium">
+                    {selectedDemande.domaineActivite || "Non renseigné"}
+                  </p>
                 </div>
                 {selectedDemande.capital && (
                   <div>
                     <p className="text-sm text-gray-600">Capital</p>
-                    <p className="font-medium">{formatCurrency(selectedDemande.capital)}</p>
+                    <p className="font-medium">
+                      {formatCurrency(selectedDemande.capital)}
+                    </p>
                   </div>
                 )}
               </div>
@@ -601,16 +714,22 @@ const AdminDomiciliations = () => {
                 <div className="flex items-center gap-2">
                   <User className="w-4 h-4 text-gray-400" />
                   <span className="font-medium">
-                    {selectedDemande.representantLegal.prenom} {selectedDemande.representantLegal.nom}
+                    {selectedDemande.representantLegal.prenom}{" "}
+                    {selectedDemande.representantLegal.nom}
                   </span>
                   {selectedDemande.representantLegal.fonction && (
-                    <span className="text-sm text-gray-500">- {selectedDemande.representantLegal.fonction}</span>
+                    <span className="text-sm text-gray-500">
+                      - {selectedDemande.representantLegal.fonction}
+                    </span>
                   )}
                 </div>
                 {selectedDemande.representantLegal.email && (
                   <div className="flex items-center gap-2">
                     <Mail className="w-4 h-4 text-gray-400" />
-                    <a href={`mailto:${selectedDemande.representantLegal.email}`} className="text-blue-600 hover:underline">
+                    <a
+                      href={`mailto:${selectedDemande.representantLegal.email}`}
+                      className="text-blue-600 hover:underline"
+                    >
                       {selectedDemande.representantLegal.email}
                     </a>
                   </div>
@@ -618,7 +737,10 @@ const AdminDomiciliations = () => {
                 {selectedDemande.representantLegal.telephone && (
                   <div className="flex items-center gap-2">
                     <Phone className="w-4 h-4 text-gray-400" />
-                    <a href={`tel:${selectedDemande.representantLegal.telephone}`} className="text-blue-600 hover:underline">
+                    <a
+                      href={`tel:${selectedDemande.representantLegal.telephone}`}
+                      className="text-blue-600 hover:underline"
+                    >
                       {selectedDemande.representantLegal.telephone}
                     </a>
                   </div>
@@ -640,29 +762,43 @@ const AdminDomiciliations = () => {
                   </div>
                   <div className="text-right">
                     <p className="text-sm text-gray-600">Date de création</p>
-                    <p className="font-medium">{formatDate(selectedDemande.dateCreation)}</p>
+                    <p className="font-medium">
+                      {formatDate(selectedDemande.dateCreation)}
+                    </p>
                   </div>
                 </div>
 
-                {selectedDemande.statut === 'active' && (
+                {selectedDemande.statut === "active" && (
                   <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm text-emerald-700 font-medium">Montant Mensuel</p>
+                        <p className="text-sm text-emerald-700 font-medium">
+                          Montant Mensuel
+                        </p>
                         <p className="text-xl font-bold text-emerald-900">
-                          {selectedDemande.montantMensuel ? formatCurrency(selectedDemande.montantMensuel) : 'N/A'}
+                          {selectedDemande.montantMensuel
+                            ? formatCurrency(selectedDemande.montantMensuel)
+                            : "N/A"}
                         </p>
                       </div>
                       {selectedDemande.dateDebut && (
                         <div>
-                          <p className="text-sm text-emerald-700 font-medium">Date début</p>
-                          <p className="font-medium text-emerald-900">{formatDate(selectedDemande.dateDebut)}</p>
+                          <p className="text-sm text-emerald-700 font-medium">
+                            Date début
+                          </p>
+                          <p className="font-medium text-emerald-900">
+                            {formatDate(selectedDemande.dateDebut)}
+                          </p>
                         </div>
                       )}
                       {selectedDemande.dateFin && (
                         <div>
-                          <p className="text-sm text-emerald-700 font-medium">Date fin</p>
-                          <p className="font-medium text-emerald-900">{formatDate(selectedDemande.dateFin)}</p>
+                          <p className="text-sm text-emerald-700 font-medium">
+                            Date fin
+                          </p>
+                          <p className="font-medium text-emerald-900">
+                            {formatDate(selectedDemande.dateFin)}
+                          </p>
                         </div>
                       )}
                     </div>
@@ -677,7 +813,9 @@ const AdminDomiciliations = () => {
                   <AlertCircle className="w-4 h-4 mr-2" />
                   Notes Admin
                 </p>
-                <p className="text-sm text-amber-700">{selectedDemande.commentaireAdmin}</p>
+                <p className="text-sm text-amber-700">
+                  {selectedDemande.commentaireAdmin}
+                </p>
               </div>
             )}
           </div>
@@ -689,19 +827,22 @@ const AdminDomiciliations = () => {
         isOpen={showActionModal}
         onClose={() => setShowActionModal(false)}
         title={
-          actionType === 'valider' ? 'Valider la demande de domiciliation' :
-          actionType === 'rejeter' ? 'Rejeter la demande de domiciliation' :
-          'Activer la domiciliation'
+          actionType === "valider"
+            ? "Valider la demande de domiciliation"
+            : actionType === "rejeter"
+              ? "Rejeter la demande de domiciliation"
+              : "Activer la domiciliation"
         }
       >
         <div className="space-y-4">
-          {actionType === 'activer' ? (
+          {actionType === "activer" ? (
             <>
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
                 <p className="text-sm text-blue-800">
                   <AlertCircle className="w-4 h-4 inline mr-2" />
-                  Vous allez activer la domiciliation pour <strong>{selectedDemande?.raisonSociale}</strong>.
-                  Une transaction sera créée automatiquement.
+                  Vous allez activer la domiciliation pour{" "}
+                  <strong>{selectedDemande?.raisonSociale}</strong>. Une
+                  transaction sera créée automatiquement.
                 </p>
               </div>
 
@@ -751,7 +892,10 @@ const AdminDomiciliations = () => {
           ) : (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Commentaire {actionType === 'rejeter' && <span className="text-red-500">*</span>}
+                Commentaire{" "}
+                {actionType === "rejeter" && (
+                  <span className="text-red-500">*</span>
+                )}
               </label>
               <textarea
                 value={commentaire}
@@ -759,11 +903,11 @@ const AdminDomiciliations = () => {
                 rows={4}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
                 placeholder={
-                  actionType === 'valider'
-                    ? 'Commentaire optionnel...'
-                    : 'Veuillez préciser la raison du rejet (obligatoire)...'
+                  actionType === "valider"
+                    ? "Commentaire optionnel..."
+                    : "Veuillez préciser la raison du rejet (obligatoire)..."
                 }
-                required={actionType === 'rejeter'}
+                required={actionType === "rejeter"}
               />
             </div>
           )}
@@ -779,7 +923,9 @@ const AdminDomiciliations = () => {
             </Button>
             <Button
               onClick={submitAction}
-              disabled={loading || (actionType === 'rejeter' && !commentaire.trim())}
+              disabled={
+                loading || (actionType === "rejeter" && !commentaire.trim())
+              }
               className="flex-1"
             >
               {loading ? (
@@ -789,12 +935,20 @@ const AdminDomiciliations = () => {
                 </>
               ) : (
                 <>
-                  {actionType === 'valider' && <CheckCheck className="w-4 h-4 mr-2" />}
-                  {actionType === 'rejeter' && <XOctagon className="w-4 h-4 mr-2" />}
-                  {actionType === 'activer' && <PlayCircle className="w-4 h-4 mr-2" />}
-                  {actionType === 'valider' ? 'Valider' :
-                   actionType === 'rejeter' ? 'Rejeter' :
-                   'Activer'}
+                  {actionType === "valider" && (
+                    <CheckCheck className="w-4 h-4 mr-2" />
+                  )}
+                  {actionType === "rejeter" && (
+                    <XOctagon className="w-4 h-4 mr-2" />
+                  )}
+                  {actionType === "activer" && (
+                    <PlayCircle className="w-4 h-4 mr-2" />
+                  )}
+                  {actionType === "valider"
+                    ? "Valider"
+                    : actionType === "rejeter"
+                      ? "Rejeter"
+                      : "Activer"}
                 </>
               )}
             </Button>
@@ -807,11 +961,15 @@ const AdminDomiciliations = () => {
         onClose={() => setShowCreateModal(false)}
         title="Créer une nouvelle domiciliation"
       >
-        <form onSubmit={handleCreateDomiciliation} className="space-y-6 max-h-[70vh] overflow-y-auto px-1">
+        <form
+          onSubmit={handleCreateDomiciliation}
+          className="space-y-6 max-h-[70vh] overflow-y-auto px-1"
+        >
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <p className="text-sm text-blue-800">
               <AlertCircle className="w-4 h-4 inline mr-2" />
-              Créez directement une domiciliation active pour un utilisateur existant
+              Créez directement une domiciliation active pour un utilisateur
+              existant
             </p>
           </div>
 
@@ -821,12 +979,17 @@ const AdminDomiciliations = () => {
             </label>
             <select
               value={createFormData.user_id}
-              onChange={(e) => setCreateFormData({ ...createFormData, user_id: e.target.value })}
+              onChange={(e) =>
+                setCreateFormData({
+                  ...createFormData,
+                  user_id: e.target.value,
+                })
+              }
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
               required
             >
               <option value="">Sélectionner un utilisateur</option>
-              {users.map(user => (
+              {users.map((user) => (
                 <option key={user.id} value={user.id}>
                   {user.prenom} {user.nom} - {user.email}
                 </option>
@@ -844,7 +1007,12 @@ const AdminDomiciliations = () => {
               <Input
                 label="Raison Sociale"
                 value={createFormData.raison_sociale}
-                onChange={(e) => setCreateFormData({ ...createFormData, raison_sociale: e.target.value })}
+                onChange={(e) =>
+                  setCreateFormData({
+                    ...createFormData,
+                    raison_sociale: e.target.value,
+                  })
+                }
                 required
               />
               <div>
@@ -853,7 +1021,12 @@ const AdminDomiciliations = () => {
                 </label>
                 <select
                   value={createFormData.forme_juridique}
-                  onChange={(e) => setCreateFormData({ ...createFormData, forme_juridique: e.target.value })}
+                  onChange={(e) =>
+                    setCreateFormData({
+                      ...createFormData,
+                      forme_juridique: e.target.value,
+                    })
+                  }
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
                   required
                 >
@@ -871,21 +1044,30 @@ const AdminDomiciliations = () => {
               <Input
                 label="NIF"
                 value={createFormData.nif}
-                onChange={(e) => setCreateFormData({ ...createFormData, nif: e.target.value })}
+                onChange={(e) =>
+                  setCreateFormData({ ...createFormData, nif: e.target.value })
+                }
                 maxLength={20}
                 placeholder="20 caractères"
               />
               <Input
                 label="NIS"
                 value={createFormData.nis}
-                onChange={(e) => setCreateFormData({ ...createFormData, nis: e.target.value })}
+                onChange={(e) =>
+                  setCreateFormData({ ...createFormData, nis: e.target.value })
+                }
                 maxLength={15}
                 placeholder="15 caractères"
               />
               <Input
                 label="Registre Commerce"
                 value={createFormData.registre_commerce}
-                onChange={(e) => setCreateFormData({ ...createFormData, registre_commerce: e.target.value })}
+                onChange={(e) =>
+                  setCreateFormData({
+                    ...createFormData,
+                    registre_commerce: e.target.value,
+                  })
+                }
               />
             </div>
 
@@ -893,12 +1075,22 @@ const AdminDomiciliations = () => {
               <Input
                 label="Article Imposition"
                 value={createFormData.article_imposition}
-                onChange={(e) => setCreateFormData({ ...createFormData, article_imposition: e.target.value })}
+                onChange={(e) =>
+                  setCreateFormData({
+                    ...createFormData,
+                    article_imposition: e.target.value,
+                  })
+                }
               />
               <Input
                 label="Numéro Auto-Entrepreneur"
                 value={createFormData.numero_auto_entrepreneur}
-                onChange={(e) => setCreateFormData({ ...createFormData, numero_auto_entrepreneur: e.target.value })}
+                onChange={(e) =>
+                  setCreateFormData({
+                    ...createFormData,
+                    numero_auto_entrepreneur: e.target.value,
+                  })
+                }
               />
             </div>
 
@@ -907,28 +1099,48 @@ const AdminDomiciliations = () => {
                 label="Capital (DA)"
                 type="number"
                 value={createFormData.capital}
-                onChange={(e) => setCreateFormData({ ...createFormData, capital: e.target.value })}
+                onChange={(e) =>
+                  setCreateFormData({
+                    ...createFormData,
+                    capital: e.target.value,
+                  })
+                }
                 min="0"
                 step="1000"
               />
               <Input
                 label="Domaine d'Activité"
                 value={createFormData.domaine_activite}
-                onChange={(e) => setCreateFormData({ ...createFormData, domaine_activite: e.target.value })}
+                onChange={(e) =>
+                  setCreateFormData({
+                    ...createFormData,
+                    domaine_activite: e.target.value,
+                  })
+                }
               />
             </div>
 
             <Input
               label="Activité Principale"
               value={createFormData.activite_principale}
-              onChange={(e) => setCreateFormData({ ...createFormData, activite_principale: e.target.value })}
+              onChange={(e) =>
+                setCreateFormData({
+                  ...createFormData,
+                  activite_principale: e.target.value,
+                })
+              }
             />
 
             <Input
               label="Date de Création Entreprise"
               type="date"
               value={createFormData.date_creation_entreprise}
-              onChange={(e) => setCreateFormData({ ...createFormData, date_creation_entreprise: e.target.value })}
+              onChange={(e) =>
+                setCreateFormData({
+                  ...createFormData,
+                  date_creation_entreprise: e.target.value,
+                })
+              }
             />
           </div>
 
@@ -942,17 +1154,32 @@ const AdminDomiciliations = () => {
               <Input
                 label="Nom"
                 value={createFormData.representant_nom}
-                onChange={(e) => setCreateFormData({ ...createFormData, representant_nom: e.target.value })}
+                onChange={(e) =>
+                  setCreateFormData({
+                    ...createFormData,
+                    representant_nom: e.target.value,
+                  })
+                }
               />
               <Input
                 label="Prénom"
                 value={createFormData.representant_prenom}
-                onChange={(e) => setCreateFormData({ ...createFormData, representant_prenom: e.target.value })}
+                onChange={(e) =>
+                  setCreateFormData({
+                    ...createFormData,
+                    representant_prenom: e.target.value,
+                  })
+                }
               />
               <Input
                 label="Fonction"
                 value={createFormData.representant_fonction}
-                onChange={(e) => setCreateFormData({ ...createFormData, representant_fonction: e.target.value })}
+                onChange={(e) =>
+                  setCreateFormData({
+                    ...createFormData,
+                    representant_fonction: e.target.value,
+                  })
+                }
               />
             </div>
 
@@ -961,12 +1188,22 @@ const AdminDomiciliations = () => {
                 label="Email"
                 type="email"
                 value={createFormData.representant_email}
-                onChange={(e) => setCreateFormData({ ...createFormData, representant_email: e.target.value })}
+                onChange={(e) =>
+                  setCreateFormData({
+                    ...createFormData,
+                    representant_email: e.target.value,
+                  })
+                }
               />
               <Input
                 label="Téléphone"
                 value={createFormData.representant_telephone}
-                onChange={(e) => setCreateFormData({ ...createFormData, representant_telephone: e.target.value })}
+                onChange={(e) =>
+                  setCreateFormData({
+                    ...createFormData,
+                    representant_telephone: e.target.value,
+                  })
+                }
               />
             </div>
           </div>
@@ -981,12 +1218,22 @@ const AdminDomiciliations = () => {
               <Input
                 label="Wilaya"
                 value={createFormData.wilaya}
-                onChange={(e) => setCreateFormData({ ...createFormData, wilaya: e.target.value })}
+                onChange={(e) =>
+                  setCreateFormData({
+                    ...createFormData,
+                    wilaya: e.target.value,
+                  })
+                }
               />
               <Input
                 label="Commune"
                 value={createFormData.commune}
-                onChange={(e) => setCreateFormData({ ...createFormData, commune: e.target.value })}
+                onChange={(e) =>
+                  setCreateFormData({
+                    ...createFormData,
+                    commune: e.target.value,
+                  })
+                }
               />
             </div>
 
@@ -996,7 +1243,12 @@ const AdminDomiciliations = () => {
               </label>
               <textarea
                 value={createFormData.adresse_actuelle}
-                onChange={(e) => setCreateFormData({ ...createFormData, adresse_actuelle: e.target.value })}
+                onChange={(e) =>
+                  setCreateFormData({
+                    ...createFormData,
+                    adresse_actuelle: e.target.value,
+                  })
+                }
                 rows={2}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
               />
@@ -1008,7 +1260,12 @@ const AdminDomiciliations = () => {
               </label>
               <textarea
                 value={createFormData.adresse_siege_social}
-                onChange={(e) => setCreateFormData({ ...createFormData, adresse_siege_social: e.target.value })}
+                onChange={(e) =>
+                  setCreateFormData({
+                    ...createFormData,
+                    adresse_siege_social: e.target.value,
+                  })
+                }
                 rows={2}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
               />
@@ -1028,7 +1285,12 @@ const AdminDomiciliations = () => {
                 </label>
                 <select
                   value={createFormData.statut}
-                  onChange={(e) => setCreateFormData({ ...createFormData, statut: e.target.value })}
+                  onChange={(e) =>
+                    setCreateFormData({
+                      ...createFormData,
+                      statut: e.target.value,
+                    })
+                  }
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
                 >
                   <option value="en_attente">En attente</option>
@@ -1040,7 +1302,12 @@ const AdminDomiciliations = () => {
                 label="Montant Mensuel (DA)"
                 type="number"
                 value={createFormData.montant_mensuel}
-                onChange={(e) => setCreateFormData({ ...createFormData, montant_mensuel: e.target.value })}
+                onChange={(e) =>
+                  setCreateFormData({
+                    ...createFormData,
+                    montant_mensuel: e.target.value,
+                  })
+                }
                 required
                 min="0"
                 step="1000"
@@ -1052,14 +1319,24 @@ const AdminDomiciliations = () => {
                 label="Date Début"
                 type="date"
                 value={createFormData.date_debut}
-                onChange={(e) => setCreateFormData({ ...createFormData, date_debut: e.target.value })}
+                onChange={(e) =>
+                  setCreateFormData({
+                    ...createFormData,
+                    date_debut: e.target.value,
+                  })
+                }
                 required
               />
               <Input
                 label="Date Fin"
                 type="date"
                 value={createFormData.date_fin}
-                onChange={(e) => setCreateFormData({ ...createFormData, date_fin: e.target.value })}
+                onChange={(e) =>
+                  setCreateFormData({
+                    ...createFormData,
+                    date_fin: e.target.value,
+                  })
+                }
                 required
               />
             </div>
@@ -1070,7 +1347,12 @@ const AdminDomiciliations = () => {
               </label>
               <select
                 value={createFormData.mode_paiement}
-                onChange={(e) => setCreateFormData({ ...createFormData, mode_paiement: e.target.value })}
+                onChange={(e) =>
+                  setCreateFormData({
+                    ...createFormData,
+                    mode_paiement: e.target.value,
+                  })
+                }
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
               >
                 <option value="cash">Espèces</option>
@@ -1086,7 +1368,12 @@ const AdminDomiciliations = () => {
               </label>
               <textarea
                 value={createFormData.notes_admin}
-                onChange={(e) => setCreateFormData({ ...createFormData, notes_admin: e.target.value })}
+                onChange={(e) =>
+                  setCreateFormData({
+                    ...createFormData,
+                    notes_admin: e.target.value,
+                  })
+                }
                 rows={3}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
                 placeholder="Notes internes..."
@@ -1104,18 +1391,14 @@ const AdminDomiciliations = () => {
             >
               Annuler
             </Button>
-            <Button
-              type="submit"
-              disabled={loading}
-              className="flex-1"
-            >
-              {loading ? 'Création...' : 'Créer la Domiciliation'}
+            <Button type="submit" disabled={loading} className="flex-1">
+              {loading ? "Création..." : "Créer la Domiciliation"}
             </Button>
           </div>
         </form>
       </Modal>
     </div>
-  )
-}
+  );
+};
 
-export default AdminDomiciliations
+export default AdminDomiciliations;

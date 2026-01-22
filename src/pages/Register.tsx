@@ -1,65 +1,67 @@
-import React from 'react'
-import { Link, Navigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { Mail, Lock, User, Phone, ArrowRight, Gift } from 'lucide-react'
-import { useForm } from 'react-hook-form'
-import toast from 'react-hot-toast'
-import Button from '../components/ui/Button'
-import Input from '../components/ui/Input'
-import { useAuthStore } from '../store/authStore'
-import { UserForm } from '../types'
-import { apiClient } from '../lib/api-client'
-import { validationRules } from '../utils/validation'
-import Logo from '../components/Logo'
+import React from "react";
+import { Link, Navigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Mail, Lock, User, Phone, ArrowRight, Gift } from "lucide-react";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import Button from "../components/ui/Button";
+import Input from "../components/ui/Input";
+import { useAuthStore } from "../store/authStore";
+import { UserForm } from "../types";
+import { apiClient } from "../lib/api-client";
+import { validationRules } from "../utils/validation";
+import Logo from "../components/Logo";
 
 interface RegisterForm extends UserForm {
-  passwordConfirm?: string
-  acceptTerms: boolean
+  passwordConfirm?: string;
+  acceptTerms: boolean;
 }
 
 const Register = () => {
-  const { register: registerUser, user } = useAuthStore()
-  const [isLoading, setIsLoading] = React.useState(false)
-  const [validatingReferral, setValidatingReferral] = React.useState(false)
-  const [referralValid, setReferralValid] = React.useState<boolean | null>(null)
+  const { register: registerUser, user } = useAuthStore();
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [validatingReferral, setValidatingReferral] = React.useState(false);
+  const [referralValid, setReferralValid] = React.useState<boolean | null>(
+    null,
+  );
 
   const {
     register,
     handleSubmit,
     watch,
-    formState: { errors }
-  } = useForm<RegisterForm>()
+    formState: { errors },
+  } = useForm<RegisterForm>();
 
-  const password = watch('password')
+  const password = watch("password");
 
   if (user) {
-    return <Navigate to="/app" replace />
+    return <Navigate to="/app" replace />;
   }
 
   const validateReferralCode = async (code: string) => {
     if (!code) {
-      setReferralValid(null)
-      return
+      setReferralValid(null);
+      return;
     }
 
-    setValidatingReferral(true)
+    setValidatingReferral(true);
     try {
-      const result = await apiClient.verifyCodeParrainage(code)
-      setReferralValid(result.success)
+      const result = await apiClient.verifyCodeParrainage(code);
+      setReferralValid(result.success);
       if (result.success) {
-        toast.success('Code de parrainage valide! Vous recevrez 3000 DA')
+        toast.success("Code de parrainage valide! Vous recevrez 3000 DA");
       } else {
-        toast.error(result.error || 'Code de parrainage invalide')
+        toast.error(result.error || "Code de parrainage invalide");
       }
     } catch (error) {
-      setReferralValid(false)
+      setReferralValid(false);
     } finally {
-      setValidatingReferral(false)
+      setValidatingReferral(false);
     }
-  }
+  };
 
   const onSubmit = async (data: RegisterForm) => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
       await registerUser({
         email: data.email,
@@ -70,13 +72,13 @@ const Register = () => {
         profession: data.profession,
         entreprise: data.entreprise,
         codeParrainage: data.codeParrainage,
-      })
+      });
     } catch (error) {
-      console.error('Register error:', error)
+      console.error("Register error:", error);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center justify-center p-4">
@@ -109,14 +111,14 @@ const Register = () => {
                 icon={<User className="w-5 h-5" />}
                 placeholder="Prénom"
                 autoComplete="given-name"
-                {...register('prenom', validationRules.prenom)}
+                {...register("prenom", validationRules.prenom)}
                 error={errors.prenom?.message}
               />
               <Input
                 label="Nom"
                 placeholder="Nom"
                 autoComplete="family-name"
-                {...register('nom', validationRules.nom)}
+                {...register("nom", validationRules.nom)}
                 error={errors.nom?.message}
               />
             </div>
@@ -127,7 +129,7 @@ const Register = () => {
               icon={<Mail className="w-5 h-5" />}
               placeholder="votre@email.com"
               autoComplete="email"
-              {...register('email', validationRules.email)}
+              {...register("email", validationRules.email)}
               error={errors.email?.message}
             />
 
@@ -137,7 +139,7 @@ const Register = () => {
               icon={<Phone className="w-5 h-5" />}
               placeholder="+213 55 123 4567"
               autoComplete="tel"
-              {...register('telephone', validationRules.phone)}
+              {...register("telephone", validationRules.phone)}
               error={errors.telephone?.message}
             />
 
@@ -147,7 +149,7 @@ const Register = () => {
               icon={<Lock className="w-5 h-5" />}
               placeholder="••••••••"
               autoComplete="new-password"
-              {...register('password', validationRules.password)}
+              {...register("password", validationRules.password)}
               error={errors.password?.message}
             />
 
@@ -157,7 +159,10 @@ const Register = () => {
               icon={<Lock className="w-5 h-5" />}
               placeholder="••••••••"
               autoComplete="new-password"
-              {...register('passwordConfirm', validationRules.passwordConfirm(password))}
+              {...register(
+                "passwordConfirm",
+                validationRules.passwordConfirm(password),
+              )}
               error={errors.passwordConfirm?.message}
             />
 
@@ -167,7 +172,7 @@ const Register = () => {
                 type="text"
                 icon={<Gift className="w-5 h-5" />}
                 placeholder="COFFICE-XXXXXX"
-                {...register('codeParrainage')}
+                {...register("codeParrainage")}
                 onBlur={(e) => validateReferralCode(e.target.value)}
               />
               {validatingReferral && (
@@ -176,13 +181,16 @@ const Register = () => {
                 </div>
               )}
               {referralValid === true && (
-                <p className="text-sm text-green-600 mt-1">✓ Code valide! Bonus de 3000 DA à l'inscription</p>
+                <p className="text-sm text-green-600 mt-1">
+                  ✓ Code valide! Bonus de 3000 DA à l'inscription
+                </p>
               )}
               {referralValid === false && (
                 <p className="text-sm text-red-600 mt-1">✗ Code invalide</p>
               )}
               <p className="text-xs text-gray-500 mt-1">
-                Si vous avez un code de parrainage, vous recevrez 3000 DA de crédit gratuit
+                Si vous avez un code de parrainage, vous recevrez 3000 DA de
+                crédit gratuit
               </p>
             </div>
 
@@ -190,28 +198,32 @@ const Register = () => {
               <input
                 type="checkbox"
                 className="rounded border-gray-300 text-accent focus:ring-accent mt-1"
-                {...register('acceptTerms', validationRules.acceptTerms)}
+                {...register("acceptTerms", validationRules.acceptTerms)}
               />
               <span className="ml-2 text-sm text-gray-600">
-                J'accepte les{' '}
-                <Link to="/mentions-legales" className="text-accent hover:text-accent/80">
+                J'accepte les{" "}
+                <Link
+                  to="/mentions-legales"
+                  className="text-accent hover:text-accent/80"
+                >
                   conditions d'utilisation
-                </Link>{' '}
-                et la{' '}
-                <Link to="/mentions-legales" className="text-accent hover:text-accent/80">
+                </Link>{" "}
+                et la{" "}
+                <Link
+                  to="/mentions-legales"
+                  className="text-accent hover:text-accent/80"
+                >
                   politique de confidentialité
                 </Link>
               </span>
             </div>
             {errors.acceptTerms && (
-              <p className="text-red-600 text-sm">{errors.acceptTerms.message}</p>
+              <p className="text-red-600 text-sm">
+                {errors.acceptTerms.message}
+              </p>
             )}
 
-            <Button
-              type="submit"
-              loading={isLoading}
-              className="w-full"
-            >
+            <Button type="submit" loading={isLoading} className="w-full">
               Créer mon compte
               <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
@@ -219,8 +231,11 @@ const Register = () => {
 
           <div className="mt-6 text-center">
             <p className="text-gray-600">
-              Déjà un compte ?{' '}
-              <Link to="/connexion" className="text-accent hover:text-accent/80 font-medium">
+              Déjà un compte ?{" "}
+              <Link
+                to="/connexion"
+                className="text-accent hover:text-accent/80 font-medium"
+              >
                 Se connecter
               </Link>
             </p>
@@ -229,13 +244,16 @@ const Register = () => {
 
         {/* Back to home */}
         <div className="text-center mt-6">
-          <Link to="/" className="text-gray-600 hover:text-primary transition-colors">
+          <Link
+            to="/"
+            className="text-gray-600 hover:text-primary transition-colors"
+          >
             ← Retour à l'accueil
           </Link>
         </div>
       </motion.div>
     </div>
-  )
-}
+  );
+};
 
-export default Register
+export default Register;

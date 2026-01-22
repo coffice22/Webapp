@@ -1,45 +1,49 @@
-import React, { useState, useEffect } from 'react'
-import { Link, useLocation } from 'react-router-dom'
-import { Menu, X, MessageCircle } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { useTranslation } from 'react-i18next'
-import Logo from './Logo'
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { Menu, X, MessageCircle } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
+import Logo from "./Logo";
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(false)
-  const location = useLocation()
-  const { t } = useTranslation()
+  const [isOpen, setIsOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const location = useLocation();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50)
-    }
+      setIsScrolled(window.scrollY > 50);
+    };
 
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const navLinks = [
-    { name: t('nav.home'), path: '/' },
-    { name: t('nav.spaces'), path: '/espaces' },
-    { name: t('nav.domiciliation'), path: '/domiciliation' },
-    { name: t('nav.about'), path: '/a-propos' },
-  ]
+    { name: t("nav.home"), path: "/" },
+    { name: t("nav.spaces"), path: "/espaces" },
+    { name: t("nav.domiciliation"), path: "/domiciliation" },
+    { name: t("nav.about"), path: "/a-propos" },
+  ];
 
   const isActive = (path: string) => {
-    if (path === '/espaces') {
-      return location.pathname === '/espaces' || location.pathname === '/tarifs'
+    if (path === "/espaces") {
+      return (
+        location.pathname === "/espaces" || location.pathname === "/tarifs"
+      );
     }
-    return location.pathname === path
-  }
+    return location.pathname === path;
+  };
 
   return (
     <motion.nav
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-white/98 backdrop-blur-md shadow-lg' : 'bg-white/95 backdrop-blur-sm'
+        isScrolled
+          ? "bg-white/98 backdrop-blur-md shadow-lg"
+          : "bg-white/95 backdrop-blur-sm"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -55,8 +59,8 @@ const Navbar = () => {
                 to={link.path}
                 className={`relative px-4 py-2 font-medium transition-all ${
                   isActive(link.path)
-                    ? 'text-primary'
-                    : 'text-gray-600 hover:text-primary'
+                    ? "text-primary"
+                    : "text-gray-600 hover:text-primary"
                 }`}
               >
                 {link.name}
@@ -93,7 +97,11 @@ const Navbar = () => {
               onClick={() => setIsOpen(!isOpen)}
               className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
             >
-              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
             </button>
           </div>
         </div>
@@ -103,7 +111,7 @@ const Navbar = () => {
         {isOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
+            animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             className="lg:hidden bg-white border-t border-gray-100"
           >
@@ -115,8 +123,8 @@ const Navbar = () => {
                   onClick={() => setIsOpen(false)}
                   className={`block px-4 py-3 rounded-lg font-medium transition-colors ${
                     isActive(link.path)
-                      ? 'bg-primary text-white'
-                      : 'text-gray-700 hover:bg-gray-50'
+                      ? "bg-primary text-white"
+                      : "text-gray-700 hover:bg-gray-50"
                   }`}
                 >
                   {link.name}
@@ -134,7 +142,7 @@ const Navbar = () => {
         )}
       </AnimatePresence>
     </motion.nav>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;

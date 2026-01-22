@@ -1,23 +1,23 @@
-const isDev = import.meta.env.DEV
+const isDev = import.meta.env.DEV;
 
-type LogLevel = 'error' | 'warn' | 'info' | 'debug'
+type LogLevel = "error" | "warn" | "info" | "debug";
 
 interface LogEntry {
-  level: LogLevel
-  message: string
-  data?: any
-  timestamp: string
-  userAgent?: string
+  level: LogLevel;
+  message: string;
+  data?: any;
+  timestamp: string;
+  userAgent?: string;
 }
 
 class Logger {
-  private logs: LogEntry[] = []
-  private maxLogs = 100
+  private logs: LogEntry[] = [];
+  private maxLogs = 100;
 
   private formatMessage(level: LogLevel, message: string, data?: any): string {
-    const timestamp = new Date().toISOString()
-    const prefix = `[${timestamp}] [${level.toUpperCase()}]`
-    return data ? `${prefix} ${message}` : `${prefix} ${message}`
+    const timestamp = new Date().toISOString();
+    const prefix = `[${timestamp}] [${level.toUpperCase()}]`;
+    return data ? `${prefix} ${message}` : `${prefix} ${message}`;
   }
 
   private addLog(level: LogLevel, message: string, data?: any) {
@@ -26,64 +26,64 @@ class Logger {
       message,
       data,
       timestamp: new Date().toISOString(),
-      userAgent: navigator.userAgent
-    }
+      userAgent: navigator.userAgent,
+    };
 
-    this.logs.push(entry)
+    this.logs.push(entry);
 
     if (this.logs.length > this.maxLogs) {
-      this.logs.shift()
+      this.logs.shift();
     }
   }
 
   error(message: string, data?: any) {
-    this.addLog('error', message, data)
+    this.addLog("error", message, data);
 
     if (isDev) {
-      console.error(this.formatMessage('error', message), data)
+      console.error(this.formatMessage("error", message), data);
     } else {
-      console.error(message)
+      console.error(message);
     }
   }
 
   warn(message: string, data?: any) {
-    this.addLog('warn', message, data)
+    this.addLog("warn", message, data);
 
     if (isDev) {
-      console.warn(this.formatMessage('warn', message), data)
+      console.warn(this.formatMessage("warn", message), data);
     }
   }
 
   info(message: string, data?: any) {
-    this.addLog('info', message, data)
+    this.addLog("info", message, data);
 
     if (isDev) {
-      console.log(this.formatMessage('info', message), data)
+      console.log(this.formatMessage("info", message), data);
     }
   }
 
   debug(message: string, data?: any) {
-    this.addLog('debug', message, data)
+    this.addLog("debug", message, data);
 
     if (isDev) {
-      console.debug(this.formatMessage('debug', message), data)
+      console.debug(this.formatMessage("debug", message), data);
     }
   }
 
   getLogs(level?: LogLevel): LogEntry[] {
     if (level) {
-      return this.logs.filter(log => log.level === level)
+      return this.logs.filter((log) => log.level === level);
     }
-    return [...this.logs]
+    return [...this.logs];
   }
 
   clearLogs() {
-    this.logs = []
+    this.logs = [];
   }
 
   exportLogs(): string {
-    return JSON.stringify(this.logs, null, 2)
+    return JSON.stringify(this.logs, null, 2);
   }
 }
 
-export const logger = new Logger()
+export const logger = new Logger();
