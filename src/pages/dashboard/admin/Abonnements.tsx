@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   CreditCard,
   Plus,
@@ -17,278 +17,309 @@ import {
   ToggleLeft,
   ToggleRight,
   Calendar,
-  AlertCircle
-} from 'lucide-react'
-import Card from '../../../components/ui/Card'
-import Button from '../../../components/ui/Button'
-import Badge from '../../../components/ui/Badge'
-import Input from '../../../components/ui/Input'
-import Modal from '../../../components/ui/Modal'
-import { formatCurrency } from '../../../utils/formatters'
-import toast from 'react-hot-toast'
-import { apiClient } from '../../../lib/api-client'
+  AlertCircle,
+} from "lucide-react";
+import Card from "../../../components/ui/Card";
+import Button from "../../../components/ui/Button";
+import Badge from "../../../components/ui/Badge";
+import Input from "../../../components/ui/Input";
+import Modal from "../../../components/ui/Modal";
+import { formatCurrency } from "../../../utils/formatters";
+import toast from "react-hot-toast";
+import { apiClient } from "../../../lib/api-client";
 
 interface Abonnement {
-  id: string
-  nom: string
-  type: string
-  prix: number
-  prix_avec_domiciliation?: number
-  duree_mois: number
-  description?: string
-  avantages?: string[]
-  actif: boolean
-  statut: 'actif' | 'inactif' | 'archive'
-  ordre: number
-  created_at?: string
-  updated_at?: string
+  id: string;
+  nom: string;
+  type: string;
+  prix: number;
+  prix_avec_domiciliation?: number;
+  duree_mois: number;
+  description?: string;
+  avantages?: string[];
+  actif: boolean;
+  statut: "actif" | "inactif" | "archive";
+  ordre: number;
+  created_at?: string;
+  updated_at?: string;
 }
 
 const AdminAbonnements = () => {
-  const [abonnements, setAbonnements] = useState<Abonnement[]>([])
-  const [loading, setLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [filterStatut, setFilterStatut] = useState<string>('tous')
-  const [showModal, setShowModal] = useState(false)
-  const [showDeleteModal, setShowDeleteModal] = useState(false)
-  const [selectedAbonnement, setSelectedAbonnement] = useState<Abonnement | null>(null)
-  const [isEditing, setIsEditing] = useState(false)
+  const [abonnements, setAbonnements] = useState<Abonnement[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatut, setFilterStatut] = useState<string>("tous");
+  const [showModal, setShowModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedAbonnement, setSelectedAbonnement] =
+    useState<Abonnement | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
 
   const [formData, setFormData] = useState<Partial<Abonnement>>({
-    nom: '',
-    type: '',
+    nom: "",
+    type: "",
     prix: 0,
     prix_avec_domiciliation: 0,
     duree_mois: 1,
-    description: '',
+    description: "",
     avantages: [],
     actif: true,
-    statut: 'actif',
-    ordre: 0
-  })
+    statut: "actif",
+    ordre: 0,
+  });
 
-  const [newAvantage, setNewAvantage] = useState('')
+  const [newAvantage, setNewAvantage] = useState("");
 
   useEffect(() => {
-    loadAbonnements()
-  }, [])
+    loadAbonnements();
+  }, []);
 
   const loadAbonnements = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const response = await apiClient.get('/api/abonnements/index.php')
+      const response = await apiClient.get("/api/abonnements/index.php");
       if (response.success) {
-        setAbonnements(response.data || [])
+        setAbonnements(response.data || []);
       }
     } catch (error) {
-      console.error('Erreur chargement abonnements:', error)
-      toast.error('Erreur lors du chargement des abonnements')
+      console.error("Erreur chargement abonnements:", error);
+      toast.error("Erreur lors du chargement des abonnements");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
-  const filteredAbonnements = abonnements.filter(ab => {
-    const matchSearch = ab.nom.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      ab.type.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchFilter = filterStatut === 'tous' || ab.statut === filterStatut
-    return matchSearch && matchFilter
-  })
+  const filteredAbonnements = abonnements.filter((ab) => {
+    const matchSearch =
+      ab.nom.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      ab.type.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchFilter = filterStatut === "tous" || ab.statut === filterStatut;
+    return matchSearch && matchFilter;
+  });
 
   const stats = {
     total: abonnements.length,
-    actifs: abonnements.filter(a => a.statut === 'actif').length,
-    inactifs: abonnements.filter(a => a.statut === 'inactif').length,
+    actifs: abonnements.filter((a) => a.statut === "actif").length,
+    inactifs: abonnements.filter((a) => a.statut === "inactif").length,
     revenuMensuel: abonnements
-      .filter(a => a.statut === 'actif')
-      .reduce((sum, a) => sum + a.prix, 0)
-  }
+      .filter((a) => a.statut === "actif")
+      .reduce((sum, a) => sum + a.prix, 0),
+  };
 
   const handleOpenModal = (abonnement?: Abonnement) => {
     if (abonnement) {
-      setIsEditing(true)
-      setSelectedAbonnement(abonnement)
+      setIsEditing(true);
+      setSelectedAbonnement(abonnement);
       setFormData({
         ...abonnement,
-        avantages: abonnement.avantages || []
-      })
+        avantages: abonnement.avantages || [],
+      });
     } else {
-      setIsEditing(false)
-      setSelectedAbonnement(null)
+      setIsEditing(false);
+      setSelectedAbonnement(null);
       setFormData({
-        nom: '',
-        type: '',
+        nom: "",
+        type: "",
         prix: 0,
         prix_avec_domiciliation: 0,
         duree_mois: 1,
-        description: '',
+        description: "",
         avantages: [],
         actif: true,
-        statut: 'actif',
-        ordre: 0
-      })
+        statut: "actif",
+        ordre: 0,
+      });
     }
-    setShowModal(true)
-  }
+    setShowModal(true);
+  };
 
   const handleCloseModal = () => {
-    setShowModal(false)
-    setSelectedAbonnement(null)
-    setIsEditing(false)
+    setShowModal(false);
+    setSelectedAbonnement(null);
+    setIsEditing(false);
     setFormData({
-      nom: '',
-      type: '',
+      nom: "",
+      type: "",
       prix: 0,
       prix_avec_domiciliation: 0,
       duree_mois: 1,
-      description: '',
+      description: "",
       avantages: [],
       actif: true,
-      statut: 'actif',
-      ordre: 0
-    })
-    setNewAvantage('')
-  }
+      statut: "actif",
+      ordre: 0,
+    });
+    setNewAvantage("");
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!formData.nom || !formData.type || !formData.prix) {
-      toast.error('Veuillez remplir tous les champs obligatoires')
-      return
+      toast.error("Veuillez remplir tous les champs obligatoires");
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
     try {
       const payload = {
         ...formData,
         prix: Number(formData.prix),
-        prix_avec_domiciliation: formData.prix_avec_domiciliation ? Number(formData.prix_avec_domiciliation) : null,
+        prix_avec_domiciliation: formData.prix_avec_domiciliation
+          ? Number(formData.prix_avec_domiciliation)
+          : null,
         duree_mois: Number(formData.duree_mois),
         ordre: Number(formData.ordre),
-        actif: formData.actif ? 1 : 0
-      }
+        actif: formData.actif ? 1 : 0,
+      };
 
       if (isEditing && selectedAbonnement) {
-        const response = await apiClient.put('/api/abonnements/update.php', {
+        const response = await apiClient.put("/api/abonnements/update.php", {
           id: selectedAbonnement.id,
-          ...payload
-        })
+          ...payload,
+        });
         if (response.success) {
-          toast.success('Abonnement modifié avec succès')
-          handleCloseModal()
-          await loadAbonnements()
+          toast.success("Abonnement modifié avec succès");
+          handleCloseModal();
+          await loadAbonnements();
         }
       } else {
-        const response = await apiClient.post('/api/abonnements/create.php', payload)
+        const response = await apiClient.post(
+          "/api/abonnements/create.php",
+          payload,
+        );
         if (response.success) {
-          toast.success('Abonnement créé avec succès')
-          handleCloseModal()
-          await loadAbonnements()
+          toast.success("Abonnement créé avec succès");
+          handleCloseModal();
+          await loadAbonnements();
         }
       }
     } catch (error: any) {
-      console.error('Erreur:', error)
-      toast.error(error.response?.data?.message || 'Une erreur est survenue')
+      console.error("Erreur:", error);
+      toast.error(error.response?.data?.message || "Une erreur est survenue");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleToggleActif = async (abonnement: Abonnement) => {
     try {
-      const response = await apiClient.put('/api/abonnements/update.php', {
+      const response = await apiClient.put("/api/abonnements/update.php", {
         id: abonnement.id,
-        actif: !abonnement.actif
-      })
+        actif: !abonnement.actif,
+      });
       if (response.success) {
-        toast.success(`Abonnement ${!abonnement.actif ? 'activé' : 'désactivé'}`)
-        await loadAbonnements()
+        toast.success(
+          `Abonnement ${!abonnement.actif ? "activé" : "désactivé"}`,
+        );
+        await loadAbonnements();
       }
     } catch (error) {
-      toast.error('Erreur lors de la mise à jour')
+      toast.error("Erreur lors de la mise à jour");
     }
-  }
+  };
 
   const handleDelete = async () => {
-    if (!selectedAbonnement) return
+    if (!selectedAbonnement) return;
 
-    setLoading(true)
+    setLoading(true);
     try {
-      const response = await apiClient.delete('/api/abonnements/delete.php', {
-        id: selectedAbonnement.id
-      })
+      const response = await apiClient.delete("/api/abonnements/delete.php", {
+        id: selectedAbonnement.id,
+      });
       if (response.success) {
-        toast.success('Abonnement archivé avec succès')
-        setShowDeleteModal(false)
-        setSelectedAbonnement(null)
-        await loadAbonnements()
+        toast.success("Abonnement archivé avec succès");
+        setShowDeleteModal(false);
+        setSelectedAbonnement(null);
+        await loadAbonnements();
       }
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Erreur lors de la suppression')
+      toast.error(
+        error.response?.data?.message || "Erreur lors de la suppression",
+      );
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleAddAvantage = () => {
     if (newAvantage.trim()) {
       setFormData({
         ...formData,
-        avantages: [...(formData.avantages || []), newAvantage.trim()]
-      })
-      setNewAvantage('')
+        avantages: [...(formData.avantages || []), newAvantage.trim()],
+      });
+      setNewAvantage("");
     }
-  }
+  };
 
   const handleRemoveAvantage = (index: number) => {
     setFormData({
       ...formData,
-      avantages: formData.avantages?.filter((_, i) => i !== index)
-    })
-  }
+      avantages: formData.avantages?.filter((_, i) => i !== index),
+    });
+  };
 
   const exportToCSV = () => {
     const csvContent = [
-      ['Nom', 'Type', 'Prix', 'Prix avec Domiciliation', 'Durée (mois)', 'Statut', 'Actif', 'Ordre'],
-      ...filteredAbonnements.map(a => [
+      [
+        "Nom",
+        "Type",
+        "Prix",
+        "Prix avec Domiciliation",
+        "Durée (mois)",
+        "Statut",
+        "Actif",
+        "Ordre",
+      ],
+      ...filteredAbonnements.map((a) => [
         a.nom,
         a.type,
         a.prix,
-        a.prix_avec_domiciliation || 'N/A',
+        a.prix_avec_domiciliation || "N/A",
         a.duree_mois,
         a.statut,
-        a.actif ? 'Oui' : 'Non',
-        a.ordre
-      ])
-    ].map(row => row.join(',')).join('\n')
+        a.actif ? "Oui" : "Non",
+        a.ordre,
+      ]),
+    ]
+      .map((row) => row.join(","))
+      .join("\n");
 
-    const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' })
-    const url = window.URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `abonnements_${new Date().toISOString().split('T')[0]}.csv`
-    a.click()
-    window.URL.revokeObjectURL(url)
-    toast.success('Export réussi')
-  }
+    const blob = new Blob(["\uFEFF" + csvContent], {
+      type: "text/csv;charset=utf-8;",
+    });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `abonnements_${new Date().toISOString().split("T")[0]}.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+    toast.success("Export réussi");
+  };
 
   const getStatutBadge = (statut: string) => {
-    const badges: Record<string, { variant: 'success' | 'warning' | 'danger' | 'default', label: string }> = {
-      actif: { variant: 'success', label: 'Actif' },
-      inactif: { variant: 'warning', label: 'Inactif' },
-      archive: { variant: 'default', label: 'Archivé' }
-    }
-    const badge = badges[statut] || badges.actif
-    return <Badge variant={badge.variant}>{badge.label}</Badge>
-  }
+    const badges: Record<
+      string,
+      { variant: "success" | "warning" | "danger" | "default"; label: string }
+    > = {
+      actif: { variant: "success", label: "Actif" },
+      inactif: { variant: "warning", label: "Inactif" },
+      archive: { variant: "default", label: "Archivé" },
+    };
+    const badge = badges[statut] || badges.actif;
+    return <Badge variant={badge.variant}>{badge.label}</Badge>;
+  };
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Gestion des Abonnements</h1>
-          <p className="text-gray-600 mt-1">Administration des types d'abonnements et forfaits</p>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Gestion des Abonnements
+          </h1>
+          <p className="text-gray-600 mt-1">
+            Administration des types d'abonnements et forfaits
+          </p>
         </div>
         <div className="flex gap-3">
           <Button onClick={exportToCSV} variant="outline">
@@ -317,7 +348,9 @@ const AdminAbonnements = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-green-600 font-medium">Actifs</p>
-              <p className="text-3xl font-bold text-green-900">{stats.actifs}</p>
+              <p className="text-3xl font-bold text-green-900">
+                {stats.actifs}
+              </p>
             </div>
             <CheckCircle className="w-10 h-10 text-green-600 opacity-50" />
           </div>
@@ -327,7 +360,9 @@ const AdminAbonnements = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-amber-600 font-medium">Inactifs</p>
-              <p className="text-3xl font-bold text-amber-900">{stats.inactifs}</p>
+              <p className="text-3xl font-bold text-amber-900">
+                {stats.inactifs}
+              </p>
             </div>
             <XCircle className="w-10 h-10 text-amber-600 opacity-50" />
           </div>
@@ -336,7 +371,9 @@ const AdminAbonnements = () => {
         <Card className="p-6 bg-gradient-to-br from-purple-50 to-purple-100 border-l-4 border-purple-600">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-purple-600 font-medium">Revenu Potentiel</p>
+              <p className="text-sm text-purple-600 font-medium">
+                Revenu Potentiel
+              </p>
               <p className="text-2xl font-bold text-purple-900">
                 {formatCurrency(stats.revenuMensuel)}
               </p>
@@ -414,7 +451,9 @@ const AdminAbonnements = () => {
                   >
                     <td className="px-6 py-4">
                       <div>
-                        <p className="font-medium text-gray-900">{abonnement.nom}</p>
+                        <p className="font-medium text-gray-900">
+                          {abonnement.nom}
+                        </p>
                         {abonnement.description && (
                           <p className="text-sm text-gray-500 truncate max-w-xs">
                             {abonnement.description}
@@ -432,7 +471,8 @@ const AdminAbonnements = () => {
                         </p>
                         {abonnement.prix_avec_domiciliation && (
                           <p className="text-xs text-gray-500">
-                            Avec dom: {formatCurrency(abonnement.prix_avec_domiciliation)}
+                            Avec dom:{" "}
+                            {formatCurrency(abonnement.prix_avec_domiciliation)}
                           </p>
                         )}
                       </div>
@@ -447,7 +487,7 @@ const AdminAbonnements = () => {
                       <button
                         onClick={() => handleToggleActif(abonnement)}
                         className="focus:outline-none"
-                        title={abonnement.actif ? 'Désactiver' : 'Activer'}
+                        title={abonnement.actif ? "Désactiver" : "Activer"}
                       >
                         {abonnement.actif ? (
                           <ToggleRight className="w-8 h-8 text-green-600" />
@@ -470,8 +510,8 @@ const AdminAbonnements = () => {
                           size="sm"
                           variant="outline"
                           onClick={() => {
-                            setSelectedAbonnement(abonnement)
-                            setShowDeleteModal(true)
+                            setSelectedAbonnement(abonnement);
+                            setShowDeleteModal(true);
                           }}
                           title="Supprimer"
                           className="text-red-600 hover:text-red-700 hover:bg-red-50"
@@ -491,21 +531,25 @@ const AdminAbonnements = () => {
       <Modal
         isOpen={showModal}
         onClose={handleCloseModal}
-        title={isEditing ? 'Modifier l\'abonnement' : 'Nouvel abonnement'}
+        title={isEditing ? "Modifier l'abonnement" : "Nouvel abonnement"}
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <Input
               label="Nom de l'abonnement"
               value={formData.nom}
-              onChange={(e) => setFormData({ ...formData, nom: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, nom: e.target.value })
+              }
               required
               placeholder="Ex: Solo, Pro, Executive"
             />
             <Input
               label="Type"
               value={formData.type}
-              onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, type: e.target.value })
+              }
               required
               placeholder="Ex: solo, pro, entreprise"
             />
@@ -516,7 +560,9 @@ const AdminAbonnements = () => {
               label="Prix (DA)"
               type="number"
               value={formData.prix}
-              onChange={(e) => setFormData({ ...formData, prix: Number(e.target.value) })}
+              onChange={(e) =>
+                setFormData({ ...formData, prix: Number(e.target.value) })
+              }
               required
               min="0"
               step="100"
@@ -524,8 +570,13 @@ const AdminAbonnements = () => {
             <Input
               label="Prix avec Domiciliation (DA)"
               type="number"
-              value={formData.prix_avec_domiciliation || ''}
-              onChange={(e) => setFormData({ ...formData, prix_avec_domiciliation: Number(e.target.value) || 0 })}
+              value={formData.prix_avec_domiciliation || ""}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  prix_avec_domiciliation: Number(e.target.value) || 0,
+                })
+              }
               min="0"
               step="100"
               placeholder="Optionnel"
@@ -534,7 +585,9 @@ const AdminAbonnements = () => {
               label="Durée (mois)"
               type="number"
               value={formData.duree_mois}
-              onChange={(e) => setFormData({ ...formData, duree_mois: Number(e.target.value) })}
+              onChange={(e) =>
+                setFormData({ ...formData, duree_mois: Number(e.target.value) })
+              }
               required
               min="1"
             />
@@ -546,7 +599,9 @@ const AdminAbonnements = () => {
             </label>
             <textarea
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
               rows={3}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
               placeholder="Description de l'abonnement"
@@ -578,13 +633,17 @@ const AdminAbonnements = () => {
                   onChange={(e) => setNewAvantage(e.target.value)}
                   placeholder="Ajouter un avantage"
                   onKeyPress={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault()
-                      handleAddAvantage()
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleAddAvantage();
                     }
                   }}
                 />
-                <Button type="button" onClick={handleAddAvantage} variant="outline">
+                <Button
+                  type="button"
+                  onClick={handleAddAvantage}
+                  variant="outline"
+                >
                   <Plus className="w-4 h-4" />
                 </Button>
               </div>
@@ -598,7 +657,9 @@ const AdminAbonnements = () => {
               </label>
               <select
                 value={formData.statut}
-                onChange={(e) => setFormData({ ...formData, statut: e.target.value as any })}
+                onChange={(e) =>
+                  setFormData({ ...formData, statut: e.target.value as any })
+                }
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
               >
                 <option value="actif">Actif</option>
@@ -611,7 +672,9 @@ const AdminAbonnements = () => {
               label="Ordre d'affichage"
               type="number"
               value={formData.ordre}
-              onChange={(e) => setFormData({ ...formData, ordre: Number(e.target.value) })}
+              onChange={(e) =>
+                setFormData({ ...formData, ordre: Number(e.target.value) })
+              }
               min="0"
             />
 
@@ -620,7 +683,9 @@ const AdminAbonnements = () => {
                 <input
                   type="checkbox"
                   checked={formData.actif}
-                  onChange={(e) => setFormData({ ...formData, actif: e.target.checked })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, actif: e.target.checked })
+                  }
                   className="w-4 h-4 text-accent border-gray-300 rounded focus:ring-accent"
                 />
                 <span className="ml-2 text-sm text-gray-700">Actif</span>
@@ -629,11 +694,16 @@ const AdminAbonnements = () => {
           </div>
 
           <div className="flex gap-3 pt-4 border-t">
-            <Button type="button" variant="outline" onClick={handleCloseModal} className="flex-1">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleCloseModal}
+              className="flex-1"
+            >
               Annuler
             </Button>
             <Button type="submit" disabled={loading} className="flex-1">
-              {loading ? 'Enregistrement...' : isEditing ? 'Modifier' : 'Créer'}
+              {loading ? "Enregistrement..." : isEditing ? "Modifier" : "Créer"}
             </Button>
           </div>
         </form>
@@ -642,8 +712,8 @@ const AdminAbonnements = () => {
       <Modal
         isOpen={showDeleteModal}
         onClose={() => {
-          setShowDeleteModal(false)
-          setSelectedAbonnement(null)
+          setShowDeleteModal(false);
+          setSelectedAbonnement(null);
         }}
         title="Confirmer la suppression"
       >
@@ -652,8 +722,9 @@ const AdminAbonnements = () => {
             <p className="text-sm text-amber-800 flex items-start gap-2">
               <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
               <span>
-                Êtes-vous sûr de vouloir archiver l'abonnement <strong>{selectedAbonnement?.nom}</strong> ?
-                Cette action ne supprimera pas l'abonnement mais le rendra indisponible.
+                Êtes-vous sûr de vouloir archiver l'abonnement{" "}
+                <strong>{selectedAbonnement?.nom}</strong> ? Cette action ne
+                supprimera pas l'abonnement mais le rendra indisponible.
               </span>
             </p>
           </div>
@@ -661,8 +732,8 @@ const AdminAbonnements = () => {
             <Button
               variant="outline"
               onClick={() => {
-                setShowDeleteModal(false)
-                setSelectedAbonnement(null)
+                setShowDeleteModal(false);
+                setSelectedAbonnement(null);
               }}
               className="flex-1"
             >
@@ -673,13 +744,13 @@ const AdminAbonnements = () => {
               disabled={loading}
               className="flex-1 bg-red-600 hover:bg-red-700"
             >
-              {loading ? 'Suppression...' : 'Archiver'}
+              {loading ? "Suppression..." : "Archiver"}
             </Button>
           </div>
         </div>
       </Modal>
     </div>
-  )
-}
+  );
+};
 
-export default AdminAbonnements
+export default AdminAbonnements;

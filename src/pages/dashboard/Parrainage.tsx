@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import {
   Gift,
   Copy,
@@ -7,86 +7,91 @@ import {
   Users,
   TrendingUp,
   Share2,
-  Info
-} from 'lucide-react'
-import { useAuthStore } from '../../store/authStore'
-import Card from '../../components/ui/Card'
-import Button from '../../components/ui/Button'
-import Badge from '../../components/ui/Badge'
-import toast from 'react-hot-toast'
-import { apiClient } from '../../lib/api-client'
+  Info,
+} from "lucide-react";
+import { useAuthStore } from "../../store/authStore";
+import Card from "../../components/ui/Card";
+import Button from "../../components/ui/Button";
+import Badge from "../../components/ui/Badge";
+import toast from "react-hot-toast";
+import { apiClient } from "../../lib/api-client";
 
 interface ParrainageStats {
-  parraines: number
-  daGagnes: number
-  codeParrainage: string
+  parraines: number;
+  daGagnes: number;
+  codeParrainage: string;
 }
 
 const Parrainage = () => {
-  const { user } = useAuthStore()
-  const [copied, setCopied] = useState(false)
-  const [stats, setStats] = useState<ParrainageStats | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { user } = useAuthStore();
+  const [copied, setCopied] = useState(false);
+  const [stats, setStats] = useState<ParrainageStats | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadParrainageStats = async () => {
       if (!user?.codeParrainage) {
-        setLoading(false)
-        return
+        setLoading(false);
+        return;
       }
 
       try {
-        const response = await apiClient.getParrainages(user.id)
+        const response = await apiClient.getParrainages(user.id);
         if (response.success && response.data) {
-          const parrainages = Array.isArray(response.data) ? response.data : []
+          const parrainages = Array.isArray(response.data) ? response.data : [];
           setStats({
             parraines: parrainages.length,
-            daGagnes: parrainages.reduce((sum: number, p: any) => sum + (p.recompenseParrain || 0), 0),
-            codeParrainage: user.codeParrainage || ''
-          })
+            daGagnes: parrainages.reduce(
+              (sum: number, p: any) => sum + (p.recompenseParrain || 0),
+              0,
+            ),
+            codeParrainage: user.codeParrainage || "",
+          });
         }
       } catch (error) {
-        console.error('Erreur chargement stats parrainage:', error)
+        console.error("Erreur chargement stats parrainage:", error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    loadParrainageStats()
-  }, [user])
+    loadParrainageStats();
+  }, [user]);
 
   const handleCopyCode = () => {
     if (user?.codeParrainage) {
-      navigator.clipboard.writeText(user.codeParrainage)
-      setCopied(true)
-      toast.success('Code copié !')
-      setTimeout(() => setCopied(false), 2000)
+      navigator.clipboard.writeText(user.codeParrainage);
+      setCopied(true);
+      toast.success("Code copié !");
+      setTimeout(() => setCopied(false), 2000);
     }
-  }
+  };
 
   const handleShare = () => {
-    const url = `${window.location.origin}/inscription?parrain=${user?.codeParrainage}`
+    const url = `${window.location.origin}/inscription?parrain=${user?.codeParrainage}`;
     if (navigator.share) {
-      navigator.share({
-        title: 'Rejoignez Coffice',
-        text: `Utilisez mon code de parrainage ${user?.codeParrainage} et profitez d'avantages exclusifs !`,
-        url
-      }).catch(() => {
-        navigator.clipboard.writeText(url)
-        toast.success('Lien copié !')
-      })
+      navigator
+        .share({
+          title: "Rejoignez Coffice",
+          text: `Utilisez mon code de parrainage ${user?.codeParrainage} et profitez d'avantages exclusifs !`,
+          url,
+        })
+        .catch(() => {
+          navigator.clipboard.writeText(url);
+          toast.success("Lien copié !");
+        });
     } else {
-      navigator.clipboard.writeText(url)
-      toast.success('Lien copié !')
+      navigator.clipboard.writeText(url);
+      toast.success("Lien copié !");
     }
-  }
+  };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent"></div>
       </div>
-    )
+    );
   }
 
   return (
@@ -108,7 +113,9 @@ const Parrainage = () => {
             </div>
             <div>
               <h2 className="text-2xl font-bold">Votre code de parrainage</h2>
-              <p className="text-white/80 text-sm">Partagez-le avec vos contacts</p>
+              <p className="text-white/80 text-sm">
+                Partagez-le avec vos contacts
+              </p>
             </div>
           </div>
 
@@ -117,7 +124,7 @@ const Parrainage = () => {
               <div className="flex-1">
                 <p className="text-white/70 text-sm mb-2">Votre code unique</p>
                 <p className="text-4xl font-bold tracking-wider">
-                  {user?.codeParrainage || 'Chargement...'}
+                  {user?.codeParrainage || "Chargement..."}
                 </p>
               </div>
               <button
@@ -151,7 +158,9 @@ const Parrainage = () => {
               </div>
               <div>
                 <p className="text-gray-600 text-sm">Parrainés</p>
-                <p className="text-3xl font-bold text-gray-900">{stats?.parraines || 0}</p>
+                <p className="text-3xl font-bold text-gray-900">
+                  {stats?.parraines || 0}
+                </p>
               </div>
             </div>
           </Card>
@@ -163,7 +172,9 @@ const Parrainage = () => {
               </div>
               <div>
                 <p className="text-gray-600 text-sm">DA gagnés</p>
-                <p className="text-3xl font-bold text-gray-900">{stats?.daGagnes || 0}</p>
+                <p className="text-3xl font-bold text-gray-900">
+                  {stats?.daGagnes || 0}
+                </p>
               </div>
             </div>
           </Card>
@@ -175,7 +186,9 @@ const Parrainage = () => {
           <div className="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center">
             <Info className="w-5 h-5 text-accent" />
           </div>
-          <h3 className="text-xl font-bold text-gray-900">Comment ça marche ?</h3>
+          <h3 className="text-xl font-bold text-gray-900">
+            Comment ça marche ?
+          </h3>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -183,7 +196,9 @@ const Parrainage = () => {
             <div className="w-16 h-16 bg-accent/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <span className="text-2xl font-bold text-accent">1</span>
             </div>
-            <h4 className="font-bold text-gray-900 mb-2">Partagez votre code</h4>
+            <h4 className="font-bold text-gray-900 mb-2">
+              Partagez votre code
+            </h4>
             <p className="text-sm text-gray-600">
               Partagez votre code avec vos contacts, amis et collègues
             </p>
@@ -195,7 +210,8 @@ const Parrainage = () => {
             </div>
             <h4 className="font-bold text-gray-900 mb-2">Ils s'inscrivent</h4>
             <p className="text-sm text-gray-600">
-              Ils s'inscrivent avec votre code et profitent d'avantages exclusifs
+              Ils s'inscrivent avec votre code et profitent d'avantages
+              exclusifs
             </p>
           </div>
 
@@ -203,7 +219,9 @@ const Parrainage = () => {
             <div className="w-16 h-16 bg-warm/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <span className="text-2xl font-bold text-warm">3</span>
             </div>
-            <h4 className="font-bold text-gray-900 mb-2">Vous recevez des récompenses</h4>
+            <h4 className="font-bold text-gray-900 mb-2">
+              Vous recevez des récompenses
+            </h4>
             <p className="text-sm text-gray-600">
               Recevez des crédits pour chaque personne qui utilise votre code
             </p>
@@ -215,7 +233,9 @@ const Parrainage = () => {
         <div className="flex items-start gap-3">
           <Gift className="w-6 h-6 text-blue-600 mt-1" />
           <div>
-            <h4 className="font-bold text-blue-900 mb-2">Avantages du parrainage</h4>
+            <h4 className="font-bold text-blue-900 mb-2">
+              Avantages du parrainage
+            </h4>
             <ul className="space-y-2 text-sm text-blue-700">
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-blue-600 rounded-full"></div>
@@ -238,7 +258,7 @@ const Parrainage = () => {
         </div>
       </Card>
     </div>
-  )
-}
+  );
+};
 
-export default Parrainage
+export default Parrainage;

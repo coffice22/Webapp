@@ -1,199 +1,265 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { 
-  Calendar, Search, Filter, Eye, Edit, X, Check, Clock, MapPin, 
-  User, Trash2, Download, ArrowUpDown, CreditCard, AlertCircle, 
-  CheckCircle, Calendar as CalendarIcon, Plus
-} from 'lucide-react';
-import Button from '../ui/Button';
-import Card from '../ui/Card';
-import Badge from '../ui/Badge';
-import Input from '../ui/Input';
-import Modal from '../ui/Modal';
-import { useERPStore } from '../../store/erpStore';
-import { formatDate, formatTime, formatCurrency } from '../../utils/formatters';
-import { Reservation, Space, Member } from '../../types/erp';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import {
+  Calendar,
+  Search,
+  Filter,
+  Eye,
+  Edit,
+  X,
+  Check,
+  Clock,
+  MapPin,
+  User,
+  Trash2,
+  Download,
+  ArrowUpDown,
+  CreditCard,
+  AlertCircle,
+  CheckCircle,
+  Calendar as CalendarIcon,
+  Plus,
+} from "lucide-react";
+import Button from "../ui/Button";
+import Card from "../ui/Card";
+import Badge from "../ui/Badge";
+import Input from "../ui/Input";
+import Modal from "../ui/Modal";
+import { useERPStore } from "../../store/erpStore";
+import { formatDate, formatTime, formatCurrency } from "../../utils/formatters";
+import { Reservation, Space, Member } from "../../types/erp";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const ReservationManagement = () => {
   const {
-    reservations, spaces, members, updateReservation, deleteReservation,
-    getReservationById, getSpaceById, getMemberById, processReservation,
-    cancelReservation, checkInReservation, checkOutReservation, addReservation
+    reservations,
+    spaces,
+    members,
+    updateReservation,
+    deleteReservation,
+    getReservationById,
+    getSpaceById,
+    getMemberById,
+    processReservation,
+    cancelReservation,
+    checkInReservation,
+    checkOutReservation,
+    addReservation,
   } = useERPStore();
-  
+
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [dateFilter, setDateFilter] = useState('all');
-  const [spaceFilter, setSpaceFilter] = useState('all');
-  const [sortBy, setSortBy] = useState('startDate');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
-  const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [dateFilter, setDateFilter] = useState("all");
+  const [spaceFilter, setSpaceFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("startDate");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [selectedReservation, setSelectedReservation] =
+    useState<Reservation | null>(null);
   const [showDetails, setShowDetails] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  
+
   const [newReservation, setNewReservation] = useState({
-    memberId: '',
-    spaceId: '',
+    memberId: "",
+    spaceId: "",
     startDate: new Date(),
     endDate: new Date(new Date().getTime() + 2 * 60 * 60 * 1000), // +2 heures par défaut
-    notes: '',
-    promoCode: ''
+    notes: "",
+    promoCode: "",
   });
-  
+
   const [estimatedAmount, setEstimatedAmount] = useState(0);
 
   useEffect(() => {
     // Simuler le chargement des données
     setTimeout(() => setLoading(false), 500);
   }, []);
-  
+
   useEffect(() => {
     // Calculer le montant estimé
-    if (newReservation.spaceId && newReservation.startDate && newReservation.endDate) {
+    if (
+      newReservation.spaceId &&
+      newReservation.startDate &&
+      newReservation.endDate
+    ) {
       const space = getSpaceById(newReservation.spaceId);
       if (space) {
-        const durationHours = (newReservation.endDate.getTime() - newReservation.startDate.getTime()) / (1000 * 60 * 60);
+        const durationHours =
+          (newReservation.endDate.getTime() -
+            newReservation.startDate.getTime()) /
+          (1000 * 60 * 60);
         let amount = durationHours * space.hourlyRate;
-        
+
         // Appliquer les réductions pour durée
         if (durationHours >= 8) {
           amount = amount * 0.9; // 10% de réduction pour 8h+
         } else if (durationHours >= 4) {
           amount = amount * 0.95; // 5% de réduction pour 4h+
         }
-        
+
         // Appliquer le code promo (simulation)
-        if (newReservation.promoCode === 'WELCOME10') {
+        if (newReservation.promoCode === "WELCOME10") {
           amount = amount - 1000;
-        } else if (newReservation.promoCode === 'SUMMER20') {
+        } else if (newReservation.promoCode === "SUMMER20") {
           amount = amount - 2000;
         }
-        
+
         setEstimatedAmount(Math.max(0, Math.round(amount)));
       }
     }
   }, [newReservation, getSpaceById]);
 
   const filteredReservations = reservations
-    .filter(reservation => {
+    .filter((reservation) => {
       const space = getSpaceById(reservation.spaceId);
       const member = getMemberById(reservation.userId);
-      
-      const spaceName = space ? space.name : '';
-      const memberName = member ? `${member.firstName} ${member.lastName}` : '';
-      
-      const matchesSearch = 
+
+      const spaceName = space ? space.name : "";
+      const memberName = member ? `${member.firstName} ${member.lastName}` : "";
+
+      const matchesSearch =
         spaceName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         memberName.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      const matchesStatus = statusFilter === 'all' || reservation.status === statusFilter;
-      
+
+      const matchesStatus =
+        statusFilter === "all" || reservation.status === statusFilter;
+
       let matchesDate = true;
-      if (dateFilter === 'today') {
+      if (dateFilter === "today") {
         const today = new Date().toDateString();
         matchesDate = new Date(reservation.startDate).toDateString() === today;
-      } else if (dateFilter === 'week') {
+      } else if (dateFilter === "week") {
         const weekAgo = new Date();
         weekAgo.setDate(weekAgo.getDate() - 7);
         matchesDate = new Date(reservation.startDate) >= weekAgo;
-      } else if (dateFilter === 'month') {
+      } else if (dateFilter === "month") {
         const monthAgo = new Date();
         monthAgo.setMonth(monthAgo.getMonth() - 1);
         matchesDate = new Date(reservation.startDate) >= monthAgo;
       }
-      
-      const matchesSpace = spaceFilter === 'all' || reservation.spaceId === spaceFilter;
-      
+
+      const matchesSpace =
+        spaceFilter === "all" || reservation.spaceId === spaceFilter;
+
       return matchesSearch && matchesStatus && matchesDate && matchesSpace;
     })
     .sort((a, b) => {
       let comparison = 0;
-      
+
       switch (sortBy) {
-        case 'startDate':
-          comparison = new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
+        case "startDate":
+          comparison =
+            new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
           break;
-        case 'space':
+        case "space":
           const spaceA = getSpaceById(a.spaceId);
           const spaceB = getSpaceById(b.spaceId);
-          comparison = (spaceA?.name || '').localeCompare(spaceB?.name || '');
+          comparison = (spaceA?.name || "").localeCompare(spaceB?.name || "");
           break;
-        case 'member':
+        case "member":
           const memberA = getMemberById(a.userId);
           const memberB = getMemberById(b.userId);
-          comparison = (memberA?.lastName || '').localeCompare(memberB?.lastName || '');
+          comparison = (memberA?.lastName || "").localeCompare(
+            memberB?.lastName || "",
+          );
           break;
-        case 'amount':
+        case "amount":
           comparison = a.totalAmount - b.totalAmount;
           break;
         default:
           comparison = 0;
       }
-      
-      return sortOrder === 'asc' ? comparison : -comparison;
+
+      return sortOrder === "asc" ? comparison : -comparison;
     });
 
   const totalPages = Math.ceil(filteredReservations.length / itemsPerPage);
   const paginatedReservations = filteredReservations.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
 
   const getStatusVariant = (status: string) => {
     switch (status) {
-      case 'confirmed': return 'success';
-      case 'pending': return 'warning';
-      case 'cancelled': return 'error';
-      case 'completed': return 'default';
-      default: return 'default';
+      case "confirmed":
+        return "success";
+      case "pending":
+        return "warning";
+      case "cancelled":
+        return "error";
+      case "completed":
+        return "default";
+      default:
+        return "default";
     }
   };
 
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case 'confirmed': return 'Confirmée';
-      case 'pending': return 'En attente';
-      case 'cancelled': return 'Annulée';
-      case 'completed': return 'Terminée';
-      default: return status;
+      case "confirmed":
+        return "Confirmée";
+      case "pending":
+        return "En attente";
+      case "cancelled":
+        return "Annulée";
+      case "completed":
+        return "Terminée";
+      default:
+        return status;
     }
   };
 
   const getPaymentStatusVariant = (status: string) => {
     switch (status) {
-      case 'paid': return 'success';
-      case 'unpaid': return 'warning';
-      case 'refunded': return 'error';
-      case 'partial': return 'info';
-      default: return 'default';
+      case "paid":
+        return "success";
+      case "unpaid":
+        return "warning";
+      case "refunded":
+        return "error";
+      case "partial":
+        return "info";
+      default:
+        return "default";
     }
   };
 
   const getPaymentStatusLabel = (status: string) => {
     switch (status) {
-      case 'paid': return 'Payé';
-      case 'unpaid': return 'Non payé';
-      case 'refunded': return 'Remboursé';
-      case 'partial': return 'Partiel';
-      default: return status;
+      case "paid":
+        return "Payé";
+      case "unpaid":
+        return "Non payé";
+      case "refunded":
+        return "Remboursé";
+      case "partial":
+        return "Partiel";
+      default:
+        return status;
     }
   };
 
-  const handleStatusChange = async (reservationId: string, newStatus: 'confirmed' | 'pending' | 'cancelled' | 'completed') => {
+  const handleStatusChange = async (
+    reservationId: string,
+    newStatus: "confirmed" | "pending" | "cancelled" | "completed",
+  ) => {
     await updateReservation(reservationId, { status: newStatus });
   };
 
-  const handlePaymentStatusChange = async (reservationId: string, newStatus: 'paid' | 'unpaid' | 'refunded' | 'partial') => {
+  const handlePaymentStatusChange = async (
+    reservationId: string,
+    newStatus: "paid" | "unpaid" | "refunded" | "partial",
+  ) => {
     await updateReservation(reservationId, { paymentStatus: newStatus });
   };
 
   const handleDeleteReservation = (reservationId: string) => {
-    if (window.confirm('Êtes-vous sûr de vouloir supprimer cette réservation ?')) {
+    if (
+      window.confirm("Êtes-vous sûr de vouloir supprimer cette réservation ?")
+    ) {
       deleteReservation(reservationId);
       setShowDetails(false);
     }
@@ -202,7 +268,7 @@ const ReservationManagement = () => {
   const handleCheckIn = (reservationId: string) => {
     const result = checkInReservation(reservationId);
     if (result.success) {
-      alert('Check-in effectué avec succès');
+      alert("Check-in effectué avec succès");
     } else {
       alert(`Erreur: ${result.error}`);
     }
@@ -211,32 +277,32 @@ const ReservationManagement = () => {
   const handleCheckOut = (reservationId: string) => {
     const result = checkOutReservation(reservationId);
     if (result.success) {
-      alert('Check-out effectué avec succès');
+      alert("Check-out effectué avec succès");
     } else {
       alert(`Erreur: ${result.error}`);
     }
   };
 
   const handleCancelReservation = (reservationId: string) => {
-    const reason = prompt('Veuillez indiquer la raison de l\'annulation:');
+    const reason = prompt("Veuillez indiquer la raison de l'annulation:");
     if (reason) {
       cancelReservation(reservationId);
-      alert('Réservation annulée avec succès');
+      alert("Réservation annulée avec succès");
     }
   };
 
   const toggleSort = (field: string) => {
     if (sortBy === field) {
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
     } else {
       setSortBy(field);
-      setSortOrder('asc');
+      setSortOrder("asc");
     }
   };
 
   const handleCreateReservation = () => {
     if (!newReservation.memberId || !newReservation.spaceId) {
-      alert('Veuillez sélectionner un membre et un espace');
+      alert("Veuillez sélectionner un membre et un espace");
       return;
     }
 
@@ -249,33 +315,33 @@ const ReservationManagement = () => {
       spaceId: newReservation.spaceId,
       startDate: newReservation.startDate,
       endDate: newReservation.endDate,
-      status: 'confirmed' as const,
+      status: "confirmed" as const,
       totalAmount: 0,
-      createdAt: new Date()
+      createdAt: new Date(),
     };
 
     addReservation(newRes);
-    alert('Réservation créée avec succès');
+    alert("Réservation créée avec succès");
     setShowCreateModal(false);
     setNewReservation({
-      memberId: '',
-      spaceId: '',
+      memberId: "",
+      spaceId: "",
       startDate: new Date(),
       endDate: new Date(new Date().getTime() + 2 * 60 * 60 * 1000),
-      notes: '',
-      promoCode: ''
+      notes: "",
+      promoCode: "",
     });
   };
 
   const exportReservations = () => {
-    const reservationsData = filteredReservations.map(reservation => {
+    const reservationsData = filteredReservations.map((reservation) => {
       const space = getSpaceById(reservation.spaceId);
       const member = getMemberById(reservation.userId);
-      
+
       return {
         id: reservation.id,
-        space: space?.name || 'Inconnu',
-        member: member ? `${member.firstName} ${member.lastName}` : 'Inconnu',
+        space: space?.name || "Inconnu",
+        member: member ? `${member.firstName} ${member.lastName}` : "Inconnu",
         startDate: formatDate(new Date(reservation.startDate)),
         startTime: formatTime(new Date(reservation.startDate)),
         endTime: formatTime(new Date(reservation.endDate)),
@@ -283,16 +349,16 @@ const ReservationManagement = () => {
         status: getStatusLabel(reservation.status),
         paymentStatus: getPaymentStatusLabel(reservation.paymentStatus),
         amount: formatCurrency(reservation.totalAmount),
-        notes: reservation.notes || ''
+        notes: reservation.notes || "",
       };
     });
-    
+
     const dataStr = JSON.stringify(reservationsData, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const dataBlob = new Blob([dataStr], { type: "application/json" });
     const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
-    link.download = `coffice-reservations-${new Date().toISOString().split('T')[0]}.json`;
+    link.download = `coffice-reservations-${new Date().toISOString().split("T")[0]}.json`;
     link.click();
   };
 
@@ -309,8 +375,12 @@ const ReservationManagement = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-display font-bold text-primary">Gestion des Réservations</h1>
-          <p className="text-gray-600">Gérez toutes les réservations de votre coworking</p>
+          <h1 className="text-3xl font-display font-bold text-primary">
+            Gestion des Réservations
+          </h1>
+          <p className="text-gray-600">
+            Gérez toutes les réservations de votre coworking
+          </p>
         </div>
         <div className="flex gap-3">
           <Button variant="outline" onClick={exportReservations}>
@@ -333,7 +403,7 @@ const ReservationManagement = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          
+
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
@@ -363,8 +433,10 @@ const ReservationManagement = () => {
             className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-accent focus:outline-none"
           >
             <option value="all">Tous les espaces</option>
-            {spaces.map(space => (
-              <option key={space.id} value={space.id}>{space.name}</option>
+            {spaces.map((space) => (
+              <option key={space.id} value={space.id}>
+                {space.name}
+              </option>
             ))}
           </select>
 
@@ -381,35 +453,35 @@ const ReservationManagement = () => {
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
-                <th 
+                <th
                   className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                  onClick={() => toggleSort('space')}
+                  onClick={() => toggleSort("space")}
                 >
                   <div className="flex items-center">
                     Espace
-                    {sortBy === 'space' && (
+                    {sortBy === "space" && (
                       <ArrowUpDown className="w-4 h-4 ml-1" />
                     )}
                   </div>
                 </th>
-                <th 
+                <th
                   className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                  onClick={() => toggleSort('member')}
+                  onClick={() => toggleSort("member")}
                 >
                   <div className="flex items-center">
                     Client
-                    {sortBy === 'member' && (
+                    {sortBy === "member" && (
                       <ArrowUpDown className="w-4 h-4 ml-1" />
                     )}
                   </div>
                 </th>
-                <th 
+                <th
                   className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                  onClick={() => toggleSort('startDate')}
+                  onClick={() => toggleSort("startDate")}
                 >
                   <div className="flex items-center">
                     Date & Heure
-                    {sortBy === 'startDate' && (
+                    {sortBy === "startDate" && (
                       <ArrowUpDown className="w-4 h-4 ml-1" />
                     )}
                   </div>
@@ -417,13 +489,13 @@ const ReservationManagement = () => {
                 <th className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                   Statut
                 </th>
-                <th 
+                <th
                   className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                  onClick={() => toggleSort('amount')}
+                  onClick={() => toggleSort("amount")}
                 >
                   <div className="flex items-center">
                     Montant
-                    {sortBy === 'amount' && (
+                    {sortBy === "amount" && (
                       <ArrowUpDown className="w-4 h-4 ml-1" />
                     )}
                   </div>
@@ -437,7 +509,7 @@ const ReservationManagement = () => {
               {paginatedReservations.map((reservation, index) => {
                 const space = getSpaceById(reservation.spaceId);
                 const member = getMemberById(reservation.userId);
-                
+
                 return (
                   <motion.tr
                     key={reservation.id}
@@ -453,10 +525,10 @@ const ReservationManagement = () => {
                         </div>
                         <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900">
-                            {space?.name || 'Espace inconnu'}
+                            {space?.name || "Espace inconnu"}
                           </div>
                           <div className="text-sm text-gray-500">
-                            {space?.type || 'Type inconnu'}
+                            {space?.type || "Type inconnu"}
                           </div>
                         </div>
                       </div>
@@ -465,21 +537,30 @@ const ReservationManagement = () => {
                       <div className="flex items-center">
                         <div className="w-8 h-8 bg-gradient-to-br from-accent to-teal rounded-full flex items-center justify-center">
                           <span className="text-white font-semibold text-xs">
-                            {member ? `${member.firstName.charAt(0)}${member.lastName.charAt(0)}` : 'NA'}
+                            {member
+                              ? `${member.firstName.charAt(0)}${member.lastName.charAt(0)}`
+                              : "NA"}
                           </span>
                         </div>
                         <div className="ml-3">
                           <div className="text-sm font-medium text-gray-900">
-                            {member ? `${member.firstName} ${member.lastName}` : 'Membre inconnu'}
+                            {member
+                              ? `${member.firstName} ${member.lastName}`
+                              : "Membre inconnu"}
                           </div>
-                          <div className="text-sm text-gray-500">{member?.email || 'Email inconnu'}</div>
+                          <div className="text-sm text-gray-500">
+                            {member?.email || "Email inconnu"}
+                          </div>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{formatDate(new Date(reservation.startDate))}</div>
+                      <div className="text-sm text-gray-900">
+                        {formatDate(new Date(reservation.startDate))}
+                      </div>
                       <div className="text-sm text-gray-500">
-                        {formatTime(new Date(reservation.startDate))} - {formatTime(new Date(reservation.endDate))}
+                        {formatTime(new Date(reservation.startDate))} -{" "}
+                        {formatTime(new Date(reservation.endDate))}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -487,7 +568,12 @@ const ReservationManagement = () => {
                         <Badge variant={getStatusVariant(reservation.status)}>
                           {getStatusLabel(reservation.status)}
                         </Badge>
-                        <Badge variant={getPaymentStatusVariant(reservation.paymentStatus)} size="sm">
+                        <Badge
+                          variant={getPaymentStatusVariant(
+                            reservation.paymentStatus,
+                          )}
+                          size="sm"
+                        >
                           {getPaymentStatusLabel(reservation.paymentStatus)}
                         </Badge>
                       </div>
@@ -512,46 +598,54 @@ const ReservationManagement = () => {
                         >
                           <Eye className="w-4 h-4" />
                         </Button>
-                        
-                        {reservation.status === 'pending' && (
+
+                        {reservation.status === "pending" && (
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => handleStatusChange(reservation.id, 'confirmed')}
+                            onClick={() =>
+                              handleStatusChange(reservation.id, "confirmed")
+                            }
                           >
                             <Check className="w-4 h-4" />
                           </Button>
                         )}
-                        
-                        {(reservation.status === 'confirmed' || reservation.status === 'pending') && (
+
+                        {(reservation.status === "confirmed" ||
+                          reservation.status === "pending") && (
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => handleCancelReservation(reservation.id)}
+                            onClick={() =>
+                              handleCancelReservation(reservation.id)
+                            }
                           >
                             <X className="w-4 h-4" />
                           </Button>
                         )}
-                        
-                        {reservation.status === 'confirmed' && !reservation.checkInTime && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleCheckIn(reservation.id)}
-                          >
-                            <Clock className="w-4 h-4" />
-                          </Button>
-                        )}
-                        
-                        {reservation.status === 'confirmed' && reservation.checkInTime && !reservation.checkOutTime && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleCheckOut(reservation.id)}
-                          >
-                            <CheckCircle className="w-4 h-4" />
-                          </Button>
-                        )}
+
+                        {reservation.status === "confirmed" &&
+                          !reservation.checkInTime && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleCheckIn(reservation.id)}
+                            >
+                              <Clock className="w-4 h-4" />
+                            </Button>
+                          )}
+
+                        {reservation.status === "confirmed" &&
+                          reservation.checkInTime &&
+                          !reservation.checkOutTime && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleCheckOut(reservation.id)}
+                            >
+                              <CheckCircle className="w-4 h-4" />
+                            </Button>
+                          )}
                       </div>
                     </td>
                   </motion.tr>
@@ -565,13 +659,18 @@ const ReservationManagement = () => {
         {totalPages > 1 && (
           <div className="px-6 py-4 border-t border-gray-200 flex justify-between items-center">
             <div className="text-sm text-gray-500">
-              Affichage de {(currentPage - 1) * itemsPerPage + 1} à {Math.min(currentPage * itemsPerPage, filteredReservations.length)} sur {filteredReservations.length} réservations
+              Affichage de {(currentPage - 1) * itemsPerPage + 1} à{" "}
+              {Math.min(
+                currentPage * itemsPerPage,
+                filteredReservations.length,
+              )}{" "}
+              sur {filteredReservations.length} réservations
             </div>
             <div className="flex space-x-2">
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
               >
                 Précédent
@@ -579,7 +678,9 @@ const ReservationManagement = () => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
                 disabled={currentPage === totalPages}
               >
                 Suivant
@@ -604,7 +705,9 @@ const ReservationManagement = () => {
                 <span className="text-white font-bold">
                   {(() => {
                     const member = getMemberById(selectedReservation.userId);
-                    return member ? `${member.firstName.charAt(0)}${member.lastName.charAt(0)}` : 'NA';
+                    return member
+                      ? `${member.firstName.charAt(0)}${member.lastName.charAt(0)}`
+                      : "NA";
                   })()}
                 </span>
               </div>
@@ -612,19 +715,23 @@ const ReservationManagement = () => {
                 <h4 className="font-semibold text-primary">
                   {(() => {
                     const member = getMemberById(selectedReservation.userId);
-                    return member ? `${member.firstName} ${member.lastName}` : 'Membre inconnu';
+                    return member
+                      ? `${member.firstName} ${member.lastName}`
+                      : "Membre inconnu";
                   })()}
                 </h4>
                 <p className="text-sm text-gray-600">
                   {(() => {
                     const member = getMemberById(selectedReservation.userId);
-                    return member ? member.email : 'Email inconnu';
+                    return member ? member.email : "Email inconnu";
                   })()}
                 </p>
                 {(() => {
                   const member = getMemberById(selectedReservation.userId);
-                  return member?.phone && (
-                    <p className="text-sm text-gray-600">{member.phone}</p>
+                  return (
+                    member?.phone && (
+                      <p className="text-sm text-gray-600">{member.phone}</p>
+                    )
                   );
                 })()}
               </div>
@@ -633,21 +740,29 @@ const ReservationManagement = () => {
             {/* Reservation Details */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Espace</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Espace
+                </label>
                 <p className="text-primary font-semibold">
                   {(() => {
                     const space = getSpaceById(selectedReservation.spaceId);
-                    return space ? space.name : 'Espace inconnu';
+                    return space ? space.name : "Espace inconnu";
                   })()}
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Statut</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Statut
+                </label>
                 <div className="flex space-x-2">
                   <Badge variant={getStatusVariant(selectedReservation.status)}>
                     {getStatusLabel(selectedReservation.status)}
                   </Badge>
-                  <Badge variant={getPaymentStatusVariant(selectedReservation.paymentStatus)}>
+                  <Badge
+                    variant={getPaymentStatusVariant(
+                      selectedReservation.paymentStatus,
+                    )}
+                  >
                     {getPaymentStatusLabel(selectedReservation.paymentStatus)}
                   </Badge>
                 </div>
@@ -656,26 +771,42 @@ const ReservationManagement = () => {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
-                <p className="text-primary">{formatDate(new Date(selectedReservation.startDate))}</p>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Date
+                </label>
+                <p className="text-primary">
+                  {formatDate(new Date(selectedReservation.startDate))}
+                </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Horaires</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Horaires
+                </label>
                 <p className="text-primary">
-                  {formatTime(new Date(selectedReservation.startDate))} - {formatTime(new Date(selectedReservation.endDate))}
+                  {formatTime(new Date(selectedReservation.startDate))} -{" "}
+                  {formatTime(new Date(selectedReservation.endDate))}
                 </p>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Durée</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Durée
+                </label>
                 <p className="text-primary">
-                  {((new Date(selectedReservation.endDate).getTime() - new Date(selectedReservation.startDate).getTime()) / (1000 * 60 * 60)).toFixed(1)} heures
+                  {(
+                    (new Date(selectedReservation.endDate).getTime() -
+                      new Date(selectedReservation.startDate).getTime()) /
+                    (1000 * 60 * 60)
+                  ).toFixed(1)}{" "}
+                  heures
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Montant total</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Montant total
+                </label>
                 <p className="text-accent font-bold text-lg">
                   {formatCurrency(selectedReservation.totalAmount)}
                 </p>
@@ -689,31 +820,48 @@ const ReservationManagement = () => {
 
             {selectedReservation.promoCode && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Code promo</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Code promo
+                </label>
                 <p className="text-primary">{selectedReservation.promoCode}</p>
               </div>
             )}
 
             {selectedReservation.notes && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
-                <p className="text-primary bg-gray-50 p-3 rounded-lg">{selectedReservation.notes}</p>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Notes
+                </label>
+                <p className="text-primary bg-gray-50 p-3 rounded-lg">
+                  {selectedReservation.notes}
+                </p>
               </div>
             )}
 
             {/* Check-in/Check-out Info */}
-            {(selectedReservation.checkInTime || selectedReservation.checkOutTime) && (
+            {(selectedReservation.checkInTime ||
+              selectedReservation.checkOutTime) && (
               <div className="grid grid-cols-2 gap-4">
                 {selectedReservation.checkInTime && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Check-in</label>
-                    <p className="text-primary">{formatDate(new Date(selectedReservation.checkInTime))} {formatTime(new Date(selectedReservation.checkInTime))}</p>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Check-in
+                    </label>
+                    <p className="text-primary">
+                      {formatDate(new Date(selectedReservation.checkInTime))}{" "}
+                      {formatTime(new Date(selectedReservation.checkInTime))}
+                    </p>
                   </div>
                 )}
                 {selectedReservation.checkOutTime && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Check-out</label>
-                    <p className="text-primary">{formatDate(new Date(selectedReservation.checkOutTime))} {formatTime(new Date(selectedReservation.checkOutTime))}</p>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Check-out
+                    </label>
+                    <p className="text-primary">
+                      {formatDate(new Date(selectedReservation.checkOutTime))}{" "}
+                      {formatTime(new Date(selectedReservation.checkOutTime))}
+                    </p>
                   </div>
                 )}
               </div>
@@ -721,10 +869,10 @@ const ReservationManagement = () => {
 
             {/* Actions */}
             <div className="flex gap-3 pt-4">
-              {selectedReservation.status === 'pending' && (
+              {selectedReservation.status === "pending" && (
                 <Button
                   onClick={() => {
-                    handleStatusChange(selectedReservation.id, 'confirmed');
+                    handleStatusChange(selectedReservation.id, "confirmed");
                     setShowDetails(false);
                   }}
                   className="flex-1"
@@ -733,12 +881,12 @@ const ReservationManagement = () => {
                   Confirmer
                 </Button>
               )}
-              
-              {selectedReservation.paymentStatus === 'unpaid' && (
+
+              {selectedReservation.paymentStatus === "unpaid" && (
                 <Button
                   variant="outline"
                   onClick={() => {
-                    handlePaymentStatusChange(selectedReservation.id, 'paid');
+                    handlePaymentStatusChange(selectedReservation.id, "paid");
                     setShowDetails(false);
                   }}
                   className="flex-1"
@@ -747,8 +895,9 @@ const ReservationManagement = () => {
                   Marquer comme payé
                 </Button>
               )}
-              
-              {(selectedReservation.status === 'confirmed' || selectedReservation.status === 'pending') && (
+
+              {(selectedReservation.status === "confirmed" ||
+                selectedReservation.status === "pending") && (
                 <Button
                   variant="outline"
                   onClick={() => {
@@ -761,7 +910,7 @@ const ReservationManagement = () => {
                   Annuler
                 </Button>
               )}
-              
+
               <Button
                 variant="outline"
                 onClick={() => handleDeleteReservation(selectedReservation.id)}
@@ -790,33 +939,45 @@ const ReservationManagement = () => {
               </label>
               <select
                 value={newReservation.memberId}
-                onChange={(e) => setNewReservation(prev => ({ ...prev, memberId: e.target.value }))}
+                onChange={(e) =>
+                  setNewReservation((prev) => ({
+                    ...prev,
+                    memberId: e.target.value,
+                  }))
+                }
                 className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-accent focus:outline-none"
               >
                 <option value="">Sélectionner un membre</option>
-                {members.map(member => (
+                {members.map((member) => (
                   <option key={member.id} value={member.id}>
                     {member.firstName} {member.lastName} ({member.email})
                   </option>
                 ))}
               </select>
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Espace
               </label>
               <select
                 value={newReservation.spaceId}
-                onChange={(e) => setNewReservation(prev => ({ ...prev, spaceId: e.target.value }))}
+                onChange={(e) =>
+                  setNewReservation((prev) => ({
+                    ...prev,
+                    spaceId: e.target.value,
+                  }))
+                }
                 className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-accent focus:outline-none"
               >
                 <option value="">Sélectionner un espace</option>
-                {spaces.filter(space => space.available).map(space => (
-                  <option key={space.id} value={space.id}>
-                    {space.name} - {formatCurrency(space.hourlyRate)}/h
-                  </option>
-                ))}
+                {spaces
+                  .filter((space) => space.available)
+                  .map((space) => (
+                    <option key={space.id} value={space.id}>
+                      {space.name} - {formatCurrency(space.hourlyRate)}/h
+                    </option>
+                  ))}
               </select>
             </div>
           </div>
@@ -829,7 +990,10 @@ const ReservationManagement = () => {
               <DatePicker
                 selected={newReservation.startDate}
                 onChange={(date: Date | null) => {
-                  setNewReservation(prev => ({ ...prev, startDate: date || new Date() }));
+                  setNewReservation((prev) => ({
+                    ...prev,
+                    startDate: date || new Date(),
+                  }));
                 }}
                 showTimeSelect
                 timeFormat="HH:mm"
@@ -838,7 +1002,7 @@ const ReservationManagement = () => {
                 className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-accent focus:outline-none"
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Date et heure de fin
@@ -846,7 +1010,10 @@ const ReservationManagement = () => {
               <DatePicker
                 selected={newReservation.endDate}
                 onChange={(date: Date | null) => {
-                  setNewReservation(prev => ({ ...prev, endDate: date || new Date() }));
+                  setNewReservation((prev) => ({
+                    ...prev,
+                    endDate: date || new Date(),
+                  }));
                 }}
                 showTimeSelect
                 timeFormat="HH:mm"
@@ -860,7 +1027,12 @@ const ReservationManagement = () => {
           <Input
             label="Code promo (optionnel)"
             value={newReservation.promoCode}
-            onChange={(e) => setNewReservation(prev => ({ ...prev, promoCode: e.target.value }))}
+            onChange={(e) =>
+              setNewReservation((prev) => ({
+                ...prev,
+                promoCode: e.target.value,
+              }))
+            }
             placeholder="Ex: WELCOME10"
           />
 
@@ -870,7 +1042,12 @@ const ReservationManagement = () => {
             </label>
             <textarea
               value={newReservation.notes}
-              onChange={(e) => setNewReservation(prev => ({ ...prev, notes: e.target.value }))}
+              onChange={(e) =>
+                setNewReservation((prev) => ({
+                  ...prev,
+                  notes: e.target.value,
+                }))
+              }
               rows={3}
               className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-accent focus:outline-none resize-none"
               placeholder="Informations supplémentaires..."

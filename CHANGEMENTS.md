@@ -9,18 +9,21 @@
 ## ✅ Corrections Effectuées
 
 ### 1. Configuration .env
+
 - ✅ Supprimé les anciennes variables Supabase
 - ✅ Ajouté `VITE_API_URL` pour pointer vers l'API PHP
 - ✅ Ajouté toutes les variables MySQL nécessaires (DB_HOST, DB_NAME, DB_USER, DB_PASSWORD)
 - ✅ Ajouté les variables de sécurité (JWT_SECRET, etc.)
 
 ### 2. Amélioration API Client (src/lib/api-client.ts)
+
 - ✅ Ajout de logs de démarrage montrant l'URL API configurée
 - ✅ Messages d'erreur plus explicites avec l'URL exacte appelée
 - ✅ Affichage de la réponse serveur en cas d'erreur pour faciliter le débogage
 - ✅ Détection automatique si VITE_API_URL n'est pas configuré
 
 ### 3. Script d'Installation Automatique (api/install.php)
+
 - ✅ Vérifie que le fichier .env est correctement configuré
 - ✅ Teste la connexion MySQL
 - ✅ Crée la base de données automatiquement
@@ -29,11 +32,13 @@
 - ✅ Rapport détaillé en JSON
 
 ### 4. Documentation
+
 - ✅ Créé INSTALLATION.md avec guide complet pas-à-pas
 - ✅ Mis à jour README.md avec instructions simplifiées
 - ✅ Supprimé l'ancien DEPLOYMENT.md pour éviter la confusion
 
 ### 5. Build
+
 - ✅ Application buildée avec succès (14.32s)
 - ✅ Aucune erreur TypeScript
 - ✅ Tous les modules transformés correctement
@@ -51,6 +56,7 @@ JWT_SECRET=VOTRE_CLE_SECRETE_JWT_ICI
 ```
 
 #### Générer la clé JWT:
+
 ```bash
 # Linux/Mac
 openssl rand -base64 64
@@ -81,6 +87,7 @@ php scripts/create_admin_simple.php
 ```
 
 Ou via le script web:
+
 ```bash
 php scripts/create_admin_web.php
 ```
@@ -108,6 +115,7 @@ php scripts/create_admin_web.php
 Si vous avez toujours des erreurs, vérifiez:
 
 1. **Console navigateur (F12)**: Vous verrez maintenant des logs détaillés:
+
    ```
    [API] URL configurée: https://coffice.dz/api
    [API] Request failed: {...}
@@ -130,6 +138,7 @@ Si vous avez toujours des erreurs, vérifiez:
 ## 🆘 Support
 
 Si problème persistant après avoir suivi ces étapes:
+
 1. Vérifiez les logs dans la console navigateur
 2. Consultez les logs PHP du serveur
 3. Vérifiez que MySQL est accessible

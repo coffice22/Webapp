@@ -1,111 +1,122 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { Bell, X, Check, Calendar, Gift, Building, CheckCircle } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { apiClient } from '../../lib/api-client'
-import { useAuthStore } from '../../store/authStore'
-import { formatDistanceToNow } from 'date-fns'
-import { fr } from 'date-fns/locale'
+import React, { useState, useEffect, useRef } from "react";
+import {
+  Bell,
+  X,
+  Check,
+  Calendar,
+  Gift,
+  Building,
+  CheckCircle,
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { apiClient } from "../../lib/api-client";
+import { useAuthStore } from "../../store/authStore";
+import { formatDistanceToNow } from "date-fns";
+import { fr } from "date-fns/locale";
 
 interface Notification {
-  id: string
-  type: 'reservation' | 'abonnement' | 'parrainage' | 'domiciliation' | 'promo'
-  titre: string
-  message: string
-  lue: boolean
-  created_at: string
+  id: string;
+  type: "reservation" | "abonnement" | "parrainage" | "domiciliation" | "promo";
+  titre: string;
+  message: string;
+  lue: boolean;
+  created_at: string;
 }
 
 const NotificationCenter: React.FC = () => {
-  const { user } = useAuthStore()
-  const [isOpen, setIsOpen] = useState(false)
-  const [notifications, setNotifications] = useState<Notification[]>([])
-  const [unreadCount, setUnreadCount] = useState(0)
-  const dropdownRef = useRef<HTMLDivElement>(null)
+  const { user } = useAuthStore();
+  const [isOpen, setIsOpen] = useState(false);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (user) {
-      loadNotifications()
+      loadNotifications();
 
       // Polling toutes les 30 secondes pour les nouvelles notifications
       const interval = setInterval(() => {
-        loadNotifications()
-      }, 30000)
+        loadNotifications();
+      }, 30000);
 
       return () => {
-        clearInterval(interval)
-      }
+        clearInterval(interval);
+      };
     }
-  }, [user])
+  }, [user]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false)
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
       }
-    }
+    };
 
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const loadNotifications = async () => {
-    if (!user) return
+    if (!user) return;
 
     try {
-      const response = await apiClient.getNotifications()
-      const data = (response.data as Notification[]) || []
-      setNotifications(data)
-      setUnreadCount(data.filter((n: Notification) => !n.lue).length)
+      const response = await apiClient.getNotifications();
+      const data = (response.data as Notification[]) || [];
+      setNotifications(data);
+      setUnreadCount(data.filter((n: Notification) => !n.lue).length);
     } catch (error) {
-      console.error('Erreur chargement notifications:', error)
+      console.error("Erreur chargement notifications:", error);
     }
-  }
+  };
 
   const markAsRead = async (id: string) => {
     try {
-      await apiClient.markNotificationRead(id)
-      loadNotifications()
+      await apiClient.markNotificationRead(id);
+      loadNotifications();
     } catch (error) {
-      console.error('Erreur marquage lu:', error)
+      console.error("Erreur marquage lu:", error);
     }
-  }
+  };
 
   const markAllAsRead = async () => {
-    if (!user) return
+    if (!user) return;
 
     try {
-      await apiClient.markAllNotificationsRead()
-      loadNotifications()
+      await apiClient.markAllNotificationsRead();
+      loadNotifications();
     } catch (error) {
-      console.error('Erreur marquage tout lu:', error)
+      console.error("Erreur marquage tout lu:", error);
     }
-  }
+  };
 
   const deleteNotification = async (id: string) => {
     try {
-      await apiClient.deleteNotification(id)
-      loadNotifications()
+      await apiClient.deleteNotification(id);
+      loadNotifications();
     } catch (error) {
-      console.error('Erreur suppression notification:', error)
+      console.error("Erreur suppression notification:", error);
     }
-  }
+  };
 
   const getIcon = (type: string) => {
     switch (type) {
-      case 'reservation':
-        return <Calendar className="w-5 h-5 text-blue-600" />
-      case 'abonnement':
-        return <CheckCircle className="w-5 h-5 text-green-600" />
-      case 'parrainage':
-        return <Gift className="w-5 h-5 text-accent" />
-      case 'domiciliation':
-        return <Building className="w-5 h-5 text-teal-600" />
-      case 'promo':
-        return <Gift className="w-5 h-5 text-orange-600" />
+      case "reservation":
+        return <Calendar className="w-5 h-5 text-blue-600" />;
+      case "abonnement":
+        return <CheckCircle className="w-5 h-5 text-green-600" />;
+      case "parrainage":
+        return <Gift className="w-5 h-5 text-accent" />;
+      case "domiciliation":
+        return <Building className="w-5 h-5 text-teal-600" />;
+      case "promo":
+        return <Gift className="w-5 h-5 text-orange-600" />;
       default:
-        return <Bell className="w-5 h-5 text-gray-600" />
+        return <Bell className="w-5 h-5 text-gray-600" />;
     }
-  }
+  };
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -116,7 +127,7 @@ const NotificationCenter: React.FC = () => {
         <Bell className="w-5 h-5" />
         {unreadCount > 0 && (
           <span className="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
-            {unreadCount > 9 ? '9+' : unreadCount}
+            {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         )}
       </button>
@@ -132,7 +143,9 @@ const NotificationCenter: React.FC = () => {
             {/* Header */}
             <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-primary/5 to-accent/5">
               <div className="flex items-center justify-between">
-                <h3 className="font-bold text-lg text-gray-900">Notifications</h3>
+                <h3 className="font-bold text-lg text-gray-900">
+                  Notifications
+                </h3>
                 {unreadCount > 0 && (
                   <button
                     onClick={markAllAsRead}
@@ -159,7 +172,7 @@ const NotificationCenter: React.FC = () => {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       className={`p-4 hover:bg-gray-50 transition-colors ${
-                        !notif.lue ? 'bg-primary/5' : ''
+                        !notif.lue ? "bg-primary/5" : ""
                       }`}
                     >
                       <div className="flex gap-3">
@@ -178,12 +191,14 @@ const NotificationCenter: React.FC = () => {
                               <X className="w-4 h-4" />
                             </button>
                           </div>
-                          <p className="text-sm text-gray-600 mb-2">{notif.message}</p>
+                          <p className="text-sm text-gray-600 mb-2">
+                            {notif.message}
+                          </p>
                           <div className="flex items-center justify-between">
                             <span className="text-xs text-gray-400">
                               {formatDistanceToNow(new Date(notif.created_at), {
                                 addSuffix: true,
-                                locale: fr
+                                locale: fr,
                               })}
                             </span>
                             {!notif.lue && (
@@ -219,7 +234,7 @@ const NotificationCenter: React.FC = () => {
         )}
       </AnimatePresence>
     </div>
-  )
-}
+  );
+};
 
-export default NotificationCenter
+export default NotificationCenter;

@@ -1,58 +1,58 @@
-import React from 'react'
-import { Link, Navigate, useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { Mail, Lock, ArrowRight } from 'lucide-react'
-import { useForm } from 'react-hook-form'
-import toast from 'react-hot-toast'
-import Button from '../components/ui/Button'
-import Input from '../components/ui/Input'
-import { useAuthStore } from '../store/authStore'
-import { validationRules } from '../utils/validation'
-import Logo from '../components/Logo'
+import React from "react";
+import { Link, Navigate, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Mail, Lock, ArrowRight } from "lucide-react";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import Button from "../components/ui/Button";
+import Input from "../components/ui/Input";
+import { useAuthStore } from "../store/authStore";
+import { validationRules } from "../utils/validation";
+import Logo from "../components/Logo";
 
 interface LoginForm {
-  email: string
-  password: string
-  rememberMe: boolean
+  email: string;
+  password: string;
+  rememberMe: boolean;
 }
 
 const Login = () => {
-  const navigate = useNavigate()
-  const { login, user, isLoading: authLoading } = useAuthStore()
-  const [isLoading, setIsLoading] = React.useState(false)
+  const navigate = useNavigate();
+  const { login, user, isLoading: authLoading } = useAuthStore();
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const {
     register,
     handleSubmit,
-    formState: { errors }
-  } = useForm<LoginForm>()
+    formState: { errors },
+  } = useForm<LoginForm>();
 
   // Vérifier si l'utilisateur arrive après une session expirée
   React.useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    if (params.get('session_expired') === '1') {
-      toast.error('Votre session a expiré. Veuillez vous reconnecter.')
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("session_expired") === "1") {
+      toast.error("Votre session a expiré. Veuillez vous reconnecter.");
       // Nettoyer l'URL
-      window.history.replaceState({}, '', '/connexion')
+      window.history.replaceState({}, "", "/connexion");
     }
-  }, [])
+  }, []);
 
   if (user) {
-    return <Navigate to="/app" replace />
+    return <Navigate to="/app" replace />;
   }
 
   const onSubmit = async (data: LoginForm) => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      await login(data.email, data.password)
-      navigate('/app')
+      await login(data.email, data.password);
+      navigate("/app");
     } catch (error) {
-      console.error('Login error:', error)
+      console.error("Login error:", error);
       // L'erreur est déjà affichée par le store via toast
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center justify-center p-4">
@@ -84,7 +84,7 @@ const Login = () => {
               icon={<Mail className="w-5 h-5" />}
               placeholder="votre@email.com"
               autoComplete="email"
-              {...register('email', validationRules.email)}
+              {...register("email", validationRules.email)}
               error={errors.email?.message}
             />
 
@@ -94,29 +94,27 @@ const Login = () => {
               icon={<Lock className="w-5 h-5" />}
               placeholder="••••••••"
               autoComplete="current-password"
-              {...register('password', validationRules.password)}
+              {...register("password", validationRules.password)}
               error={errors.password?.message}
             />
 
             <div className="flex items-center justify-between">
               <label className="flex items-center">
-                <input 
-                  type="checkbox" 
+                <input
+                  type="checkbox"
                   className="rounded border-gray-300 text-accent focus:ring-accent"
-                  {...register('rememberMe')}
+                  {...register("rememberMe")}
                 />
-                <span className="ml-2 text-sm text-gray-600">Se souvenir de moi</span>
+                <span className="ml-2 text-sm text-gray-600">
+                  Se souvenir de moi
+                </span>
               </label>
               <a href="#" className="text-sm text-accent hover:text-accent/80">
                 Mot de passe oublié ?
               </a>
             </div>
 
-            <Button
-              type="submit"
-              loading={isLoading}
-              className="w-full"
-            >
+            <Button type="submit" loading={isLoading} className="w-full">
               Se connecter
               <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
@@ -124,8 +122,11 @@ const Login = () => {
 
           <div className="mt-6 text-center">
             <p className="text-gray-600">
-              Pas encore de compte ?{' '}
-              <Link to="/inscription" className="text-accent hover:text-accent/80 font-medium">
+              Pas encore de compte ?{" "}
+              <Link
+                to="/inscription"
+                className="text-accent hover:text-accent/80 font-medium"
+              >
                 S'inscrire
               </Link>
             </p>
@@ -134,13 +135,16 @@ const Login = () => {
 
         {/* Back to home */}
         <div className="text-center mt-6">
-          <Link to="/" className="text-gray-600 hover:text-primary transition-colors">
+          <Link
+            to="/"
+            className="text-gray-600 hover:text-primary transition-colors"
+          >
             ← Retour à l'accueil
           </Link>
         </div>
       </motion.div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

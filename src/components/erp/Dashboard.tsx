@@ -1,12 +1,31 @@
-import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { BarChart3, TrendingUp, TrendingDown, DollarSign, Users, Calendar, Building, Clock, AlertCircle, CheckCircle, ArrowUpRight, ArrowDownRight, Briefcase, FileText, Package, PenTool as Tool, Bell, Activity } from 'lucide-react';
-import Card from '../ui/Card';
-import Button from '../ui/Button';
-import Badge from '../ui/Badge';
-import { useERPStore } from '../../store/erpStore';
-import { formatCurrency, formatDate } from '../../utils/formatters';
-import { apiClient } from '../../lib/api-client';
+import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import {
+  BarChart3,
+  TrendingUp,
+  TrendingDown,
+  DollarSign,
+  Users,
+  Calendar,
+  Building,
+  Clock,
+  AlertCircle,
+  CheckCircle,
+  ArrowUpRight,
+  ArrowDownRight,
+  Briefcase,
+  FileText,
+  Package,
+  PenTool as Tool,
+  Bell,
+  Activity,
+} from "lucide-react";
+import Card from "../ui/Card";
+import Button from "../ui/Button";
+import Badge from "../ui/Badge";
+import { useERPStore } from "../../store/erpStore";
+import { formatCurrency, formatDate } from "../../utils/formatters";
+import { apiClient } from "../../lib/api-client";
 
 interface StatCardProps {
   title: string;
@@ -14,17 +33,25 @@ interface StatCardProps {
   icon: React.ReactNode;
   trend?: number;
   trendLabel?: string;
-  color: 'green' | 'blue' | 'purple' | 'orange' | 'red';
+  color: "green" | "blue" | "purple" | "orange" | "red";
   delay?: number;
 }
 
-const StatCard = ({ title, value, icon, trend, trendLabel, color, delay = 0 }: StatCardProps) => {
+const StatCard = ({
+  title,
+  value,
+  icon,
+  trend,
+  trendLabel,
+  color,
+  delay = 0,
+}: StatCardProps) => {
   const colorClasses = {
-    green: 'bg-green-100 text-green-600',
-    blue: 'bg-blue-100 text-blue-600',
-    purple: 'bg-purple-100 text-purple-600',
-    orange: 'bg-orange-100 text-orange-600',
-    red: 'bg-red-100 text-red-600'
+    green: "bg-green-100 text-green-600",
+    blue: "bg-blue-100 text-blue-600",
+    purple: "bg-purple-100 text-purple-600",
+    orange: "bg-orange-100 text-orange-600",
+    red: "bg-red-100 text-red-600",
   };
 
   const isPositive = trend && trend >= 0;
@@ -37,12 +64,20 @@ const StatCard = ({ title, value, icon, trend, trendLabel, color, delay = 0 }: S
     >
       <Card className="p-6 hover:shadow-lg transition-shadow">
         <div className="flex items-center justify-between mb-4">
-          <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${colorClasses[color]}`}>
+          <div
+            className={`w-12 h-12 rounded-xl flex items-center justify-center ${colorClasses[color]}`}
+          >
             {icon}
           </div>
           {trend !== undefined && (
-            <div className={`flex items-center gap-1 text-sm font-semibold ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
-              {isPositive ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
+            <div
+              className={`flex items-center gap-1 text-sm font-semibold ${isPositive ? "text-green-600" : "text-red-600"}`}
+            >
+              {isPositive ? (
+                <ArrowUpRight className="w-4 h-4" />
+              ) : (
+                <ArrowDownRight className="w-4 h-4" />
+              )}
               {Math.abs(trend)}%
             </div>
           )}
@@ -59,13 +94,22 @@ const StatCard = ({ title, value, icon, trend, trendLabel, color, delay = 0 }: S
 
 const ERPDashboard = () => {
   const {
-    spaces, reservations, members, subscriptions, invoices,
-    maintenanceRequests, inventory, generateAnalytics, analytics,
-    getLowStockItems
+    spaces,
+    reservations,
+    members,
+    subscriptions,
+    invoices,
+    maintenanceRequests,
+    inventory,
+    generateAnalytics,
+    analytics,
+    getLowStockItems,
   } = useERPStore();
 
   const [loading, setLoading] = useState(true);
-  const [period, setPeriod] = useState<'day' | 'week' | 'month' | 'year'>('month');
+  const [period, setPeriod] = useState<"day" | "week" | "month" | "year">(
+    "month",
+  );
   const [adminStats, setAdminStats] = useState<any>(null);
 
   useEffect(() => {
@@ -79,7 +123,7 @@ const ERPDashboard = () => {
           setAdminStats(response.data);
         }
       } catch (error) {
-        console.error('Error loading analytics:', error);
+        console.error("Error loading analytics:", error);
       } finally {
         setLoading(false);
       }
@@ -88,22 +132,30 @@ const ERPDashboard = () => {
     loadData();
   }, [period]);
 
-  const availableSpaces = spaces.filter(s => s.available).length;
+  const availableSpaces = spaces.filter((s) => s.available).length;
   const stats = {
     totalSpaces: spaces.length,
     availableSpaces,
     totalMembers: members.length,
-    activeMembers: members.filter(m => m.status === 'active').length,
+    activeMembers: members.filter((m) => m.status === "active").length,
     totalReservations: reservations.length,
-    todayReservations: reservations.filter(r =>
-      new Date(r.startDate).toDateString() === new Date().toDateString()
+    todayReservations: reservations.filter(
+      (r) => new Date(r.startDate).toDateString() === new Date().toDateString(),
     ).length,
-    pendingInvoices: invoices.filter(i => i.status === 'sent' || i.status === 'draft').length,
-    overdueInvoices: invoices.filter(i => i.status === 'overdue').length,
-    activeSubscriptions: subscriptions.filter(s => s.status === 'active').length,
+    pendingInvoices: invoices.filter(
+      (i) => i.status === "sent" || i.status === "draft",
+    ).length,
+    overdueInvoices: invoices.filter((i) => i.status === "overdue").length,
+    activeSubscriptions: subscriptions.filter((s) => s.status === "active")
+      .length,
     lowStockItems: getLowStockItems().length,
-    pendingMaintenance: maintenanceRequests.filter(r => r.status === 'pending').length,
-    occupancyRate: spaces.length > 0 ? Math.round(((spaces.length - availableSpaces) / spaces.length) * 100) : 0
+    pendingMaintenance: maintenanceRequests.filter(
+      (r) => r.status === "pending",
+    ).length,
+    occupancyRate:
+      spaces.length > 0
+        ? Math.round(((spaces.length - availableSpaces) / spaces.length) * 100)
+        : 0,
   };
 
   if (loading) {
@@ -115,19 +167,21 @@ const ERPDashboard = () => {
   }
 
   const recentActivities = [
-    ...(reservations.slice(0, 3).map(r => ({
-      type: 'reservation',
-      message: `Nouvelle réservation pour ${r.spaceId || 'un espace'}`,
+    ...reservations.slice(0, 3).map((r) => ({
+      type: "reservation",
+      message: `Nouvelle réservation pour ${r.spaceId || "un espace"}`,
       time: r.createdAt || new Date().toISOString(),
-      icon: <Calendar className="w-4 h-4" />
-    }))),
-    ...(maintenanceRequests.slice(0, 2).map(m => ({
-      type: 'maintenance',
+      icon: <Calendar className="w-4 h-4" />,
+    })),
+    ...maintenanceRequests.slice(0, 2).map((m) => ({
+      type: "maintenance",
       message: `Demande de maintenance: ${m.description}`,
       time: m.createdAt || new Date().toISOString(),
-      icon: <Tool className="w-4 h-4" />
-    })))
-  ].sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()).slice(0, 5);
+      icon: <Tool className="w-4 h-4" />,
+    })),
+  ]
+    .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
+    .slice(0, 5);
 
   return (
     <div className="space-y-8">
@@ -142,14 +196,20 @@ const ERPDashboard = () => {
         </div>
 
         <div className="flex gap-2">
-          {(['day', 'week', 'month', 'year'] as const).map((p) => (
+          {(["day", "week", "month", "year"] as const).map((p) => (
             <Button
               key={p}
-              variant={period === p ? 'primary' : 'outline'}
+              variant={period === p ? "primary" : "outline"}
               size="sm"
               onClick={() => setPeriod(p)}
             >
-              {p === 'day' ? 'Jour' : p === 'week' ? 'Semaine' : p === 'month' ? 'Mois' : 'Année'}
+              {p === "day"
+                ? "Jour"
+                : p === "week"
+                  ? "Semaine"
+                  : p === "month"
+                    ? "Mois"
+                    : "Année"}
             </Button>
           ))}
         </div>
@@ -158,7 +218,11 @@ const ERPDashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
           title="Revenus ce mois"
-          value={formatCurrency(adminStats?.revenue?.month || analytics?.financialSummary.revenue || 0)}
+          value={formatCurrency(
+            adminStats?.revenue?.month ||
+              analytics?.financialSummary.revenue ||
+              0,
+          )}
           icon={<DollarSign className="w-6 h-6" />}
           trend={adminStats?.revenue?.growth}
           trendLabel="vs mois dernier"
@@ -217,7 +281,9 @@ const ERPDashboard = () => {
                   <FileText className="w-4 h-4 text-gray-600" />
                   <p className="text-sm text-gray-600">Factures en attente</p>
                 </div>
-                <p className="text-2xl font-bold text-primary">{stats.pendingInvoices}</p>
+                <p className="text-2xl font-bold text-primary">
+                  {stats.pendingInvoices}
+                </p>
               </div>
 
               <div className="p-4 bg-red-50 rounded-lg">
@@ -225,7 +291,9 @@ const ERPDashboard = () => {
                   <AlertCircle className="w-4 h-4 text-red-600" />
                   <p className="text-sm text-red-600">Factures en retard</p>
                 </div>
-                <p className="text-2xl font-bold text-red-600">{stats.overdueInvoices}</p>
+                <p className="text-2xl font-bold text-red-600">
+                  {stats.overdueInvoices}
+                </p>
               </div>
 
               <div className="p-4 bg-green-50 rounded-lg">
@@ -233,7 +301,9 @@ const ERPDashboard = () => {
                   <CheckCircle className="w-4 h-4 text-green-600" />
                   <p className="text-sm text-green-600">Abonnements actifs</p>
                 </div>
-                <p className="text-2xl font-bold text-green-600">{stats.activeSubscriptions}</p>
+                <p className="text-2xl font-bold text-green-600">
+                  {stats.activeSubscriptions}
+                </p>
               </div>
 
               <div className="p-4 bg-orange-50 rounded-lg">
@@ -241,7 +311,9 @@ const ERPDashboard = () => {
                   <Package className="w-4 h-4 text-orange-600" />
                   <p className="text-sm text-orange-600">Stock faible</p>
                 </div>
-                <p className="text-2xl font-bold text-orange-600">{stats.lowStockItems}</p>
+                <p className="text-2xl font-bold text-orange-600">
+                  {stats.lowStockItems}
+                </p>
               </div>
 
               <div className="p-4 bg-yellow-50 rounded-lg">
@@ -249,7 +321,9 @@ const ERPDashboard = () => {
                   <Tool className="w-4 h-4 text-yellow-600" />
                   <p className="text-sm text-yellow-600">Maintenance</p>
                 </div>
-                <p className="text-2xl font-bold text-yellow-600">{stats.pendingMaintenance}</p>
+                <p className="text-2xl font-bold text-yellow-600">
+                  {stats.pendingMaintenance}
+                </p>
               </div>
 
               <div className="p-4 bg-blue-50 rounded-lg">
@@ -257,7 +331,9 @@ const ERPDashboard = () => {
                   <Briefcase className="w-4 h-4 text-blue-600" />
                   <p className="text-sm text-blue-600">Espaces disponibles</p>
                 </div>
-                <p className="text-2xl font-bold text-blue-600">{stats.availableSpaces}</p>
+                <p className="text-2xl font-bold text-blue-600">
+                  {stats.availableSpaces}
+                </p>
               </div>
             </div>
           </Card>
@@ -280,13 +356,20 @@ const ERPDashboard = () => {
             <div className="space-y-4">
               {recentActivities.length > 0 ? (
                 recentActivities.map((activity, index) => (
-                  <div key={index} className="flex gap-3 p-3 bg-gray-50 rounded-lg">
+                  <div
+                    key={index}
+                    className="flex gap-3 p-3 bg-gray-50 rounded-lg"
+                  >
                     <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center text-gray-600">
                       {activity.icon}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm text-gray-900 truncate">{activity.message}</p>
-                      <p className="text-xs text-gray-500">{formatDate(activity.time)}</p>
+                      <p className="text-sm text-gray-900 truncate">
+                        {activity.message}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {formatDate(activity.time)}
+                      </p>
                     </div>
                   </div>
                 ))
@@ -301,7 +384,9 @@ const ERPDashboard = () => {
         </motion.div>
       </div>
 
-      {(stats.overdueInvoices > 0 || stats.lowStockItems > 0 || stats.pendingMaintenance > 0) && (
+      {(stats.overdueInvoices > 0 ||
+        stats.lowStockItems > 0 ||
+        stats.pendingMaintenance > 0) && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -311,16 +396,27 @@ const ERPDashboard = () => {
             <div className="flex items-start gap-3">
               <AlertCircle className="w-6 h-6 text-yellow-600 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <h3 className="font-semibold text-yellow-900 mb-2">Actions requises</h3>
+                <h3 className="font-semibold text-yellow-900 mb-2">
+                  Actions requises
+                </h3>
                 <ul className="space-y-1 text-sm text-yellow-800">
                   {stats.overdueInvoices > 0 && (
-                    <li>• {stats.overdueInvoices} facture(s) en retard nécessitent votre attention</li>
+                    <li>
+                      • {stats.overdueInvoices} facture(s) en retard nécessitent
+                      votre attention
+                    </li>
                   )}
                   {stats.lowStockItems > 0 && (
-                    <li>• {stats.lowStockItems} article(s) en stock faible à réapprovisionner</li>
+                    <li>
+                      • {stats.lowStockItems} article(s) en stock faible à
+                      réapprovisionner
+                    </li>
                   )}
                   {stats.pendingMaintenance > 0 && (
-                    <li>• {stats.pendingMaintenance} demande(s) de maintenance en attente</li>
+                    <li>
+                      • {stats.pendingMaintenance} demande(s) de maintenance en
+                      attente
+                    </li>
                   )}
                 </ul>
               </div>

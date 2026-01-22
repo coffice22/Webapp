@@ -1,69 +1,97 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { 
-  Users, Search, Filter, Plus, Edit, Trash2, Eye, UserCheck, UserX, Mail, Phone, 
-  Download, ArrowUpDown, CreditCard, Calendar, Building, Tag, MoreHorizontal, 
-  UserPlus, FileText, MessageSquare, Star, Shield, RefreshCw
-} from 'lucide-react';
-import Button from '../ui/Button';
-import Card from '../ui/Card';
-import Badge from '../ui/Badge';
-import Input from '../ui/Input';
-import Modal from '../ui/Modal';
-import { useERPStore } from '../../store/erpStore';
-import { formatDate, formatCurrency } from '../../utils/formatters';
-import { Member, MemberSubscription } from '../../types/erp';
-import toast from 'react-hot-toast';
-import { 
-  createColumnHelper, 
-  flexRender, 
-  getCoreRowModel, 
-  useReactTable, 
-  getSortedRowModel, 
-  getFilteredRowModel, 
-  getPaginationRowModel 
-} from '@tanstack/react-table';
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import {
+  Users,
+  Search,
+  Filter,
+  Plus,
+  Edit,
+  Trash2,
+  Eye,
+  UserCheck,
+  UserX,
+  Mail,
+  Phone,
+  Download,
+  ArrowUpDown,
+  CreditCard,
+  Calendar,
+  Building,
+  Tag,
+  MoreHorizontal,
+  UserPlus,
+  FileText,
+  MessageSquare,
+  Star,
+  Shield,
+  RefreshCw,
+} from "lucide-react";
+import Button from "../ui/Button";
+import Card from "../ui/Card";
+import Badge from "../ui/Badge";
+import Input from "../ui/Input";
+import Modal from "../ui/Modal";
+import { useERPStore } from "../../store/erpStore";
+import { formatDate, formatCurrency } from "../../utils/formatters";
+import { Member, MemberSubscription } from "../../types/erp";
+import toast from "react-hot-toast";
+import {
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+  getSortedRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+} from "@tanstack/react-table";
 
 const MemberManagement = () => {
-  const { 
-    members, addMember, updateMember, deleteMember, getMemberById,
-    subscriptions, getMemberSubscription, processSubscriptionPayment,
-    memberships, getMembershipById
+  const {
+    members,
+    addMember,
+    updateMember,
+    deleteMember,
+    getMemberById,
+    subscriptions,
+    getMemberSubscription,
+    processSubscriptionPayment,
+    memberships,
+    getMembershipById,
   } = useERPStore();
-  
+
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [showMemberModal, setShowMemberModal] = useState(false);
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    companyName: '',
-    position: '',
-    industry: '',
-    status: 'active' as 'active' | 'inactive' | 'suspended',
-    notes: '',
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    companyName: "",
+    position: "",
+    industry: "",
+    status: "active" as "active" | "inactive" | "suspended",
+    notes: "",
     marketingConsent: true,
     billingAddress: {
-      street: '',
-      city: '',
-      state: '',
-      postalCode: '',
-      country: 'Algérie',
-      isPrimary: true
-    }
+      street: "",
+      city: "",
+      state: "",
+      postalCode: "",
+      country: "Algérie",
+      isPrimary: true,
+    },
   });
-  
+
   const [subscriptionData, setSubscriptionData] = useState({
-    membershipId: '',
-    billingCycle: 'monthly' as 'monthly' | 'annual',
+    membershipId: "",
+    billingCycle: "monthly" as "monthly" | "annual",
     autoRenew: true,
-    paymentMethod: 'cib'
+    paymentMethod: "cib",
   });
 
   useEffect(() => {
@@ -72,72 +100,93 @@ const MemberManagement = () => {
   }, []);
 
   const columnHelper = createColumnHelper<Member>();
-  
+
   const columns = [
-    columnHelper.accessor('id', {
-      header: 'ID',
-      cell: info => <span className="text-xs text-gray-500">{info.getValue()}</span>
+    columnHelper.accessor("id", {
+      header: "ID",
+      cell: (info) => (
+        <span className="text-xs text-gray-500">{info.getValue()}</span>
+      ),
     }),
-    columnHelper.accessor(row => `${row.firstName} ${row.lastName}`, {
-      id: 'fullName',
+    columnHelper.accessor((row) => `${row.firstName} ${row.lastName}`, {
+      id: "fullName",
       header: () => <div className="flex items-center">Nom</div>,
-      cell: info => (
+      cell: (info) => (
         <div className="flex items-center">
           <div className="w-10 h-10 bg-gradient-to-br from-accent to-teal rounded-full flex items-center justify-center">
             <span className="text-white font-semibold text-sm">
-              {info.row.original.firstName.charAt(0)}{info.row.original.lastName.charAt(0)}
+              {info.row.original.firstName.charAt(0)}
+              {info.row.original.lastName.charAt(0)}
             </span>
           </div>
           <div className="ml-4">
-            <div className="text-sm font-medium text-gray-900">{info.getValue()}</div>
-            <div className="text-sm text-gray-500">{info.row.original.email}</div>
+            <div className="text-sm font-medium text-gray-900">
+              {info.getValue()}
+            </div>
+            <div className="text-sm text-gray-500">
+              {info.row.original.email}
+            </div>
           </div>
         </div>
-      )
+      ),
     }),
-    columnHelper.accessor('companyName', {
+    columnHelper.accessor("companyName", {
       header: () => <div className="flex items-center">Entreprise</div>,
-      cell: info => (
+      cell: (info) => (
         <div>
-          <div className="text-sm text-gray-900">{info.getValue() || 'N/A'}</div>
-          <div className="text-sm text-gray-500">{info.row.original.position || 'N/A'}</div>
+          <div className="text-sm text-gray-900">
+            {info.getValue() || "N/A"}
+          </div>
+          <div className="text-sm text-gray-500">
+            {info.row.original.position || "N/A"}
+          </div>
         </div>
-      )
+      ),
     }),
-    columnHelper.accessor('status', {
-      header: 'Statut',
-      cell: info => {
+    columnHelper.accessor("status", {
+      header: "Statut",
+      cell: (info) => {
         const status = info.getValue();
-        const variant = status === 'active' ? 'success' : status === 'inactive' ? 'warning' : 'error';
+        const variant =
+          status === "active"
+            ? "success"
+            : status === "inactive"
+              ? "warning"
+              : "error";
         return <Badge variant={variant}>{status}</Badge>;
-      }
+      },
     }),
-    columnHelper.accessor('joinDate', {
-      header: 'Inscription',
-      cell: info => <span className="text-sm text-gray-600">{formatDate(info.getValue())}</span>
+    columnHelper.accessor("joinDate", {
+      header: "Inscription",
+      cell: (info) => (
+        <span className="text-sm text-gray-600">
+          {formatDate(info.getValue())}
+        </span>
+      ),
     }),
     columnHelper.display({
-      id: 'subscription',
-      header: 'Abonnement',
-      cell: info => {
+      id: "subscription",
+      header: "Abonnement",
+      cell: (info) => {
         const subscription = getMemberSubscription(info.row.original.id);
-        if (!subscription) return <span className="text-sm text-gray-500">Aucun</span>;
-        
+        if (!subscription)
+          return <span className="text-sm text-gray-500">Aucun</span>;
+
         const membership = getMembershipById(subscription.membershipId);
         return (
           <div>
-            <Badge variant="info">{membership?.name || 'N/A'}</Badge>
+            <Badge variant="info">{membership?.name || "N/A"}</Badge>
             <div className="text-xs text-gray-500 mt-1">
               Expire: {formatDate(subscription.endDate)}
             </div>
           </div>
         );
-      }
+      },
     }),
     columnHelper.display({
-      id: 'actions',
-      header: 'Actions',
-      cell: info => (
+      id: "actions",
+      header: "Actions",
+      cell: (info) => (
         <div className="flex items-center space-x-2">
           <Button
             variant="outline"
@@ -158,21 +207,21 @@ const MemberManagement = () => {
                 firstName: info.row.original.firstName,
                 lastName: info.row.original.lastName,
                 email: info.row.original.email,
-                phone: info.row.original.phone || '',
-                companyName: info.row.original.companyName || '',
-                position: info.row.original.position || '',
-                industry: info.row.original.industry || '',
+                phone: info.row.original.phone || "",
+                companyName: info.row.original.companyName || "",
+                position: info.row.original.position || "",
+                industry: info.row.original.industry || "",
                 status: info.row.original.status,
-                notes: info.row.original.notes || '',
+                notes: info.row.original.notes || "",
                 marketingConsent: info.row.original.marketingConsent,
                 billingAddress: info.row.original.billingAddress || {
-                  street: '',
-                  city: '',
-                  state: '',
-                  postalCode: '',
-                  country: 'Algérie',
-                  isPrimary: true
-                }
+                  street: "",
+                  city: "",
+                  state: "",
+                  postalCode: "",
+                  country: "Algérie",
+                  isPrimary: true,
+                },
               });
               setIsEditing(true);
               setShowMemberModal(true);
@@ -198,18 +247,22 @@ const MemberManagement = () => {
             <Trash2 className="w-4 h-4" />
           </Button>
         </div>
-      )
-    })
+      ),
+    }),
   ];
 
-  const filteredMembers = members.filter(member => {
-    const matchesSearch = 
-      `${member.firstName} ${member.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  const filteredMembers = members.filter((member) => {
+    const matchesSearch =
+      `${member.firstName} ${member.lastName}`
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
       member.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (member.companyName && member.companyName.toLowerCase().includes(searchTerm.toLowerCase()));
-    
-    const matchesStatus = statusFilter === 'all' || member.status === statusFilter;
-    
+      (member.companyName &&
+        member.companyName.toLowerCase().includes(searchTerm.toLowerCase()));
+
+    const matchesStatus =
+      statusFilter === "all" || member.status === statusFilter;
+
     return matchesSearch && matchesStatus;
   });
 
@@ -240,18 +293,18 @@ const MemberManagement = () => {
       position: formData.position,
       industry: formData.industry,
       status: formData.status,
-      membershipType: 'standard',
+      membershipType: "standard",
       joinDate: new Date(),
       notes: formData.notes,
       billingAddress: formData.billingAddress,
       marketingConsent: formData.marketingConsent,
-      lastActivity: new Date()
+      lastActivity: new Date(),
     };
 
     addMember(newMember);
     resetForm();
     setShowMemberModal(false);
-    toast.success('Membre créé avec succès');
+    toast.success("Membre créé avec succès");
   };
 
   const handleUpdateMember = () => {
@@ -268,115 +321,129 @@ const MemberManagement = () => {
       status: formData.status,
       notes: formData.notes,
       billingAddress: formData.billingAddress,
-      marketingConsent: formData.marketingConsent
+      marketingConsent: formData.marketingConsent,
     });
 
     resetForm();
     setShowMemberModal(false);
     setIsEditing(false);
     setSelectedMember(null);
-    toast.success('Membre mis à jour avec succès');
+    toast.success("Membre mis à jour avec succès");
   };
 
   const handleDeleteMember = (memberId: string) => {
-    if (window.confirm('Êtes-vous sûr de vouloir supprimer ce membre ? Cette action est irréversible.')) {
+    if (
+      window.confirm(
+        "Êtes-vous sûr de vouloir supprimer ce membre ? Cette action est irréversible.",
+      )
+    ) {
       deleteMember(memberId);
-      toast.success('Membre supprimé avec succès');
+      toast.success("Membre supprimé avec succès");
     }
   };
 
   const handleCreateSubscription = () => {
     if (!selectedMember || !subscriptionData.membershipId) {
-      toast.error('Veuillez sélectionner un abonnement');
+      toast.error("Veuillez sélectionner un abonnement");
       return;
     }
-    
-    const result = processSubscriptionPayment(subscriptionData.membershipId, 0, 'card');
-    
+
+    const result = processSubscriptionPayment(
+      subscriptionData.membershipId,
+      0,
+      "card",
+    );
+
     if (result.success) {
-      toast.success('Abonnement créé avec succès');
+      toast.success("Abonnement créé avec succès");
       setShowSubscriptionModal(false);
       setSubscriptionData({
-        membershipId: '',
-        billingCycle: 'monthly',
+        membershipId: "",
+        billingCycle: "monthly",
         autoRenew: true,
-        paymentMethod: 'cib'
+        paymentMethod: "cib",
       });
     } else {
-      toast.error(result.error || 'Erreur lors de la création de l\'abonnement');
+      toast.error(result.error || "Erreur lors de la création de l'abonnement");
     }
   };
 
   const resetForm = () => {
     setFormData({
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      companyName: '',
-      position: '',
-      industry: '',
-      status: 'active',
-      notes: '',
+      firstName: "",
+      lastName: "",
+      email: "",
+      phone: "",
+      companyName: "",
+      position: "",
+      industry: "",
+      status: "active",
+      notes: "",
       marketingConsent: true,
       billingAddress: {
-        street: '',
-        city: '',
-        state: '',
-        postalCode: '',
-        country: 'Algérie',
-        isPrimary: true
-      }
+        street: "",
+        city: "",
+        state: "",
+        postalCode: "",
+        country: "Algérie",
+        isPrimary: true,
+      },
     });
     setSelectedMember(null);
     setIsEditing(false);
   };
 
   const industryOptions = [
-    'Technologie',
-    'Finance',
-    'Marketing',
-    'Conseil',
-    'E-commerce',
-    'Éducation',
-    'Santé',
-    'Immobilier',
-    'Médias',
-    'Design',
-    'Juridique',
-    'Autre'
+    "Technologie",
+    "Finance",
+    "Marketing",
+    "Conseil",
+    "E-commerce",
+    "Éducation",
+    "Santé",
+    "Immobilier",
+    "Médias",
+    "Design",
+    "Juridique",
+    "Autre",
   ];
 
   const exportMembers = () => {
-    const membersData = members.map(member => {
+    const membersData = members.map((member) => {
       const subscription = getMemberSubscription(member.id);
-      const membership = subscription ? getMembershipById(subscription.membershipId) : null;
-      
+      const membership = subscription
+        ? getMembershipById(subscription.membershipId)
+        : null;
+
       return {
         id: member.id,
         firstName: member.firstName,
         lastName: member.lastName,
         email: member.email,
-        phone: member.phone || 'N/A',
-        company: member.companyName || 'N/A',
-        position: member.position || 'N/A',
-        industry: member.industry || 'N/A',
+        phone: member.phone || "N/A",
+        company: member.companyName || "N/A",
+        position: member.position || "N/A",
+        industry: member.industry || "N/A",
         status: member.status,
         joinDate: formatDate(member.joinDate),
-        subscription: membership ? membership.name : 'Aucun',
-        subscriptionEnd: subscription ? formatDate(subscription.endDate) : 'N/A',
-        lastActivity: member.lastActivity ? formatDate(member.lastActivity) : 'N/A'
+        subscription: membership ? membership.name : "Aucun",
+        subscriptionEnd: subscription
+          ? formatDate(subscription.endDate)
+          : "N/A",
+        lastActivity: member.lastActivity
+          ? formatDate(member.lastActivity)
+          : "N/A",
       };
     });
-    
+
     const dataStr = JSON.stringify(membersData, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const dataBlob = new Blob([dataStr], { type: "application/json" });
     const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
-    link.download = `coffice-members-${new Date().toISOString().split('T')[0]}.json`;
+    link.download = `coffice-members-${new Date().toISOString().split("T")[0]}.json`;
     link.click();
-    toast.success('Membres exportés avec succès');
+    toast.success("Membres exportés avec succès");
   };
 
   if (loading) {
@@ -392,8 +459,12 @@ const MemberManagement = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-display font-bold text-primary">Gestion des Membres</h1>
-          <p className="text-gray-600">Gérez tous les membres de votre coworking</p>
+          <h1 className="text-3xl font-display font-bold text-primary">
+            Gestion des Membres
+          </h1>
+          <p className="text-gray-600">
+            Gérez tous les membres de votre coworking
+          </p>
         </div>
         <div className="flex gap-3">
           <Button variant="outline" onClick={exportMembers}>
@@ -416,7 +487,9 @@ const MemberManagement = () => {
             </div>
             <div className="ml-4">
               <p className="text-sm text-gray-600">Total Membres</p>
-              <p className="text-2xl font-bold text-primary">{members.length}</p>
+              <p className="text-2xl font-bold text-primary">
+                {members.length}
+              </p>
             </div>
           </div>
         </Card>
@@ -429,7 +502,7 @@ const MemberManagement = () => {
             <div className="ml-4">
               <p className="text-sm text-gray-600">Membres Actifs</p>
               <p className="text-2xl font-bold text-primary">
-                {members.filter(m => m.status === 'active').length}
+                {members.filter((m) => m.status === "active").length}
               </p>
             </div>
           </div>
@@ -443,7 +516,7 @@ const MemberManagement = () => {
             <div className="ml-4">
               <p className="text-sm text-gray-600">Abonnements Actifs</p>
               <p className="text-2xl font-bold text-primary">
-                {subscriptions.filter(s => s.status === 'active').length}
+                {subscriptions.filter((s) => s.status === "active").length}
               </p>
             </div>
           </div>
@@ -457,11 +530,16 @@ const MemberManagement = () => {
             <div className="ml-4">
               <p className="text-sm text-gray-600">Nouveaux ce mois</p>
               <p className="text-2xl font-bold text-primary">
-                {members.filter(m => {
-                  const now = new Date();
-                  const joinDate = new Date(m.joinDate);
-                  return joinDate.getMonth() === now.getMonth() && joinDate.getFullYear() === now.getFullYear();
-                }).length}
+                {
+                  members.filter((m) => {
+                    const now = new Date();
+                    const joinDate = new Date(m.joinDate);
+                    return (
+                      joinDate.getMonth() === now.getMonth() &&
+                      joinDate.getFullYear() === now.getFullYear()
+                    );
+                  }).length
+                }
               </p>
             </div>
           </div>
@@ -477,7 +555,7 @@ const MemberManagement = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          
+
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
@@ -502,43 +580,45 @@ const MemberManagement = () => {
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
-                {table.getHeaderGroups().map(headerGroup => (
-                  headerGroup.headers.map(header => (
-                    <th 
+                {table.getHeaderGroups().map((headerGroup) =>
+                  headerGroup.headers.map((header) => (
+                    <th
                       key={header.id}
                       className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider"
                     >
                       {header.isPlaceholder ? null : (
                         <div
                           {...{
-                            className: header.column.getCanSort() ? 'cursor-pointer select-none' : '',
+                            className: header.column.getCanSort()
+                              ? "cursor-pointer select-none"
+                              : "",
                             onClick: header.column.getToggleSortingHandler(),
                           }}
                         >
                           {flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                         </div>
                       )}
                     </th>
-                  ))
-                ))}
+                  )),
+                )}
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {table.getRowModel().rows.map(row => (
+              {table.getRowModel().rows.map((row) => (
                 <motion.tr
                   key={row.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="hover:bg-gray-50"
                 >
-                  {row.getVisibleCells().map(cell => (
+                  {row.getVisibleCells().map((cell) => (
                     <td key={cell.id} className="px-6 py-4 whitespace-nowrap">
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </td>
                   ))}
@@ -552,19 +632,20 @@ const MemberManagement = () => {
         <div className="px-6 py-4 border-t border-gray-200 flex justify-between items-center">
           <div className="flex items-center gap-2">
             <span className="text-sm text-gray-700">
-              Page{' '}
+              Page{" "}
               <strong>
-                {table.getState().pagination.pageIndex + 1} sur {table.getPageCount()}
+                {table.getState().pagination.pageIndex + 1} sur{" "}
+                {table.getPageCount()}
               </strong>
             </span>
             <select
               value={table.getState().pagination.pageSize}
-              onChange={e => {
+              onChange={(e) => {
                 table.setPageSize(Number(e.target.value));
               }}
               className="px-2 py-1 border rounded text-sm"
             >
-              {[10, 20, 30, 40, 50].map(pageSize => (
+              {[10, 20, 30, 40, 50].map((pageSize) => (
                 <option key={pageSize} value={pageSize}>
                   Afficher {pageSize}
                 </option>
@@ -599,7 +680,7 @@ const MemberManagement = () => {
           setShowMemberModal(false);
           resetForm();
         }}
-        title={isEditing ? 'Modifier le membre' : 'Ajouter un membre'}
+        title={isEditing ? "Modifier le membre" : "Ajouter un membre"}
         size="lg"
       >
         <div className="space-y-6">
@@ -607,14 +688,18 @@ const MemberManagement = () => {
             <Input
               label="Prénom"
               value={formData.firstName}
-              onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, firstName: e.target.value }))
+              }
               placeholder="Prénom"
             />
-            
+
             <Input
               label="Nom"
               value={formData.lastName}
-              onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, lastName: e.target.value }))
+              }
               placeholder="Nom"
             />
           </div>
@@ -624,14 +709,18 @@ const MemberManagement = () => {
               label="Email"
               type="email"
               value={formData.email}
-              onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, email: e.target.value }))
+              }
               placeholder="email@exemple.com"
             />
-            
+
             <Input
               label="Téléphone"
               value={formData.phone}
-              onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, phone: e.target.value }))
+              }
               placeholder="+213 23 804 924"
             />
           </div>
@@ -640,14 +729,21 @@ const MemberManagement = () => {
             <Input
               label="Entreprise"
               value={formData.companyName}
-              onChange={(e) => setFormData(prev => ({ ...prev, companyName: e.target.value }))}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  companyName: e.target.value,
+                }))
+              }
               placeholder="Nom de l'entreprise"
             />
-            
+
             <Input
               label="Poste"
               value={formData.position}
-              onChange={(e) => setFormData(prev => ({ ...prev, position: e.target.value }))}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, position: e.target.value }))
+              }
               placeholder="Ex: Développeur, Designer, etc."
             />
           </div>
@@ -659,23 +755,32 @@ const MemberManagement = () => {
               </label>
               <select
                 value={formData.industry}
-                onChange={(e) => setFormData(prev => ({ ...prev, industry: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, industry: e.target.value }))
+                }
                 className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-accent focus:outline-none"
               >
                 <option value="">Sélectionner un secteur</option>
-                {industryOptions.map(industry => (
-                  <option key={industry} value={industry}>{industry}</option>
+                {industryOptions.map((industry) => (
+                  <option key={industry} value={industry}>
+                    {industry}
+                  </option>
                 ))}
               </select>
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Statut
               </label>
               <select
                 value={formData.status}
-                onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value as any }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    status: e.target.value as any,
+                  }))
+                }
                 className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-accent focus:outline-none"
               >
                 <option value="active">Actif</option>
@@ -693,41 +798,61 @@ const MemberManagement = () => {
               <Input
                 label="Rue"
                 value={formData.billingAddress.street}
-                onChange={(e) => setFormData(prev => ({ 
-                  ...prev, 
-                  billingAddress: { ...prev.billingAddress, street: e.target.value } 
-                }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    billingAddress: {
+                      ...prev.billingAddress,
+                      street: e.target.value,
+                    },
+                  }))
+                }
                 placeholder="Adresse"
               />
-              
+
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Input
                   label="Ville"
                   value={formData.billingAddress.city}
-                  onChange={(e) => setFormData(prev => ({ 
-                    ...prev, 
-                    billingAddress: { ...prev.billingAddress, city: e.target.value } 
-                  }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      billingAddress: {
+                        ...prev.billingAddress,
+                        city: e.target.value,
+                      },
+                    }))
+                  }
                   placeholder="Ville"
                 />
-                
+
                 <Input
                   label="État/Province"
                   value={formData.billingAddress.state}
-                  onChange={(e) => setFormData(prev => ({ 
-                    ...prev, 
-                    billingAddress: { ...prev.billingAddress, state: e.target.value } 
-                  }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      billingAddress: {
+                        ...prev.billingAddress,
+                        state: e.target.value,
+                      },
+                    }))
+                  }
                   placeholder="État/Province"
                 />
-                
+
                 <Input
                   label="Code postal"
                   value={formData.billingAddress.postalCode}
-                  onChange={(e) => setFormData(prev => ({ 
-                    ...prev, 
-                    billingAddress: { ...prev.billingAddress, postalCode: e.target.value } 
-                  }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      billingAddress: {
+                        ...prev.billingAddress,
+                        postalCode: e.target.value,
+                      },
+                    }))
+                  }
                   placeholder="Code postal"
                 />
               </div>
@@ -740,7 +865,9 @@ const MemberManagement = () => {
             </label>
             <textarea
               value={formData.notes}
-              onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, notes: e.target.value }))
+              }
               rows={3}
               className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-accent focus:outline-none resize-none"
               placeholder="Notes additionnelles..."
@@ -752,10 +879,18 @@ const MemberManagement = () => {
               type="checkbox"
               id="marketingConsent"
               checked={formData.marketingConsent}
-              onChange={(e) => setFormData(prev => ({ ...prev, marketingConsent: e.target.checked }))}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  marketingConsent: e.target.checked,
+                }))
+              }
               className="rounded border-gray-300 text-accent focus:ring-accent"
             />
-            <label htmlFor="marketingConsent" className="ml-2 text-sm text-gray-700">
+            <label
+              htmlFor="marketingConsent"
+              className="ml-2 text-sm text-gray-700"
+            >
               Accepte de recevoir des communications marketing
             </label>
           </div>
@@ -775,9 +910,11 @@ const MemberManagement = () => {
             <Button
               onClick={isEditing ? handleUpdateMember : handleCreateMember}
               className="flex-1"
-              disabled={!formData.firstName || !formData.lastName || !formData.email}
+              disabled={
+                !formData.firstName || !formData.lastName || !formData.email
+              }
             >
-              {isEditing ? 'Mettre à jour' : 'Créer le membre'}
+              {isEditing ? "Mettre à jour" : "Créer le membre"}
             </Button>
           </div>
         </div>
@@ -789,10 +926,10 @@ const MemberManagement = () => {
         onClose={() => {
           setShowSubscriptionModal(false);
           setSubscriptionData({
-            membershipId: '',
-            billingCycle: 'monthly',
+            membershipId: "",
+            billingCycle: "monthly",
             autoRenew: true,
-            paymentMethod: 'cib'
+            paymentMethod: "cib",
           });
         }}
         title="Gérer l'abonnement"
@@ -805,19 +942,25 @@ const MemberManagement = () => {
                 {selectedMember.firstName} {selectedMember.lastName}
               </h3>
               <p className="text-sm text-gray-600">{selectedMember.email}</p>
-              
+
               {(() => {
                 const subscription = getMemberSubscription(selectedMember.id);
                 if (subscription) {
-                  const membership = getMembershipById(subscription.membershipId);
+                  const membership = getMembershipById(
+                    subscription.membershipId,
+                  );
                   return (
                     <div className="mt-2">
                       <Badge variant="success">Abonnement actif</Badge>
                       <p className="text-sm text-gray-700 mt-1">
-                        Plan: <span className="font-medium">{membership?.name}</span>
+                        Plan:{" "}
+                        <span className="font-medium">{membership?.name}</span>
                       </p>
                       <p className="text-sm text-gray-700">
-                        Expire le: <span className="font-medium">{formatDate(subscription.endDate)}</span>
+                        Expire le:{" "}
+                        <span className="font-medium">
+                          {formatDate(subscription.endDate)}
+                        </span>
                       </p>
                     </div>
                   );
@@ -837,13 +980,19 @@ const MemberManagement = () => {
             </label>
             <select
               value={subscriptionData.membershipId}
-              onChange={(e) => setSubscriptionData(prev => ({ ...prev, membershipId: e.target.value }))}
+              onChange={(e) =>
+                setSubscriptionData((prev) => ({
+                  ...prev,
+                  membershipId: e.target.value,
+                }))
+              }
               className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-accent focus:outline-none"
             >
               <option value="">Sélectionner un plan</option>
-              {memberships.map(membership => (
+              {memberships.map((membership) => (
                 <option key={membership.id} value={membership.id}>
-                  {membership.name} - {formatCurrency(membership.monthlyPrice)}/mois
+                  {membership.name} - {formatCurrency(membership.monthlyPrice)}
+                  /mois
                 </option>
               ))}
             </select>
@@ -856,21 +1005,31 @@ const MemberManagement = () => {
               </label>
               <select
                 value={subscriptionData.billingCycle}
-                onChange={(e) => setSubscriptionData(prev => ({ ...prev, billingCycle: e.target.value as any }))}
+                onChange={(e) =>
+                  setSubscriptionData((prev) => ({
+                    ...prev,
+                    billingCycle: e.target.value as any,
+                  }))
+                }
                 className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-accent focus:outline-none"
               >
                 <option value="monthly">Mensuel</option>
                 <option value="annual">Annuel</option>
               </select>
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Méthode de paiement
               </label>
               <select
                 value={subscriptionData.paymentMethod}
-                onChange={(e) => setSubscriptionData(prev => ({ ...prev, paymentMethod: e.target.value }))}
+                onChange={(e) =>
+                  setSubscriptionData((prev) => ({
+                    ...prev,
+                    paymentMethod: e.target.value,
+                  }))
+                }
                 className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-accent focus:outline-none"
               >
                 <option value="cib">Carte CIB</option>
@@ -885,7 +1044,12 @@ const MemberManagement = () => {
               type="checkbox"
               id="autoRenew"
               checked={subscriptionData.autoRenew}
-              onChange={(e) => setSubscriptionData(prev => ({ ...prev, autoRenew: e.target.checked }))}
+              onChange={(e) =>
+                setSubscriptionData((prev) => ({
+                  ...prev,
+                  autoRenew: e.target.checked,
+                }))
+              }
               className="rounded border-gray-300 text-accent focus:ring-accent"
             />
             <label htmlFor="autoRenew" className="ml-2 text-sm text-gray-700">
@@ -899,19 +1063,23 @@ const MemberManagement = () => {
                 <div>
                   <p className="font-medium text-primary">Montant total</p>
                   <p className="text-sm text-gray-600">
-                    {subscriptionData.billingCycle === 'annual' ? 'Facturation annuelle' : 'Facturation mensuelle'}
+                    {subscriptionData.billingCycle === "annual"
+                      ? "Facturation annuelle"
+                      : "Facturation mensuelle"}
                   </p>
                 </div>
                 <div className="text-right">
                   <p className="text-2xl font-bold text-accent">
                     {(() => {
-                      const membership = getMembershipById(subscriptionData.membershipId);
+                      const membership = getMembershipById(
+                        subscriptionData.membershipId,
+                      );
                       if (!membership) return formatCurrency(0);
-                      
+
                       return formatCurrency(
-                        subscriptionData.billingCycle === 'annual' 
-                          ? membership.annualPrice 
-                          : membership.monthlyPrice
+                        subscriptionData.billingCycle === "annual"
+                          ? membership.annualPrice
+                          : membership.monthlyPrice,
                       );
                     })()}
                   </p>
@@ -927,10 +1095,10 @@ const MemberManagement = () => {
               onClick={() => {
                 setShowSubscriptionModal(false);
                 setSubscriptionData({
-                  membershipId: '',
-                  billingCycle: 'monthly',
+                  membershipId: "",
+                  billingCycle: "monthly",
                   autoRenew: true,
-                  paymentMethod: 'cib'
+                  paymentMethod: "cib",
                 });
               }}
               className="flex-1"

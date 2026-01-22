@@ -1,10 +1,33 @@
-import React, { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { LayoutDashboard, Building, Calendar, Users, CreditCard, FileText, Settings, LogOut, Menu, X, BarChart3, PenTool as Tool, Package, Briefcase, HelpCircle, Bell, Search, ChevronDown, ChevronRight, User, Sun, Moon } from 'lucide-react';
-import Badge from '../ui/Badge';
-import { useAuthStore } from '../../store/authStore';
-import Logo from '../Logo';
+import React, { useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import {
+  LayoutDashboard,
+  Building,
+  Calendar,
+  Users,
+  CreditCard,
+  FileText,
+  Settings,
+  LogOut,
+  Menu,
+  X,
+  BarChart3,
+  PenTool as Tool,
+  Package,
+  Briefcase,
+  HelpCircle,
+  Bell,
+  Search,
+  ChevronDown,
+  ChevronRight,
+  User,
+  Sun,
+  Moon,
+} from "lucide-react";
+import Badge from "../ui/Badge";
+import { useAuthStore } from "../../store/authStore";
+import Logo from "../Logo";
 
 interface ERPNavigationProps {
   children: React.ReactNode;
@@ -22,38 +45,41 @@ const ERPNavigation: React.FC<ERPNavigationProps> = ({ children }) => {
       await logout();
 
       setTimeout(() => {
-        navigate('/connexion', { replace: true });
+        navigate("/connexion", { replace: true });
         window.location.reload();
       }, 100);
     } catch (error) {
-      console.error('Erreur déconnexion:', error);
+      console.error("Erreur déconnexion:", error);
 
-      navigate('/connexion', { replace: true });
+      navigate("/connexion", { replace: true });
       window.location.reload();
     }
   };
 
   const navigation = [
-    { name: 'Tableau de bord', href: '/erp', icon: LayoutDashboard },
-    { name: 'Espaces', href: '/erp/spaces', icon: Building },
-    { name: 'Réservations', href: '/erp/reservations', icon: Calendar },
-    { name: 'Membres', href: '/erp/members', icon: Users },
-    { name: 'Finances', href: '/erp/finances', icon: CreditCard, 
+    { name: "Tableau de bord", href: "/erp", icon: LayoutDashboard },
+    { name: "Espaces", href: "/erp/spaces", icon: Building },
+    { name: "Réservations", href: "/erp/reservations", icon: Calendar },
+    { name: "Membres", href: "/erp/members", icon: Users },
+    {
+      name: "Finances",
+      href: "/erp/finances",
+      icon: CreditCard,
       submenu: [
-        { name: 'Factures', href: '/erp/finances/invoices' },
-        { name: 'Paiements', href: '/erp/finances/payments' },
-        { name: 'Dépenses', href: '/erp/finances/expenses' }
-      ]
+        { name: "Factures", href: "/erp/finances/invoices" },
+        { name: "Paiements", href: "/erp/finances/payments" },
+        { name: "Dépenses", href: "/erp/finances/expenses" },
+      ],
     },
-    { name: 'Maintenance', href: '/erp/maintenance', icon: Tool },
-    { name: 'Inventaire', href: '/erp/inventory', icon: Package },
-    { name: 'Rapports', href: '/erp/reports', icon: BarChart3 },
-    { name: 'Paramètres', href: '/erp/settings', icon: Settings }
+    { name: "Maintenance", href: "/erp/maintenance", icon: Tool },
+    { name: "Inventaire", href: "/erp/inventory", icon: Package },
+    { name: "Rapports", href: "/erp/reports", icon: BarChart3 },
+    { name: "Paramètres", href: "/erp/settings", icon: Settings },
   ];
 
   const isActive = (path: string) => {
-    if (path === '/erp') {
-      return location.pathname === '/erp';
+    if (path === "/erp") {
+      return location.pathname === "/erp";
     }
     return location.pathname.startsWith(path);
   };
@@ -65,21 +91,23 @@ const ERPNavigation: React.FC<ERPNavigationProps> = ({ children }) => {
   };
 
   return (
-    <div className={`min-h-screen bg-gray-50 ${darkMode ? 'dark' : ''}`}>
+    <div className={`min-h-screen bg-gray-50 ${darkMode ? "dark" : ""}`}>
       {/* Mobile sidebar backdrop */}
       {sidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 z-40 bg-black/50 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar */}
-      <div className={`
+      <div
+        className={`
         fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-900 shadow-lg transform transition-transform duration-300 ease-in-out
         lg:translate-x-0 lg:static lg:inset-0
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-      `}>
+        ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+      `}
+      >
         <div className="flex h-full flex-col">
           {/* Logo */}
           <div className="flex items-center justify-between p-6 border-b dark:border-gray-700">
@@ -101,7 +129,7 @@ const ERPNavigation: React.FC<ERPNavigationProps> = ({ children }) => {
               const active = isActive(item.href);
               const hasSubmenu = item.submenu && item.submenu.length > 0;
               const isSubmenuOpen = openSubmenu === item.name;
-              
+
               return (
                 <div key={item.name}>
                   {hasSubmenu ? (
@@ -110,9 +138,10 @@ const ERPNavigation: React.FC<ERPNavigationProps> = ({ children }) => {
                         onClick={() => toggleSubmenu(item.name)}
                         className={`
                           flex items-center justify-between w-full px-4 py-3 rounded-xl font-medium transition-all duration-200
-                          ${active
-                            ? 'bg-accent text-white shadow-lg dark:bg-accent/80'
-                            : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-accent'
+                          ${
+                            active
+                              ? "bg-accent text-white shadow-lg dark:bg-accent/80"
+                              : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-accent"
                           }
                         `}
                       >
@@ -126,19 +155,20 @@ const ERPNavigation: React.FC<ERPNavigationProps> = ({ children }) => {
                           <ChevronRight className="w-4 h-4" />
                         )}
                       </button>
-                      
+
                       {isSubmenuOpen && (
                         <div className="ml-6 mt-1 space-y-1">
-                          {item.submenu!.map(subitem => (
+                          {item.submenu!.map((subitem) => (
                             <Link
                               key={subitem.name}
                               to={subitem.href}
                               onClick={() => setSidebarOpen(false)}
                               className={`
                                 flex items-center px-4 py-2 rounded-lg font-medium transition-all duration-200
-                                ${location.pathname === subitem.href
-                                  ? 'bg-accent/10 text-accent dark:bg-accent/20'
-                                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-accent'
+                                ${
+                                  location.pathname === subitem.href
+                                    ? "bg-accent/10 text-accent dark:bg-accent/20"
+                                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-accent"
                                 }
                               `}
                             >
@@ -155,9 +185,10 @@ const ERPNavigation: React.FC<ERPNavigationProps> = ({ children }) => {
                       onClick={() => setSidebarOpen(false)}
                       className={`
                         flex items-center px-4 py-3 rounded-xl font-medium transition-all duration-200
-                        ${active
-                          ? 'bg-accent text-white shadow-lg dark:bg-accent/80'
-                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-accent'
+                        ${
+                          active
+                            ? "bg-accent text-white shadow-lg dark:bg-accent/80"
+                            : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-accent"
                         }
                       `}
                     >
@@ -174,15 +205,15 @@ const ERPNavigation: React.FC<ERPNavigationProps> = ({ children }) => {
           <div className="p-4 border-t bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
             <div className="flex items-center space-x-3 mb-4">
               <div className="w-10 h-10 bg-gradient-to-br from-accent to-teal rounded-full flex items-center justify-center">
-                <span className="text-white font-semibold">
-                  AD
-                </span>
+                <span className="text-white font-semibold">AD</span>
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
                   Admin Coffice
                 </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">admin@coffice.dz</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                  admin@coffice.dz
+                </p>
                 <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-accent text-white mt-1">
                   Admin
                 </span>
@@ -198,7 +229,7 @@ const ERPNavigation: React.FC<ERPNavigationProps> = ({ children }) => {
                 ) : (
                   <Moon className="w-4 h-4 mr-2" />
                 )}
-                {darkMode ? 'Mode clair' : 'Mode sombre'}
+                {darkMode ? "Mode clair" : "Mode sombre"}
               </button>
               <button
                 onClick={handleLogout}
@@ -244,18 +275,18 @@ const ERPNavigation: React.FC<ERPNavigationProps> = ({ children }) => {
                   3
                 </span>
               </button>
-              
+
               <button className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
                 <HelpCircle className="w-5 h-5 text-gray-500 dark:text-gray-400" />
               </button>
-              
+
               <div className="hidden md:flex items-center space-x-2">
                 <div className="w-8 h-8 bg-gradient-to-br from-accent to-teal rounded-full flex items-center justify-center">
-                  <span className="text-white font-semibold text-xs">
-                    AD
-                  </span>
+                  <span className="text-white font-semibold text-xs">AD</span>
                 </div>
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Admin</span>
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Admin
+                </span>
               </div>
             </div>
           </div>

@@ -9,6 +9,7 @@ Les erreurs 500 (Internal Server Error) lors de la création de réservations ou
 **Visitez:** `https://coffice.dz/api/test_connection.php`
 
 Ce script va:
+
 - ✅ Vérifier que le fichier `.env` existe et est chargé
 - ✅ Vérifier les variables MySQL (DB_HOST, DB_NAME, etc.)
 - ✅ Tester la connexion à MySQL
@@ -23,6 +24,7 @@ Ce script va:
 #### Problème: "Base de données n'existe pas"
 
 **Solution:**
+
 1. Visitez: `https://coffice.dz/api/install.php`
 2. Le script va créer automatiquement la base et toutes les tables
 3. Supprimez `api/install.php` après l'installation
@@ -32,6 +34,7 @@ Ce script va:
 **Solutions possibles:**
 
 1. **Vérifiez les identifiants dans `.env`**
+
    ```env
    DB_HOST=localhost
    DB_PORT=3306
@@ -64,6 +67,7 @@ APP_ENV=development
 **Avec ce mode activé**, les erreurs 500 afficheront le message exact du problème dans la console navigateur (F12).
 
 **Pour la production**, changez en:
+
 ```env
 APP_ENV=production
 ```
@@ -71,10 +75,12 @@ APP_ENV=production
 ### Étape 4: Vérifier les logs PHP
 
 Les logs d'erreur détaillés se trouvent dans:
+
 - `/var/log/php-errors.log`
 - Ou via cPanel > Logs > Error Log
 
 Recherchez les erreurs avec:
+
 ```bash
 tail -f /var/log/php-errors.log | grep -E "(reservation|user update)"
 ```
@@ -84,12 +90,14 @@ tail -f /var/log/php-errors.log | grep -E "(reservation|user update)"
 ### Erreur: "Cannot create reservation"
 
 **Causes possibles:**
+
 1. Base de données non créée → Exécutez `api/install.php`
 2. Table `reservations` manquante → Exécutez `api/install.php`
 3. Table `espaces` vide → Exécutez `api/install.php` (insère les espaces de base)
 4. Espace_id invalide → Vérifiez que l'espace existe
 
 **Test manuel:**
+
 ```bash
 curl -X POST https://coffice.dz/api/reservations/create.php \
   -H "Authorization: Bearer VOTRE_TOKEN" \
@@ -105,11 +113,13 @@ curl -X POST https://coffice.dz/api/reservations/create.php \
 ### Erreur: "Cannot update user"
 
 **Causes possibles:**
+
 1. Table `users` manquante → Exécutez `api/install.php`
 2. Champs de la table incompatibles → Re-importez le schéma SQL
 3. User_id invalide → Vérifiez l'authentification
 
 **Test manuel:**
+
 ```bash
 curl -X PUT "https://coffice.dz/api/users/update.php?id=USER_ID" \
   -H "Authorization: Bearer VOTRE_TOKEN" \
@@ -168,22 +178,27 @@ Avant de demander de l'aide, vérifiez:
 ## 🆘 Erreurs Fréquentes et Solutions
 
 ### "SQLSTATE[HY000] [1045] Access denied"
+
 ❌ **Problème:** Mauvais identifiants MySQL
 ✅ **Solution:** Vérifiez `DB_USER` et `DB_PASSWORD` dans `.env`
 
 ### "SQLSTATE[HY000] [2002] Connection refused"
+
 ❌ **Problème:** MySQL n'est pas démarré ou `DB_HOST` incorrect
 ✅ **Solution:** Vérifiez que MySQL tourne et que `DB_HOST=localhost`
 
 ### "SQLSTATE[42S02]: Base table or view not found"
+
 ❌ **Problème:** Table manquante
 ✅ **Solution:** Exécutez `api/install.php`
 
 ### "SQLSTATE[42000]: Syntax error or access violation"
+
 ❌ **Problème:** Erreur SQL ou permissions insuffisantes
 ✅ **Solution:** Vérifiez les privilèges de l'utilisateur MySQL
 
 ### "Undefined index: DB_HOST"
+
 ❌ **Problème:** Variables `.env` non chargées
 ✅ **Solution:** Vérifiez que le fichier `.env` est à la racine du projet
 

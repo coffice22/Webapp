@@ -1,70 +1,103 @@
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
-import { apiClient } from '../lib/api-client'
-import toast from 'react-hot-toast'
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { apiClient } from "../lib/api-client";
+import toast from "react-hot-toast";
 import type {
-  User, Espace, Reservation,
-  Transaction, DemandeDomiciliation, DomiciliationService, CodePromo,
-  CreateReservationData, CreateDomiciliationData, AdminStats, Abonnement, AbonnementUtilisateur
-} from '../types'
+  User,
+  Espace,
+  Reservation,
+  Transaction,
+  DemandeDomiciliation,
+  DomiciliationService,
+  CodePromo,
+  CreateReservationData,
+  CreateDomiciliationData,
+  AdminStats,
+  Abonnement,
+  AbonnementUtilisateur,
+} from "../types";
 
 interface NotificationSettings {
-  emailNotificationsEnabled: boolean
-  reservationReminders: boolean
-  paymentNotifications: boolean
-  maintenanceAlerts: boolean
+  emailNotificationsEnabled: boolean;
+  reservationReminders: boolean;
+  paymentNotifications: boolean;
+  maintenanceAlerts: boolean;
 }
 
 interface AppState {
-  users: User[]
-  espaces: Espace[]
-  reservations: Reservation[]
-  transactions: Transaction[]
-  demandesDomiciliation: DemandeDomiciliation[]
-  domiciliationServices: DomiciliationService[]
-  codesPromo: CodePromo[]
-  abonnements: Abonnement[]
-  abonnementsUtilisateurs: AbonnementUtilisateur[]
-  notificationSettings: NotificationSettings
-  initialized: boolean
-  loading: boolean
+  users: User[];
+  espaces: Espace[];
+  reservations: Reservation[];
+  transactions: Transaction[];
+  demandesDomiciliation: DemandeDomiciliation[];
+  domiciliationServices: DomiciliationService[];
+  codesPromo: CodePromo[];
+  abonnements: Abonnement[];
+  abonnementsUtilisateurs: AbonnementUtilisateur[];
+  notificationSettings: NotificationSettings;
+  initialized: boolean;
+  loading: boolean;
 
-  initializeData: () => Promise<void>
+  initializeData: () => Promise<void>;
 
-  loadAbonnements: () => Promise<void>
-  addAbonnement: (data: Partial<Abonnement>) => Promise<{ success: boolean; error?: string }>
-  updateAbonnement: (id: string, data: Partial<Abonnement>) => Promise<{ success: boolean; error?: string }>
+  loadAbonnements: () => Promise<void>;
+  addAbonnement: (
+    data: Partial<Abonnement>,
+  ) => Promise<{ success: boolean; error?: string }>;
+  updateAbonnement: (
+    id: string,
+    data: Partial<Abonnement>,
+  ) => Promise<{ success: boolean; error?: string }>;
 
-  loadEspaces: () => Promise<void>
-  addEspace: (data: Partial<Espace>) => Promise<{ success: boolean; error?: string }>
-  updateEspace: (id: string, data: Partial<Espace>) => Promise<{ success: boolean; error?: string }>
-  deleteEspace: (id: string) => Promise<{ success: boolean; error?: string }>
+  loadEspaces: () => Promise<void>;
+  addEspace: (
+    data: Partial<Espace>,
+  ) => Promise<{ success: boolean; error?: string }>;
+  updateEspace: (
+    id: string,
+    data: Partial<Espace>,
+  ) => Promise<{ success: boolean; error?: string }>;
+  deleteEspace: (id: string) => Promise<{ success: boolean; error?: string }>;
 
-  loadReservations: () => Promise<void>
-  createReservation: (data: CreateReservationData) => Promise<{ success: boolean; error?: string; id?: string }>
-  updateReservation: (id: string, data: Partial<Reservation>) => Promise<{ success: boolean; error?: string }>
-  calculateReservationAmount: (espaceId: string, dateDebut: Date, dateFin: Date, codePromo?: string) => number
+  loadReservations: () => Promise<void>;
+  createReservation: (
+    data: CreateReservationData,
+  ) => Promise<{ success: boolean; error?: string; id?: string }>;
+  updateReservation: (
+    id: string,
+    data: Partial<Reservation>,
+  ) => Promise<{ success: boolean; error?: string }>;
+  calculateReservationAmount: (
+    espaceId: string,
+    dateDebut: Date,
+    dateFin: Date,
+    codePromo?: string,
+  ) => number;
 
-  loadDemandesDomiciliation: () => Promise<void>
-  getUserDemandeDomiciliation: (userId: string) => DemandeDomiciliation | null
-  createDemandeDomiciliation: (data: CreateDomiciliationData) => Promise<{ success: boolean; error?: string }>
+  loadDemandesDomiciliation: () => Promise<void>;
+  getUserDemandeDomiciliation: (userId: string) => DemandeDomiciliation | null;
+  createDemandeDomiciliation: (
+    data: CreateDomiciliationData,
+  ) => Promise<{ success: boolean; error?: string }>;
 
-  loadUsers: () => Promise<void>
-  addUser: (data: Partial<User>) => Promise<{ success: boolean; error?: string }>
-  updateUser: (userId: string, data: any) => Promise<void>
-  deleteUser: (userId: string) => Promise<{ success: boolean; error?: string }>
+  loadUsers: () => Promise<void>;
+  addUser: (
+    data: Partial<User>,
+  ) => Promise<{ success: boolean; error?: string }>;
+  updateUser: (userId: string, data: any) => Promise<void>;
+  deleteUser: (userId: string) => Promise<{ success: boolean; error?: string }>;
 
-  getAdminStats: () => AdminStats
-  getNotificationSettings: () => NotificationSettings
-  updateNotificationSettings: (settings: Partial<NotificationSettings>) => void
+  getAdminStats: () => AdminStats;
+  getNotificationSettings: () => NotificationSettings;
+  updateNotificationSettings: (settings: Partial<NotificationSettings>) => void;
 }
 
 const defaultNotificationSettings: NotificationSettings = {
   emailNotificationsEnabled: true,
   reservationReminders: true,
   paymentNotifications: true,
-  maintenanceAlerts: true
-}
+  maintenanceAlerts: true,
+};
 
 export const useAppStore = create<AppState>()(
   persist(
@@ -83,29 +116,30 @@ export const useAppStore = create<AppState>()(
       loading: false,
 
       initializeData: async () => {
-        const state = get()
-        if (state.loading) return
+        const state = get();
+        if (state.loading) return;
 
-        set({ loading: true })
+        set({ loading: true });
 
         try {
-          await Promise.all([
-            get().loadEspaces(),
-            get().loadReservations()
-          ])
+          await Promise.all([get().loadEspaces(), get().loadReservations()]);
 
-          set({ initialized: true })
+          set({ initialized: true });
         } catch (error) {
-          console.error('Erreur initialisation:', error)
+          console.error("Erreur initialisation:", error);
         } finally {
-          set({ loading: false })
+          set({ loading: false });
         }
       },
 
       loadEspaces: async () => {
         try {
-          const response = await apiClient.getEspaces()
-          if (response.success && response.data && Array.isArray(response.data)) {
+          const response = await apiClient.getEspaces();
+          if (
+            response.success &&
+            response.data &&
+            Array.isArray(response.data)
+          ) {
             const espaces = response.data.map((e: any) => ({
               id: e.id,
               nom: e.nom,
@@ -122,58 +156,62 @@ export const useAppStore = create<AppState>()(
               image: e.image_url,
               imageUrl: e.image_url,
               createdAt: e.created_at,
-              updatedAt: e.updated_at
-            }))
-            set({ espaces })
+              updatedAt: e.updated_at,
+            }));
+            set({ espaces });
           }
         } catch (error) {
-          console.error('Erreur chargement espaces:', error)
+          console.error("Erreur chargement espaces:", error);
         }
       },
 
       addEspace: async (data) => {
         try {
-          const response = await apiClient.createEspace(data)
+          const response = await apiClient.createEspace(data);
           if (response.success) {
-            await get().loadEspaces()
-            return { success: true }
+            await get().loadEspaces();
+            return { success: true };
           }
-          return { success: false, error: response.error }
+          return { success: false, error: response.error };
         } catch (error: any) {
-          return { success: false, error: error.message }
+          return { success: false, error: error.message };
         }
       },
 
       updateEspace: async (id, data) => {
         try {
-          const response = await apiClient.updateEspace(id, data)
+          const response = await apiClient.updateEspace(id, data);
           if (response.success) {
-            await get().loadEspaces()
-            return { success: true }
+            await get().loadEspaces();
+            return { success: true };
           }
-          return { success: false, error: response.error }
+          return { success: false, error: response.error };
         } catch (error: any) {
-          return { success: false, error: error.message }
+          return { success: false, error: error.message };
         }
       },
 
       deleteEspace: async (id) => {
         try {
-          const response = await apiClient.deleteEspace(id)
+          const response = await apiClient.deleteEspace(id);
           if (response.success) {
-            await get().loadEspaces()
-            return { success: true }
+            await get().loadEspaces();
+            return { success: true };
           }
-          return { success: false, error: response.error }
+          return { success: false, error: response.error };
         } catch (error: any) {
-          return { success: false, error: error.message }
+          return { success: false, error: error.message };
         }
       },
 
       loadAbonnements: async () => {
         try {
-          const response = await apiClient.getAbonnements()
-          if (response.success && response.data && Array.isArray(response.data)) {
+          const response = await apiClient.getAbonnements();
+          if (
+            response.success &&
+            response.data &&
+            Array.isArray(response.data)
+          ) {
             const abonnements = response.data.map((a: any) => ({
               id: a.id,
               nom: a.nom,
@@ -188,48 +226,52 @@ export const useAppStore = create<AppState>()(
               avantages: a.avantages || [],
               actif: a.actif,
               statut: a.statut,
-              couleur: a.couleur || '#3B82F6',
+              couleur: a.couleur || "#3B82F6",
               ordre: a.ordre,
               createdAt: a.created_at,
-              updatedAt: a.updated_at
-            }))
-            set({ abonnements })
+              updatedAt: a.updated_at,
+            }));
+            set({ abonnements });
           }
         } catch (error) {
-          console.error('Erreur chargement abonnements:', error)
+          console.error("Erreur chargement abonnements:", error);
         }
       },
 
       addAbonnement: async (data) => {
         try {
-          const response = await apiClient.createAbonnement(data)
+          const response = await apiClient.createAbonnement(data);
           if (response.success) {
-            await get().loadAbonnements()
-            return { success: true }
+            await get().loadAbonnements();
+            return { success: true };
           }
-          return { success: false, error: response.error }
+          return { success: false, error: response.error };
         } catch (error: any) {
-          return { success: false, error: error.message }
+          return { success: false, error: error.message };
         }
       },
 
       updateAbonnement: async (id, data) => {
         try {
-          const response = await apiClient.updateAbonnement(id, data)
+          const response = await apiClient.updateAbonnement(id, data);
           if (response.success) {
-            await get().loadAbonnements()
-            return { success: true }
+            await get().loadAbonnements();
+            return { success: true };
           }
-          return { success: false, error: response.error }
+          return { success: false, error: response.error };
         } catch (error: any) {
-          return { success: false, error: error.message }
+          return { success: false, error: error.message };
         }
       },
 
       loadReservations: async () => {
         try {
-          const response = await apiClient.getReservations()
-          if (response.success && response.data && Array.isArray(response.data)) {
+          const response = await apiClient.getReservations();
+          if (
+            response.success &&
+            response.data &&
+            Array.isArray(response.data)
+          ) {
             const reservations = response.data.map((r: any) => ({
               id: r.id,
               userId: r.user_id,
@@ -245,23 +287,27 @@ export const useAppStore = create<AppState>()(
               notes: r.notes,
               dateCreation: r.created_at,
               createdAt: r.created_at,
-              espace: r.espace_nom ? {
-                id: r.espace_id,
-                nom: r.espace_nom,
-                type: r.espace_type
-              } : undefined,
-              utilisateur: r.user_nom ? {
-                id: r.user_id,
-                nom: r.user_nom,
-                prenom: r.user_prenom,
-                email: r.user_email,
-                role: 'user' as const
-              } : undefined
-            }))
-            set({ reservations })
+              espace: r.espace_nom
+                ? {
+                    id: r.espace_id,
+                    nom: r.espace_nom,
+                    type: r.espace_type,
+                  }
+                : undefined,
+              utilisateur: r.user_nom
+                ? {
+                    id: r.user_id,
+                    nom: r.user_nom,
+                    prenom: r.user_prenom,
+                    email: r.user_email,
+                    role: "user" as const,
+                  }
+                : undefined,
+            }));
+            set({ reservations });
           }
         } catch (error) {
-          console.error('Erreur chargement reservations:', error)
+          console.error("Erreur chargement reservations:", error);
         }
       },
 
@@ -274,61 +320,65 @@ export const useAppStore = create<AppState>()(
             dateFin: data.dateFin.toISOString(),
             participants: data.participants,
             notes: data.notes,
-            codePromo: data.codePromo
-          })
+            codePromo: data.codePromo,
+          });
 
           if (response.success) {
-            await get().loadReservations()
-            return { success: true, id: (response.data as any)?.id }
+            await get().loadReservations();
+            return { success: true, id: (response.data as any)?.id };
           }
-          return { success: false, error: response.error || 'Erreur lors de la creation' }
+          return {
+            success: false,
+            error: response.error || "Erreur lors de la creation",
+          };
         } catch (error: any) {
-          return { success: false, error: error.message }
+          return { success: false, error: error.message };
         }
       },
 
       updateReservation: async (id, data) => {
         try {
-          const response = await apiClient.updateReservation(id, data)
+          const response = await apiClient.updateReservation(id, data);
           if (response.success) {
-            await get().loadReservations()
-            return { success: true }
+            await get().loadReservations();
+            return { success: true };
           }
-          return { success: false, error: response.error }
+          return { success: false, error: response.error };
         } catch (error: any) {
-          return { success: false, error: error.message }
+          return { success: false, error: error.message };
         }
       },
 
       calculateReservationAmount: (espaceId, dateDebut, dateFin) => {
-        const espace = get().espaces.find(e => e.id === espaceId)
-        if (!espace) return 0
+        const espace = get().espaces.find((e) => e.id === espaceId);
+        if (!espace) return 0;
 
-        const diffMs = dateFin.getTime() - dateDebut.getTime()
-        const diffHours = diffMs / (1000 * 60 * 60)
+        const diffMs = dateFin.getTime() - dateDebut.getTime();
+        const diffHours = diffMs / (1000 * 60 * 60);
 
-        let amount = 0
+        let amount = 0;
 
         if (diffHours < 24) {
-          amount = Math.ceil(diffHours) * espace.prixHeure
+          amount = Math.ceil(diffHours) * espace.prixHeure;
         } else {
-          const diffDays = Math.ceil(diffHours / 24)
+          const diffDays = Math.ceil(diffHours / 24);
 
           if (diffDays >= 7 && espace.prixSemaine) {
-            const weeks = Math.floor(diffDays / 7)
-            const remainingDays = diffDays % 7
-            amount = (weeks * espace.prixSemaine) + (remainingDays * espace.prixJour)
+            const weeks = Math.floor(diffDays / 7);
+            const remainingDays = diffDays % 7;
+            amount =
+              weeks * espace.prixSemaine + remainingDays * espace.prixJour;
           } else {
-            amount = diffDays * espace.prixJour
+            amount = diffDays * espace.prixJour;
           }
         }
 
-        return Math.round(amount)
+        return Math.round(amount);
       },
 
       loadDemandesDomiciliation: async () => {
         try {
-          const response = await apiClient.getDomiciliations()
+          const response = await apiClient.getDomiciliations();
           if (response.success && response.data) {
             const demandesDomiciliation = Array.isArray(response.data)
               ? response.data.map((d: any) => ({
@@ -348,7 +398,7 @@ export const useAppStore = create<AppState>()(
                     prenom: d.representant_prenom,
                     fonction: d.representant_fonction,
                     telephone: d.representant_telephone,
-                    email: d.representant_email
+                    email: d.representant_email,
                   },
                   domaineActivite: d.domaine_activite,
                   adresseSiegeSocial: d.adresse_siege_social,
@@ -358,12 +408,12 @@ export const useAppStore = create<AppState>()(
                   commentaireAdmin: d.commentaire_admin,
                   dateValidation: d.date_validation,
                   dateCreation: d.created_at,
-                  updatedAt: d.updated_at
+                  updatedAt: d.updated_at,
                 }))
-              : []
+              : [];
 
             const domiciliationServices = demandesDomiciliation
-              .filter((d: DemandeDomiciliation) => d.statut === 'validee')
+              .filter((d: DemandeDomiciliation) => d.statut === "validee")
               .map((d: DemandeDomiciliation) => ({
                 id: d.id,
                 userId: d.userId,
@@ -380,13 +430,22 @@ export const useAppStore = create<AppState>()(
                   dateCreation: d.dateCreationEntreprise,
                   capital: d.capital,
                   siegeSocial: d.adresseSiegeSocial,
-                  activitePrincipale: d.domaineActivite
+                  activitePrincipale: d.domaineActivite,
                 },
                 startDate: d.dateValidation || d.dateCreation,
-                endDate: new Date(new Date(d.dateValidation || d.dateCreation).setFullYear(new Date(d.dateValidation || d.dateCreation).getFullYear() + 1)),
-                status: 'active' as const,
-                address: 'Mohammadia Mall, 4eme etage, Bureau 1178, Alger',
-                services: ['Domiciliation', 'Courrier', 'Support administratif'],
+                endDate: new Date(
+                  new Date(d.dateValidation || d.dateCreation).setFullYear(
+                    new Date(d.dateValidation || d.dateCreation).getFullYear() +
+                      1,
+                  ),
+                ),
+                status: "active" as const,
+                address: "Mohammadia Mall, 4eme etage, Bureau 1178, Alger",
+                services: [
+                  "Domiciliation",
+                  "Courrier",
+                  "Support administratif",
+                ],
                 monthlyFee: 22000,
                 setupFee: 0,
                 documentsLegaux: [],
@@ -396,166 +455,185 @@ export const useAppStore = create<AppState>()(
                 numeroContrat: `DOM-${d.id.substring(0, 8).toUpperCase()}`,
                 visibleSurSite: true,
                 createdAt: d.dateCreation,
-                updatedAt: d.updatedAt
-              }))
+                updatedAt: d.updatedAt,
+              }));
 
-            set({ demandesDomiciliation, domiciliationServices })
+            set({ demandesDomiciliation, domiciliationServices });
           } else {
-            set({ demandesDomiciliation: [], domiciliationServices: [] })
+            set({ demandesDomiciliation: [], domiciliationServices: [] });
           }
         } catch (error) {
-          console.error('Erreur chargement domiciliations:', error)
-          set({ demandesDomiciliation: [], domiciliationServices: [] })
+          console.error("Erreur chargement domiciliations:", error);
+          set({ demandesDomiciliation: [], domiciliationServices: [] });
         }
       },
 
       getUserDemandeDomiciliation: (userId) => {
-        return get().demandesDomiciliation.find(d => d.userId === userId) || null
+        return (
+          get().demandesDomiciliation.find((d) => d.userId === userId) || null
+        );
       },
 
       createDemandeDomiciliation: async (data) => {
         try {
-          const response = await apiClient.createDemandeDomiciliation(data)
+          const response = await apiClient.createDemandeDomiciliation(data);
           if (response.success) {
-            await get().loadDemandesDomiciliation()
-            return { success: true }
+            await get().loadDemandesDomiciliation();
+            return { success: true };
           }
-          return { success: false, error: response.error || 'Erreur creation' }
+          return { success: false, error: response.error || "Erreur creation" };
         } catch (error: any) {
-          return { success: false, error: error.message }
+          return { success: false, error: error.message };
         }
       },
 
       loadUsers: async () => {
         try {
-          const response = await apiClient.getUsers()
-          if (response.success && response.data && Array.isArray(response.data)) {
+          const response = await apiClient.getUsers();
+          if (
+            response.success &&
+            response.data &&
+            Array.isArray(response.data)
+          ) {
             const users = response.data.map((u: any) => ({
               ...u,
               dateCreation: u.created_at,
-              derniereConnexion: u.last_login
-            }))
-            set({ users })
+              derniereConnexion: u.last_login,
+            }));
+            set({ users });
           }
         } catch (error) {
-          console.error('Erreur chargement utilisateurs:', error)
+          console.error("Erreur chargement utilisateurs:", error);
         }
       },
 
       addUser: async (data) => {
         try {
           const response = await apiClient.register({
-            email: data.email || '',
-            password: data.password || '',
-            nom: data.nom || '',
-            prenom: data.prenom || '',
+            email: data.email || "",
+            password: data.password || "",
+            nom: data.nom || "",
+            prenom: data.prenom || "",
             telephone: data.telephone,
             profession: data.profession,
-            entreprise: data.entreprise
-          })
+            entreprise: data.entreprise,
+          });
 
           if (response.success) {
-            await get().loadUsers()
-            return { success: true }
+            await get().loadUsers();
+            return { success: true };
           }
-          return { success: false, error: response.error }
+          return { success: false, error: response.error };
         } catch (error: any) {
-          return { success: false, error: error.message }
+          return { success: false, error: error.message };
         }
       },
 
       updateUser: async (userId, data) => {
         try {
-          const response = await apiClient.updateUser(userId, data)
+          const response = await apiClient.updateUser(userId, data);
           if (!response.success) {
-            throw new Error(response.error || 'Erreur mise a jour')
+            throw new Error(response.error || "Erreur mise a jour");
           }
 
-          const { user, loadUser } = (await import('./authStore')).useAuthStore.getState()
+          const { user, loadUser } = (
+            await import("./authStore")
+          ).useAuthStore.getState();
 
           if (user?.id === userId) {
-            await loadUser()
+            await loadUser();
           }
 
-          if (user?.role === 'admin') {
-            await get().loadUsers()
+          if (user?.role === "admin") {
+            await get().loadUsers();
           }
 
-          toast.success('Informations mises a jour')
+          toast.success("Informations mises a jour");
         } catch (error: any) {
-          toast.error(error.message || 'Erreur')
-          throw error
+          toast.error(error.message || "Erreur");
+          throw error;
         }
       },
 
       deleteUser: async (userId) => {
         try {
-          const response = await apiClient.deleteUser(userId)
+          const response = await apiClient.deleteUser(userId);
           if (response.success) {
-            await get().loadUsers()
-            return { success: true }
+            await get().loadUsers();
+            return { success: true };
           }
-          return { success: false, error: response.error }
+          return { success: false, error: response.error };
         } catch (error: any) {
-          return { success: false, error: error.message }
+          return { success: false, error: error.message };
         }
       },
 
       getAdminStats: () => {
-        const state = get()
-        const today = new Date()
-        const thisMonth = today.getMonth()
-        const thisYear = today.getFullYear()
+        const state = get();
+        const today = new Date();
+        const thisMonth = today.getMonth();
+        const thisYear = today.getFullYear();
 
-        const reservationsCeMois = state.reservations.filter(r => {
-          const date = new Date(r.dateCreation || r.createdAt)
-          return date.getMonth() === thisMonth && date.getFullYear() === thisYear
-        })
+        const reservationsCeMois = state.reservations.filter((r) => {
+          const date = new Date(r.dateCreation || r.createdAt);
+          return (
+            date.getMonth() === thisMonth && date.getFullYear() === thisYear
+          );
+        });
 
-        const caMois = reservationsCeMois.reduce((sum, r) => sum + (r.montantTotal || 0), 0)
+        const caMois = reservationsCeMois.reduce(
+          (sum, r) => sum + (r.montantTotal || 0),
+          0,
+        );
 
-        const espacesOccupes = state.espaces.filter(e => !e.disponible).length
-        const tauxOccupation = state.espaces.length > 0
-          ? Math.round((espacesOccupes / state.espaces.length) * 100)
-          : 0
+        const espacesOccupes = state.espaces.filter(
+          (e) => !e.disponible,
+        ).length;
+        const tauxOccupation =
+          state.espaces.length > 0
+            ? Math.round((espacesOccupes / state.espaces.length) * 100)
+            : 0;
 
         return {
-          totalRevenue: state.transactions.reduce((sum, t) => sum + (t.montant || 0), 0),
+          totalRevenue: state.transactions.reduce(
+            (sum, t) => sum + (t.montant || 0),
+            0,
+          ),
           totalReservations: state.reservations.length,
           totalUsers: state.users.length,
-          activeUsers: state.users.filter(u => u.statut === 'actif').length,
+          activeUsers: state.users.filter((u) => u.statut === "actif").length,
           occupancyRate: tauxOccupation,
           tauxOccupation,
           monthlyRevenue: caMois,
           caMois,
           reservationsCeMois: reservationsCeMois.length,
-          popularSpaces: state.espaces.slice(0, 5).map(e => ({
+          popularSpaces: state.espaces.slice(0, 5).map((e) => ({
             name: e.nom,
-            count: state.reservations.filter(r => r.espaceId === e.id).length
+            count: state.reservations.filter((r) => r.espaceId === e.id).length,
           })),
-          recentActivity: state.reservations.slice(0, 10).map(r => ({
-            type: 'reservation',
-            description: `Reservation ${r.espace?.nom || 'Espace'}`,
-            date: new Date(r.dateCreation || r.createdAt)
-          }))
-        }
+          recentActivity: state.reservations.slice(0, 10).map((r) => ({
+            type: "reservation",
+            description: `Reservation ${r.espace?.nom || "Espace"}`,
+            date: new Date(r.dateCreation || r.createdAt),
+          })),
+        };
       },
 
       getNotificationSettings: () => {
-        return get().notificationSettings
+        return get().notificationSettings;
       },
 
       updateNotificationSettings: (settings) => {
-        set(state => ({
-          notificationSettings: { ...state.notificationSettings, ...settings }
-        }))
-      }
+        set((state) => ({
+          notificationSettings: { ...state.notificationSettings, ...settings },
+        }));
+      },
     }),
     {
-      name: 'coffice-app-storage',
+      name: "coffice-app-storage",
       partialize: (state) => ({
-        notificationSettings: state.notificationSettings
-      })
-    }
-  )
-)
+        notificationSettings: state.notificationSettings,
+      }),
+    },
+  ),
+);

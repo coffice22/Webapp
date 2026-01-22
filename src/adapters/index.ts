@@ -3,7 +3,13 @@
  * Centralise la logique de transformation snake_case <-> camelCase
  */
 
-import type { Espace, Reservation, User, Abonnement, DemandeDomiciliation } from '../types'
+import type {
+  Espace,
+  Reservation,
+  User,
+  Abonnement,
+  DemandeDomiciliation,
+} from "../types";
 
 /**
  * Adapter pour les espaces
@@ -24,7 +30,7 @@ export const espaceAdapter = {
     etage: apiData.etage,
     imageUrl: apiData.image_url,
     createdAt: apiData.created_at,
-    updatedAt: apiData.updated_at
+    updatedAt: apiData.updated_at,
   }),
 
   toAPI: (espace: Partial<Espace>): any => ({
@@ -39,9 +45,9 @@ export const espaceAdapter = {
     equipements: espace.equipements,
     disponible: espace.disponible,
     etage: espace.etage,
-    image_url: espace.imageUrl
-  })
-}
+    image_url: espace.imageUrl,
+  }),
+};
 
 /**
  * Adapter pour les réservations
@@ -62,18 +68,22 @@ export const reservationAdapter = {
     notes: apiData.notes,
     dateCreation: apiData.created_at,
     createdAt: apiData.created_at,
-    espace: apiData.espace_nom ? {
-      id: apiData.espace_id,
-      nom: apiData.espace_nom,
-      type: apiData.espace_type
-    } : undefined,
-    utilisateur: apiData.user_nom ? {
-      id: apiData.user_id,
-      nom: apiData.user_nom,
-      prenom: apiData.user_prenom,
-      email: apiData.user_email,
-      role: 'user' as const
-    } : undefined
+    espace: apiData.espace_nom
+      ? {
+          id: apiData.espace_id,
+          nom: apiData.espace_nom,
+          type: apiData.espace_type,
+        }
+      : undefined,
+    utilisateur: apiData.user_nom
+      ? {
+          id: apiData.user_id,
+          nom: apiData.user_nom,
+          prenom: apiData.user_prenom,
+          email: apiData.user_email,
+          role: "user" as const,
+        }
+      : undefined,
   }),
 
   toAPI: (reservation: Partial<Reservation>): any => ({
@@ -81,9 +91,9 @@ export const reservationAdapter = {
     date_debut: reservation.dateDebut,
     date_fin: reservation.dateFin,
     statut: reservation.statut,
-    notes: reservation.notes
-  })
-}
+    notes: reservation.notes,
+  }),
+};
 
 /**
  * Adapter pour les abonnements
@@ -102,10 +112,10 @@ export const abonnementAdapter = {
     description: apiData.description,
     avantages: apiData.avantages || [],
     actif: apiData.actif,
-    couleur: apiData.couleur || '#3B82F6',
+    couleur: apiData.couleur || "#3B82F6",
     ordre: apiData.ordre,
     createdAt: apiData.created_at,
-    updatedAt: apiData.updated_at || apiData.created_at
+    updatedAt: apiData.updated_at || apiData.created_at,
   }),
 
   toAPI: (abonnement: Partial<Abonnement>): any => ({
@@ -117,9 +127,9 @@ export const abonnementAdapter = {
     description: abonnement.description,
     avantages: abonnement.avantages,
     actif: abonnement.actif,
-    ordre: abonnement.ordre
-  })
-}
+    ordre: abonnement.ordre,
+  }),
+};
 
 /**
  * Adapter pour les utilisateurs
@@ -157,46 +167,46 @@ export const userAdapter = {
     derniereConnexion: apiData.derniere_connexion,
     dateCreation: apiData.created_at,
     createdAt: apiData.created_at,
-    updatedAt: apiData.updated_at
+    updatedAt: apiData.updated_at,
   }),
 
   toAPI: (user: Partial<User>): any => {
-    const apiData: any = {}
+    const apiData: any = {};
 
     const fieldMapping: Record<string, string> = {
-      nom: 'nom',
-      prenom: 'prenom',
-      telephone: 'telephone',
-      profession: 'profession',
-      entreprise: 'entreprise',
-      adresse: 'adresse',
-      bio: 'bio',
-      wilaya: 'wilaya',
-      commune: 'commune',
-      avatar: 'avatar',
-      typeEntreprise: 'type_entreprise',
-      nif: 'nif',
-      nis: 'nis',
-      registreCommerce: 'registre_commerce',
-      articleImposition: 'article_imposition',
-      numeroAutoEntrepreneur: 'numero_auto_entrepreneur',
-      raisonSociale: 'raison_sociale',
-      dateCreationEntreprise: 'date_creation_entreprise',
-      capital: 'capital',
-      siegeSocial: 'siege_social',
-      activitePrincipale: 'activite_principale',
-      formeJuridique: 'forme_juridique'
-    }
+      nom: "nom",
+      prenom: "prenom",
+      telephone: "telephone",
+      profession: "profession",
+      entreprise: "entreprise",
+      adresse: "adresse",
+      bio: "bio",
+      wilaya: "wilaya",
+      commune: "commune",
+      avatar: "avatar",
+      typeEntreprise: "type_entreprise",
+      nif: "nif",
+      nis: "nis",
+      registreCommerce: "registre_commerce",
+      articleImposition: "article_imposition",
+      numeroAutoEntrepreneur: "numero_auto_entrepreneur",
+      raisonSociale: "raison_sociale",
+      dateCreationEntreprise: "date_creation_entreprise",
+      capital: "capital",
+      siegeSocial: "siege_social",
+      activitePrincipale: "activite_principale",
+      formeJuridique: "forme_juridique",
+    };
 
     Object.entries(fieldMapping).forEach(([camelKey, snakeKey]) => {
       if (user[camelKey as keyof User] !== undefined) {
-        apiData[snakeKey] = user[camelKey as keyof User]
+        apiData[snakeKey] = user[camelKey as keyof User];
       }
-    })
+    });
 
-    return apiData
-  }
-}
+    return apiData;
+  },
+};
 
 /**
  * Adapter pour les domiciliations
@@ -214,9 +224,10 @@ export const domiciliationAdapter = {
     articleImposition: apiData.article_imposition,
     coordonneesFiscales: apiData.coordonnees_fiscales,
     coordonneesAdministratives: apiData.coordonnees_administratives,
-    representantLegal: typeof apiData.representant_legal === 'string'
-      ? JSON.parse(apiData.representant_legal)
-      : apiData.representant_legal,
+    representantLegal:
+      typeof apiData.representant_legal === "string"
+        ? JSON.parse(apiData.representant_legal)
+        : apiData.representant_legal,
     domaineActivite: apiData.domaine_activite,
     adresseSiegeSocial: apiData.adresse_siege_social,
     capital: apiData.capital,
@@ -225,7 +236,7 @@ export const domiciliationAdapter = {
     commentaireAdmin: apiData.commentaire_admin,
     dateValidation: apiData.date_validation,
     dateCreation: apiData.created_at,
-    updatedAt: apiData.updated_at
+    updatedAt: apiData.updated_at,
   }),
 
   toAPI: (domiciliation: Partial<DemandeDomiciliation>): any => ({
@@ -239,6 +250,6 @@ export const domiciliationAdapter = {
     domaine_activite: domiciliation.domaineActivite,
     adresse_siege_social: domiciliation.adresseSiegeSocial,
     capital: domiciliation.capital,
-    date_creation_entreprise: domiciliation.dateCreationEntreprise
-  })
-}
+    date_creation_entreprise: domiciliation.dateCreationEntreprise,
+  }),
+};

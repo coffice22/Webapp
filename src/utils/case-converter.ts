@@ -7,14 +7,14 @@
  * Convertit une chaîne camelCase en snake_case
  */
 export function camelToSnake(str: string): string {
-  return str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`)
+  return str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
 }
 
 /**
  * Convertit une chaîne snake_case en camelCase
  */
 export function snakeToCamel(str: string): string {
-  return str.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase())
+  return str.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
 }
 
 /**
@@ -22,37 +22,42 @@ export function snakeToCamel(str: string): string {
  */
 export function objectToSnakeCase<T = any>(obj: any): T {
   if (obj === null || obj === undefined) {
-    return obj
+    return obj;
   }
 
   if (Array.isArray(obj)) {
-    return obj.map(item => objectToSnakeCase(item)) as any
+    return obj.map((item) => objectToSnakeCase(item)) as any;
   }
 
-  if (typeof obj !== 'object') {
-    return obj
+  if (typeof obj !== "object") {
+    return obj;
   }
 
-  const result: any = {}
+  const result: any = {};
 
   for (const key in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      const snakeKey = camelToSnake(key)
-      const value = obj[key]
+      const snakeKey = camelToSnake(key);
+      const value = obj[key];
 
-      if (value !== null && typeof value === 'object' && !Array.isArray(value) && !(value instanceof Date)) {
-        result[snakeKey] = objectToSnakeCase(value)
+      if (
+        value !== null &&
+        typeof value === "object" &&
+        !Array.isArray(value) &&
+        !(value instanceof Date)
+      ) {
+        result[snakeKey] = objectToSnakeCase(value);
       } else if (Array.isArray(value)) {
-        result[snakeKey] = value.map(item =>
-          typeof item === 'object' ? objectToSnakeCase(item) : item
-        )
+        result[snakeKey] = value.map((item) =>
+          typeof item === "object" ? objectToSnakeCase(item) : item,
+        );
       } else {
-        result[snakeKey] = value
+        result[snakeKey] = value;
       }
     }
   }
 
-  return result
+  return result;
 }
 
 /**
@@ -60,51 +65,56 @@ export function objectToSnakeCase<T = any>(obj: any): T {
  */
 export function objectToCamelCase<T = any>(obj: any): T {
   if (obj === null || obj === undefined) {
-    return obj
+    return obj;
   }
 
   if (Array.isArray(obj)) {
-    return obj.map(item => objectToCamelCase(item)) as any
+    return obj.map((item) => objectToCamelCase(item)) as any;
   }
 
-  if (typeof obj !== 'object') {
-    return obj
+  if (typeof obj !== "object") {
+    return obj;
   }
 
-  const result: any = {}
+  const result: any = {};
 
   for (const key in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
-      const camelKey = snakeToCamel(key)
-      const value = obj[key]
+      const camelKey = snakeToCamel(key);
+      const value = obj[key];
 
-      if (value !== null && typeof value === 'object' && !Array.isArray(value) && !(value instanceof Date)) {
-        result[camelKey] = objectToCamelCase(value)
+      if (
+        value !== null &&
+        typeof value === "object" &&
+        !Array.isArray(value) &&
+        !(value instanceof Date)
+      ) {
+        result[camelKey] = objectToCamelCase(value);
       } else if (Array.isArray(value)) {
-        result[camelKey] = value.map(item =>
-          typeof item === 'object' ? objectToCamelCase(item) : item
-        )
+        result[camelKey] = value.map((item) =>
+          typeof item === "object" ? objectToCamelCase(item) : item,
+        );
       } else {
-        result[camelKey] = value
+        result[camelKey] = value;
       }
     }
   }
 
-  return result
+  return result;
 }
 
 /**
  * Convertit les paramètres de requête en snake_case pour l'API
  */
 export function queryParamsToSnakeCase(params: Record<string, any>): string {
-  const snakeParams = objectToSnakeCase(params)
-  const searchParams = new URLSearchParams()
+  const snakeParams = objectToSnakeCase(params);
+  const searchParams = new URLSearchParams();
 
   for (const [key, value] of Object.entries(snakeParams)) {
     if (value !== null && value !== undefined) {
-      searchParams.append(key, String(value))
+      searchParams.append(key, String(value));
     }
   }
 
-  return searchParams.toString()
+  return searchParams.toString();
 }

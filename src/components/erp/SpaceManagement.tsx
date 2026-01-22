@@ -1,51 +1,76 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Building, Plus, Edit, Trash2, Eye, MapPin, Users, DollarSign, Settings, ToggleLeft, ToggleRight, Filter, Search, Calendar, PenTool as Tool, CheckCircle, AlertTriangle, ArrowUpDown, Download } from 'lucide-react';
-import Button from '../ui/Button';
-import Card from '../ui/Card';
-import Badge from '../ui/Badge';
-import Input from '../ui/Input';
-import Modal from '../ui/Modal';
-import { useERPStore } from '../../store/erpStore';
-import { formatCurrency } from '../../utils/formatters';
-import { Space, MaintenanceRequest } from '../../types/erp';
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import {
+  Building,
+  Plus,
+  Edit,
+  Trash2,
+  Eye,
+  MapPin,
+  Users,
+  DollarSign,
+  Settings,
+  ToggleLeft,
+  ToggleRight,
+  Filter,
+  Search,
+  Calendar,
+  PenTool as Tool,
+  CheckCircle,
+  AlertTriangle,
+  ArrowUpDown,
+  Download,
+} from "lucide-react";
+import Button from "../ui/Button";
+import Card from "../ui/Card";
+import Badge from "../ui/Badge";
+import Input from "../ui/Input";
+import Modal from "../ui/Modal";
+import { useERPStore } from "../../store/erpStore";
+import { formatCurrency } from "../../utils/formatters";
+import { Space, MaintenanceRequest } from "../../types/erp";
 
 const SpaceManagement = () => {
-  const { 
-    spaces, addSpace, updateSpace, deleteSpace, getSpaceById,
-    maintenanceRequests, addMaintenanceRequest
+  const {
+    spaces,
+    addSpace,
+    updateSpace,
+    deleteSpace,
+    getSpaceById,
+    maintenanceRequests,
+    addMaintenanceRequest,
   } = useERPStore();
-  
+
   const [loading, setLoading] = useState(true);
   const [showSpaceModal, setShowSpaceModal] = useState(false);
   const [showMaintenanceModal, setShowMaintenanceModal] = useState(false);
   const [selectedSpace, setSelectedSpace] = useState<Space | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [typeFilter, setTypeFilter] = useState('all');
-  const [availabilityFilter, setAvailabilityFilter] = useState('all');
-  const [sortBy, setSortBy] = useState('name');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-  
+  const [searchTerm, setSearchTerm] = useState("");
+  const [typeFilter, setTypeFilter] = useState("all");
+  const [availabilityFilter, setAvailabilityFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("name");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+
   const [formData, setFormData] = useState({
-    name: '',
-    type: 'desk',
+    name: "",
+    type: "desk",
     capacity: 1,
     hourlyRate: 0,
     dailyRate: 0,
     monthlyRate: 0,
-    description: '',
+    description: "",
     amenities: [] as string[],
-    location: '',
+    location: "",
     floor: 1,
     area: 0,
-    images: [] as string[]
+    images: [] as string[],
   });
-  
+
   const [maintenanceForm, setMaintenanceForm] = useState({
-    title: '',
-    description: '',
-    priority: 'medium' as 'low' | 'medium' | 'high' | 'critical'
+    title: "",
+    description: "",
+    priority: "medium" as "low" | "medium" | "high" | "critical",
   });
 
   useEffect(() => {
@@ -54,17 +79,29 @@ const SpaceManagement = () => {
   }, []);
 
   const spaceTypes = {
-    desk: 'Poste de travail',
-    meeting_room: 'Salle de réunion',
-    office: 'Bureau fermé',
-    event_space: 'Espace événementiel'
+    desk: "Poste de travail",
+    meeting_room: "Salle de réunion",
+    office: "Bureau fermé",
+    event_space: "Espace événementiel",
   };
 
   const amenitiesList = [
-    'WiFi', 'Électricité', 'Climatisation', 'Café', 'Projecteur', 
-    'Tableau blanc', 'Système audio', 'Isolation acoustique', 
-    'Micros', 'Table de mixage', 'Éclairage', 'Imprimante',
-    'Écran TV', 'Visioconférence', 'Cuisine', 'Casiers'
+    "WiFi",
+    "Électricité",
+    "Climatisation",
+    "Café",
+    "Projecteur",
+    "Tableau blanc",
+    "Système audio",
+    "Isolation acoustique",
+    "Micros",
+    "Table de mixage",
+    "Éclairage",
+    "Imprimante",
+    "Écran TV",
+    "Visioconférence",
+    "Cuisine",
+    "Casiers",
   ];
 
   const handleCreateSpace = () => {
@@ -79,14 +116,14 @@ const SpaceManagement = () => {
       dailyRate: formData.dailyRate,
       monthlyRate: formData.monthlyRate,
       available: true,
-      status: 'available',
+      status: "available",
       description: formData.description,
       amenities: formData.amenities,
       location: formData.location,
       floor: formData.floor,
       area: formData.area,
       images: formData.images,
-      maintenanceStatus: 'good'
+      maintenanceStatus: "good",
     };
 
     addSpace(newSpace);
@@ -109,7 +146,7 @@ const SpaceManagement = () => {
       location: formData.location,
       floor: formData.floor,
       area: formData.area,
-      images: formData.images
+      images: formData.images,
     });
 
     resetForm();
@@ -119,12 +156,15 @@ const SpaceManagement = () => {
   };
 
   const handleDeleteSpace = (spaceId: string) => {
-    if (window.confirm('Êtes-vous sûr de vouloir supprimer cet espace ?')) {
+    if (window.confirm("Êtes-vous sûr de vouloir supprimer cet espace ?")) {
       deleteSpace(spaceId);
     }
   };
 
-  const handleToggleAvailability = (spaceId: string, currentStatus: boolean) => {
+  const handleToggleAvailability = (
+    spaceId: string,
+    currentStatus: boolean,
+  ) => {
     updateSpace(spaceId, { available: !currentStatus });
   };
 
@@ -142,7 +182,7 @@ const SpaceManagement = () => {
       location: space.location,
       floor: space.floor,
       area: space.area,
-      images: space.images
+      images: space.images,
     });
     setIsEditing(true);
     setShowSpaceModal(true);
@@ -150,126 +190,136 @@ const SpaceManagement = () => {
 
   const resetForm = () => {
     setFormData({
-      name: '',
-      type: 'desk',
+      name: "",
+      type: "desk",
       capacity: 1,
       hourlyRate: 0,
       dailyRate: 0,
       monthlyRate: 0,
-      description: '',
+      description: "",
       amenities: [],
-      location: '',
+      location: "",
       floor: 1,
       area: 0,
-      images: []
+      images: [],
     });
     setSelectedSpace(null);
     setIsEditing(false);
   };
 
   const handleAmenityToggle = (amenity: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       amenities: prev.amenities.includes(amenity)
-        ? prev.amenities.filter(a => a !== amenity)
-        : [...prev.amenities, amenity]
+        ? prev.amenities.filter((a) => a !== amenity)
+        : [...prev.amenities, amenity],
     }));
   };
 
   const handleCreateMaintenanceRequest = () => {
     if (!selectedSpace) return;
-    
+
     const newRequest: MaintenanceRequest = {
       id: `maint-${Date.now()}`,
       spaceId: selectedSpace.id,
-      requestedBy: 'current-user-id', // Dans une vraie application, ce serait l'ID de l'utilisateur connecté
+      requestedBy: "current-user-id", // Dans une vraie application, ce serait l'ID de l'utilisateur connecté
       title: maintenanceForm.title,
       description: maintenanceForm.description,
       priority: maintenanceForm.priority,
-      status: 'pending',
+      status: "pending",
       requestDate: new Date(),
       dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-      createdAt: new Date()
+      createdAt: new Date(),
     };
-    
+
     addMaintenanceRequest(newRequest);
-    
+
     // Mettre à jour le statut de l'espace
-    updateSpace(selectedSpace.id, { maintenanceStatus: 'under_maintenance' });
-    
+    updateSpace(selectedSpace.id, { maintenanceStatus: "under_maintenance" });
+
     setMaintenanceForm({
-      title: '',
-      description: '',
-      priority: 'medium'
+      title: "",
+      description: "",
+      priority: "medium",
     });
-    
+
     setShowMaintenanceModal(false);
   };
 
   const getMaintenanceStatusVariant = (status: string) => {
     switch (status) {
-      case 'operational': return 'success';
-      case 'maintenance': return 'warning';
-      case 'out_of_order': return 'error';
-      default: return 'default';
+      case "operational":
+        return "success";
+      case "maintenance":
+        return "warning";
+      case "out_of_order":
+        return "error";
+      default:
+        return "default";
     }
   };
 
   const getMaintenanceStatusLabel = (status: string) => {
     switch (status) {
-      case 'operational': return 'Opérationnel';
-      case 'maintenance': return 'En maintenance';
-      case 'out_of_order': return 'Hors service';
-      default: return status;
+      case "operational":
+        return "Opérationnel";
+      case "maintenance":
+        return "En maintenance";
+      case "out_of_order":
+        return "Hors service";
+      default:
+        return status;
     }
   };
 
   // Filtrage et tri des espaces
   const filteredSpaces = spaces
-    .filter(space => {
-      const matchesSearch = space.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           space.description.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesType = typeFilter === 'all' || space.type === typeFilter;
-      const matchesAvailability = availabilityFilter === 'all' || 
-                                 (availabilityFilter === 'available' && space.available) ||
-                                 (availabilityFilter === 'unavailable' && !space.available);
-      
+    .filter((space) => {
+      const matchesSearch =
+        space.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        space.description.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesType = typeFilter === "all" || space.type === typeFilter;
+      const matchesAvailability =
+        availabilityFilter === "all" ||
+        (availabilityFilter === "available" && space.available) ||
+        (availabilityFilter === "unavailable" && !space.available);
+
       return matchesSearch && matchesType && matchesAvailability;
     })
     .sort((a, b) => {
       let comparison = 0;
-      
+
       switch (sortBy) {
-        case 'name':
+        case "name":
           comparison = a.name.localeCompare(b.name);
           break;
-        case 'type':
+        case "type":
           comparison = a.type.localeCompare(b.type);
           break;
-        case 'capacity':
+        case "capacity":
           comparison = a.capacity - b.capacity;
           break;
-        case 'hourlyRate':
+        case "hourlyRate":
           comparison = a.hourlyRate - b.hourlyRate;
           break;
         default:
           comparison = 0;
       }
-      
-      return sortOrder === 'asc' ? comparison : -comparison;
+
+      return sortOrder === "asc" ? comparison : -comparison;
     });
 
   const toggleSort = (field: string) => {
     if (sortBy === field) {
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
     } else {
       setSortBy(field);
-      setSortOrder('asc');
+      setSortOrder("asc");
     }
   };
 
   const exportSpaces = () => {
-    const spacesData = spaces.map(space => ({
+    const spacesData = spaces.map((space) => ({
       id: space.id,
       name: space.name,
       type: spaceTypes[space.type as keyof typeof spaceTypes],
@@ -277,20 +327,20 @@ const SpaceManagement = () => {
       hourlyRate: space.hourlyRate,
       dailyRate: space.dailyRate,
       monthlyRate: space.monthlyRate,
-      available: space.available ? 'Oui' : 'Non',
+      available: space.available ? "Oui" : "Non",
       location: space.location,
       floor: space.floor,
       area: space.area,
-      amenities: space.amenities.join(', '),
-      maintenanceStatus: getMaintenanceStatusLabel(space.maintenanceStatus)
+      amenities: space.amenities.join(", "),
+      maintenanceStatus: getMaintenanceStatusLabel(space.maintenanceStatus),
     }));
-    
+
     const dataStr = JSON.stringify(spacesData, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const dataBlob = new Blob([dataStr], { type: "application/json" });
     const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
-    link.download = `coffice-spaces-${new Date().toISOString().split('T')[0]}.json`;
+    link.download = `coffice-spaces-${new Date().toISOString().split("T")[0]}.json`;
     link.click();
   };
 
@@ -307,8 +357,12 @@ const SpaceManagement = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-display font-bold text-primary">Gestion des Espaces</h1>
-          <p className="text-gray-600">Gérez tous les espaces de votre coworking</p>
+          <h1 className="text-3xl font-display font-bold text-primary">
+            Gestion des Espaces
+          </h1>
+          <p className="text-gray-600">
+            Gérez tous les espaces de votre coworking
+          </p>
         </div>
         <div className="flex gap-3">
           <Button variant="outline" onClick={exportSpaces}>
@@ -344,7 +398,11 @@ const SpaceManagement = () => {
             <div className="ml-4">
               <p className="text-sm text-gray-600">Espaces Disponibles</p>
               <p className="text-2xl font-bold text-primary">
-                {spaces.filter(e => e.available && e.maintenanceStatus === 'good').length}
+                {
+                  spaces.filter(
+                    (e) => e.available && e.maintenanceStatus === "good",
+                  ).length
+                }
               </p>
             </div>
           </div>
@@ -372,7 +430,7 @@ const SpaceManagement = () => {
             <div className="ml-4">
               <p className="text-sm text-gray-600">En Maintenance</p>
               <p className="text-2xl font-bold text-primary">
-                {spaces.filter(e => e.maintenanceStatus !== 'good').length}
+                {spaces.filter((e) => e.maintenanceStatus !== "good").length}
               </p>
             </div>
           </div>
@@ -388,7 +446,7 @@ const SpaceManagement = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          
+
           <select
             value={typeFilter}
             onChange={(e) => setTypeFilter(e.target.value)}
@@ -396,7 +454,9 @@ const SpaceManagement = () => {
           >
             <option value="all">Tous les types</option>
             {Object.entries(spaceTypes).map(([value, label]) => (
-              <option key={value} value={value}>{label}</option>
+              <option key={value} value={value}>
+                {label}
+              </option>
             ))}
           </select>
 
@@ -423,46 +483,46 @@ const SpaceManagement = () => {
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
-                <th 
+                <th
                   className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                  onClick={() => toggleSort('name')}
+                  onClick={() => toggleSort("name")}
                 >
                   <div className="flex items-center">
                     Espace
-                    {sortBy === 'name' && (
+                    {sortBy === "name" && (
                       <ArrowUpDown className="w-4 h-4 ml-1" />
                     )}
                   </div>
                 </th>
-                <th 
+                <th
                   className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                  onClick={() => toggleSort('type')}
+                  onClick={() => toggleSort("type")}
                 >
                   <div className="flex items-center">
                     Type
-                    {sortBy === 'type' && (
+                    {sortBy === "type" && (
                       <ArrowUpDown className="w-4 h-4 ml-1" />
                     )}
                   </div>
                 </th>
-                <th 
+                <th
                   className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                  onClick={() => toggleSort('capacity')}
+                  onClick={() => toggleSort("capacity")}
                 >
                   <div className="flex items-center">
                     Capacité
-                    {sortBy === 'capacity' && (
+                    {sortBy === "capacity" && (
                       <ArrowUpDown className="w-4 h-4 ml-1" />
                     )}
                   </div>
                 </th>
-                <th 
+                <th
                   className="px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                  onClick={() => toggleSort('hourlyRate')}
+                  onClick={() => toggleSort("hourlyRate")}
                 >
                   <div className="flex items-center">
                     Tarif
-                    {sortBy === 'hourlyRate' && (
+                    {sortBy === "hourlyRate" && (
                       <ArrowUpDown className="w-4 h-4 ml-1" />
                     )}
                   </div>
@@ -490,8 +550,12 @@ const SpaceManagement = () => {
                         <Building className="w-5 h-5 text-accent" />
                       </div>
                       <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{space.name}</div>
-                        <div className="text-sm text-gray-500">{space.location}, Étage {space.floor}</div>
+                        <div className="text-sm font-medium text-gray-900">
+                          {space.name}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          {space.location}, Étage {space.floor}
+                        </div>
                       </div>
                     </div>
                   </td>
@@ -502,23 +566,31 @@ const SpaceManagement = () => {
                     <div className="text-sm text-gray-500">{space.area} m²</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{space.capacity} personnes</div>
+                    <div className="text-sm text-gray-900">
+                      {space.capacity} personnes
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">{formatCurrency(space.hourlyRate)}/h</div>
-                    <div className="text-sm text-gray-500">{formatCurrency(space.dailyRate)}/jour</div>
+                    <div className="text-sm font-medium text-gray-900">
+                      {formatCurrency(space.hourlyRate)}/h
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      {formatCurrency(space.dailyRate)}/jour
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex flex-col space-y-2">
-                      <Badge 
-                        variant={space.available ? 'success' : 'error'}
+                      <Badge
+                        variant={space.available ? "success" : "error"}
                         size="sm"
                       >
-                        {space.available ? 'Disponible' : 'Non disponible'}
+                        {space.available ? "Disponible" : "Non disponible"}
                       </Badge>
-                      
-                      <Badge 
-                        variant={getMaintenanceStatusVariant(space.maintenanceStatus)}
+
+                      <Badge
+                        variant={getMaintenanceStatusVariant(
+                          space.maintenanceStatus,
+                        )}
                         size="sm"
                       >
                         {getMaintenanceStatusLabel(space.maintenanceStatus)}
@@ -537,11 +609,13 @@ const SpaceManagement = () => {
                       >
                         <Tool className="w-4 h-4" />
                       </Button>
-                      
+
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleToggleAvailability(space.id, space.available)}
+                        onClick={() =>
+                          handleToggleAvailability(space.id, space.available)
+                        }
                       >
                         {space.available ? (
                           <ToggleRight className="w-4 h-4" />
@@ -549,7 +623,7 @@ const SpaceManagement = () => {
                           <ToggleLeft className="w-4 h-4" />
                         )}
                       </Button>
-                      
+
                       <Button
                         variant="outline"
                         size="sm"
@@ -557,7 +631,7 @@ const SpaceManagement = () => {
                       >
                         <Edit className="w-4 h-4" />
                       </Button>
-                      
+
                       <Button
                         variant="outline"
                         size="sm"
@@ -581,7 +655,7 @@ const SpaceManagement = () => {
           setShowSpaceModal(false);
           resetForm();
         }}
-        title={isEditing ? 'Modifier l\'espace' : 'Nouvel espace'}
+        title={isEditing ? "Modifier l'espace" : "Nouvel espace"}
         size="lg"
       >
         <div className="space-y-6">
@@ -589,21 +663,27 @@ const SpaceManagement = () => {
             <Input
               label="Nom de l'espace"
               value={formData.name}
-              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, name: e.target.value }))
+              }
               placeholder="Ex: Salle de Réunion Alpha"
             />
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Type d'espace
               </label>
               <select
                 value={formData.type}
-                onChange={(e) => setFormData(prev => ({ ...prev, type: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, type: e.target.value }))
+                }
                 className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-accent focus:outline-none"
               >
                 {Object.entries(spaceTypes).map(([value, label]) => (
-                  <option key={value} value={value}>{label}</option>
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
                 ))}
               </select>
             </div>
@@ -612,7 +692,9 @@ const SpaceManagement = () => {
           <Input
             label="Description"
             value={formData.description}
-            onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, description: e.target.value }))
+            }
             placeholder="Description détaillée de l'espace"
           />
 
@@ -622,23 +704,38 @@ const SpaceManagement = () => {
               type="number"
               min="1"
               value={formData.capacity}
-              onChange={(e) => setFormData(prev => ({ ...prev, capacity: parseInt(e.target.value) || 1 }))}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  capacity: parseInt(e.target.value) || 1,
+                }))
+              }
             />
-            
+
             <Input
               label="Superficie (m²)"
               type="number"
               min="0"
               value={formData.area}
-              onChange={(e) => setFormData(prev => ({ ...prev, area: parseInt(e.target.value) || 0 }))}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  area: parseInt(e.target.value) || 0,
+                }))
+              }
             />
-            
+
             <Input
               label="Étage"
               type="number"
               min="0"
               value={formData.floor}
-              onChange={(e) => setFormData(prev => ({ ...prev, floor: parseInt(e.target.value) || 0 }))}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  floor: parseInt(e.target.value) || 0,
+                }))
+              }
             />
           </div>
 
@@ -648,30 +745,47 @@ const SpaceManagement = () => {
               type="number"
               min="0"
               value={formData.hourlyRate}
-              onChange={(e) => setFormData(prev => ({ ...prev, hourlyRate: parseInt(e.target.value) || 0 }))}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  hourlyRate: parseInt(e.target.value) || 0,
+                }))
+              }
             />
-            
+
             <Input
               label="Prix par jour (DA)"
               type="number"
               min="0"
               value={formData.dailyRate}
-              onChange={(e) => setFormData(prev => ({ ...prev, dailyRate: parseInt(e.target.value) || 0 }))}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  dailyRate: parseInt(e.target.value) || 0,
+                }))
+              }
             />
-            
+
             <Input
               label="Prix par mois (DA)"
               type="number"
               min="0"
               value={formData.monthlyRate}
-              onChange={(e) => setFormData(prev => ({ ...prev, monthlyRate: parseInt(e.target.value) || 0 }))}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  monthlyRate: parseInt(e.target.value) || 0,
+                }))
+              }
             />
           </div>
 
           <Input
             label="Emplacement"
             value={formData.location}
-            onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, location: e.target.value }))
+            }
             placeholder="Ex: Aile Nord, Bâtiment Principal"
           />
 
@@ -681,7 +795,10 @@ const SpaceManagement = () => {
             </label>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
               {amenitiesList.map((amenity) => (
-                <label key={amenity} className="flex items-center space-x-2 cursor-pointer">
+                <label
+                  key={amenity}
+                  className="flex items-center space-x-2 cursor-pointer"
+                >
                   <input
                     type="checkbox"
                     checked={formData.amenities.includes(amenity)}
@@ -711,7 +828,7 @@ const SpaceManagement = () => {
               className="flex-1"
               disabled={!formData.name || !formData.description}
             >
-              {isEditing ? 'Mettre à jour' : 'Créer l\'espace'}
+              {isEditing ? "Mettre à jour" : "Créer l'espace"}
             </Button>
           </div>
         </div>
@@ -723,9 +840,9 @@ const SpaceManagement = () => {
         onClose={() => {
           setShowMaintenanceModal(false);
           setMaintenanceForm({
-            title: '',
-            description: '',
-            priority: 'medium'
+            title: "",
+            description: "",
+            priority: "medium",
           });
         }}
         title="Signaler un problème de maintenance"
@@ -734,10 +851,16 @@ const SpaceManagement = () => {
         <div className="space-y-6">
           {selectedSpace && (
             <div className="p-4 bg-gray-50 rounded-lg">
-              <h3 className="font-medium text-primary mb-2">{selectedSpace.name}</h3>
-              <p className="text-sm text-gray-600">{selectedSpace.location}, Étage {selectedSpace.floor}</p>
-              <Badge 
-                variant={getMaintenanceStatusVariant(selectedSpace.maintenanceStatus)}
+              <h3 className="font-medium text-primary mb-2">
+                {selectedSpace.name}
+              </h3>
+              <p className="text-sm text-gray-600">
+                {selectedSpace.location}, Étage {selectedSpace.floor}
+              </p>
+              <Badge
+                variant={getMaintenanceStatusVariant(
+                  selectedSpace.maintenanceStatus,
+                )}
                 className="mt-2"
               >
                 {getMaintenanceStatusLabel(selectedSpace.maintenanceStatus)}
@@ -748,7 +871,9 @@ const SpaceManagement = () => {
           <Input
             label="Titre du problème"
             value={maintenanceForm.title}
-            onChange={(e) => setMaintenanceForm(prev => ({ ...prev, title: e.target.value }))}
+            onChange={(e) =>
+              setMaintenanceForm((prev) => ({ ...prev, title: e.target.value }))
+            }
             placeholder="Ex: Climatisation défectueuse"
           />
 
@@ -758,7 +883,12 @@ const SpaceManagement = () => {
             </label>
             <textarea
               value={maintenanceForm.description}
-              onChange={(e) => setMaintenanceForm(prev => ({ ...prev, description: e.target.value }))}
+              onChange={(e) =>
+                setMaintenanceForm((prev) => ({
+                  ...prev,
+                  description: e.target.value,
+                }))
+              }
               rows={4}
               className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-accent focus:outline-none resize-none"
               placeholder="Décrivez le problème en détail..."
@@ -771,7 +901,12 @@ const SpaceManagement = () => {
             </label>
             <select
               value={maintenanceForm.priority}
-              onChange={(e) => setMaintenanceForm(prev => ({ ...prev, priority: e.target.value as any }))}
+              onChange={(e) =>
+                setMaintenanceForm((prev) => ({
+                  ...prev,
+                  priority: e.target.value as any,
+                }))
+              }
               className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-accent focus:outline-none"
             >
               <option value="low">Basse</option>
@@ -788,9 +923,9 @@ const SpaceManagement = () => {
               onClick={() => {
                 setShowMaintenanceModal(false);
                 setMaintenanceForm({
-                  title: '',
-                  description: '',
-                  priority: 'medium'
+                  title: "",
+                  description: "",
+                  priority: "medium",
                 });
               }}
               className="flex-1"
