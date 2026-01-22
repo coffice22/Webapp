@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Script d'installation de la base de données Coffice
  * À exécuter une seule fois pour initialiser la base de données
@@ -8,7 +9,8 @@
 header('Content-Type: application/json; charset=utf-8');
 
 // Charger la configuration
-function loadEnvFile() {
+function loadEnvFile()
+{
     $envFile = __DIR__ . '/../.env';
 
     if (!file_exists($envFile)) {
@@ -21,7 +23,9 @@ function loadEnvFile() {
     $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     foreach ($lines as $line) {
         $line = trim($line);
-        if ($line === '' || $line[0] === '#' || strpos($line, '=') === false) continue;
+        if ($line === '' || $line[0] === '#' || strpos($line, '=') === false) {
+            continue;
+        }
 
         [$key, $value] = explode('=', $line, 2);
         $key = trim($key);
@@ -37,7 +41,8 @@ function loadEnvFile() {
 }
 
 // Vérifier la configuration
-function checkConfiguration() {
+function checkConfiguration()
+{
     $required = ['DB_HOST', 'DB_NAME', 'DB_USER', 'DB_PASSWORD', 'JWT_SECRET'];
     $missing = [];
     $placeholders = [];
@@ -70,7 +75,8 @@ function checkConfiguration() {
 }
 
 // Test de connexion MySQL
-function testConnection() {
+function testConnection()
+{
     $host = $_ENV['DB_HOST'] ?? 'localhost';
     $port = $_ENV['DB_PORT'] ?? '3306';
     $username = $_ENV['DB_USER'] ?? '';
@@ -91,7 +97,8 @@ function testConnection() {
 }
 
 // Créer la base de données
-function createDatabase($pdo) {
+function createDatabase($pdo)
+{
     $dbName = $_ENV['DB_NAME'] ?? '';
     $charset = $_ENV['DB_CHARSET'] ?? 'utf8mb4';
 
@@ -108,7 +115,8 @@ function createDatabase($pdo) {
 }
 
 // Importer le schéma SQL
-function importSchema($pdo) {
+function importSchema($pdo)
+{
     $sqlFile = __DIR__ . '/../database/coffice.sql';
 
     if (!file_exists($sqlFile)) {
@@ -128,7 +136,7 @@ function importSchema($pdo) {
         // Diviser en commandes individuelles
         $statements = array_filter(
             array_map('trim', explode(';', $sql)),
-            function($stmt) { return !empty($stmt); }
+            function ($stmt) { return !empty($stmt); }
         );
 
         $executed = 0;
@@ -170,7 +178,8 @@ function importSchema($pdo) {
 }
 
 // Vérifier l'installation
-function verifyInstallation($pdo) {
+function verifyInstallation($pdo)
+{
     try {
         $tables = $pdo->query("SHOW TABLES")->fetchAll(PDO::FETCH_COLUMN);
 
@@ -281,4 +290,3 @@ try {
         'timestamp' => date('Y-m-d H:i:s')
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 }
-?>

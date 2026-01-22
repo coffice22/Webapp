@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Obtenir l'utilisateur courant
  * GET /api/auth/me.php
@@ -78,4 +79,3 @@ try {
     error_log("Get current user error: " . $e->getMessage());
     Response::serverError();
 }
-?>

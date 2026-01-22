@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Mise à jour d'une réservation
  * PUT /api/reservations/update.php
@@ -124,4 +125,3 @@ try {
     error_log("Update reservation error: " . $e->getMessage());
     Response::serverError("Erreur lors de la mise à jour");
 }
-?>

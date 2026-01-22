@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Rejeter une demande de domiciliation (Admin)
  * POST /api/domiciliations/reject.php
@@ -87,4 +88,3 @@ try {
     error_log("Reject domiciliation error: " . $e->getMessage());
     Response::serverError();
 }
-?>

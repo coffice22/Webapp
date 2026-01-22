@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Utilitaire de sanitization pour prévenir les attaques XSS
  */
@@ -191,4 +192,3 @@ class Sanitizer
         return str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $string);
     }
 }
-?>

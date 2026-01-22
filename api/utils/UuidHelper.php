@@ -1,13 +1,16 @@
 <?php
+
 /**
  * UUID Helper - Génération d'UUID v4 valides
  */
 
-class UuidHelper {
+class UuidHelper
+{
     /**
      * Générer un UUID v4 valide (format: xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx)
      */
-    public static function generate() {
+    public static function generate()
+    {
         return sprintf(
             '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
             mt_rand(0, 0xffff),
@@ -24,8 +27,8 @@ class UuidHelper {
     /**
      * Valider un UUID
      */
-    public static function isValid($uuid) {
+    public static function isValid($uuid)
+    {
         return preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i', $uuid) === 1;
     }
 }
-?>

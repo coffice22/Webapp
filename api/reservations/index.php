@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Liste des réservations
  * GET /api/reservations/index.php
@@ -54,4 +55,3 @@ try {
     error_log("Reservations error: " . $e->getMessage());
     Response::serverError();
 }
-?>

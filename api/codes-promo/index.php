@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Liste des codes promo (Admin uniquement)
  * GET /api/codes-promo/index.php
@@ -27,4 +28,3 @@ try {
     error_log("Codes promo error: " . $e->getMessage());
     Response::serverError("Erreur lors de la récupération des codes promo");
 }
-?>

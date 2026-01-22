@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Déconnexion utilisateur
  * POST /api/auth/logout.php
@@ -26,4 +27,3 @@ try {
     // Retourner success même en cas d'erreur car la déconnexion client doit fonctionner
     Response::success(null, "Déconnexion réussie");
 }
-?>

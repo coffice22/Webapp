@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Liste des abonnements
  * GET /api/abonnements/index.php
@@ -50,4 +51,3 @@ try {
     error_log("Get abonnements error: " . $e->getMessage());
     Response::serverError("Erreur lors de la récupération des abonnements");
 }
-?>

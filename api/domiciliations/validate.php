@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Valider une demande de domiciliation (Admin)
  * POST /api/domiciliations/validate.php
@@ -88,4 +89,3 @@ try {
     error_log("Validate domiciliation error: " . $e->getMessage());
     Response::serverError();
 }
-?>

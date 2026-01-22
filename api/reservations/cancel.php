@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Annuler une réservation
  * POST /api/reservations/cancel.php
@@ -54,4 +55,3 @@ try {
     error_log("Cancel reservation error: " . $e->getMessage());
     Response::serverError("Erreur lors de l'annulation");
 }
-?>

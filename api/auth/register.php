@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Inscription utilisateur
  * POST /api/auth/register.php
@@ -195,4 +196,3 @@ try {
     error_log("Stack trace: " . $e->getTraceAsString());
     Response::serverError("Erreur lors de l'inscription");
 }
-?>

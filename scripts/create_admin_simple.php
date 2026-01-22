@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Script simplifié de création d'administrateur
  * Sans dépendances - Utilise uniquement MySQLi
@@ -17,7 +18,9 @@ if (file_exists($envFile)) {
     $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     foreach ($lines as $line) {
         $line = trim($line);
-        if ($line === '' || $line[0] === '#' || strpos($line, '=') === false) continue;
+        if ($line === '' || $line[0] === '#' || strpos($line, '=') === false) {
+            continue;
+        }
 
         list($key, $value) = explode('=', $line, 2);
         $envVars[trim($key)] = trim($value);
@@ -85,13 +88,18 @@ try {
     }
 
     // Générer un UUID simple
-    function generateUuid() {
-        return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-            mt_rand(0, 0xffff), mt_rand(0, 0xffff),
+    function generateUuid()
+    {
+        return sprintf(
+            '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
             mt_rand(0, 0xffff),
             mt_rand(0, 0x0fff) | 0x4000,
             mt_rand(0, 0x3fff) | 0x8000,
-            mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff)
         );
     }
 
@@ -135,4 +143,3 @@ try {
     echo "\n❌ Erreur: " . $e->getMessage() . "\n\n";
     exit(1);
 }
-?>

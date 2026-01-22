@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Supprimer un abonnement
  * DELETE /api/abonnements/delete.php
@@ -52,4 +53,3 @@ try {
     error_log("Delete abonnement error: " . $e->getMessage());
     Response::serverError("Erreur lors de la suppression de l'abonnement");
 }
-?>

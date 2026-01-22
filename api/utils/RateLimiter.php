@@ -1,10 +1,12 @@
 <?php
+
 /**
  * Rate Limiter simple basé sur fichiers
  * Protège contre les attaques brute force
  */
 
-class RateLimiter {
+class RateLimiter
+{
     private static $cacheDir = __DIR__ . '/../.cache/ratelimit/';
 
     /**
@@ -14,7 +16,8 @@ class RateLimiter {
      * @param int $decayMinutes Durée en minutes avant reset
      * @return bool True si limite dépassée
      */
-    public static function tooManyAttempts($identifier, $maxAttempts = 60, $decayMinutes = 1) {
+    public static function tooManyAttempts($identifier, $maxAttempts = 60, $decayMinutes = 1)
+    {
         $key = self::getKey($identifier);
         $data = self::getData($key);
 
@@ -22,7 +25,7 @@ class RateLimiter {
         $windowStart = $now - ($decayMinutes * 60);
 
         // Nettoyer les anciennes tentatives
-        $data['attempts'] = array_filter($data['attempts'], function($timestamp) use ($windowStart) {
+        $data['attempts'] = array_filter($data['attempts'], function ($timestamp) use ($windowStart) {
             return $timestamp > $windowStart;
         });
 
@@ -32,7 +35,8 @@ class RateLimiter {
     /**
      * Enregistre une tentative
      */
-    public static function hit($identifier) {
+    public static function hit($identifier)
+    {
         $key = self::getKey($identifier);
         $data = self::getData($key);
 
@@ -43,7 +47,8 @@ class RateLimiter {
     /**
      * Reset le compteur
      */
-    public static function clear($identifier) {
+    public static function clear($identifier)
+    {
         $key = self::getKey($identifier);
         $file = self::$cacheDir . $key;
         if (file_exists($file)) {
@@ -54,14 +59,15 @@ class RateLimiter {
     /**
      * Obtenir le nombre de tentatives restantes
      */
-    public static function retriesLeft($identifier, $maxAttempts = 60, $decayMinutes = 1) {
+    public static function retriesLeft($identifier, $maxAttempts = 60, $decayMinutes = 1)
+    {
         $key = self::getKey($identifier);
         $data = self::getData($key);
 
         $now = time();
         $windowStart = $now - ($decayMinutes * 60);
 
-        $data['attempts'] = array_filter($data['attempts'], function($timestamp) use ($windowStart) {
+        $data['attempts'] = array_filter($data['attempts'], function ($timestamp) use ($windowStart) {
             return $timestamp > $windowStart;
         });
 
@@ -71,7 +77,8 @@ class RateLimiter {
     /**
      * Obtenir le temps avant le prochain essai
      */
-    public static function availableIn($identifier, $decayMinutes = 1) {
+    public static function availableIn($identifier, $decayMinutes = 1)
+    {
         $key = self::getKey($identifier);
         $data = self::getData($key);
 
@@ -87,11 +94,13 @@ class RateLimiter {
 
     // Méthodes privées
 
-    private static function getKey($identifier) {
+    private static function getKey($identifier)
+    {
         return md5($identifier);
     }
 
-    private static function getData($key) {
+    private static function getData($key)
+    {
         self::ensureCacheDir();
 
         $file = self::$cacheDir . $key;
@@ -107,14 +116,16 @@ class RateLimiter {
         return ['attempts' => []];
     }
 
-    private static function saveData($key, $data) {
+    private static function saveData($key, $data)
+    {
         self::ensureCacheDir();
 
         $file = self::$cacheDir . $key;
         file_put_contents($file, json_encode($data));
     }
 
-    private static function ensureCacheDir() {
+    private static function ensureCacheDir()
+    {
         if (!is_dir(self::$cacheDir)) {
             mkdir(self::$cacheDir, 0755, true);
         }
@@ -123,7 +134,8 @@ class RateLimiter {
     /**
      * Nettoyer les vieux fichiers de cache (appelé périodiquement)
      */
-    public static function cleanup($olderThanHours = 24) {
+    public static function cleanup($olderThanHours = 24)
+    {
         self::ensureCacheDir();
 
         $files = glob(self::$cacheDir . '*');
@@ -136,4 +148,3 @@ class RateLimiter {
         }
     }
 }
-?>

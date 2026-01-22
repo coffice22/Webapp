@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Liste des parrainages
  * GET /api/parrainages/index.php?user_id=xxx
@@ -46,4 +47,3 @@ try {
     error_log("Parrainages error: " . $e->getMessage());
     Response::serverError("Erreur lors de la récupération des parrainages");
 }
-?>

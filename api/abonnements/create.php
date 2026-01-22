@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Créer un abonnement
  * POST /api/abonnements/create.php
@@ -71,4 +72,3 @@ try {
     error_log("Create abonnement error: " . $e->getMessage());
     Response::serverError("Erreur lors de la création de l'abonnement");
 }
-?>

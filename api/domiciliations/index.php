@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Liste des demandes de domiciliation
  * GET /api/domiciliations/index.php
@@ -39,4 +40,3 @@ try {
     error_log("Get domiciliations error: " . $e->getMessage());
     Response::serverError();
 }
-?>

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Supprimer une notification
  * DELETE /api/notifications/delete.php
@@ -43,4 +44,3 @@ try {
     error_log("Delete notification error: " . $e->getMessage());
     Response::serverError("Erreur lors de la suppression de la notification");
 }
-?>
