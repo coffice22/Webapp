@@ -22,7 +22,7 @@ export function useEntityActions<T>(
   const handleUpdate = async (
     id: string,
     data: Partial<T>,
-    successMsg: string = 'Mise à jour réussie'
+    successMsg = 'Mise à jour réussie'
   ): Promise<boolean> => {
     if (!updateFn) {
       toast.error('Action non disponible')
@@ -49,8 +49,8 @@ export function useEntityActions<T>(
 
   const handleDelete = async (
     id: string,
-    confirmMsg: string = 'Êtes-vous sûr de vouloir supprimer cet élément ?',
-    successMsg: string = 'Suppression réussie'
+    confirmMsg = 'Êtes-vous sûr de vouloir supprimer cet élément ?',
+    successMsg = 'Suppression réussie'
   ): Promise<boolean> => {
     if (!deleteFn) {
       toast.error('Action non disponible')
@@ -81,7 +81,7 @@ export function useEntityActions<T>(
 
   const handleCreate = async (
     data: Partial<T>,
-    successMsg: string = 'Création réussie'
+    successMsg = 'Création réussie'
   ): Promise<boolean> => {
     if (!createFn) {
       toast.error('Action non disponible')
