@@ -46,7 +46,7 @@ export const getImageUrl = (category: keyof typeof IMAGES, key?: string): string
   }
 
   const categoryData = IMAGES[category] as Record<string, Record<string, string>>
-  if (categoryData && categoryData[key]) {
+  if (categoryData?.[key]) {
     return categoryData[key].url || ''
   }
 
@@ -63,7 +63,7 @@ export const getImageAlt = (category: keyof typeof IMAGES, key?: string): string
   }
 
   const categoryData = IMAGES[category] as Record<string, Record<string, string>>
-  if (categoryData && categoryData[key]) {
+  if (categoryData?.[key]) {
     return categoryData[key].alt || ''
   }
 
