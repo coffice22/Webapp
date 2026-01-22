@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Statistiques administrateur
  * GET /api/admin/stats.php
@@ -156,4 +157,3 @@ try {
     error_log("Get admin stats error: " . $e->getMessage());
     Response::serverError();
 }
-?>

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Liste des utilisateurs (Admin uniquement)
  * GET /api/users/index.php
@@ -44,4 +45,3 @@ try {
     error_log("Users list error: " . $e->getMessage());
     Response::serverError();
 }
-?>

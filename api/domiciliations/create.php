@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Créer une demande de domiciliation
  * POST /api/domiciliations/create.php
@@ -141,4 +142,3 @@ try {
     error_log("Create domiciliation error: " . $e->getMessage());
     Response::serverError();
 }
-?>

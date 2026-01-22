@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Détails d'un utilisateur
  * GET /api/users/show.php?id=xxx
@@ -52,4 +53,3 @@ try {
     error_log("User show error: " . $e->getMessage());
     Response::serverError();
 }
-?>

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Créer un espace
  * POST /api/espaces/create.php
@@ -53,4 +54,3 @@ try {
     error_log("Create espace error: " . $e->getMessage());
     Response::serverError();
 }
-?>

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Test rapide de connexion à la base de données
  * URL: https://coffice.dz/api/test_connection.php
@@ -26,7 +27,9 @@ if (!file_exists($envFile)) {
 $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 foreach ($lines as $line) {
     $line = trim($line);
-    if ($line === '' || $line[0] === '#' || strpos($line, '=') === false) continue;
+    if ($line === '' || $line[0] === '#' || strpos($line, '=') === false) {
+        continue;
+    }
 
     [$key, $value] = explode('=', $line, 2);
     $key = trim($key);
@@ -119,4 +122,3 @@ try {
     echo "2. Les identifiants dans .env sont corrects\n";
     echo "3. L'utilisateur a les permissions nécessaires\n";
 }
-?>

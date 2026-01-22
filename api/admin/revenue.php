@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Revenu par période
  * GET /api/admin/revenue.php?period=day|week|month|year
@@ -93,4 +94,3 @@ try {
     error_log("Get revenue error: " . $e->getMessage());
     Response::serverError();
 }
-?>

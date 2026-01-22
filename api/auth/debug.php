@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ENDPOINT DE DIAGNOSTIC - AUTHENTIFICATION JWT
  * GET /api/auth/debug.php
@@ -149,4 +150,3 @@ $debug['result'] = [
 
 // Afficher le debug
 echo json_encode($debug, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-?>

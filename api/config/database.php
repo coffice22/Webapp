@@ -1,10 +1,12 @@
 <?php
+
 /**
  * Configuration de la base de données MySQL pour Coffice
  * Singleton pattern pour optimiser les connexions
  */
 
-class Database {
+class Database
+{
     private static $instance = null;
     private static $envLoaded = false;
 
@@ -16,7 +18,8 @@ class Database {
     private $charset;
     private $conn;
 
-    private function __construct() {
+    private function __construct()
+    {
         self::loadEnv();
 
         $this->host = $_ENV['DB_HOST'] ?? 'localhost';
@@ -27,15 +30,19 @@ class Database {
         $this->charset = $_ENV['DB_CHARSET'] ?? 'utf8mb4';
     }
 
-    public static function getInstance() {
+    public static function getInstance()
+    {
         if (self::$instance === null) {
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    private static function loadEnv() {
-        if (self::$envLoaded) return;
+    private static function loadEnv()
+    {
+        if (self::$envLoaded) {
+            return;
+        }
 
         $envFile = file_exists(__DIR__ . '/../.env')
             ? __DIR__ . '/../.env'
@@ -45,7 +52,9 @@ class Database {
             $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
             foreach ($lines as $line) {
                 $line = trim($line);
-                if ($line === '' || $line[0] === '#' || strpos($line, '=') === false) continue;
+                if ($line === '' || $line[0] === '#' || strpos($line, '=') === false) {
+                    continue;
+                }
 
                 [$key, $value] = explode('=', $line, 2);
                 $key = trim($key);
@@ -61,7 +70,8 @@ class Database {
         self::$envLoaded = true;
     }
 
-    public function getConnection() {
+    public function getConnection()
+    {
         if ($this->conn !== null) {
             return $this->conn;
         }
@@ -77,7 +87,7 @@ class Database {
                 PDO::ATTR_PERSISTENT => false
             ]);
 
-        } catch(PDOException $e) {
+        } catch (PDOException $e) {
             error_log("DB Connection Error: " . $e->getMessage());
             http_response_code(500);
             die(json_encode([
@@ -89,4 +99,3 @@ class Database {
         return $this->conn;
     }
 }
-?>

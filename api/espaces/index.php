@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Gestion des espaces
  * GET /api/espaces/index.php - Lister les espaces
@@ -35,4 +36,3 @@ try {
     error_log("Espaces error: " . $e->getMessage());
     Response::serverError();
 }
-?>

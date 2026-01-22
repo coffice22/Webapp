@@ -1,5 +1,6 @@
 #!/usr/bin/env php
 <?php
+
 /**
  * Script de Test Complet - Coffice API
  *
@@ -8,7 +9,8 @@
  */
 
 // Couleurs pour output console
-class Colors {
+class Colors
+{
     public static $GREEN = "\033[32m";
     public static $RED = "\033[31m";
     public static $YELLOW = "\033[33m";
@@ -17,7 +19,8 @@ class Colors {
     public static $BOLD = "\033[1m";
 }
 
-class CofficeAPITester {
+class CofficeAPITester
+{
     private $baseUrl;
     private $token = null;
     private $refreshToken = null;
@@ -29,7 +32,8 @@ class CofficeAPITester {
         'skipped' => 0
     ];
 
-    public function __construct($baseUrl) {
+    public function __construct($baseUrl)
+    {
         $this->baseUrl = rtrim($baseUrl, '/');
         echo Colors::$BOLD . Colors::$BLUE . "\n";
         echo "╔═══════════════════════════════════════════════╗\n";
@@ -40,7 +44,8 @@ class CofficeAPITester {
         echo "URL de l'API: " . Colors::$YELLOW . $this->baseUrl . Colors::$RESET . "\n\n";
     }
 
-    private function request($endpoint, $method = 'GET', $data = null, $useAuth = true) {
+    private function request($endpoint, $method = 'GET', $data = null, $useAuth = true)
+    {
         $url = $this->baseUrl . $endpoint;
 
         $ch = curl_init();
@@ -92,7 +97,8 @@ class CofficeAPITester {
         ];
     }
 
-    private function test($name, $callback) {
+    private function test($name, $callback)
+    {
         $this->stats['total']++;
         echo "Testing: " . $name . " ... ";
 
@@ -102,7 +108,7 @@ class CofficeAPITester {
                 $this->stats['passed']++;
                 echo Colors::$GREEN . "✓ PASSED" . Colors::$RESET . "\n";
                 return true;
-            } else if ($result === 'skip') {
+            } elseif ($result === 'skip') {
                 $this->stats['skipped']++;
                 echo Colors::$YELLOW . "⊘ SKIPPED" . Colors::$RESET . "\n";
                 return 'skip';
@@ -122,7 +128,8 @@ class CofficeAPITester {
         }
     }
 
-    private function section($title) {
+    private function section($title)
+    {
         echo "\n" . Colors::$BOLD . Colors::$BLUE;
         echo "═══════════════════════════════════════════════\n";
         echo "  " . strtoupper($title) . "\n";
@@ -130,7 +137,8 @@ class CofficeAPITester {
         echo Colors::$RESET . "\n";
     }
 
-    public function runAllTests() {
+    public function runAllTests()
+    {
         $startTime = microtime(true);
 
         // 1. Tests Authentification
@@ -161,9 +169,10 @@ class CofficeAPITester {
         $this->printSummary($startTime);
     }
 
-    private function testAuthentication() {
+    private function testAuthentication()
+    {
         // Test inscription
-        $this->test("Inscription nouvel utilisateur", function() {
+        $this->test("Inscription nouvel utilisateur", function () {
             $email = 'test_' . time() . '@coffice.test';
             $response = $this->request('/auth/register.php', 'POST', [
                 'email' => $email,
@@ -184,8 +193,10 @@ class CofficeAPITester {
         });
 
         // Test connexion
-        $this->test("Connexion utilisateur", function() {
-            if (!$this->testUser) return 'skip';
+        $this->test("Connexion utilisateur", function () {
+            if (!$this->testUser) {
+                return 'skip';
+            }
 
             $response = $this->request('/auth/login.php', 'POST', [
                 'email' => $this->testUser['email'],
@@ -201,16 +212,20 @@ class CofficeAPITester {
         });
 
         // Test vérification token
-        $this->test("Vérification token (me)", function() {
-            if (!$this->token) return 'skip';
+        $this->test("Vérification token (me)", function () {
+            if (!$this->token) {
+                return 'skip';
+            }
 
             $response = $this->request('/auth/me.php');
             return $response['http_code'] === 200 && isset($response['data']['data']['email']);
         });
 
         // Test refresh token
-        $this->test("Refresh token", function() {
-            if (!$this->refreshToken) return 'skip';
+        $this->test("Refresh token", function () {
+            if (!$this->refreshToken) {
+                return 'skip';
+            }
 
             $response = $this->request('/auth/refresh.php', 'POST', [
                 'refreshToken' => $this->refreshToken
@@ -224,15 +239,16 @@ class CofficeAPITester {
         });
     }
 
-    private function testEspaces() {
+    private function testEspaces()
+    {
         // Liste des espaces
-        $this->test("Récupération liste espaces", function() {
+        $this->test("Récupération liste espaces", function () {
             $response = $this->request('/espaces/index.php', 'GET', null, false);
             return $response['http_code'] === 200 && isset($response['data']['data']);
         });
 
         // Détails d'un espace (si disponible)
-        $this->test("Détails d'un espace", function() {
+        $this->test("Détails d'un espace", function () {
             $listResponse = $this->request('/espaces/index.php', 'GET', null, false);
             if ($listResponse['http_code'] !== 200 || empty($listResponse['data']['data'])) {
                 return 'skip';
@@ -244,21 +260,22 @@ class CofficeAPITester {
         });
     }
 
-    private function testReservations() {
+    private function testReservations()
+    {
         if (!$this->token) {
-            $this->test("Liste réservations", function() { return 'skip'; });
-            $this->test("Création réservation", function() { return 'skip'; });
+            $this->test("Liste réservations", function () { return 'skip'; });
+            $this->test("Création réservation", function () { return 'skip'; });
             return;
         }
 
         // Liste des réservations
-        $this->test("Liste réservations utilisateur", function() {
+        $this->test("Liste réservations utilisateur", function () {
             $response = $this->request('/reservations/index.php');
             return $response['http_code'] === 200;
         });
 
         // Création réservation (si espace disponible)
-        $this->test("Création réservation", function() {
+        $this->test("Création réservation", function () {
             $espacesResponse = $this->request('/espaces/index.php', 'GET', null, false);
             if ($espacesResponse['http_code'] !== 200 || empty($espacesResponse['data']['data'])) {
                 return 'skip';
@@ -280,45 +297,49 @@ class CofficeAPITester {
         });
     }
 
-    private function testCodesPromo() {
+    private function testCodesPromo()
+    {
         if (!$this->token) {
-            $this->test("Liste codes promo", function() { return 'skip'; });
+            $this->test("Liste codes promo", function () { return 'skip'; });
             return;
         }
 
-        $this->test("Récupération codes promo", function() {
+        $this->test("Récupération codes promo", function () {
             $response = $this->request('/codes-promo/index.php');
             return $response['http_code'] === 200;
         });
     }
 
-    private function testUsers() {
+    private function testUsers()
+    {
         if (!$this->token) {
-            $this->test("Liste utilisateurs", function() { return 'skip'; });
+            $this->test("Liste utilisateurs", function () { return 'skip'; });
             return;
         }
 
-        $this->test("Liste utilisateurs", function() {
+        $this->test("Liste utilisateurs", function () {
             $response = $this->request('/users/index.php');
             // Peut retourner 403 si pas admin, c'est normal
             return $response['http_code'] === 200 || $response['http_code'] === 403;
         });
     }
 
-    private function testStats() {
+    private function testStats()
+    {
         if (!$this->token) {
-            $this->test("Statistiques admin", function() { return 'skip'; });
+            $this->test("Statistiques admin", function () { return 'skip'; });
             return;
         }
 
-        $this->test("Statistiques dashboard", function() {
+        $this->test("Statistiques dashboard", function () {
             $response = $this->request('/admin/stats.php');
             // Peut retourner 403 si pas admin, c'est normal
             return $response['http_code'] === 200 || $response['http_code'] === 403;
         });
     }
 
-    private function printSummary($startTime) {
+    private function printSummary($startTime)
+    {
         $duration = round(microtime(true) - $startTime, 2);
 
         echo "\n" . Colors::$BOLD;
@@ -339,7 +360,7 @@ class CofficeAPITester {
         echo "\nTaux de réussite: " . Colors::$BOLD;
         if ($successRate >= 80) {
             echo Colors::$GREEN;
-        } else if ($successRate >= 60) {
+        } elseif ($successRate >= 60) {
             echo Colors::$YELLOW;
         } else {
             echo Colors::$RED;

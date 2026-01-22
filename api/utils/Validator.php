@@ -1,16 +1,19 @@
 <?php
+
 /**
  * Classe utilitaire pour la validation des données
  * Centralise toutes les règles de validation de l'application
  */
 
-class Validator {
+class Validator
+{
     private $errors = [];
 
     /**
      * Valider un email
      */
-    public function validateEmail($email, $fieldName = 'email') {
+    public function validateEmail($email, $fieldName = 'email')
+    {
         if (empty($email)) {
             $this->errors[$fieldName] = "L'email est requis";
             return false;
@@ -27,7 +30,8 @@ class Validator {
     /**
      * Valider un mot de passe
      */
-    public function validatePassword($password, $fieldName = 'password') {
+    public function validatePassword($password, $fieldName = 'password')
+    {
         if (empty($password)) {
             $this->errors[$fieldName] = "Le mot de passe est requis";
             return false;
@@ -44,7 +48,8 @@ class Validator {
     /**
      * Valider un numéro de téléphone algérien
      */
-    public function validatePhone($phone, $fieldName = 'telephone', $required = false) {
+    public function validatePhone($phone, $fieldName = 'telephone', $required = false)
+    {
         if (empty($phone)) {
             if ($required) {
                 $this->errors[$fieldName] = "Le numéro de téléphone est requis";
@@ -69,7 +74,8 @@ class Validator {
     /**
      * Valider une chaîne requise
      */
-    public function validateRequired($value, $fieldName) {
+    public function validateRequired($value, $fieldName)
+    {
         if (empty($value) && $value !== '0' && $value !== 0) {
             $this->errors[$fieldName] = "Le champ $fieldName est requis";
             return false;
@@ -81,7 +87,8 @@ class Validator {
     /**
      * Valider une longueur minimale
      */
-    public function validateMinLength($value, $minLength, $fieldName) {
+    public function validateMinLength($value, $minLength, $fieldName)
+    {
         if (strlen($value) < $minLength) {
             $this->errors[$fieldName] = "Le champ $fieldName doit contenir au moins $minLength caractères";
             return false;
@@ -93,7 +100,8 @@ class Validator {
     /**
      * Valider une longueur maximale
      */
-    public function validateMaxLength($value, $maxLength, $fieldName) {
+    public function validateMaxLength($value, $maxLength, $fieldName)
+    {
         if (strlen($value) > $maxLength) {
             $this->errors[$fieldName] = "Le champ $fieldName ne doit pas dépasser $maxLength caractères";
             return false;
@@ -105,7 +113,8 @@ class Validator {
     /**
      * Valider une date
      */
-    public function validateDate($date, $fieldName = 'date', $required = true) {
+    public function validateDate($date, $fieldName = 'date', $required = true)
+    {
         if (empty($date)) {
             if ($required) {
                 $this->errors[$fieldName] = "La date est requise";
@@ -126,7 +135,8 @@ class Validator {
     /**
      * Valider qu'une date est après une autre
      */
-    public function validateDateAfter($date1, $date2, $fieldName = 'date') {
+    public function validateDateAfter($date1, $date2, $fieldName = 'date')
+    {
         $timestamp1 = strtotime($date1);
         $timestamp2 = strtotime($date2);
 
@@ -141,7 +151,8 @@ class Validator {
     /**
      * Valider qu'une date est dans le futur
      */
-    public function validateDateFuture($date, $fieldName = 'date') {
+    public function validateDateFuture($date, $fieldName = 'date')
+    {
         $timestamp = strtotime($date);
         $now = time();
 
@@ -156,7 +167,8 @@ class Validator {
     /**
      * Valider un montant (nombre positif)
      */
-    public function validateAmount($amount, $fieldName = 'montant', $required = true) {
+    public function validateAmount($amount, $fieldName = 'montant', $required = true)
+    {
         if ($amount === null || $amount === '') {
             if ($required) {
                 $this->errors[$fieldName] = "Le montant est requis";
@@ -176,7 +188,8 @@ class Validator {
     /**
      * Valider un UUID
      */
-    public function validateUuid($uuid, $fieldName = 'id') {
+    public function validateUuid($uuid, $fieldName = 'id')
+    {
         if (empty($uuid)) {
             $this->errors[$fieldName] = "L'identifiant est requis";
             return false;
@@ -195,7 +208,8 @@ class Validator {
     /**
      * Valider une énumération (valeur parmi une liste)
      */
-    public function validateEnum($value, $allowedValues, $fieldName) {
+    public function validateEnum($value, $allowedValues, $fieldName)
+    {
         if (!in_array($value, $allowedValues, true)) {
             $allowed = implode(', ', $allowedValues);
             $this->errors[$fieldName] = "La valeur doit être parmi: $allowed";
@@ -208,21 +222,24 @@ class Validator {
     /**
      * Récupérer toutes les erreurs
      */
-    public function getErrors() {
+    public function getErrors()
+    {
         return $this->errors;
     }
 
     /**
      * Vérifier s'il y a des erreurs
      */
-    public function hasErrors() {
+    public function hasErrors()
+    {
         return !empty($this->errors);
     }
 
     /**
      * Récupérer le premier message d'erreur
      */
-    public function getFirstError() {
+    public function getFirstError()
+    {
         if (empty($this->errors)) {
             return null;
         }
@@ -233,14 +250,16 @@ class Validator {
     /**
      * Réinitialiser les erreurs
      */
-    public function reset() {
+    public function reset()
+    {
         $this->errors = [];
     }
 
     /**
      * Méthode statique pour valider rapidement un email
      */
-    public static function isValidEmail($email) {
+    public static function isValidEmail($email)
+    {
         $validator = new self();
         return $validator->validateEmail($email);
     }
@@ -248,7 +267,8 @@ class Validator {
     /**
      * Méthode statique pour valider rapidement un téléphone
      */
-    public static function isValidPhone($phone) {
+    public static function isValidPhone($phone)
+    {
         $validator = new self();
         return $validator->validatePhone($phone, 'telephone', false);
     }
@@ -256,9 +276,9 @@ class Validator {
     /**
      * Méthode statique pour valider rapidement un mot de passe
      */
-    public static function isValidPassword($password) {
+    public static function isValidPassword($password)
+    {
         $validator = new self();
         return $validator->validatePassword($password);
     }
 }
-?>

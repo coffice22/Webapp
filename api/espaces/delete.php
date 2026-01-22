@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Supprimer un espace (soft delete)
  * DELETE /api/espaces/delete.php
@@ -59,4 +60,3 @@ try {
     error_log("Delete espace error: " . $e->getMessage());
     Response::serverError();
 }
-?>

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Utilitaire de pagination pour les listes
  */
@@ -166,4 +167,3 @@ class Pagination
         return (int)$stmt->fetch(PDO::FETCH_ASSOC)['total'];
     }
 }
-?>

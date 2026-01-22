@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Rafraîchir le token JWT
  * POST /api/auth/refresh.php
@@ -66,4 +67,3 @@ try {
     error_log("Refresh token error: " . $e->getMessage());
     Response::error("Erreur lors du rafraîchissement du token", 500);
 }
-?>

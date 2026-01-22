@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Activer une domiciliation (Admin)
  * POST /api/domiciliations/activate.php
@@ -112,4 +113,3 @@ try {
     error_log("Activate domiciliation error: " . $e->getMessage());
     Response::serverError();
 }
-?>

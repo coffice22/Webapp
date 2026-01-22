@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Bootstrap - Fichier d'initialisation complet pour l'API Coffice
  * Charge et configure tous les composants nécessaires au fonctionnement de l'API
@@ -106,7 +107,7 @@ $logger = Logger::getInstance();
 // =====================================================
 
 // Gestionnaire d'erreurs PHP
-set_error_handler(function($errno, $errstr, $errfile, $errline) use ($logger) {
+set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($logger) {
     // Ne pas traiter les erreurs supprimées avec @
     if (!(error_reporting() & $errno)) {
         return false;
@@ -143,7 +144,7 @@ set_error_handler(function($errno, $errstr, $errfile, $errline) use ($logger) {
 });
 
 // Gestionnaire d'exceptions non capturées
-set_exception_handler(function($exception) use ($logger) {
+set_exception_handler(function ($exception) use ($logger) {
     $logger->error('Uncaught Exception: ' . $exception->getMessage(), [
         'exception' => get_class($exception),
         'file' => $exception->getFile(),
@@ -163,7 +164,7 @@ set_exception_handler(function($exception) use ($logger) {
 });
 
 // Gestionnaire d'arrêt fatal
-register_shutdown_function(function() use ($logger) {
+register_shutdown_function(function () use ($logger) {
     $error = error_get_last();
 
     if ($error !== null && in_array($error['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR])) {
@@ -230,56 +231,64 @@ require_once __DIR__ . '/utils/ErrorHandler.php';
 /**
  * Obtenir la connexion à la base de données
  */
-function getDb(): PDO {
+function getDb(): PDO
+{
     return Database::getInstance()->getConnection();
 }
 
 /**
  * Obtenir le logger
  */
-function getLogger(): Logger {
+function getLogger(): Logger
+{
     return Logger::getInstance();
 }
 
 /**
  * Logger un message info
  */
-function logInfo(string $message, array $context = []): void {
+function logInfo(string $message, array $context = []): void
+{
     Logger::getInstance()->info($message, $context);
 }
 
 /**
  * Logger un warning
  */
-function logWarning(string $message, array $context = []): void {
+function logWarning(string $message, array $context = []): void
+{
     Logger::getInstance()->warning($message, $context);
 }
 
 /**
  * Logger une erreur
  */
-function logError(string $message, array $context = []): void {
+function logError(string $message, array $context = []): void
+{
     Logger::getInstance()->error($message, $context);
 }
 
 /**
  * Générer un UUID
  */
-function generateUuid(): string {
+function generateUuid(): string
+{
     return UuidHelper::generate();
 }
 
 /**
  * Valider un UUID
  */
-function isValidUuid(string $uuid): bool {
+function isValidUuid(string $uuid): bool
+{
     return UuidHelper::isValid($uuid);
 }
 
 /**
  * Obtenir l'utilisateur authentifié
  */
-function getAuthUser(): ?array {
+function getAuthUser(): ?array
+{
     try {
         return Auth::verifyAuth();
     } catch (Exception $e) {
@@ -290,7 +299,8 @@ function getAuthUser(): ?array {
 /**
  * Vérifier si l'utilisateur est admin
  */
-function isAdmin(): bool {
+function isAdmin(): bool
+{
     $user = getAuthUser();
     return $user && ($user['role'] ?? '') === 'admin';
 }
@@ -298,42 +308,48 @@ function isAdmin(): bool {
 /**
  * Obtenir une variable d'environnement
  */
-function env(string $key, $default = null) {
+function env(string $key, $default = null)
+{
     return $_ENV[$key] ?? getenv($key) ?: $default;
 }
 
 /**
  * Sanitizer une chaîne
  */
-function sanitize(string $input): string {
+function sanitize(string $input): string
+{
     return Sanitizer::cleanString($input);
 }
 
 /**
  * Sanitizer un email
  */
-function sanitizeEmail(string $email): string {
+function sanitizeEmail(string $email): string
+{
     return Sanitizer::email($email);
 }
 
 /**
  * Valider un email
  */
-function isValidEmail(string $email): bool {
+function isValidEmail(string $email): bool
+{
     return Validator::email($email);
 }
 
 /**
  * Valider un numéro de téléphone algérien
  */
-function isValidPhone(string $phone): bool {
+function isValidPhone(string $phone): bool
+{
     return Validator::algerianPhone($phone);
 }
 
 /**
  * Obtenir l'adresse IP du client
  */
-function getClientIp(): string {
+function getClientIp(): string
+{
     if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
         return $_SERVER['HTTP_CLIENT_IP'];
     } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
@@ -348,14 +364,16 @@ function getClientIp(): string {
 /**
  * Obtenir le User-Agent
  */
-function getUserAgent(): string {
+function getUserAgent(): string
+{
     return $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown';
 }
 
 /**
  * Vérifier si la requête est AJAX
  */
-function isAjaxRequest(): bool {
+function isAjaxRequest(): bool
+{
     return !empty($_SERVER['HTTP_X_REQUESTED_WITH'])
         && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
 }
@@ -363,14 +381,16 @@ function isAjaxRequest(): bool {
 /**
  * Obtenir la méthode HTTP
  */
-function getRequestMethod(): string {
+function getRequestMethod(): string
+{
     return $_SERVER['REQUEST_METHOD'] ?? 'GET';
 }
 
 /**
  * Obtenir les données JSON du body
  */
-function getJsonInput() {
+function getJsonInput()
+{
     $input = file_get_contents('php://input');
     return json_decode($input);
 }
@@ -378,21 +398,24 @@ function getJsonInput() {
 /**
  * Envoyer une réponse JSON succès
  */
-function jsonSuccess($data = null, string $message = null, int $code = 200): void {
+function jsonSuccess($data = null, string $message = null, int $code = 200): void
+{
     Response::success($data, $message, $code);
 }
 
 /**
  * Envoyer une réponse JSON erreur
  */
-function jsonError(string $message, int $code = 400): void {
+function jsonError(string $message, int $code = 400): void
+{
     Response::error($message, $code);
 }
 
 /**
  * Créer une pagination
  */
-function paginate(int $total, int $page = 1, int $perPage = 20): array {
+function paginate(int $total, int $page = 1, int $perPage = 20): array
+{
     return Pagination::create($total, $page, $perPage);
 }
 
