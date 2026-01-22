@@ -1,6 +1,71 @@
 version = 1
 
 [[analyzers]]
+name = "terraform"
+
+[[analyzers]]
+name = "swift"
+
+[[analyzers]]
+name = "shell"
+
+[[analyzers]]
+name = "secrets"
+
+[[analyzers]]
+name = "scala"
+
+[[analyzers]]
+name = "rust"
+
+  [analyzers.meta]
+  msrv = "stable"
+
+[[analyzers]]
+name = "kotlin"
+
+  [analyzers.meta]
+  runtime_version = "1.8"
+  language_version = "1.7"
+
+[[analyzers]]
+name = "javascript"
+
+  [analyzers.meta]
+  plugins = [
+    "react",
+    "vue"
+  ]
+  environment = [
+    "jquery",
+    "nodejs"
+  ]
+
+[[analyzers]]
+name = "go"
+
+  [analyzers.meta]
+  import_root = "github.com/coffice22/Webapp"
+
+[[analyzers]]
+name = "ruby"
+
+[[analyzers]]
+name = "test-coverage"
+
+[[analyzers]]
+name = "docker"
+
+[[analyzers]]
+name = "cxx"
+
+[[analyzers]]
+name = "csharp"
+
+[[analyzers]]
+name = "ansible"
+
+[[analyzers]]
 name = "python"
 
   [analyzers.meta]
