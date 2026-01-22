@@ -2,46 +2,33 @@
 
 Application web complète pour la gestion d'espaces de coworking au Mohammadia Mall, Alger.
 
-## Installation Rapide
+## 🚀 Installation
 
-### Prérequis
-- PHP 8.1+ (extensions: pdo_mysql, json, mbstring, openssl)
-- MySQL 8.0+
-- Node.js 18+
-- Apache/Nginx avec mod_rewrite
+**Pour une installation détaillée, consultez: [INSTALLATION.md](INSTALLATION.md)**
 
-### Installation en 5 étapes
+### Installation rapide (développement local)
 
 ```bash
-# 1. Cloner et installer
-git clone [votre-repo]
-cd coffice-app
+# 1. Installation
 npm install
 
 # 2. Configuration
 cp .env.example .env
-# Éditer .env avec vos paramètres
+# Éditer .env avec vos paramètres MySQL
 
-# 3. Base de données
-mysql -u root -p -e "CREATE DATABASE coffice CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-mysql -u root -p coffice < database/coffice.sql
+# 3. Lancer le script d'installation automatique
+# Visitez: http://localhost/api/install.php (puis supprimez ce fichier!)
 
-# 4. Créer l'administrateur
+# 4. Créer un admin
 php scripts/create_admin_simple.php
-# Email: admin@coffice.dz / Password: Admin@Coffice2025
 
-# 5. Build et déploiement
+# 5. Build
 npm run build
-# Copier dist/ vers votre serveur web
 ```
 
-### Test de l'installation
+### Test rapide
 
 ```bash
-# Tester toutes les fonctionnalités
-php scripts/test_api.php
-
-# Ou avec npm
 npm run test:local
 ```
 
@@ -73,6 +60,16 @@ coffice-app/
 └── scripts/            # Scripts admin
 ```
 
+## 📦 Version Actuelle: v3.1.0
+
+### Nouveautés v3.1.0
+- ✅ **Configuration MySQL pure**: Suppression complète de Supabase, migration vers MySQL
+- ✅ **Script d'installation automatique**: Installation en un clic via `api/install.php`
+- ✅ **Page Abonnements Admin complète**: CRUD complet avec stats, export CSV, filtres
+- ✅ **Création manuelle de domiciliations**: Les admins peuvent créer des domiciliations pour n'importe quel utilisateur
+- ✅ **Amélioration de la gestion d'erreurs**: Messages d'erreur plus détaillés et debugging amélioré
+- ✅ **Documentation d'installation complète**: Guide pas-à-pas dans INSTALLATION.md
+
 ## Fonctionnalités
 
 ### Utilisateurs
@@ -86,18 +83,12 @@ coffice-app/
 ### Administrateurs
 - Gestion complète des utilisateurs
 - CRUD espaces de coworking
-- Création et gestion des abonnements
-- Création manuelle de domiciliations
+- **NOUVEAU:** Page Abonnements complète avec stats, recherche, export CSV
+- **NOUVEAU:** Création manuelle de domiciliations pour n'importe quel utilisateur
 - Validation et activation des domiciliations
 - Gestion codes promo et parrainages
 - Statistiques et revenus en temps réel
 - Système ERP intégré
-
-### Module ERP (Admin)
-- Gestion des membres et abonnements
-- Gestion des espaces et disponibilité
-- Réservations et calendrier
-- Facturation et paiements
 - Inventaire et maintenance
 - Statistiques et rapports
 - Analytics et KPIs
