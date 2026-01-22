@@ -19,7 +19,7 @@ interface ApiResponse<T = any> {
 class ApiClient {
   private token: string | null = null
   private refreshToken: string | null = null
-  private isRefreshing: boolean = false
+  private isRefreshing = false
   private refreshPromise: Promise<string> | null = null
 
   constructor() {
@@ -153,8 +153,8 @@ class ApiClient {
   private async request<T>(
     endpoint: string,
     options: RequestInit = {},
-    retryWithRefresh: boolean = true,
-    retryCount: number = 0
+    retryWithRefresh = true,
+    retryCount = 0
   ): Promise<ApiResponse<T>> {
     const MAX_RETRIES = 3
     const headers: Record<string, string> = {
@@ -617,7 +617,7 @@ class ApiClient {
     return this.request('/admin/stats.php')
   }
 
-  async getRevenue(period: string = 'month') {
+  async getRevenue(period = 'month') {
     return this.request(`/admin/revenue.php?period=${period}`)
   }
 

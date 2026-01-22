@@ -40,13 +40,13 @@ export const formatDateTime = (date: Date | string): string => {
   return dateStr && timeStr ? `${dateStr} à ${timeStr}` : ''
 }
 
-export const formatCurrency = (amount: number, currency: string = 'DA'): string => {
+export const formatCurrency = (amount: number, currency = 'DA'): string => {
   if (typeof amount !== 'number' || isNaN(amount)) return '0 DA'
   const formatted = numberFormatter.format(amount)
   return `${formatted} ${currency}`
 }
 
-export const formatPrice = (amount: number, showTTC: boolean = false): string => {
+export const formatPrice = (amount: number, showTTC = false): string => {
   if (typeof amount !== 'number' || isNaN(amount)) return '0 DA'
   const formatted = numberFormatter.format(amount)
   return showTTC ? `${formatted} DA TTC` : `${formatted} DA`
