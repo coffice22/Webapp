@@ -1,15 +1,20 @@
 <?php
+
 /**
  * Classe pour gérer l'authentification JWT
  */
 
-class Auth {
+class Auth
+{
     private static $envLoaded = false;
     private static $issuer = "coffice.dz";
     private static $audience = "coffice-app";
 
-    private static function loadEnv() {
-        if (self::$envLoaded) return;
+    private static function loadEnv()
+    {
+        if (self::$envLoaded) {
+            return;
+        }
 
         $envFile = file_exists(__DIR__ . '/../.env')
             ? __DIR__ . '/../.env'
@@ -19,7 +24,9 @@ class Auth {
             $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
             foreach ($lines as $line) {
                 $line = trim($line);
-                if ($line === '' || $line[0] === '#' || strpos($line, '=') === false) continue;
+                if ($line === '' || $line[0] === '#' || strpos($line, '=') === false) {
+                    continue;
+                }
 
                 [$key, $value] = explode('=', $line, 2);
                 $key = trim($key);
@@ -35,7 +42,8 @@ class Auth {
         self::$envLoaded = true;
     }
 
-    private static function getSecretKey() {
+    private static function getSecretKey()
+    {
         self::loadEnv();
         $key = getenv('JWT_SECRET') ?: ($_ENV['JWT_SECRET'] ?? null);
         if (!$key) {
@@ -47,7 +55,8 @@ class Auth {
     /**
      * Générer un token JWT (access token)
      */
-    public static function generateToken($user_id, $email, $role) {
+    public static function generateToken($user_id, $email, $role)
+    {
         $issued_at = time();
         $expiration = $issued_at + (60 * 60); // 1 heure
 
@@ -70,7 +79,8 @@ class Auth {
     /**
      * Générer un refresh token (durée de vie plus longue)
      */
-    public static function generateRefreshToken($user_id, $email, $role) {
+    public static function generateRefreshToken($user_id, $email, $role)
+    {
         $issued_at = time();
         $expiration = $issued_at + (30 * 24 * 60 * 60); // 30 jours
 
@@ -93,7 +103,8 @@ class Auth {
     /**
      * Vérifier et décoder un token
      */
-    public static function validateToken($token) {
+    public static function validateToken($token)
+    {
         try {
             $decoded = self::decode($token);
 
@@ -116,7 +127,8 @@ class Auth {
     /**
      * Encoder un payload en JWT (simple implementation)
      */
-    private static function encode($payload) {
+    private static function encode($payload)
+    {
         $header = json_encode(['typ' => 'JWT', 'alg' => 'HS256']);
         $header = self::base64UrlEncode($header);
 
@@ -132,7 +144,8 @@ class Auth {
     /**
      * Décoder un JWT
      */
-    private static function decode($token) {
+    private static function decode($token)
+    {
         $parts = explode('.', $token);
 
         if (count($parts) !== 3) {
@@ -161,14 +174,16 @@ class Auth {
     /**
      * Helper pour encoder en base64 URL-safe
      */
-    private static function base64UrlEncode($data) {
+    private static function base64UrlEncode($data)
+    {
         return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
     }
 
     /**
      * Helper pour décoder du base64 URL-safe
      */
-    private static function base64UrlDecode($data) {
+    private static function base64UrlDecode($data)
+    {
         $remainder = strlen($data) % 4;
         if ($remainder) {
             $data .= str_repeat('=', 4 - $remainder);
@@ -179,14 +194,16 @@ class Auth {
     /**
      * Hasher un mot de passe
      */
-    public static function hashPassword($password) {
+    public static function hashPassword($password)
+    {
         return password_hash($password, PASSWORD_BCRYPT);
     }
 
     /**
      * Vérifier un mot de passe
      */
-    public static function verifyPassword($password, $hash) {
+    public static function verifyPassword($password, $hash)
+    {
         return password_verify($password, $hash);
     }
 
@@ -194,7 +211,8 @@ class Auth {
      * Récupérer le token Bearer depuis les headers
      * Compatible avec tous les serveurs (Apache, Nginx, etc.)
      */
-    public static function getBearerToken($debug = false) {
+    public static function getBearerToken($debug = false)
+    {
         $auth_header = null;
         $method_used = null;
 
@@ -203,7 +221,9 @@ class Auth {
             $headers = getallheaders();
             $auth_header = isset($headers['Authorization']) ? $headers['Authorization'] :
                           (isset($headers['authorization']) ? $headers['authorization'] : null);
-            if ($auth_header) $method_used = 'getallheaders()';
+            if ($auth_header) {
+                $method_used = 'getallheaders()';
+            }
         }
 
         // Méthode 2: $_SERVER['HTTP_AUTHORIZATION'] (Nginx, lighttpd)
@@ -217,7 +237,9 @@ class Auth {
             $headers = apache_request_headers();
             $auth_header = isset($headers['Authorization']) ? $headers['Authorization'] :
                           (isset($headers['authorization']) ? $headers['authorization'] : null);
-            if ($auth_header) $method_used = 'apache_request_headers()';
+            if ($auth_header) {
+                $method_used = 'apache_request_headers()';
+            }
         }
 
         // Méthode 4: $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] (Apache avec .htaccess RewriteRule)
@@ -252,18 +274,24 @@ class Auth {
         }
 
         if (empty($auth_header)) {
-            if ($debug) error_log("AUTH DEBUG - No auth header found");
+            if ($debug) {
+                error_log("AUTH DEBUG - No auth header found");
+            }
             return null;
         }
 
         // Extraire le token (format: "Bearer TOKEN")
         if (preg_match('/Bearer\s+(.*)$/i', $auth_header, $matches)) {
             $token = trim($matches[1]);
-            if ($debug) error_log("AUTH DEBUG - Token extracted: " . substr($token, 0, 20) . "...");
+            if ($debug) {
+                error_log("AUTH DEBUG - Token extracted: " . substr($token, 0, 20) . "...");
+            }
             return $token;
         }
 
-        if ($debug) error_log("AUTH DEBUG - No Bearer token found in header");
+        if ($debug) {
+            error_log("AUTH DEBUG - No Bearer token found in header");
+        }
         return null;
     }
 
@@ -272,17 +300,22 @@ class Auth {
      * Utiliser cette méthode dans tous les endpoints protégés
      * Utilise uniquement la validation JWT (simplifié)
      */
-    public static function verifyAuth($debug = false) {
+    public static function verifyAuth($debug = false)
+    {
         $token = self::getBearerToken($debug);
 
         if (!$token) {
-            if ($debug) error_log("AUTH DEBUG - Token null, returning 401");
+            if ($debug) {
+                error_log("AUTH DEBUG - Token null, returning 401");
+            }
             require_once __DIR__ . '/Response.php';
             Response::error("Token d'authentification manquant", 401);
             exit;
         }
 
-        if ($debug) error_log("AUTH DEBUG - Validating token...");
+        if ($debug) {
+            error_log("AUTH DEBUG - Validating token...");
+        }
         $userData = self::validateToken($token);
 
         if (!$userData) {
@@ -310,7 +343,8 @@ class Auth {
     /**
      * Vérifier que l'utilisateur est admin (sinon erreur 403)
      */
-    public static function requireAdmin() {
+    public static function requireAdmin()
+    {
         $auth = self::verifyAuth();
 
         if ($auth['role'] !== 'admin') {
@@ -323,4 +357,3 @@ class Auth {
     }
 
 }
-?>

@@ -1,14 +1,17 @@
 <?php
+
 /**
  * ErrorHandler - Gestion centralisée des erreurs
  * Simplifie la gestion des exceptions dans les endpoints
  */
 
-class ErrorHandler {
+class ErrorHandler
+{
     /**
      * Exécute un callback avec gestion automatique des erreurs
      */
-    public static function handle(callable $callback) {
+    public static function handle(callable $callback)
+    {
         try {
             return $callback();
         } catch (PDOException $e) {
@@ -39,7 +42,8 @@ class ErrorHandler {
     /**
      * Exécute un callback avec gestion des erreurs et rollback de transaction
      */
-    public static function handleWithTransaction($db, callable $callback) {
+    public static function handleWithTransaction($db, callable $callback)
+    {
         try {
             $db->beginTransaction();
             $result = $callback();
@@ -55,7 +59,12 @@ class ErrorHandler {
 }
 
 // Exceptions personnalisées
-class ValidationException extends Exception {}
-class UnauthorizedException extends Exception {}
-class NotFoundException extends Exception {}
-?>
+class ValidationException extends Exception
+{
+}
+class UnauthorizedException extends Exception
+{
+}
+class NotFoundException extends Exception
+{
+}

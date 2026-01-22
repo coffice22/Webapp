@@ -1,4 +1,5 @@
 <?php
+
 require_once '../config/cors.php';
 require_once '../config/database.php';
 require_once '../utils/Auth.php';
@@ -107,4 +108,3 @@ try {
     error_log("Update promo error: " . $e->getMessage());
     Response::serverError("Erreur lors de la mise à jour du code promo");
 }
-?>

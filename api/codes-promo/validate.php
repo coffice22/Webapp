@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Valider un code promo
  * POST /api/codes-promo/validate.php
@@ -111,4 +112,3 @@ try {
     error_log("Validate promo error: " . $e->getMessage());
     Response::serverError("Erreur lors de la validation du code promo");
 }
-?>

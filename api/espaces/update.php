@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Mettre à jour un espace
  * PUT /api/espaces/update.php
@@ -63,4 +64,3 @@ try {
     error_log("Update espace error: " . $e->getMessage());
     Response::serverError();
 }
-?>

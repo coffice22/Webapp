@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Connexion utilisateur
  * POST /api/auth/login.php
@@ -103,4 +104,3 @@ try {
     error_log("Login error: " . $e->getMessage());
     Response::error("Erreur lors de la connexion", 500);
 }
-?>

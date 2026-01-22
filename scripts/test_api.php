@@ -1,5 +1,6 @@
 #!/usr/bin/env php
 <?php
+
 /**
  * Script de test complet de toutes les fonctionnalités de l'API Coffice
  *
@@ -38,12 +39,14 @@ $domiciliationId = null;
 $codePromoId = null;
 
 // Fonction pour afficher les messages
-function logMessage($message, $color = COLOR_RESET) {
+function logMessage($message, $color = COLOR_RESET)
+{
     echo $color . $message . COLOR_RESET . PHP_EOL;
 }
 
 // Fonction pour logger un test
-function logTest($name, $passed, $error = null) {
+function logTest($name, $passed, $error = null)
+{
     global $totalTests, $passedTests, $failedTests;
 
     $totalTests++;
@@ -61,7 +64,8 @@ function logTest($name, $passed, $error = null) {
 }
 
 // Fonction pour faire une requête API
-function makeRequest($endpoint, $method = 'GET', $data = null, $token = null) {
+function makeRequest($endpoint, $method = 'GET', $data = null, $token = null)
+{
     global $API_URL;
 
     $url = $API_URL . $endpoint;

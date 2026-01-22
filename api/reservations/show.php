@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Détails d'une réservation
  * GET /api/reservations/show.php?id=xxx
@@ -52,4 +53,3 @@ try {
     error_log("Reservation show error: " . $e->getMessage());
     Response::serverError("Erreur lors de la récupération de la réservation");
 }
-?>

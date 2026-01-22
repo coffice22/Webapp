@@ -1,13 +1,16 @@
 <?php
+
 /**
  * Classe utilitaire pour les réponses API
  */
 
-class Response {
+class Response
+{
     /**
      * Envoyer une réponse JSON
      */
-    public static function json($data, $code = 200) {
+    public static function json($data, $code = 200)
+    {
         http_response_code($code);
         echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         exit();
@@ -16,7 +19,8 @@ class Response {
     /**
      * Réponse de succès
      */
-    public static function success($data = null, $message = "Succès", $code = 200) {
+    public static function success($data = null, $message = "Succès", $code = 200)
+    {
         self::json([
             'success' => true,
             'message' => $message,
@@ -27,7 +31,8 @@ class Response {
     /**
      * Réponse d'erreur
      */
-    public static function error($message = "Une erreur est survenue", $code = 400, $details = null) {
+    public static function error($message = "Une erreur est survenue", $code = 400, $details = null)
+    {
         self::json([
             'success' => false,
             'error' => $message,
@@ -38,28 +43,32 @@ class Response {
     /**
      * Non autorisé
      */
-    public static function unauthorized($message = "Non autorisé") {
+    public static function unauthorized($message = "Non autorisé")
+    {
         self::error($message, 401);
     }
 
     /**
      * Interdit
      */
-    public static function forbidden($message = "Accès interdit") {
+    public static function forbidden($message = "Accès interdit")
+    {
         self::error($message, 403);
     }
 
     /**
      * Non trouvé
      */
-    public static function notFound($message = "Ressource non trouvée") {
+    public static function notFound($message = "Ressource non trouvée")
+    {
         self::error($message, 404);
     }
 
     /**
      * Erreur serveur
      */
-    public static function serverError($message = "Erreur serveur") {
+    public static function serverError($message = "Erreur serveur")
+    {
         self::error($message, 500);
     }
 
@@ -67,7 +76,8 @@ class Response {
      * Récupérer et parser le JSON du body de la requête
      * @return object|null
      */
-    public static function getJsonInput() {
+    public static function getJsonInput()
+    {
         $rawInput = file_get_contents("php://input");
         $data = json_decode($rawInput);
 
@@ -84,7 +94,8 @@ class Response {
      * @param array $requiredFields
      * @return bool
      */
-    public static function validateRequired($data, array $requiredFields) {
+    public static function validateRequired($data, array $requiredFields)
+    {
         $missing = [];
 
         foreach ($requiredFields as $field) {
@@ -100,4 +111,3 @@ class Response {
         return true;
     }
 }
-?>

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Script de vérification rapide de l'installation Coffice
  * À utiliser pour diagnostiquer les problèmes de configuration
@@ -54,7 +55,9 @@ if (file_exists($envFile)) {
     $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     foreach ($lines as $line) {
         $line = trim($line);
-        if ($line === '' || $line[0] === '#' || strpos($line, '=') === false) continue;
+        if ($line === '' || $line[0] === '#' || strpos($line, '=') === false) {
+            continue;
+        }
 
         [$key, $value] = explode('=', $line, 2);
         $key = trim($key);
@@ -236,4 +239,3 @@ echo json_encode([
             ? '⚠️ Configuration à finaliser'
             : '❌ Erreurs à corriger')
 ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-?>

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Mettre à jour un abonnement
  * PUT /api/abonnements/update.php
@@ -114,4 +115,3 @@ try {
     error_log("Update abonnement error: " . $e->getMessage());
     Response::serverError("Erreur lors de la mise à jour de l'abonnement");
 }
-?>

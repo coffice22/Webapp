@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Détail d'un espace
  * GET /api/espaces/show.php?id=xxx
@@ -35,4 +36,3 @@ try {
     error_log("Get espace error: " . $e->getMessage());
     Response::serverError();
 }
-?>

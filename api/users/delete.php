@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Supprimer un utilisateur (soft delete)
  * DELETE /api/users/delete.php?id=xxx
@@ -38,4 +39,3 @@ try {
     error_log("User delete error: " . $e->getMessage());
     Response::serverError();
 }
-?>

@@ -21,7 +21,9 @@ if (file_exists($envFile)) {
     $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     foreach ($lines as $line) {
         $line = trim($line);
-        if ($line === '' || $line[0] === '#' || strpos($line, '=') === false) continue;
+        if ($line === '' || $line[0] === '#' || strpos($line, '=') === false) {
+            continue;
+        }
         list($key, $value) = explode('=', $line, 2);
         $envVars[trim($key)] = trim($value);
     }
@@ -220,13 +222,18 @@ header('Content-Type: text/html; charset=utf-8');
             }
 
             // Générer un UUID
-            function generateUuid() {
-                return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-                    mt_rand(0, 0xffff), mt_rand(0, 0xffff),
+            function generateUuid()
+            {
+                return sprintf(
+                    '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+                    mt_rand(0, 0xffff),
+                    mt_rand(0, 0xffff),
                     mt_rand(0, 0xffff),
                     mt_rand(0, 0x0fff) | 0x4000,
                     mt_rand(0, 0x3fff) | 0x8000,
-                    mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
+                    mt_rand(0, 0xffff),
+                    mt_rand(0, 0xffff),
+                    mt_rand(0, 0xffff)
                 );
             }
 
@@ -286,7 +293,7 @@ header('Content-Type: text/html; charset=utf-8');
             echo '3. Que l\'utilisateur MySQL a les permissions nécessaires';
             echo '</div>';
         }
-        ?>
+?>
 
         <div class="warning" style="margin-top: 30px;">
             <span class="icon">🗑️</span> SUPPRIMEZ CE FICHIER après utilisation pour des raisons de sécurité !

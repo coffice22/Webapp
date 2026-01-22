@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Marquer une notification comme lue
  * PUT /api/notifications/read.php
@@ -43,4 +44,3 @@ try {
     error_log("Read notification error: " . $e->getMessage());
     Response::serverError("Erreur lors de la mise à jour de la notification");
 }
-?>

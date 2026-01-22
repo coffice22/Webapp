@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Marquer toutes les notifications comme lues
  * PUT /api/notifications/read-all.php
@@ -28,4 +29,3 @@ try {
     error_log("Read all notifications error: " . $e->getMessage());
     Response::serverError("Erreur lors de la mise à jour des notifications");
 }
-?>

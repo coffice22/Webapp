@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Utilitaire de logging standardisé
  * Gère les niveaux de log : INFO, WARNING, ERROR, SECURITY
@@ -6,10 +7,10 @@
 
 class Logger
 {
-    const LEVEL_INFO = 'info';
-    const LEVEL_WARNING = 'warning';
-    const LEVEL_ERROR = 'error';
-    const LEVEL_SECURITY = 'security';
+    public const LEVEL_INFO = 'info';
+    public const LEVEL_WARNING = 'warning';
+    public const LEVEL_ERROR = 'error';
+    public const LEVEL_SECURITY = 'security';
 
     private static $db = null;
 
@@ -114,4 +115,3 @@ class Logger
         }
     }
 }
-?>

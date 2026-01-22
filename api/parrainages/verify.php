@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Vérifier un code parrainage
  * POST /api/parrainages/verify.php
@@ -45,4 +46,3 @@ try {
     error_log("Verify parrainage error: " . $e->getMessage());
     Response::serverError("Erreur lors de la vérification du code parrainage");
 }
-?>

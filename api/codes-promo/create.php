@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Créer un code promo (Admin uniquement)
  * POST /api/codes-promo/create.php
@@ -76,4 +77,3 @@ try {
     error_log("Create promo error: " . $e->getMessage());
     Response::serverError("Erreur lors de la création du code promo");
 }
-?>

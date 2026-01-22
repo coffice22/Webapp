@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Mettre à jour une demande de domiciliation
  * PUT /api/domiciliations/update.php
@@ -73,4 +74,3 @@ try {
     error_log("Update domiciliation error: " . $e->getMessage());
     Response::serverError();
 }
-?>

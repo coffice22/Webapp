@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Domiciliation d'un utilisateur spécifique
  * GET /api/domiciliations/user.php?user_id=xxx
@@ -47,4 +48,3 @@ try {
     error_log("Get user domiciliation error: " . $e->getMessage());
     Response::serverError();
 }
-?>

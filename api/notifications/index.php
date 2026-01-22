@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API: Liste des notifications d'un utilisateur
  * GET /api/notifications/index.php
@@ -32,4 +33,3 @@ try {
     error_log("Get notifications error: " . $e->getMessage());
     Response::serverError("Erreur lors de la récupération des notifications");
 }
-?>
