@@ -901,7 +901,7 @@ const InventoryManagement = () => {
                 })}
                 size={200}
                 level="H"
-                includeMargin={true}
+                includeMargin
               />
             </div>
 
