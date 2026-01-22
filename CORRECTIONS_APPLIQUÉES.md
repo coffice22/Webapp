@@ -1,7 +1,7 @@
-# Corrections Appliquées - Session 2
+# Corrections Appliquées - Session 2 (Complétée)
 
 Date: 2026-01-22
-Version: 3.1.1
+Version: 3.1.2
 
 ## 🐛 Problèmes Détectés
 
@@ -164,17 +164,85 @@ rm api/install.php  # si déjà exécuté
 
 ## 📁 Fichiers Modifiés
 
+**Session 2a:**
 - ✅ `src/components/ui/DateTimePicker.tsx` - Fix clés dupliquées
-- ✅ `api/reservations/create.php` - Messages d'erreur détaillés
+- ✅ `api/reservations/create.php` - Messages d'erreur détaillés + chargement `.env`
 - ✅ `.env` - Mode développement, suppression variables Supabase
 - ✅ `À_LIRE_MAINTENANT.txt` - Ajout section dépannage
 
-## 🏗️ Build
+**Session 2b:**
+- ✅ `api/users/update.php` - Chargement `.env` + messages améliorés
+- ✅ `api/reservations/create.php` - Chargement `.env` + messages améliorés
+- ✅ `src/main.tsx` - Future flags React Router
+
+## 🔧 Corrections Supplémentaires (Session 2b)
+
+### 1. Chargement `.env` dans les Endpoints API
+**Problème:** `APP_ENV` n'était pas chargé correctement dans `users/update.php` et `reservations/create.php`
+
+**Cause:** Ces fichiers ne chargeaient pas directement le fichier `.env`, donc la variable `APP_ENV=development` n'était pas disponible.
+
+**Solution:**
+Ajout du chargement explicite du `.env` au début de chaque fichier:
+```php
+// Charger .env pour APP_ENV
+$envFile = __DIR__ . '/../../.env';
+if (file_exists($envFile)) {
+    $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        // ... parse et charge dans $_ENV
+    }
+}
+```
+
+**Fichiers modifiés:**
+- `api/users/update.php`
+- `api/reservations/create.php`
+
+### 2. Messages d'Erreur Améliorés
+**Amélioration:** Simplification de la détection du mode développement
+
+**Avant:**
+```php
+$isDev = getenv('APP_ENV') === 'development' || ($_ENV['APP_ENV'] ?? '') === 'development';
+```
+
+**Après:**
+```php
+$isDev = ($_ENV['APP_ENV'] ?? 'production') === 'development';
+```
+
+**Résultat:** Messages d'erreur détaillés maintenant **garantis** en mode développement
+
+### 3. Warnings React Router Future Flags
+**Problème:** 2 warnings React Router dans la console
+```
+⚠️ v7_startTransition future flag warning
+⚠️ v7_relativeSplatPath future flag warning
+```
+
+**Cause:** React Router 6 prépare la migration vers la v7
+
+**Solution:** Ajout des future flags dans `BrowserRouter`:
+```typescript
+<BrowserRouter
+  future={{
+    v7_startTransition: true,
+    v7_relativeSplatPath: true
+  }}
+>
+```
+
+**Fichier modifié:** `src/main.tsx`
+
+**Résultat:** Plus aucun warning React Router
+
+## 🏗️ Build Final
 
 **Status:** ✅ Réussi
-**Temps:** 15.84s
+**Temps:** 12.27s (optimisé)
 **Erreurs:** 0
-**Warnings:** 0 (warning React corrigé)
+**Warnings:** 0
 
 ## 🎯 Prochaines Étapes
 
@@ -214,8 +282,40 @@ rm api/install.php  # si déjà exécuté
 - **Guide rapide:** `À_LIRE_MAINTENANT.txt`
 - **README:** `README.md`
 
+## 🎉 Résultat Final
+
+### Console navigateur (F12) après corrections:
+- ✅ Plus de warnings React (clés dupliquées)
+- ✅ Plus de warnings React Router (future flags)
+- ✅ Messages d'erreur 500 maintenant détaillés en mode développement
+- ✅ Identification précise des problèmes serveur
+
+### Prochaine étape: Diagnostic et Résolution des Erreurs 500
+
+Maintenant que les messages d'erreur sont correctement affichés, vous pourrez:
+
+1. **Voir exactement l'erreur** dans la console (F12) quand vous essayez de:
+   - Créer une réservation
+   - Mettre à jour votre profil
+
+2. **Exécuter le diagnostic:**
+   ```
+   https://coffice.dz/api/test_connection.php
+   ```
+
+3. **Installer la BDD si nécessaire:**
+   ```
+   https://coffice.dz/api/install.php
+   ```
+
+### Ce qui a été corrigé:
+- ✅ Warnings React (clés dupliquées) → **CORRIGÉ**
+- ✅ Warnings React Router → **CORRIGÉ**
+- ✅ Messages d'erreur génériques → **CORRIGÉ (maintenant détaillés)**
+- ⏳ Erreurs 500 serveur → **Diagnostic maintenant possible**
+
 ---
 
 **Date:** 2026-01-22
-**Version:** 3.1.1
-**Build:** ✅ Réussi (15.84s)
+**Version:** 3.1.2
+**Build:** ✅ Réussi (12.27s)

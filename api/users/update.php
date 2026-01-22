@@ -10,6 +10,23 @@ require_once '../config/database.php';
 require_once '../utils/Auth.php';
 require_once '../utils/Response.php';
 
+// Charger .env pour APP_ENV
+$envFile = __DIR__ . '/../../.env';
+if (file_exists($envFile)) {
+    $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        $line = trim($line);
+        if ($line === '' || $line[0] === '#' || strpos($line, '=') === false) continue;
+        [$key, $value] = explode('=', $line, 2);
+        $key = trim($key);
+        $value = trim($value);
+        if ($key !== '' && !isset($_ENV[$key])) {
+            $_ENV[$key] = $value;
+            putenv("$key=$value");
+        }
+    }
+}
+
 try {
     $auth = Auth::verifyAuth();
 
@@ -124,10 +141,12 @@ try {
 } catch (Exception $e) {
     error_log("User update error: " . $e->getMessage());
     error_log("User update trace: " . $e->getTraceAsString());
+    error_log("APP_ENV value: " . ($_ENV['APP_ENV'] ?? 'not set'));
 
-    $isDev = getenv('APP_ENV') === 'development' || ($_ENV['APP_ENV'] ?? '') === 'development';
+    $isDev = ($_ENV['APP_ENV'] ?? 'production') === 'development';
+
     if ($isDev) {
-        Response::error($e->getMessage(), 500);
+        Response::error("Mise à jour utilisateur échouée: " . $e->getMessage(), 500);
     } else {
         Response::serverError("Erreur lors de la mise à jour");
     }
