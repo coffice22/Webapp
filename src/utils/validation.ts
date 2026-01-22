@@ -95,14 +95,14 @@ export const validationRules = {
     required: `${fieldName} requis`
   }),
 
-  minLength: (length: number, fieldName: string = 'Ce champ') => ({
+  minLength: (length: number, fieldName = 'Ce champ') => ({
     minLength: {
       value: length,
       message: `${fieldName} doit contenir au moins ${length} caractères`
     }
   }),
 
-  maxLength: (length: number, fieldName: string = 'Ce champ') => ({
+  maxLength: (length: number, fieldName = 'Ce champ') => ({
     maxLength: {
       value: length,
       message: `${fieldName} ne peut pas dépasser ${length} caractères`
