@@ -122,7 +122,7 @@ const AnalyticsAndReporting = () => {
         doc.text(`${subscriptions.filter(s => s.status === 'active').length}`, 80, 100);
         
         doc.text('Taux de rétention:', 25, 110);
-        doc.text(`85%`, 80, 110);
+        doc.text("85%", 80, 110);
       }
       
       // Tableau de données

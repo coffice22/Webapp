@@ -707,7 +707,7 @@ const DomiciliationPublic = () => {
             <p className="text-gray-600 text-lg max-w-2xl mx-auto">
               {visibleCompanies.length > 0
                 ? `Rejoignez les ${visibleCompanies.length} entreprises qui ont choisi Coffice pour leur domiciliation`
-                : `Soyez parmi les premières entreprises à domicilier votre siège social chez Coffice`
+                : "Soyez parmi les premières entreprises à domicilier votre siège social chez Coffice"
               }
             </p>
           </div>
