@@ -121,21 +121,40 @@ FICHIERS SUPPRIMÉS:
 📘 README principal:              README.md
 
 ═══════════════════════════════════════════════════════════════
+   ERREURS 500 (Réservations/Domiciliation)?
+═══════════════════════════════════════════════════════════════
+
+Si vous avez des erreurs 500:
+
+1. 🔍 Diagnostiquez:
+   Visitez: https://coffice.dz/api/test_connection.php
+   (Supprimez ce fichier après le test!)
+
+2. 🔧 Si "Base de données n'existe pas":
+   Visitez: https://coffice.dz/api/install.php
+   (Supprimez ce fichier après l'installation!)
+
+3. 📖 Guide complet de dépannage:
+   Consultez: DÉPANNAGE.md
+
+═══════════════════════════════════════════════════════════════
    AIDE ET DÉBOGAGE
 ═══════════════════════════════════════════════════════════════
 
-Si problème:
+En mode développement (APP_ENV=development), les erreurs 500
+afficheront le message exact du problème dans la console (F12).
 
 1. Vérifiez la console navigateur (F12)
    Vous verrez: [API] URL configurée: ...
                 [API] Request failed: ...
+                Erreur création réservation: [message détaillé]
 
 2. Testez manuellement l'API:
    curl https://coffice.dz/api/auth/debug.php
 
 3. Consultez les logs PHP du serveur
 
-4. Relisez INSTALLATION.md étape par étape
+4. Lisez DÉPANNAGE.md pour les problèmes courants
 
 ═══════════════════════════════════════════════════════════════
    VERSION & BUILD

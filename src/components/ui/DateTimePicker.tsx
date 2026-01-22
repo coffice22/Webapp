@@ -45,7 +45,15 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
     return `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
   })
 
-  const daysOfWeek = ['L', 'M', 'M', 'J', 'V', 'S', 'D']
+  const daysOfWeek = [
+    { key: 'lun', label: 'L' },
+    { key: 'mar', label: 'M' },
+    { key: 'mer', label: 'M' },
+    { key: 'jeu', label: 'J' },
+    { key: 'ven', label: 'V' },
+    { key: 'sam', label: 'S' },
+    { key: 'dim', label: 'D' }
+  ]
   const monthStart = startOfMonth(currentMonth)
   const monthEnd = endOfMonth(currentMonth)
   const monthDays = eachDayOfInterval({ start: monthStart, end: monthEnd })
@@ -262,8 +270,8 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
 
         <div className="grid grid-cols-7 gap-0.5">
           {daysOfWeek.map(day => (
-            <div key={day} className="text-center text-xs font-bold text-gray-500 py-2">
-              {day}
+            <div key={day.key} className="text-center text-xs font-bold text-gray-500 py-2">
+              {day.label}
             </div>
           ))}
           {Array.from({ length: startPadding }).map((_, i) => <div key={`pad-${i}`} />)}

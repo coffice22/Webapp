@@ -279,6 +279,13 @@ try {
 
 } catch (Exception $e) {
     error_log("Create reservation error: " . $e->getMessage());
-    Response::serverError("Erreur lors de la création de la réservation");
+    error_log("Create reservation trace: " . $e->getTraceAsString());
+
+    $isDev = getenv('APP_ENV') === 'development' || ($_ENV['APP_ENV'] ?? '') === 'development';
+    if ($isDev) {
+        Response::error("Erreur création réservation: " . $e->getMessage(), 500);
+    } else {
+        Response::serverError("Erreur lors de la création de la réservation");
+    }
 }
 ?>
