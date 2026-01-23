@@ -1378,7 +1378,10 @@ const MaintenanceManagement = () => {
             </h4>
             <div className="space-y-3">
               {spaces.slice(0, 5).map((space, index) => (
-                <div key={`space-cost-${space.id}`} className="flex items-center justify-between">
+                <div
+                  key={`space-cost-${space.id}`}
+                  className="flex items-center justify-between"
+                >
                   <span className="text-sm text-gray-600">{space.name}</span>
                   <div className="flex items-center space-x-4">
                     <div className="w-32 bg-gray-200 rounded-full h-2">

@@ -293,7 +293,10 @@ const Reports = () => {
                   maxRevenu > 0 ? (espace.revenu / maxRevenu) * 100 : 0;
 
                 return (
-                  <div key={`espace-revenu-${espace.id || espace.nom}`} className="space-y-2">
+                  <div
+                    key={`espace-revenu-${espace.id || espace.nom}`}
+                    className="space-y-2"
+                  >
                     <div className="flex justify-between items-center text-sm">
                       <span className="font-medium text-gray-900">
                         {espace.nom}

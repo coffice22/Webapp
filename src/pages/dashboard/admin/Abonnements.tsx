@@ -614,7 +614,10 @@ const AdminAbonnements = () => {
             </label>
             <div className="space-y-2">
               {formData.avantages?.map((avantage, index) => (
-                <div key={`avantage-form-${index}`} className="flex items-center gap-2">
+                <div
+                  key={`avantage-form-${index}`}
+                  className="flex items-center gap-2"
+                >
                   <div className="flex-1 px-3 py-2 bg-gray-50 rounded-lg text-sm">
                     {avantage}
                   </div>
