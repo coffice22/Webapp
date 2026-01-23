@@ -48,6 +48,7 @@ Vous devriez voir la colonne `rappel_envoye` dans la liste.
 ## Impact
 
 Cette colonne permet au script `scripts/send_reminders.php` de:
+
 - Ne pas envoyer plusieurs fois le même rappel
 - Optimiser les requêtes avec un index dédié
 - Tracer les rappels envoyés

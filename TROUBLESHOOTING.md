@@ -14,6 +14,7 @@ curl https://coffice.dz/api/test_db_connection.php
 ```
 
 Ce script teste:
+
 - La connexion MySQL
 - L'existence de toutes les tables
 - Les colonnes critiques de la table reservations
@@ -25,6 +26,7 @@ Ce script teste:
 **Symptôme:** Les tables n'existent pas
 
 **Solution:**
+
 ```bash
 # 1. Importer le schéma complet
 mysql -u cofficed_user -p cofficed_coffice < database/coffice.sql
@@ -39,6 +41,7 @@ mysql -u cofficed_user -p cofficed_coffice < database/migrations/003_add_rappel_
 **Symptôme:** Le script de rappels échoue
 
 **Solution:**
+
 ```bash
 mysql -u cofficed_user -p cofficed_coffice < database/migrations/003_add_rappel_envoye.sql
 ```
@@ -58,6 +61,7 @@ DB_PASSWORD=CofficeADMIN2025!
 ```
 
 Tester la connexion:
+
 ```bash
 mysql -u cofficed_user -p -h localhost cofficed_coffice
 ```
@@ -67,6 +71,7 @@ mysql -u cofficed_user -p -h localhost cofficed_coffice
 **Symptôme:** Erreur "Access denied"
 
 **Solution:**
+
 ```sql
 -- Se connecter en root
 mysql -u root -p
@@ -81,6 +86,7 @@ FLUSH PRIVILEGES;
 **Symptôme:** Pas de détails d'erreur
 
 **Solution:**
+
 ```bash
 # Vérifier/créer le dossier de logs
 mkdir -p api/logs
@@ -93,6 +99,7 @@ APP_ENV=development
 ```
 
 Puis consulter les logs:
+
 ```bash
 tail -f api/logs/php_errors.log
 ```
