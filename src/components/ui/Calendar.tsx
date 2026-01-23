@@ -1,7 +1,19 @@
-import { useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths, startOfWeek, endOfWeek, isToday } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  format,
+  startOfMonth,
+  endOfMonth,
+  eachDayOfInterval,
+  isSameMonth,
+  isSameDay,
+  addMonths,
+  subMonths,
+  startOfWeek,
+  endOfWeek,
+  isToday,
+} from "date-fns";
+import { fr } from "date-fns/locale";
 
 interface CalendarProps {
   reservations: any[];
@@ -9,7 +21,11 @@ interface CalendarProps {
   selectedDate?: Date;
 }
 
-export default function Calendar({ reservations, onDateClick, selectedDate }: CalendarProps) {
+export default function Calendar({
+  reservations,
+  onDateClick,
+  selectedDate,
+}: CalendarProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
   const monthStart = startOfMonth(currentMonth);
@@ -20,7 +36,7 @@ export default function Calendar({ reservations, onDateClick, selectedDate }: Ca
   const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
 
   const getReservationsForDay = (date: Date) => {
-    return reservations.filter(res => {
+    return reservations.filter((res) => {
       const resDate = new Date(res.date_debut);
       return isSameDay(resDate, date);
     });
@@ -45,7 +61,7 @@ export default function Calendar({ reservations, onDateClick, selectedDate }: Ca
         </button>
 
         <h2 className="text-lg font-semibold capitalize">
-          {format(currentMonth, 'MMMM yyyy', { locale: fr })}
+          {format(currentMonth, "MMMM yyyy", { locale: fr })}
         </h2>
 
         <button
@@ -58,8 +74,11 @@ export default function Calendar({ reservations, onDateClick, selectedDate }: Ca
 
       <div className="p-4">
         <div className="grid grid-cols-7 gap-2 mb-2">
-          {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map((day) => (
-            <div key={day} className="text-center text-sm font-medium text-gray-600 py-2">
+          {["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"].map((day) => (
+            <div
+              key={day}
+              className="text-center text-sm font-medium text-gray-600 py-2"
+            >
               {day}
             </div>
           ))}
@@ -79,22 +98,22 @@ export default function Calendar({ reservations, onDateClick, selectedDate }: Ca
                 onClick={() => onDateClick && onDateClick(day)}
                 className={`
                   relative aspect-square p-2 rounded-lg text-sm transition-all
-                  ${!isCurrentMonth ? 'text-gray-300' : 'text-gray-900'}
-                  ${isSelected ? 'bg-blue-600 text-white' : ''}
-                  ${isCurrentDay && !isSelected ? 'bg-blue-50 border-2 border-blue-600' : ''}
-                  ${!isSelected && !isCurrentDay ? 'hover:bg-gray-100' : ''}
-                  ${hasReservations && !isSelected ? 'font-semibold' : ''}
+                  ${!isCurrentMonth ? "text-gray-300" : "text-gray-900"}
+                  ${isSelected ? "bg-blue-600 text-white" : ""}
+                  ${isCurrentDay && !isSelected ? "bg-blue-50 border-2 border-blue-600" : ""}
+                  ${!isSelected && !isCurrentDay ? "hover:bg-gray-100" : ""}
+                  ${hasReservations && !isSelected ? "font-semibold" : ""}
                 `}
               >
                 <div className="flex flex-col items-center justify-center h-full">
-                  <span>{format(day, 'd')}</span>
+                  <span>{format(day, "d")}</span>
                   {hasReservations && (
                     <div className="flex gap-1 mt-1">
                       {dayReservations.slice(0, 3).map((_, i) => (
                         <div
                           key={i}
                           className={`w-1 h-1 rounded-full ${
-                            isSelected ? 'bg-white' : 'bg-blue-600'
+                            isSelected ? "bg-white" : "bg-blue-600"
                           }`}
                         />
                       ))}
