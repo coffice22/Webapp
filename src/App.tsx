@@ -22,6 +22,8 @@ const DomiciliationPublic = lazy(() => import("./pages/Domiciliation"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
+const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Legal = lazy(() => import("./pages/Legal"));
 const ERPSystem = lazy(() => import("./pages/ERPSystem"));
 
@@ -160,6 +162,8 @@ function App() {
             {/* Pages d'authentification */}
             <Route path="/connexion" element={<Login />} />
             <Route path="/inscription" element={<Register />} />
+            <Route path="/mot-de-passe-oublie" element={<ForgotPassword />} />
+            <Route path="/reinitialiser-mot-de-passe" element={<ResetPassword />} />
 
             {/* Dashboard (application) */}
             <Route path="/app/*" element={<Dashboard />} />

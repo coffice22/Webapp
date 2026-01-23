@@ -191,4 +191,27 @@ class Sanitizer
     {
         return str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $string);
     }
+
+    /**
+     * Nettoyer un nom de fichier pour éviter les attaques path traversal
+     *
+     * @param string $filename
+     * @return string
+     */
+    public static function cleanFilename($filename)
+    {
+        $filename = basename($filename);
+
+        $filename = preg_replace('/[^a-zA-Z0-9._-]/', '_', $filename);
+
+        $filename = preg_replace('/(\.\.+)/', '.', $filename);
+
+        $filename = trim($filename, '._-');
+
+        if (empty($filename)) {
+            $filename = 'file_' . time();
+        }
+
+        return $filename;
+    }
 }

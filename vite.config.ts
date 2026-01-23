@@ -1,6 +1,6 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import { copyFileSync } from "fs";
+import { copyFileSync, existsSync, mkdirSync } from "fs";
 import { resolve } from "path";
 
 // https://vitejs.dev/config/
@@ -10,10 +10,20 @@ export default defineConfig({
     {
       name: "copy-htaccess",
       closeBundle() {
-        copyFileSync(
-          resolve(__dirname, ".htaccess"),
-          resolve(__dirname, "dist", ".htaccess"),
-        );
+        try {
+          const distDir = resolve(__dirname, "dist");
+          if (!existsSync(distDir)) {
+            mkdirSync(distDir, { recursive: true });
+          }
+          const htaccessSource = resolve(__dirname, ".htaccess");
+          const htaccessDest = resolve(distDir, ".htaccess");
+          if (existsSync(htaccessSource)) {
+            copyFileSync(htaccessSource, htaccessDest);
+            console.log("✓ .htaccess copied to dist/");
+          }
+        } catch (error) {
+          console.warn("Warning: Could not copy .htaccess:", error.message);
+        }
       },
     },
   ],
