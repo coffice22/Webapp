@@ -72,7 +72,8 @@ try {
     Response::error('Erreur lors du traitement du webhook', 500);
 }
 
-function handlePaymentSuccess($db, $paymentIntent) {
+function handlePaymentSuccess($db, $paymentIntent)
+{
     try {
         $userId = $paymentIntent->metadata->user_id ?? null;
         $reservationId = $paymentIntent->metadata->reservation_id ?? null;
@@ -145,7 +146,8 @@ function handlePaymentSuccess($db, $paymentIntent) {
     }
 }
 
-function handlePaymentFailure($db, $paymentIntent) {
+function handlePaymentFailure($db, $paymentIntent)
+{
     try {
         $userId = $paymentIntent->metadata->user_id ?? null;
         $reservationId = $paymentIntent->metadata->reservation_id ?? null;

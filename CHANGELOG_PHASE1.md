@@ -13,6 +13,7 @@ Toutes les 4 fonctionnalités critiques de la Phase 1 ont été implémentées a
 ### ✅ 1. Système d'Emails Complet
 
 **Backend:**
+
 - ✅ Classe `Mailer` avec support PHPMailer + fonction `mail()` native
 - ✅ Configuration SMTP flexible (Gmail, serveurs personnalisés)
 - ✅ 5 templates d'emails professionnels en HTML :
@@ -23,6 +24,7 @@ Toutes les 4 fonctionnalités critiques de la Phase 1 ont été implémentées a
   - `domiciliation-status.php` - Notifications de statut domiciliation
 
 **Configuration:**
+
 ```env
 MAIL_MAILER=smtp
 MAIL_HOST=smtp.gmail.com
@@ -35,6 +37,7 @@ MAIL_FROM_NAME=Coffice
 ```
 
 **Usage:**
+
 ```php
 Mailer::sendWelcomeEmail($email, $name);
 Mailer::sendPasswordReset($email, $name, $token);
@@ -48,6 +51,7 @@ Mailer::sendDomiciliationStatus($email, $status, $domiciliation);
 ### ✅ 2. Réinitialisation de Mot de Passe
 
 **Backend:**
+
 - ✅ Table `password_resets` avec tokens sécurisés (SHA-256)
 - ✅ Expiration automatique (1 heure)
 - ✅ Protection contre les abus (rate limiting)
@@ -58,6 +62,7 @@ Mailer::sendDomiciliationStatus($email, $status, $domiciliation);
   - `GET /api/auth/verify-reset-token` - Vérifier la validité du token
 
 **Frontend:**
+
 - ✅ Page `/mot-de-passe-oublie` - Formulaire de demande
 - ✅ Page `/reinitialiser-mot-de-passe` - Formulaire de nouveau mot de passe
 - ✅ Validation en temps réel du token
@@ -65,11 +70,13 @@ Mailer::sendDomiciliationStatus($email, $status, $domiciliation);
 - ✅ Lien dans la page de connexion
 
 **Migration SQL:**
+
 ```bash
 mysql -u root -p cofficed_coffice < database/migrations/002_password_resets.sql
 ```
 
 **Sécurité:**
+
 - Hash SHA-256 des tokens dans la DB
 - Tokens aléatoires cryptographiquement sûrs (32 bytes)
 - Expiration après 1 heure
@@ -81,6 +88,7 @@ mysql -u root -p cofficed_coffice < database/migrations/002_password_resets.sql
 ### ✅ 3. Upload de Documents
 
 **Backend:**
+
 - ✅ 4 endpoints complets :
   - `POST /api/documents/upload` - Upload sécurisé
   - `GET /api/documents/download` - Télécharger un document
@@ -88,6 +96,7 @@ mysql -u root -p cofficed_coffice < database/migrations/002_password_resets.sql
   - `GET /api/documents/index` - Lister les documents
 
 **Sécurité:**
+
 - ✅ Validation stricte des types de fichiers
 - ✅ Vérification MIME type réelle (finfo)
 - ✅ Limite de taille (10MB par défaut, configurable)
@@ -97,17 +106,20 @@ mysql -u root -p cofficed_coffice < database/migrations/002_password_resets.sql
 - ✅ Contrôle d'accès basé sur propriété
 
 **Types Autorisés:**
+
 - Images: JPG, PNG, GIF, WEBP
 - Documents: PDF, DOC, DOCX, XLS, XLSX
 - Archives: ZIP
 
 **Configuration:**
+
 ```env
 UPLOAD_MAX_SIZE=5242880  # 5 MB en bytes
 UPLOAD_DIR=uploads
 ```
 
 **Structure:**
+
 ```
 api/
 ├── uploads/
@@ -121,6 +133,7 @@ api/
 ```
 
 **Permissions requises:**
+
 ```bash
 chmod 755 api/uploads
 chmod 755 api/uploads/documents
@@ -131,17 +144,20 @@ chmod 755 api/uploads/documents
 ### ✅ 4. Intégration Paiement Réelle
 
 **Backend:**
+
 - ✅ Support multi-gateway :
   - **Stripe** (International) - Full integration avec webhooks
   - **CIB** (Algérie) - Structure prête
   - **Paiement Manuel** (Cash / Virement) - Avec confirmation admin
 
 **Endpoints:**
+
 - `POST /api/payments/create-intent` - Créer une intention de paiement
 - `POST /api/payments/confirm-manual` - Confirmer paiement manuel
 - `POST /api/payments/webhook` - Recevoir webhooks Stripe
 
 **Configuration Stripe:**
+
 ```env
 STRIPE_SECRET_KEY=sk_live_...
 STRIPE_PUBLISHABLE_KEY=pk_live_...
@@ -149,6 +165,7 @@ STRIPE_WEBHOOK_SECRET=whsec_...
 ```
 
 **Configuration CIB:**
+
 ```env
 CIB_MERCHANT_ID=votre_merchant_id
 CIB_SECRET_KEY=votre_secret_key
@@ -156,6 +173,7 @@ CIB_API_URL=https://payment.cib.dz
 ```
 
 **Dépendances:**
+
 ```bash
 composer install  # Installe stripe/stripe-php
 ```
@@ -177,6 +195,7 @@ composer install  # Installe stripe/stripe-php
    - Email de confirmation envoyé
 
 **Webhooks Stripe:**
+
 ```
 URL: https://coffice.dz/api/payments/webhook
 Events:
@@ -189,6 +208,7 @@ Events:
 ## 🔧 Dépendances Ajoutées
 
 **PHP (composer.json):**
+
 ```json
 {
   "require": {
@@ -200,6 +220,7 @@ Events:
 ```
 
 **Installation:**
+
 ```bash
 composer install
 ```
@@ -269,6 +290,7 @@ database/
 ## 🧪 Tests
 
 **Build Frontend:**
+
 ```bash
 npm run build
 # ✓ Build réussi (14.92s)
@@ -277,6 +299,7 @@ npm run build
 ```
 
 **Tests API:**
+
 ```bash
 php scripts/test_api.php https://coffice.dz/api
 ```
@@ -337,11 +360,13 @@ chmod 644 .env
 ### 4. Configuration Email
 
 **Gmail (Recommandé pour tests):**
+
 1. Activer authentification à 2 facteurs
 2. Créer "Mot de passe d'application"
 3. Utiliser ce mot de passe dans MAIL_PASSWORD
 
 **SMTP Personnalisé:**
+
 ```env
 MAIL_HOST=smtp.votre-domaine.com
 MAIL_PORT=587
@@ -401,6 +426,7 @@ MAIL_ENCRYPTION=tls
 Aucun bug critique identifié.
 
 **Warnings:**
+
 - Browserslist data 7 mois old (non critique)
 - authStore import dynamique/statique mixte (non critique)
 
@@ -409,14 +435,17 @@ Aucun bug critique identifié.
 ## 📞 Support
 
 **Questions Techniques:**
+
 - Email: dev@coffice.dz
 - Documentation: Ce fichier + DEPLOYMENT.md
 
 **Configuration Stripe:**
+
 - Support Stripe: https://support.stripe.com
 - Documentation: https://stripe.com/docs
 
 **Configuration Email:**
+
 - Gmail App Passwords: https://support.google.com/accounts/answer/185833
 
 ---
@@ -441,6 +470,7 @@ Aucun bug critique identifié.
 **Toutes les fonctionnalités critiques de la Phase 1 sont implémentées et testées.**
 
 L'application Coffice est maintenant **Production Ready** avec :
+
 - ✅ Système d'emails fonctionnel
 - ✅ Réinitialisation de mot de passe sécurisée
 - ✅ Upload de documents avec contrôles de sécurité

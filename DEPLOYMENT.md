@@ -112,6 +112,7 @@ STRIPE_WEBHOOK_SECRET=whsec_...
 ### CIB (Algérie)
 
 Contacter CIB pour obtenir:
+
 - Merchant ID
 - Secret Key
 - Documentation d'intégration
@@ -124,6 +125,7 @@ CIB_SECRET_KEY=votre_secret_key
 ### Mode Manuel (Sans Gateway)
 
 Laisser les variables vides. Le système permettra:
+
 - Paiement en espèces (à confirmer sur place)
 - Virement bancaire (avec référence)
 
@@ -183,6 +185,7 @@ crontab -e
 ```
 
 Ajouter:
+
 ```cron
 # Nettoyage quotidien (2h du matin)
 0 2 * * * mysql cofficed_coffice -e "CALL cleanup_expired_data()"
@@ -197,6 +200,7 @@ Ajouter:
 ## 🧪 Tests
 
 ### Backend
+
 ```bash
 # Test connexion DB
 php api/check.php
@@ -206,6 +210,7 @@ php scripts/test_complete.php
 ```
 
 ### Frontend
+
 ```bash
 # Build de production
 npm run build
@@ -219,6 +224,7 @@ npm run preview
 ### Problème: Email ne s'envoie pas
 
 **Solution:**
+
 1. Vérifier les logs: `tail -f api/logs/php_errors.log`
 2. Tester SMTP: `php scripts/test_email.php`
 3. Vérifier le firewall (port 587 ouvert)
@@ -226,6 +232,7 @@ npm run preview
 ### Problème: Upload échoue
 
 **Solution:**
+
 ```bash
 # Vérifier permissions
 ls -la api/uploads/
@@ -239,6 +246,7 @@ php -i | grep post_max_size
 ### Problème: Paiement Stripe échoue
 
 **Solution:**
+
 1. Mode test: `sk_test_...` et `pk_test_...`
 2. Vérifier webhook reçu: Dashboard Stripe > Developers > Webhooks
 3. Logs: `api/logs/php_errors.log`
@@ -288,6 +296,7 @@ mysql -u root -p cofficed_coffice < database/migrations/XXX_migration.sql
 ## 📞 Support
 
 Pour toute question:
+
 - Email: support@coffice.dz
 - Documentation: https://docs.coffice.dz
 - GitHub Issues: https://github.com/coffice/app/issues
