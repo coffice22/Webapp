@@ -39,6 +39,7 @@ npm run test:local
 ### 🎉 Nouveautés v3.2.0 (Dernière version)
 
 #### 🔔 Système de Notifications Complet
+
 - **Centre de notifications** avec badge temps réel dans la navbar
 - **Page notifications dédiée** avec filtres avancés (type, statut)
 - Marquage lu/non lu individuel et en masse
@@ -46,6 +47,7 @@ npm run test:local
 - Affichage avec icônes et dates relatives
 
 #### 📄 Pages de Détail Complètes
+
 - **Détail Réservation** (`/app/reservations/:id`)
   - Informations espace, dates, client, tarifs
   - Historique et notes complètes
@@ -64,12 +66,14 @@ npm run test:local
   - Historique d'inscription
 
 #### 🚫 Annulation de Réservations
+
 - Bouton "Annuler" sur chaque réservation
 - Modal de confirmation
 - Statuts annulables : en_attente, confirmée
 - Actualisation automatique après annulation
 
 #### 📊 Statistiques API en Temps Réel
+
 - Dashboard Reports utilise les endpoints API
 - Sélecteur de période (jour, semaine, mois, année)
 - Bouton actualiser avec animation
@@ -77,12 +81,14 @@ npm run test:local
 - Breakdown par type et par espace
 
 #### 🔗 Navigation Améliorée
+
 - Liens "Détails" sur toutes les cartes
 - Entrée "Notifications" dans le menu
 - Breadcrumb navigation cohérente
 - Routes complètes pour toutes les pages
 
 #### ✅ API 100% Utilisée
+
 **Tous les 44 endpoints backend sont maintenant accessibles depuis le frontend !**
 
 ### Nouveautés v3.1.0
@@ -112,6 +118,7 @@ npm run test:local
 ### Pour les Administrateurs
 
 #### Gestion
+
 - ✅ **Gestion complète des utilisateurs** avec pages de détail
 - ✅ **CRUD espaces de coworking** avec fiches détaillées
 - ✅ **Gestion des réservations** avec vue détaillée
@@ -121,6 +128,7 @@ npm run test:local
 - ✅ **Suivi des parrainages** avec récompenses
 
 #### Analytics & Reporting
+
 - ✅ **Statistiques en temps réel** depuis l'API
 - ✅ **Revenus par période** (jour, semaine, mois, année)
 - ✅ **Dashboard Analytics** avec KPIs
@@ -129,6 +137,7 @@ npm run test:local
 - ✅ **Taux d'occupation** et conversion
 
 #### Système
+
 - ✅ **Centre de notifications** pour admins
 - ✅ **Système ERP intégré**
 - ✅ **Inventaire et maintenance**
@@ -191,6 +200,7 @@ coffice-app/
 ## 🔌 Endpoints API (44/44 utilisés)
 
 ### Authentification (5)
+
 - `POST /api/auth/login.php` - Connexion
 - `POST /api/auth/register.php` - Inscription
 - `POST /api/auth/logout.php` - Déconnexion
@@ -198,12 +208,14 @@ coffice-app/
 - `POST /api/auth/refresh.php` - Refresh token
 
 ### Utilisateurs (4)
+
 - `GET /api/users/index.php` - Liste utilisateurs
 - `GET /api/users/show.php?id=` - Détail utilisateur
 - `PUT /api/users/update.php?id=` - Modifier utilisateur
 - `DELETE /api/users/delete.php?id=` - Supprimer utilisateur
 
 ### Espaces (5)
+
 - `GET /api/espaces/index.php` - Liste espaces
 - `GET /api/espaces/show.php?id=` - Détail espace
 - `POST /api/espaces/create.php` - Créer espace
@@ -211,6 +223,7 @@ coffice-app/
 - `DELETE /api/espaces/delete.php` - Supprimer espace
 
 ### Réservations (6)
+
 - `GET /api/reservations/index.php` - Liste réservations
 - `GET /api/reservations/show.php?id=` - Détail réservation
 - `POST /api/reservations/create.php` - Créer réservation
@@ -219,12 +232,14 @@ coffice-app/
 - `GET /api/reservations/user.php?user_id=` - Par utilisateur
 
 ### Notifications (4)
+
 - `GET /api/notifications/index.php` - Liste notifications
 - `PUT /api/notifications/read.php?id=` - Marquer comme lu
 - `PUT /api/notifications/read-all.php` - Tout marquer lu
 - `DELETE /api/notifications/delete.php?id=` - Supprimer
 
 ### Domiciliations (6)
+
 - `GET /api/domiciliations/index.php` - Liste domiciliations
 - `GET /api/domiciliations/user.php?user_id=` - Par utilisateur
 - `POST /api/domiciliations/create.php` - Créer demande
@@ -234,12 +249,14 @@ coffice-app/
 - `POST /api/domiciliations/activate.php` - Activer
 
 ### Abonnements (4)
+
 - `GET /api/abonnements/index.php` - Liste abonnements
 - `POST /api/abonnements/create.php` - Créer
 - `PUT /api/abonnements/update.php` - Modifier
 - `DELETE /api/abonnements/delete.php` - Supprimer
 
 ### Codes Promo (5)
+
 - `GET /api/codes-promo/index.php` - Liste codes
 - `POST /api/codes-promo/create.php` - Créer code
 - `PUT /api/codes-promo/update.php?id=` - Modifier
@@ -247,10 +264,12 @@ coffice-app/
 - `POST /api/codes-promo/validate.php` - Valider code
 
 ### Parrainages (2)
+
 - `GET /api/parrainages/index.php` - Liste parrainages
 - `POST /api/parrainages/verify.php` - Vérifier code
 
 ### Admin & Analytics (3)
+
 - `GET /api/admin/stats.php` - Statistiques globales
 - `GET /api/admin/revenue.php?period=` - Revenus par période
 - `GET /api/check.php` - Health check
@@ -258,34 +277,42 @@ coffice-app/
 ## 🎨 Espaces & Tarifs
 
 ### Open Space (12 places)
+
 - Journée: 1 200 DA | Semaine: 20 000 DA | Mois: 15 000 DA
 
 ### Private Booth Hoggar (2 places)
+
 - Journée: 6 000 DA | Semaine: 40 000 DA | Mois: 35 000 DA
 
 ### Private Booth Aurès (2 places)
+
 - Journée: 6 000 DA | Semaine: 40 000 DA | Mois: 45 000 DA
 
 ### Private Booth Atlas (4 places)
+
 - Journée: 10 000 DA | Semaine: 65 000 DA | Mois: 45 000 DA
 
 ### Salle de Réunion Premium (12 places)
+
 - Heure: 2 500 DA | Journée: 12 000 DA
 
 ## 💳 Abonnements
 
 ### Solo - 14 000 DA/mois
+
 - Accès open space 8h-18h
 - Wi-Fi 50 Mbps
 - Accès communauté
 
 ### Pro - 32 000 DA/mois
+
 - Accès tous espaces 7h-20h
 - Wi-Fi 100 Mbps
 - 2h salle réunion/mois
 - -25% sur services
 
 ### Executive - 55 000 DA/mois
+
 - Accès illimité 24/7
 - Wi-Fi illimité
 - Domiciliation incluse
@@ -426,6 +453,7 @@ cat .env
 ### Routes React renvoient 404
 
 Vérifier la configuration du serveur web :
+
 - Apache : Activer `mod_rewrite` et vérifier `.htaccess`
 - Nginx : Vérifier `try_files` dans la configuration
 
