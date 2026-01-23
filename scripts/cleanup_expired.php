@@ -43,13 +43,13 @@ try {
     echo "3. Mise à jour statut réservations expirées...\n";
     $stmt = $db->prepare('
         UPDATE reservations
-        SET statut = "completee", updated_at = NOW()
-        WHERE statut IN ("confirmee", "en_attente")
+        SET statut = "terminee", updated_at = NOW()
+        WHERE statut IN ("confirmee", "en_attente", "en_cours")
         AND date_fin < NOW()
     ');
     $stmt->execute();
     $updated = $stmt->rowCount();
-    echo "   ✓ $updated réservations marquées comme complétées\n\n";
+    echo "   ✓ $updated réservations marquées comme terminées\n\n";
 
     Logger::info('Expired reservations updated', ['count' => $updated]);
 

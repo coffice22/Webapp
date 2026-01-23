@@ -66,8 +66,9 @@ Application complète de gestion d'espaces de coworking au Mohammadia Mall, Alge
 # Importer le schéma
 mysql -u root -p cofficed_coffice < database/coffice.sql
 
-# Appliquer migration password reset
+# Appliquer les migrations
 mysql -u root -p cofficed_coffice < database/migrations/002_password_resets.sql
+mysql -u root -p cofficed_coffice < database/migrations/003_add_rappel_envoye.sql
 ```
 
 ### 3. Installation Dépendances
