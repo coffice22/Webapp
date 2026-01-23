@@ -108,7 +108,7 @@ export default function WeekCalendar({ reservations, espaces, onSlotClick }: Wee
                                 : 'bg-gray-50 hover:bg-blue-50 text-gray-600'
                               }
                             `}
-                            disabled={!!reservation}
+                            disabled={Boolean(reservation)}
                             title={reservation ? `${espace.nom} - Réservé` : `${espace.nom} - Disponible`}
                           >
                             <div className="truncate text-[10px]">{espace.nom.substring(0, 10)}</div>
