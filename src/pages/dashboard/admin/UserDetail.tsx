@@ -169,9 +169,15 @@ const UserDetail: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <p className="font-medium">{user.email}</p>
                   {user.emailVerified ? (
-                    <CheckCircle className="w-5 h-5 text-green-600" title="Email vérifié" />
+                    <CheckCircle
+                      className="w-5 h-5 text-green-600"
+                      title="Email vérifié"
+                    />
                   ) : (
-                    <XCircle className="w-5 h-5 text-red-600" title="Email non vérifié" />
+                    <XCircle
+                      className="w-5 h-5 text-red-600"
+                      title="Email non vérifié"
+                    />
                   )}
                 </div>
               </div>

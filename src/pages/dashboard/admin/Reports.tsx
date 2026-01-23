@@ -23,7 +23,9 @@ import toast from "react-hot-toast";
 
 const Reports = () => {
   const { reservations, users, espaces, domiciliationServices } = useAppStore();
-  const [periode, setPeriode] = useState<"day" | "week" | "month" | "year">("month");
+  const [periode, setPeriode] = useState<"day" | "week" | "month" | "year">(
+    "month",
+  );
   const [apiStats, setApiStats] = useState<any>(null);
   const [revenueData, setRevenueData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -73,11 +75,13 @@ const Reports = () => {
         tauxOccupation: apiStats.occupancy?.rate || 0,
         domiciliationsActives: apiStats.domiciliations?.active || 0,
         revenuDomiciliation: revenueData.subscriptions || 0,
-        espacesStats: Object.entries(revenueData.bySpace || {}).map(([nom, revenu]) => ({
-          nom,
-          revenu: Number(revenu),
-          reservations: 0,
-        })),
+        espacesStats: Object.entries(revenueData.bySpace || {}).map(
+          ([nom, revenu]) => ({
+            nom,
+            revenu: Number(revenu),
+            reservations: 0,
+          }),
+        ),
         reservationsConfirmees: apiStats.reservations?.confirmed || 0,
         reservationsEnAttente: apiStats.reservations?.pending || 0,
         reservationsAnnulees: apiStats.reservations?.cancelled || 0,
@@ -207,7 +211,14 @@ const Reports = () => {
       reservationsEnAttente,
       reservationsAnnulees,
     };
-  }, [reservations, users, espaces, domiciliationServices, apiStats, revenueData]);
+  }, [
+    reservations,
+    users,
+    espaces,
+    domiciliationServices,
+    apiStats,
+    revenueData,
+  ]);
 
   if (loading) {
     return (
@@ -367,7 +378,10 @@ const Reports = () => {
                   maxRevenu > 0 ? (espace.revenu / maxRevenu) * 100 : 0;
 
                 return (
-                  <div key={`espace-revenu-${espace.id || espace.nom}`} className="space-y-2">
+                  <div
+                    key={`espace-revenu-${espace.id || espace.nom}`}
+                    className="space-y-2"
+                  >
                     <div className="flex justify-between items-center text-sm">
                       <span className="font-medium text-gray-900">
                         {espace.nom}
