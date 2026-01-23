@@ -1064,7 +1064,7 @@ const InventoryManagement = () => {
                 .slice(0, 3)
                 .map((item, index) => (
                   <div
-                    key={index}
+                    key={`low-stock-${item.id}`}
                     className="flex items-center justify-between p-3 bg-white rounded-lg"
                   >
                     <div className="flex items-center">

@@ -443,7 +443,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                                   .slice(0, 3)
                                   .map((equip, idx) => (
                                     <span
-                                      key={idx}
+                                      key={`equip-${espace.id}-${equip}`}
                                       className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded"
                                     >
                                       {equip}

@@ -357,7 +357,7 @@ const ERPDashboard = () => {
               {recentActivities.length > 0 ? (
                 recentActivities.map((activity, index) => (
                   <div
-                    key={index}
+                    key={`activity-${activity.time}-${index}`}
                     className="flex gap-3 p-3 bg-gray-50 rounded-lg"
                   >
                     <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center text-gray-600">

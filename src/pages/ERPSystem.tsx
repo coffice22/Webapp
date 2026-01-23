@@ -656,7 +656,7 @@ const ERPSystem = () => {
               <ul className="space-y-2 mb-6">
                 {plan.avantages.map((avantage, idx) => (
                   <li
-                    key={idx}
+                    key={`avantage-${plan.id}-${idx}`}
                     className="flex items-start text-sm text-gray-600"
                   >
                     <Check className="w-4 h-4 mr-2 text-green-500 flex-shrink-0 mt-0.5" />

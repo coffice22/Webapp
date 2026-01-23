@@ -241,7 +241,7 @@ const SpacesAndPricing = () => {
               { value: "24/7", label: "Accès sécurisé" },
             ].map((stat, idx) => (
               <div
-                key={idx}
+                key={`stat-${stat.label}`}
                 className="text-center p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10"
               >
                 <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-2">
@@ -324,7 +324,7 @@ const SpacesAndPricing = () => {
 
                     <div className="space-y-3 mb-8">
                       {activeSpaceData.features.map((feature, idx) => (
-                        <div key={idx} className="flex items-start">
+                        <div key={`feature-${feature.text}`} className="flex items-start">
                           <feature.icon
                             className={`w-5 h-5 ${activeSpaceData.textColor} mt-0.5 mr-3 flex-shrink-0`}
                           />
@@ -335,7 +335,7 @@ const SpacesAndPricing = () => {
 
                     <div className="grid grid-cols-3 gap-4 p-4 bg-gray-50 rounded-xl mb-6">
                       {activeSpaceData.stats.map((stat, idx) => (
-                        <div key={idx} className="text-center">
+                        <div key={`space-stat-${stat.label}`} className="text-center">
                           <div className="text-2xl font-bold text-primary">
                             {stat.value}
                           </div>
@@ -411,7 +411,7 @@ const SpacesAndPricing = () => {
                     </p>
                     <div className="flex justify-center gap-8 mb-8">
                       {activeSpaceData.stats.map((stat, idx) => (
-                        <div key={idx} className="text-center">
+                        <div key={`booth-stat-${stat.label}`} className="text-center">
                           <div className="text-3xl font-bold text-primary">
                             {stat.value}
                           </div>
@@ -495,7 +495,7 @@ const SpacesAndPricing = () => {
                     </h4>
                     <div className="grid md:grid-cols-2 gap-3">
                       {activeSpaceData.features.map((feature, idx) => (
-                        <div key={idx} className="flex items-start">
+                        <div key={`booth-feature-${feature.text}`} className="flex items-start">
                           <feature.icon
                             className={`w-5 h-5 ${activeSpaceData.textColor} mt-0.5 mr-3 flex-shrink-0`}
                           />
@@ -519,7 +519,7 @@ const SpacesAndPricing = () => {
           <div className="grid md:grid-cols-4 gap-6">
             {benefits.map((benefit, idx) => (
               <motion.div
-                key={idx}
+                key={`benefit-${benefit.title}`}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}

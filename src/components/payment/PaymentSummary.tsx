@@ -182,7 +182,7 @@ const PaymentSummary: React.FC<PaymentSummaryProps> = ({
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {items.map((item, index) => (
-                  <tr key={index}>
+                  <tr key={`item-${item.description}-${index}`}>
                     <td className="px-4 py-3 text-sm text-gray-900">
                       {item.description}
                     </td>

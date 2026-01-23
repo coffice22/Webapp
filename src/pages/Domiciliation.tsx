@@ -454,7 +454,7 @@ const DomiciliationPublic = () => {
                   <ul className="space-y-2">
                     {service.features.map((feature, idx) => (
                       <li
-                        key={idx}
+                        key={`feature-${service.title}-${idx}`}
                         className="flex items-start gap-2 text-sm text-gray-700"
                       >
                         <div className="w-4 h-4 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -627,7 +627,7 @@ const DomiciliationPublic = () => {
 
               <ul className="space-y-3 mb-8">
                 {pricingPlan.features.map((feature, idx) => (
-                  <li key={idx} className="flex items-start gap-3">
+                  <li key={`price-feature-${feature.substring(0, 20)}-${idx}`} className="flex items-start gap-3">
                     <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                       <Check className="w-3 h-3 text-green-600" />
                     </div>
@@ -731,7 +731,7 @@ const DomiciliationPublic = () => {
               <div className="space-y-3">
                 {documentsNewCreation.map((doc, index) => (
                   <motion.div
-                    key={index}
+                    key={`new-doc-${doc.text.substring(0, 20)}-${index}`}
                     initial={{ opacity: 0, x: -20 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
@@ -771,7 +771,7 @@ const DomiciliationPublic = () => {
               <div className="space-y-3">
                 {documentsTransfer.map((doc, index) => (
                   <motion.div
-                    key={index}
+                    key={`transfer-doc-${doc.text.substring(0, 20)}-${index}`}
                     initial={{ opacity: 0, x: -20 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}

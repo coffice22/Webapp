@@ -893,7 +893,7 @@ const MaintenanceManagement = () => {
                   </label>
                   <div className="p-3 bg-gray-50 rounded-lg text-sm text-gray-700">
                     {selectedRequest.notes.split("\n").map((line, i) => (
-                      <p key={i}>{line}</p>
+                      <p key={`note-line-${i}`}>{line}</p>
                     ))}
                   </div>
                 </div>
@@ -1233,7 +1233,7 @@ const MaintenanceManagement = () => {
 
                   return (
                     <div
-                      key={index}
+                      key={`pending-request-${request.id}`}
                       className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
                     >
                       <div className="flex items-center">
@@ -1378,7 +1378,7 @@ const MaintenanceManagement = () => {
             </h4>
             <div className="space-y-3">
               {spaces.slice(0, 5).map((space, index) => (
-                <div key={index} className="flex items-center justify-between">
+                <div key={`space-cost-${space.id}`} className="flex items-center justify-between">
                   <span className="text-sm text-gray-600">{space.name}</span>
                   <div className="flex items-center space-x-4">
                     <div className="w-32 bg-gray-200 rounded-full h-2">

@@ -939,7 +939,7 @@ const InvoiceManagement = () => {
                   </thead>
                   <tbody className="divide-y divide-gray-200">
                     {selectedInvoice.items.map((item, index) => (
-                      <tr key={index}>
+                      <tr key={`invoice-item-${item.description}-${index}`}>
                         <td className="px-4 py-3 text-sm text-gray-900">
                           {item.description}
                         </td>
@@ -1158,7 +1158,7 @@ const InvoiceManagement = () => {
 
             <div className="space-y-4">
               {newInvoice.items.map((item, index) => (
-                <div key={index} className="p-4 bg-gray-50 rounded-lg">
+                <div key={`new-item-${index}`} className="p-4 bg-gray-50 rounded-lg">
                   <div className="flex justify-between items-center mb-3">
                     <h4 className="font-medium text-primary">
                       Article {index + 1}

@@ -644,7 +644,7 @@ const AnalyticsAndReporting = () => {
             <div className="space-y-4">
               {analytics?.topSpaces.map((space, index) => (
                 <div
-                  key={index}
+                  key={`top-space-${space.id || space.name}`}
                   className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
                 >
                   <div>
@@ -695,7 +695,7 @@ const AnalyticsAndReporting = () => {
                 {Object.entries(analytics?.revenueByMembership || {}).map(
                   ([key, value], index) => (
                     <div
-                      key={index}
+                      key={`membership-${key}`}
                       className="flex items-center justify-between"
                     >
                       <div className="flex items-center">
@@ -769,7 +769,7 @@ const AnalyticsAndReporting = () => {
               <div className="space-y-3">
                 {analytics?.membershipGrowth.map((item, index) => (
                   <div
-                    key={index}
+                    key={`growth-${item.period}`}
                     className="flex items-center justify-between"
                   >
                     <span className="text-sm text-gray-600">{item.period}</span>

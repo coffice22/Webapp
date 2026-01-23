@@ -1353,7 +1353,7 @@ const FinancialManagement = () => {
                   </thead>
                   <tbody className="divide-y divide-gray-200">
                     {selectedInvoice.items.map((item, index) => (
-                      <tr key={index}>
+                      <tr key={`fin-item-${item.description}-${index}`}>
                         <td className="px-4 py-3 text-sm text-gray-900">
                           {item.description}
                         </td>
@@ -1721,7 +1721,7 @@ const FinancialManagement = () => {
 
             <div className="space-y-4">
               {newInvoice.items.map((item, index) => (
-                <div key={index} className="p-4 bg-gray-50 rounded-lg">
+                <div key={`fin-new-item-${index}`} className="p-4 bg-gray-50 rounded-lg">
                   <div className="flex justify-between items-center mb-3">
                     <h5 className="font-medium text-gray-700">
                       Article #{index + 1}
