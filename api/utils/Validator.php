@@ -8,6 +8,40 @@
 class Validator
 {
     private $errors = [];
+    private $data = [];
+
+    /**
+     * Constructeur
+     * @param array $data Données à valider (optionnel)
+     */
+    public function __construct($data = [])
+    {
+        $this->data = $data ?? [];
+    }
+
+    /**
+     * Valider que les champs requis sont présents
+     * @param array $fields Liste des champs requis
+     * @return self Pour chaînage
+     */
+    public function required(array $fields)
+    {
+        foreach ($fields as $field) {
+            if (!isset($this->data[$field]) || $this->data[$field] === '' || $this->data[$field] === null) {
+                $this->errors[$field] = "Le champ $field est requis";
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * Vérifier si la validation est valide (pas d'erreurs)
+     * @return bool
+     */
+    public function isValid()
+    {
+        return empty($this->errors);
+    }
 
     /**
      * Valider un email
