@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Building,
@@ -17,6 +18,7 @@ import {
   Video,
   Grid,
   List,
+  Eye,
 } from "lucide-react";
 import { useAppStore } from "../../../store/store";
 import Button from "../../../components/ui/Button";
@@ -404,6 +406,16 @@ const Spaces = () => {
                   )}
 
                   <div className="flex gap-2 pt-4 border-t border-gray-100">
+                    <Link to={`/app/admin/spaces/${space.id}`} className="flex-1">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="w-full"
+                      >
+                        <Eye className="w-4 h-4 mr-2" />
+                        Détails
+                      </Button>
+                    </Link>
                     <Button
                       size="sm"
                       variant="outline"
