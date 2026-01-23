@@ -99,15 +99,12 @@ require_once __DIR__ . '/utils/UuidHelper.php';
 // Logger
 require_once __DIR__ . '/utils/Logger.php';
 
-// Initialiser le logger
-$logger = Logger::getInstance();
-
 // =====================================================
 // GESTIONNAIRE D'ERREURS GLOBAL
 // =====================================================
 
 // Gestionnaire d'erreurs PHP
-set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($logger) {
+set_error_handler(function ($errno, $errstr, $errfile, $errline) {
     // Ne pas traiter les erreurs supprimées avec @
     if (!(error_reporting() & $errno)) {
         return false;
@@ -133,7 +130,7 @@ set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($logger) {
 
     $errorType = $errorTypes[$errno] ?? 'UNKNOWN';
 
-    $logger->error("PHP $errorType: $errstr", [
+    Logger::error("PHP $errorType: $errstr", [
         'file' => $errfile,
         'line' => $errline,
         'type' => $errorType
@@ -144,8 +141,8 @@ set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($logger) {
 });
 
 // Gestionnaire d'exceptions non capturées
-set_exception_handler(function ($exception) use ($logger) {
-    $logger->error('Uncaught Exception: ' . $exception->getMessage(), [
+set_exception_handler(function ($exception) {
+    Logger::error('Uncaught Exception: ' . $exception->getMessage(), [
         'exception' => get_class($exception),
         'file' => $exception->getFile(),
         'line' => $exception->getLine(),
@@ -164,11 +161,11 @@ set_exception_handler(function ($exception) use ($logger) {
 });
 
 // Gestionnaire d'arrêt fatal
-register_shutdown_function(function () use ($logger) {
+register_shutdown_function(function () {
     $error = error_get_last();
 
     if ($error !== null && in_array($error['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR])) {
-        $logger->error('Fatal Error: ' . $error['message'], [
+        Logger::error('Fatal Error: ' . $error['message'], [
             'file' => $error['file'],
             'line' => $error['line'],
             'type' => $error['type']
@@ -197,7 +194,7 @@ try {
     $database = Database::getInstance();
     $db = $database->getConnection();
 } catch (Exception $e) {
-    $logger->error('Database connection failed: ' . $e->getMessage());
+    Logger::error('Database connection failed: ' . $e->getMessage());
     Response::error('Service temporairement indisponible', 503);
     exit;
 }
@@ -238,10 +235,11 @@ function getDb(): PDO
 
 /**
  * Obtenir le logger
+ * @deprecated Utiliser directement les méthodes statiques Logger::error(), Logger::info(), etc.
  */
-function getLogger(): Logger
+function getLogger(): string
 {
-    return Logger::getInstance();
+    return 'Logger';
 }
 
 /**
@@ -249,7 +247,7 @@ function getLogger(): Logger
  */
 function logInfo(string $message, array $context = []): void
 {
-    Logger::getInstance()->info($message, $context);
+    Logger::info($message, $context);
 }
 
 /**
@@ -257,7 +255,7 @@ function logInfo(string $message, array $context = []): void
  */
 function logWarning(string $message, array $context = []): void
 {
-    Logger::getInstance()->warning($message, $context);
+    Logger::warning($message, $context);
 }
 
 /**
@@ -265,7 +263,7 @@ function logWarning(string $message, array $context = []): void
  */
 function logError(string $message, array $context = []): void
 {
-    Logger::getInstance()->error($message, $context);
+    Logger::error($message, $context);
 }
 
 /**
@@ -318,15 +316,15 @@ function env(string $key, $default = null)
  */
 function sanitize(string $input): string
 {
-    return Sanitizer::cleanString($input);
+    return Sanitizer::cleanHtml($input);
 }
 
 /**
  * Sanitizer un email
  */
-function sanitizeEmail(string $email): string
+function sanitizeEmail(string $email): ?string
 {
-    return Sanitizer::email($email);
+    return Sanitizer::cleanEmail($email);
 }
 
 /**
@@ -334,7 +332,7 @@ function sanitizeEmail(string $email): string
  */
 function isValidEmail(string $email): bool
 {
-    return Validator::email($email);
+    return Validator::isValidEmail($email);
 }
 
 /**
@@ -342,7 +340,7 @@ function isValidEmail(string $email): bool
  */
 function isValidPhone(string $phone): bool
 {
-    return Validator::algerianPhone($phone);
+    return Validator::isValidPhone($phone);
 }
 
 /**

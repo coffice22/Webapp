@@ -9,28 +9,42 @@ Application web complète pour la gestion d'espaces de coworking au Mohammadia M
 ### Installation rapide (développement local)
 
 ```bash
-# 1. Installation
+# 1. Installation des dépendances
 npm install
 
-# 2. Configuration
+# 2. Configuration de l'environnement
 cp .env.example .env
 # Éditer .env avec vos paramètres MySQL
 
-# 3. Lancer le script d'installation automatique
-# Visitez: http://localhost/api/install.php (puis supprimez ce fichier!)
+# 3. Initialisation de la base de données
+# Visitez: http://localhost/api/install.php
+# ⚠️ Supprimez ce fichier après l'installation!
 
-# 4. Créer un admin
+# 4. Création d'un compte administrateur
 php scripts/create_admin_simple.php
 
-# 5. Build
+# 5. Build de l'application
 npm run build
 ```
 
 ### Test rapide
 
 ```bash
+# Tester l'API en local
 npm run test:local
 ```
+
+## 📋 Fonctionnalités
+
+- ✅ Gestion complète des espaces de coworking
+- ✅ Système de réservation en temps réel
+- ✅ Service de domiciliation d'entreprise
+- ✅ Gestion des abonnements et codes promo
+- ✅ Programme de parrainage
+- ✅ Dashboard administrateur complet
+- ✅ Système ERP intégré
+- ✅ Authentification JWT sécurisée
+- ✅ Interface responsive et moderne
 
 ## Architecture
 
@@ -38,16 +52,17 @@ npm run test:local
 
 - **Frontend:** React 18 + TypeScript + Vite + TailwindCSS
 - **Backend:** PHP 8.1 + MySQL REST API
-- **State:** Zustand + React Query
-- **Auth:** JWT avec refresh tokens
+- **State Management:** Zustand + React Query
+- **Authentification:** JWT avec refresh tokens
+- **Optimisation:** Code splitting, lazy loading
 
-### Structure
+### Structure du projet
 
 ```
 coffice-app/
 ├── api/                  # Backend PHP
-│   ├── auth/            # Authentification
-│   ├── espaces/         # Gestion espaces
+│   ├── auth/            # Authentification JWT
+│   ├── espaces/         # Gestion des espaces
 │   ├── reservations/    # Réservations
 │   ├── domiciliations/  # Domiciliations
 │   └── utils/           # Utilitaires
