@@ -1,12 +1,15 @@
 import React, { useState } from "react";
-import { Calendar, Clock, MapPin, Plus } from "lucide-react";
+import { Calendar, Clock, MapPin, Plus, XCircle, Eye } from "lucide-react";
+import { Link } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
 import { useAppStore } from "../../store/store";
+import { apiClient } from "../../lib/api-client";
 import Button from "../../components/ui/Button";
 import Card from "../../components/ui/Card";
 import Badge from "../../components/ui/Badge";
 import EmptyState from "../../components/ui/EmptyState";
 import LoadingScreen from "../../components/LoadingScreen";
+import Modal from "../../components/ui/Modal";
 import ReservationForm from "../../components/dashboard/ReservationForm";
 import { formatDate, formatPrice } from "../../utils/formatters";
 import {
@@ -14,12 +17,37 @@ import {
   getReservationStatutColor,
   STATUS_LABELS,
 } from "../../constants";
+import toast from "react-hot-toast";
 
 const Reservations = () => {
   const { user } = useAuthStore();
-  const { reservations, espaces } = useAppStore();
+  const { reservations, espaces, loadReservations } = useAppStore();
   const [showForm, setShowForm] = useState(false);
   const [selectedEspace, setSelectedEspace] = useState<any>(null);
+  const [cancellingId, setCancellingId] = useState<string | null>(null);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+
+  const handleCancelReservation = async () => {
+    if (!cancellingId) return;
+
+    try {
+      const response = await apiClient.cancelReservation(cancellingId);
+      if (response.success) {
+        toast.success("Réservation annulée avec succès");
+        await loadReservations();
+        setShowCancelModal(false);
+        setCancellingId(null);
+      } else {
+        toast.error(response.error || "Erreur lors de l'annulation");
+      }
+    } catch (error: any) {
+      toast.error(error.message || "Erreur lors de l'annulation");
+    }
+  };
+
+  const canCancelReservation = (reservation: any) => {
+    return ["en_attente", "confirmee"].includes(reservation.statut);
+  };
 
   if (!user) {
     return <LoadingScreen minimal message="Chargement..." />;
@@ -99,6 +127,32 @@ const Reservations = () => {
                     <p>{reservation.notes}</p>
                   </div>
                 )}
+
+                <div className="flex gap-2 pt-2">
+                  <Link
+                    to={`/app/reservations/${reservation.id}`}
+                    className="flex-1"
+                  >
+                    <Button variant="outline" size="sm" className="w-full">
+                      <Eye className="w-4 h-4 mr-2" />
+                      Détails
+                    </Button>
+                  </Link>
+                  {canCancelReservation(reservation) && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 text-red-600 hover:bg-red-50 border-red-300"
+                      onClick={() => {
+                        setCancellingId(reservation.id);
+                        setShowCancelModal(true);
+                      }}
+                    >
+                      <XCircle className="w-4 h-4 mr-2" />
+                      Annuler
+                    </Button>
+                  )}
+                </div>
               </div>
             </Card>
           ))}
@@ -113,6 +167,39 @@ const Reservations = () => {
         }}
         selectedEspace={selectedEspace}
       />
+
+      <Modal
+        isOpen={showCancelModal}
+        onClose={() => {
+          setShowCancelModal(false);
+          setCancellingId(null);
+        }}
+        title="Annuler la réservation"
+      >
+        <div className="space-y-4">
+          <p className="text-gray-700">
+            Êtes-vous sûr de vouloir annuler cette réservation ? Cette action
+            est irréversible.
+          </p>
+          <div className="flex gap-3 justify-end">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowCancelModal(false);
+                setCancellingId(null);
+              }}
+            >
+              Retour
+            </Button>
+            <Button
+              onClick={handleCancelReservation}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Confirmer l'annulation
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };

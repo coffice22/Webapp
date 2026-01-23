@@ -7,6 +7,8 @@ import DashboardLayout from "../components/dashboard/DashboardLayout";
 // Import direct des composants
 import DashboardHome from "../components/dashboard/DashboardHome";
 import Reservations from "./dashboard/Reservations";
+import ReservationDetail from "./dashboard/ReservationDetail";
+import Notifications from "./dashboard/Notifications";
 import Profile from "./dashboard/Profile";
 import Domiciliation from "./dashboard/Domiciliation";
 import MyCompany from "./dashboard/MyCompany";
@@ -14,7 +16,9 @@ import Parrainage from "./dashboard/Parrainage";
 import CodesPromo from "./dashboard/CodesPromo";
 // Admin pages
 import AdminUsers from "./dashboard/admin/Users";
+import UserDetail from "./dashboard/admin/UserDetail";
 import AdminSpaces from "./dashboard/admin/Spaces";
+import EspaceDetail from "./dashboard/EspaceDetail";
 import AdminReservations from "./dashboard/admin/Reservations";
 import AdminReports from "./dashboard/admin/Reports";
 import AdminDomiciliations from "./dashboard/admin/Domiciliations";
@@ -40,6 +44,8 @@ const Dashboard = () => {
 
           {/* Routes utilisateur standard */}
           <Route path="reservations" element={<Reservations />} />
+          <Route path="reservations/:id" element={<ReservationDetail />} />
+          <Route path="notifications" element={<Notifications />} />
           <Route path="domiciliation" element={<Domiciliation />} />
           <Route path="mon-entreprise" element={<MyCompany />} />
           <Route path="parrainage" element={<Parrainage />} />
@@ -49,7 +55,9 @@ const Dashboard = () => {
           {user?.role === "admin" && (
             <>
               <Route path="admin/users" element={<AdminUsers />} />
+              <Route path="admin/users/:id" element={<UserDetail />} />
               <Route path="admin/spaces" element={<AdminSpaces />} />
+              <Route path="admin/spaces/:id" element={<EspaceDetail />} />
               <Route
                 path="admin/reservations"
                 element={<AdminReservations />}

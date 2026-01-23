@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   BarChart3,
@@ -12,22 +12,83 @@ import {
   ArrowUp,
   ArrowDown,
   Percent,
+  RefreshCw,
 } from "lucide-react";
 import { useAppStore } from "../../../store/store";
+import { apiClient } from "../../../lib/api-client";
 import Card from "../../../components/ui/Card";
+import LoadingSpinner from "../../../components/ui/LoadingSpinner";
 import { formatCurrency } from "../../../utils/formatters";
+import toast from "react-hot-toast";
 
 const Reports = () => {
   const { reservations, users, espaces, domiciliationServices } = useAppStore();
-  const [periode, setPeriode] = useState<"semaine" | "mois" | "annee">("mois");
+  const [periode, setPeriode] = useState<"day" | "week" | "month" | "year">("month");
+  const [apiStats, setApiStats] = useState<any>(null);
+  const [revenueData, setRevenueData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadStats();
+  }, [periode]);
+
+  const loadStats = async () => {
+    try {
+      setLoading(true);
+      const [statsResponse, revenueResponse] = await Promise.all([
+        apiClient.getAdminStats(),
+        apiClient.getRevenue(periode),
+      ]);
+
+      if (statsResponse.success) {
+        setApiStats(statsResponse.data);
+      }
+      if (revenueResponse.success) {
+        setRevenueData(revenueResponse.data);
+      }
+    } catch (error) {
+      console.error("Erreur chargement statistiques:", error);
+      toast.error("Erreur lors du chargement des statistiques");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const stats = useMemo(() => {
+    if (apiStats && revenueData) {
+      return {
+        totalReservations: apiStats.reservations?.total || 0,
+        reservationsThisMonth: apiStats.reservations?.current || 0,
+        reservationsLastMonth: apiStats.reservations?.previous || 0,
+        variationReservations: apiStats.reservations?.variation || 0,
+        revenuTotal: revenueData.grandTotal || 0,
+        revenuThisMonth: revenueData.total || 0,
+        revenuLastMonth: 0,
+        variationRevenu: 0,
+        totalUsers: apiStats.users?.total || 0,
+        activeUsers: apiStats.users?.active || 0,
+        newUsersThisMonth: apiStats.users?.current || 0,
+        totalEspaces: espaces.length,
+        espacesDisponibles: espaces.filter((e) => e.disponible).length,
+        tauxOccupation: apiStats.occupancy?.rate || 0,
+        domiciliationsActives: apiStats.domiciliations?.active || 0,
+        revenuDomiciliation: revenueData.subscriptions || 0,
+        espacesStats: Object.entries(revenueData.bySpace || {}).map(([nom, revenu]) => ({
+          nom,
+          revenu: Number(revenu),
+          reservations: 0,
+        })),
+        reservationsConfirmees: apiStats.reservations?.confirmed || 0,
+        reservationsEnAttente: apiStats.reservations?.pending || 0,
+        reservationsAnnulees: apiStats.reservations?.cancelled || 0,
+      };
+    }
+
     const today = new Date();
     const thisMonth = today.getMonth();
     const lastMonth = thisMonth - 1;
     const thisYear = today.getFullYear();
 
-    // Réservations
     const totalReservations = reservations.length;
     const reservationsThisMonth = reservations.filter(
       (r) => new Date(r.dateCreation).getMonth() === thisMonth,
@@ -36,7 +97,6 @@ const Reports = () => {
       (r) => new Date(r.dateCreation).getMonth() === lastMonth,
     ).length;
 
-    // Revenus
     const revenuTotal = reservations
       .filter((r) => r.statut === "confirmee")
       .reduce((sum, r) => sum + r.montantTotal, 0);
@@ -57,14 +117,12 @@ const Reports = () => {
       )
       .reduce((sum, r) => sum + r.montantTotal, 0);
 
-    // Utilisateurs
     const totalUsers = users.length;
     const activeUsers = users.filter((u) => u.statut === "actif").length;
     const newUsersThisMonth = users.filter(
       (u) => new Date(u.dateCreation).getMonth() === thisMonth,
     ).length;
 
-    // Espaces
     const totalEspaces = espaces.length;
     const espacesDisponibles = espaces.filter((e) => e.disponible).length;
     const tauxOccupation =
@@ -74,7 +132,6 @@ const Reports = () => {
           )
         : 0;
 
-    // Domiciliation
     const domiciliationsActives = domiciliationServices.filter(
       (d) => d.status === "active",
     ).length;
@@ -82,7 +139,6 @@ const Reports = () => {
       .filter((d) => d.status === "active")
       .reduce((sum, d) => sum + (d.monthlyFee || 0), 0);
 
-    // Variations
     const variationReservations =
       reservationsLastMonth > 0
         ? (
@@ -151,7 +207,15 @@ const Reports = () => {
       reservationsEnAttente,
       reservationsAnnulees,
     };
-  }, [reservations, users, espaces, domiciliationServices]);
+  }, [reservations, users, espaces, domiciliationServices, apiStats, revenueData]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <LoadingSpinner size="lg" />
+      </div>
+    );
+  }
 
   const kpiCards = [
     {
@@ -216,14 +280,24 @@ const Reports = () => {
           <p className="text-gray-600 mt-1">Vue d'ensemble des performances</p>
         </div>
         <div className="flex gap-3">
+          <button
+            onClick={loadStats}
+            disabled={loading}
+            className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-2 disabled:opacity-50"
+            title="Actualiser les données"
+          >
+            <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
+            Actualiser
+          </button>
           <select
             value={periode}
             onChange={(e) => setPeriode(e.target.value as any)}
             className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent"
           >
-            <option value="semaine">Cette semaine</option>
-            <option value="mois">Ce mois</option>
-            <option value="annee">Cette année</option>
+            <option value="day">Aujourd'hui</option>
+            <option value="week">Cette semaine</option>
+            <option value="month">Ce mois</option>
+            <option value="year">Cette année</option>
           </select>
           <button
             onClick={exportReport}

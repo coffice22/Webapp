@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Users as UsersIcon,
@@ -14,6 +15,7 @@ import {
   Activity,
   TrendingUp,
   RefreshCw,
+  Eye,
 } from "lucide-react";
 import { useAppStore } from "../../../store/store";
 import Card from "../../../components/ui/Card";

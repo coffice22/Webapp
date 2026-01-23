@@ -18,6 +18,7 @@ import {
   RefreshCw,
   Tag,
   Gift,
+  Bell,
 } from "lucide-react";
 import { useAuthStore } from "../../store/authStore";
 import { useAppStore } from "../../store/store";
@@ -85,6 +86,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const userNavigation = [
     { name: "Tableau de bord", href: "/app", icon: Home },
     { name: "Réservations", href: "/app/reservations", icon: Calendar },
+    { name: "Notifications", href: "/app/notifications", icon: Bell },
     { name: "Domiciliation", href: "/app/domiciliation", icon: Building },
     { name: "Mon Entreprise", href: "/app/mon-entreprise", icon: FileText },
     { name: "Parrainage", href: "/app/parrainage", icon: Gift },
@@ -93,6 +95,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
   const adminNavigation = [
     { name: "Tableau de bord", href: "/app", icon: Home },
+    { name: "Notifications", href: "/app/notifications", icon: Bell },
     { name: "Utilisateurs", href: "/app/admin/users", icon: Users },
     { name: "Espaces", href: "/app/admin/spaces", icon: Building },
     { name: "Réservations", href: "/app/admin/reservations", icon: Calendar },
