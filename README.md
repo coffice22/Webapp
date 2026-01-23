@@ -149,15 +149,15 @@ curl https://coffice.dz/api/check.php
 
 ### Stack Technique
 
-| Composant | Technologie |
-|-----------|-------------|
-| Frontend | React 18 + TypeScript + Vite |
-| Styling | TailwindCSS + Framer Motion |
-| State | Zustand + React Query |
-| Backend | PHP 8.1 REST API |
-| Database | MySQL 8.0 (InnoDB) |
-| Auth | JWT avec refresh tokens |
-| Server | Apache/Nginx |
+| Composant | Technologie                  |
+| --------- | ---------------------------- |
+| Frontend  | React 18 + TypeScript + Vite |
+| Styling   | TailwindCSS + Framer Motion  |
+| State     | Zustand + React Query        |
+| Backend   | PHP 8.1 REST API             |
+| Database  | MySQL 8.0 (InnoDB)           |
+| Auth      | JWT avec refresh tokens      |
+| Server    | Apache/Nginx                 |
 
 ### Structure du Projet
 
@@ -280,97 +280,97 @@ User Action → React Component → Zustand Store → API Client
 
 ### Authentification (5 endpoints)
 
-| Méthode | Endpoint | Description |
-|---------|----------|-------------|
-| POST | `/api/auth/login.php` | Connexion utilisateur |
-| POST | `/api/auth/register.php` | Inscription avec parrainage |
-| POST | `/api/auth/logout.php` | Déconnexion |
-| GET | `/api/auth/me.php` | Profil utilisateur actuel |
-| POST | `/api/auth/refresh.php` | Refresh access token |
+| Méthode | Endpoint                 | Description                 |
+| ------- | ------------------------ | --------------------------- |
+| POST    | `/api/auth/login.php`    | Connexion utilisateur       |
+| POST    | `/api/auth/register.php` | Inscription avec parrainage |
+| POST    | `/api/auth/logout.php`   | Déconnexion                 |
+| GET     | `/api/auth/me.php`       | Profil utilisateur actuel   |
+| POST    | `/api/auth/refresh.php`  | Refresh access token        |
 
 ### Utilisateurs (4 endpoints)
 
-| Méthode | Endpoint | Description |
-|---------|----------|-------------|
-| GET | `/api/users/index.php` | Liste utilisateurs (admin) |
-| GET | `/api/users/show.php?id=` | Détails utilisateur |
-| PUT | `/api/users/update.php?id=` | Modifier utilisateur |
-| DELETE | `/api/users/delete.php?id=` | Supprimer utilisateur (admin) |
+| Méthode | Endpoint                    | Description                   |
+| ------- | --------------------------- | ----------------------------- |
+| GET     | `/api/users/index.php`      | Liste utilisateurs (admin)    |
+| GET     | `/api/users/show.php?id=`   | Détails utilisateur           |
+| PUT     | `/api/users/update.php?id=` | Modifier utilisateur          |
+| DELETE  | `/api/users/delete.php?id=` | Supprimer utilisateur (admin) |
 
 ### Espaces (5 endpoints)
 
-| Méthode | Endpoint | Description |
-|---------|----------|-------------|
-| GET | `/api/espaces/index.php` | Liste des espaces |
-| GET | `/api/espaces/show.php?id=` | Détails espace |
-| POST | `/api/espaces/create.php` | Créer espace (admin) |
-| PUT | `/api/espaces/update.php` | Modifier espace (admin) |
-| DELETE | `/api/espaces/delete.php` | Supprimer espace (admin) |
+| Méthode | Endpoint                    | Description              |
+| ------- | --------------------------- | ------------------------ |
+| GET     | `/api/espaces/index.php`    | Liste des espaces        |
+| GET     | `/api/espaces/show.php?id=` | Détails espace           |
+| POST    | `/api/espaces/create.php`   | Créer espace (admin)     |
+| PUT     | `/api/espaces/update.php`   | Modifier espace (admin)  |
+| DELETE  | `/api/espaces/delete.php`   | Supprimer espace (admin) |
 
 ### Réservations (5 endpoints)
 
-| Méthode | Endpoint | Description |
-|---------|----------|-------------|
-| GET | `/api/reservations/index.php` | Liste réservations |
-| GET | `/api/reservations/show.php?id=` | Détails réservation |
-| POST | `/api/reservations/create.php` | Créer réservation |
-| PUT | `/api/reservations/update.php` | Modifier réservation |
-| POST | `/api/reservations/cancel.php` | Annuler réservation |
+| Méthode | Endpoint                         | Description          |
+| ------- | -------------------------------- | -------------------- |
+| GET     | `/api/reservations/index.php`    | Liste réservations   |
+| GET     | `/api/reservations/show.php?id=` | Détails réservation  |
+| POST    | `/api/reservations/create.php`   | Créer réservation    |
+| PUT     | `/api/reservations/update.php`   | Modifier réservation |
+| POST    | `/api/reservations/cancel.php`   | Annuler réservation  |
 
 ### Notifications (4 endpoints)
 
-| Méthode | Endpoint | Description |
-|---------|----------|-------------|
-| GET | `/api/notifications/index.php` | Liste notifications |
-| PUT | `/api/notifications/read.php?id=` | Marquer comme lu |
-| PUT | `/api/notifications/read-all.php` | Tout marquer lu |
-| DELETE | `/api/notifications/delete.php?id=` | Supprimer notification |
+| Méthode | Endpoint                            | Description            |
+| ------- | ----------------------------------- | ---------------------- |
+| GET     | `/api/notifications/index.php`      | Liste notifications    |
+| PUT     | `/api/notifications/read.php?id=`   | Marquer comme lu       |
+| PUT     | `/api/notifications/read-all.php`   | Tout marquer lu        |
+| DELETE  | `/api/notifications/delete.php?id=` | Supprimer notification |
 
 ### Domiciliations (7 endpoints)
 
-| Méthode | Endpoint | Description |
-|---------|----------|-------------|
-| GET | `/api/domiciliations/index.php` | Liste domiciliations |
-| GET | `/api/domiciliations/user.php` | Domiciliation utilisateur |
-| POST | `/api/domiciliations/create.php` | Créer demande |
-| PUT | `/api/domiciliations/update.php` | Modifier demande |
-| POST | `/api/domiciliations/validate.php` | Valider (admin) |
-| POST | `/api/domiciliations/reject.php` | Rejeter (admin) |
-| POST | `/api/domiciliations/activate.php` | Activer service (admin) |
+| Méthode | Endpoint                           | Description               |
+| ------- | ---------------------------------- | ------------------------- |
+| GET     | `/api/domiciliations/index.php`    | Liste domiciliations      |
+| GET     | `/api/domiciliations/user.php`     | Domiciliation utilisateur |
+| POST    | `/api/domiciliations/create.php`   | Créer demande             |
+| PUT     | `/api/domiciliations/update.php`   | Modifier demande          |
+| POST    | `/api/domiciliations/validate.php` | Valider (admin)           |
+| POST    | `/api/domiciliations/reject.php`   | Rejeter (admin)           |
+| POST    | `/api/domiciliations/activate.php` | Activer service (admin)   |
 
 ### Abonnements (4 endpoints)
 
-| Méthode | Endpoint | Description |
-|---------|----------|-------------|
-| GET | `/api/abonnements/index.php` | Liste abonnements |
-| POST | `/api/abonnements/create.php` | Créer abonnement (admin) |
-| PUT | `/api/abonnements/update.php` | Modifier abonnement (admin) |
-| DELETE | `/api/abonnements/delete.php` | Supprimer abonnement (admin) |
+| Méthode | Endpoint                      | Description                  |
+| ------- | ----------------------------- | ---------------------------- |
+| GET     | `/api/abonnements/index.php`  | Liste abonnements            |
+| POST    | `/api/abonnements/create.php` | Créer abonnement (admin)     |
+| PUT     | `/api/abonnements/update.php` | Modifier abonnement (admin)  |
+| DELETE  | `/api/abonnements/delete.php` | Supprimer abonnement (admin) |
 
 ### Codes Promo (5 endpoints)
 
-| Méthode | Endpoint | Description |
-|---------|----------|-------------|
-| GET | `/api/codes-promo/index.php` | Liste codes promo |
-| POST | `/api/codes-promo/create.php` | Créer code (admin) |
-| PUT | `/api/codes-promo/update.php` | Modifier code (admin) |
-| DELETE | `/api/codes-promo/delete.php` | Supprimer code (admin) |
-| POST | `/api/codes-promo/validate.php` | Valider code |
+| Méthode | Endpoint                        | Description            |
+| ------- | ------------------------------- | ---------------------- |
+| GET     | `/api/codes-promo/index.php`    | Liste codes promo      |
+| POST    | `/api/codes-promo/create.php`   | Créer code (admin)     |
+| PUT     | `/api/codes-promo/update.php`   | Modifier code (admin)  |
+| DELETE  | `/api/codes-promo/delete.php`   | Supprimer code (admin) |
+| POST    | `/api/codes-promo/validate.php` | Valider code           |
 
 ### Parrainages (2 endpoints)
 
-| Méthode | Endpoint | Description |
-|---------|----------|-------------|
-| GET | `/api/parrainages/index.php` | Liste parrainages |
-| POST | `/api/parrainages/verify.php` | Vérifier code parrainage |
+| Méthode | Endpoint                      | Description              |
+| ------- | ----------------------------- | ------------------------ |
+| GET     | `/api/parrainages/index.php`  | Liste parrainages        |
+| POST    | `/api/parrainages/verify.php` | Vérifier code parrainage |
 
 ### Admin & Analytics (3 endpoints)
 
-| Méthode | Endpoint | Description |
-|---------|----------|-------------|
-| GET | `/api/admin/stats.php` | Statistiques globales |
-| GET | `/api/admin/revenue.php?period=` | Revenus par période |
-| GET | `/api/check.php` | Health check système |
+| Méthode | Endpoint                         | Description           |
+| ------- | -------------------------------- | --------------------- |
+| GET     | `/api/admin/stats.php`           | Statistiques globales |
+| GET     | `/api/admin/revenue.php?period=` | Revenus par période   |
+| GET     | `/api/check.php`                 | Health check système  |
 
 ---
 
@@ -581,6 +581,7 @@ php -r "new PDO('mysql:host=localhost;dbname=cofficed_coffice', 'cofficed_user',
 #### Routes React renvoient 404
 
 **Apache:**
+
 ```bash
 # Activer mod_rewrite
 a2enmod rewrite
@@ -591,6 +592,7 @@ cat .htaccess
 ```
 
 **Nginx:**
+
 ```bash
 # Vérifier configuration
 nginx -t
@@ -677,12 +679,14 @@ npm run test:local       # Tests API local
 ## 📞 Support & Contact
 
 **Coffice Coworking Space**
+
 - 📧 Email: contact@coffice.dz
 - 📱 Téléphone: +213 795 380 124
 - 💬 WhatsApp: [Contactez-nous](https://wa.me/213795380124)
 - 📍 Adresse: Mohammadia Mall, 4ème étage, Bureau 1178, Alger, Algérie
 
 **Horaires d'ouverture:**
+
 - Lundi - Vendredi: 8h00 - 20h00
 - Samedi: 9h00 - 18h00
 - Dimanche: Fermé
