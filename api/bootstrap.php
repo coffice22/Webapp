@@ -37,9 +37,13 @@ if ($isProduction) {
 // Logs directory
 $logDir = __DIR__ . '/../logs';
 if (!file_exists($logDir)) {
-    @mkdir($logDir, 0755, true);
+    if (!mkdir($logDir, 0755, true) && !is_dir($logDir)) {
+        error_log('Failed to create logs directory: ' . $logDir);
+    }
 }
-ini_set('error_log', $logDir . '/php_errors.log');
+if (is_dir($logDir) && is_writable($logDir)) {
+    ini_set('error_log', $logDir . '/php_errors.log');
+}
 
 // Limites de mémoire et temps d'exécution
 ini_set('memory_limit', '256M');
