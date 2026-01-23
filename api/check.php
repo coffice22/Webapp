@@ -163,7 +163,7 @@ if (isset($pdo) && isset($_ENV['DB_NAME'])) {
             $checks['database'] = [
                 'name' => 'Base de données',
                 'status' => 'warning',
-                'message' => "Base '{$dbName}' n'existe pas. Exécutez api/install.php"
+                'message' => "Base '{$dbName}' n'existe pas. Importez le fichier database/coffice.sql"
             ];
         }
     } catch (PDOException $e) {
@@ -223,7 +223,7 @@ if (isset($checks['env_vars']) && $checks['env_vars']['status'] !== 'ok') {
 }
 
 if (isset($checks['database']) && $checks['database']['status'] === 'warning') {
-    $recommendations[] = "Exécutez le script d'installation: https://coffice.dz/api/install.php";
+    $recommendations[] = "Importez le schéma de base de données depuis database/coffice.sql";
 }
 
 // Réponse JSON

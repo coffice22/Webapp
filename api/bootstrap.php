@@ -425,7 +425,7 @@ function paginate(int $total, int $page = 1, int $perPage = 20): array
 // LOGGING INITIAL
 // =====================================================
 
-$logger->info('API Bootstrap initialized', [
+Logger::info('API Bootstrap initialized', [
     'method' => getRequestMethod(),
     'uri' => $_SERVER['REQUEST_URI'] ?? '',
     'ip' => getClientIp()
@@ -437,7 +437,6 @@ $logger->info('API Bootstrap initialized', [
 
 return [
     'db' => $db,
-    'logger' => $logger,
     'validator' => new Validator(),
     'sanitizer' => new Sanitizer(),
     'isProduction' => $isProduction

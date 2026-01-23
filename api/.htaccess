@@ -84,9 +84,13 @@ ServerSignature Off
 # Empecher l'indexation
 Options -Indexes
 
-# Protection XSS
+# Protection XSS et securite renforcee
 <IfModule mod_headers.c>
     Header set X-Content-Type-Options "nosniff"
     Header set X-Frame-Options "SAMEORIGIN"
     Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    Header set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+    Header always unset X-Powered-By
+    Header unset Server
 </IfModule>

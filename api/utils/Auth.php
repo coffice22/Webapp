@@ -47,7 +47,8 @@ class Auth
         self::loadEnv();
         $key = getenv('JWT_SECRET') ?: ($_ENV['JWT_SECRET'] ?? null);
         if (!$key) {
-            $key = "COFFICE_JWT_SECRET_KEY_2025_CHANGE_IN_PRODUCTION";
+            error_log("CRITICAL ERROR: JWT_SECRET is not configured in .env file");
+            throw new Exception("JWT_SECRET configuration is missing. Please set JWT_SECRET in your .env file.");
         }
         return $key;
     }
