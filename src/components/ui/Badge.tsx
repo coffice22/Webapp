@@ -2,7 +2,14 @@ import React from "react";
 
 interface BadgeProps {
   children: React.ReactNode;
-  variant?: "default" | "primary" | "success" | "warning" | "danger" | "info" | "error";
+  variant?:
+    | "default"
+    | "primary"
+    | "success"
+    | "warning"
+    | "danger"
+    | "info"
+    | "error";
   size?: "sm" | "md" | "lg";
   className?: string;
   style?: React.CSSProperties;

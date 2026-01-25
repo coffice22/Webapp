@@ -1,29 +1,29 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { apiClient } from '../lib/api-client';
-import Button from '../components/ui/Button';
-import Input from '../components/ui/Input';
-import ErrorMessage from '../components/ui/ErrorMessage';
-import Logo from '../components/Logo';
-import toast from 'react-hot-toast';
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { apiClient } from "../lib/api-client";
+import Button from "../components/ui/Button";
+import Input from "../components/ui/Input";
+import ErrorMessage from "../components/ui/ErrorMessage";
+import Logo from "../components/Logo";
+import toast from "react-hot-toast";
 
 export default function ForgotPassword() {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setIsLoading(true);
 
     try {
-      await apiClient.post('/auth/forgot-password', { email });
+      await apiClient.post("/auth/forgot-password", { email });
       setIsSubmitted(true);
-      toast.success('Email envoyé ! Vérifiez votre boîte de réception.');
+      toast.success("Email envoyé ! Vérifiez votre boîte de réception.");
     } catch (err: any) {
-      const message = err.response?.data?.error || 'Une erreur est survenue';
+      const message = err.response?.data?.error || "Une erreur est survenue";
       setError(message);
       toast.error(message);
     } finally {
@@ -39,19 +39,33 @@ export default function ForgotPassword() {
             <div className="text-center mb-8">
               <Logo className="mx-auto mb-6" size="lg" />
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                <svg
+                  className="w-8 h-8 text-green-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
                 </svg>
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Email envoyé</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                Email envoyé
+              </h2>
               <p className="text-gray-600">
-                Si un compte existe avec l'adresse <strong>{email}</strong>, vous recevrez un lien de réinitialisation dans quelques minutes.
+                Si un compte existe avec l'adresse <strong>{email}</strong>,
+                vous recevrez un lien de réinitialisation dans quelques minutes.
               </p>
             </div>
 
             <div className="space-y-4">
               <p className="text-sm text-gray-500 text-center">
-                Vérifiez également votre dossier spam si vous ne voyez pas l'email.
+                Vérifiez également votre dossier spam si vous ne voyez pas
+                l'email.
               </p>
 
               <Link to="/connexion">
@@ -72,9 +86,12 @@ export default function ForgotPassword() {
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <div className="text-center mb-8">
             <Logo className="mx-auto mb-6" size="lg" />
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Mot de passe oublié ?</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              Mot de passe oublié ?
+            </h2>
             <p className="text-gray-600">
-              Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.
+              Entrez votre adresse email et nous vous enverrons un lien pour
+              réinitialiser votre mot de passe.
             </p>
           </div>
 
@@ -96,7 +113,10 @@ export default function ForgotPassword() {
             </Button>
 
             <div className="text-center">
-              <Link to="/connexion" className="text-sm text-blue-600 hover:text-blue-700">
+              <Link
+                to="/connexion"
+                className="text-sm text-blue-600 hover:text-blue-700"
+              >
                 Retour à la connexion
               </Link>
             </div>
