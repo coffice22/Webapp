@@ -91,7 +91,7 @@ export default function ForgotPassword() {
               disabled={isLoading}
             />
 
-            <Button type="submit" className="w-full" isLoading={isLoading}>
+            <Button type="submit" className="w-full" loading={isLoading}>
               Envoyer le lien de réinitialisation
             </Button>
 

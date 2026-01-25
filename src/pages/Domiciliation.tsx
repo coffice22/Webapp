@@ -454,7 +454,7 @@ const DomiciliationPublic = () => {
                   <ul className="space-y-2">
                     {service.features.map((feature, idx) => (
                       <li
-                        key={`feature-${service.title}-${idx}`}
+                        key={`feature-${service.name}-${idx}`}
                         className="flex items-start gap-2 text-sm text-gray-700"
                       >
                         <div className="w-4 h-4 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">

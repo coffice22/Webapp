@@ -3,19 +3,22 @@ import React from "react";
 interface LogoProps {
   className?: string;
   variant?: "light" | "dark";
+  size?: string;
 }
 
 export const Logo: React.FC<LogoProps> = ({
   className = "h-16 w-auto",
   variant = "dark",
+  size,
 }) => {
+  const finalClassName = size || className;
   const mainColor = variant === "light" ? "#FFFFFF" : "#001315";
   const subColor = variant === "light" ? "#E0E0E0" : "#58595b";
 
   return (
     <svg
       viewBox="0 0 320 150"
-      className={className}
+      className={finalClassName}
       xmlns="http://www.w3.org/2000/svg"
       role="img"
       aria-label="Coffice - Coworking Space by HCC"

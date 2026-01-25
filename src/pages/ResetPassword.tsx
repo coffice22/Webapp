@@ -167,7 +167,7 @@ export default function ResetPassword() {
             <Button
               type="submit"
               className="w-full"
-              isLoading={isLoading}
+              loading={isLoading}
               disabled={password !== passwordConfirmation || password.length < 6}
             >
               Réinitialiser le mot de passe
