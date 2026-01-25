@@ -1158,7 +1158,10 @@ const InvoiceManagement = () => {
 
             <div className="space-y-4">
               {newInvoice.items.map((item, index) => (
-                <div key={`new-item-${index}`} className="p-4 bg-gray-50 rounded-lg">
+                <div
+                  key={`new-item-${index}`}
+                  className="p-4 bg-gray-50 rounded-lg"
+                >
                   <div className="flex justify-between items-center mb-3">
                     <h4 className="font-medium text-primary">
                       Article {index + 1}
