@@ -36,9 +36,15 @@ try {
 
     // Validation stricte des champs requis
     $missingFields = [];
-    if (empty($data->espace_id)) $missingFields[] = 'espace_id';
-    if (empty($data->date_debut)) $missingFields[] = 'date_debut';
-    if (empty($data->date_fin)) $missingFields[] = 'date_fin';
+    if (empty($data->espace_id)) {
+        $missingFields[] = 'espace_id';
+    }
+    if (empty($data->date_debut)) {
+        $missingFields[] = 'date_debut';
+    }
+    if (empty($data->date_fin)) {
+        $missingFields[] = 'date_fin';
+    }
 
     if (!empty($missingFields)) {
         Response::validationError("Champs requis manquants", ['missing' => $missingFields]);

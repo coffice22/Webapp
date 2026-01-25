@@ -9,24 +9,31 @@ L'API Coffice a été mise à niveau pour respecter les standards REST et les me
 ### 1. Codes HTTP Standardisés
 
 #### ✅ Authentification (200 + Token)
+
 **Fichiers modifiés:**
+
 - `api/auth/login.php` - Retourne 200 avec token JWT
 - `api/auth/register.php` - Retourne 200 avec token après inscription
 
 **Comportement:**
+
 - Succès: HTTP 200 avec `{success: true, token: "...", user: {...}}`
 - Échec: HTTP 401 avec message d'erreur approprié
 
 #### ✅ Protection Routes (401 Sans Token)
+
 **Fichiers modifiés:**
+
 - `api/utils/Auth.php::verifyAuth()` - Protection JWT stricte
 
 **Comportement:**
+
 - Sans token: HTTP 401 "Token d'authentification manquant"
 - Token invalide: HTTP 401 "Token invalide ou expiré"
 - Token expiré: HTTP 401 "Token invalide ou expiré"
 
 **Routes protégées:**
+
 - `/auth/me.php`
 - `/reservations/*`
 - `/domiciliations/*`
@@ -35,11 +42,14 @@ L'API Coffice a été mise à niveau pour respecter les standards REST et les me
 - Toutes les routes admin
 
 #### ✅ Création Ressources (201 Created)
+
 **Fichiers modifiés:**
+
 - `api/reservations/create.php` - Retourne 201
 - `api/utils/Response.php` - Support du code 201
 
 **Comportement:**
+
 ```json
 HTTP/1.1 201 Created
 {
@@ -55,16 +65,20 @@ HTTP/1.1 201 Created
 ```
 
 #### ✅ Détection Conflits (409 Conflict)
+
 **Fichiers modifiés:**
+
 - `api/reservations/create.php` - Détecte les chevauchements horaires
 - `api/auth/register.php` - Détecte les emails existants
 - `api/utils/Response.php` - Méthode `conflict()`
 
 **Comportement:**
+
 - Réservation sur créneau occupé: HTTP 409
 - Email déjà enregistré: HTTP 409
 
 **Code de détection:**
+
 ```php
 // Vérifier disponibilité avec verrouillage
 $query = "SELECT id FROM reservations
@@ -79,18 +93,22 @@ if (count($conflits) > 0) {
 ```
 
 #### ✅ Validation Données (422 Unprocessable Entity)
+
 **Fichiers modifiés:**
+
 - `api/reservations/create.php` - Validation stricte
 - `api/auth/login.php` - Validation email/password
 - `api/auth/register.php` - Validation inscription
 - `api/utils/Response.php` - Méthode `validationError()`
 
 **Comportement:**
+
 - Champs manquants: HTTP 422 avec détails
 - Format invalide: HTTP 422 avec message
 - Validation métier: HTTP 422
 
 **Exemple de réponse:**
+
 ```json
 HTTP/1.1 422 Unprocessable Entity
 {
@@ -129,6 +147,7 @@ Response::serverError(); // 500
 **Nouveau fichier:** `scripts/audit_api.php`
 
 **Tests effectués:**
+
 1. ✅ Détection API (200)
 2. ✅ Connexion utilisateur (200 + token)
 3. ✅ Accès sans token (401)
@@ -141,6 +160,7 @@ Response::serverError(); // 500
 10. ✅ Performance (<2s)
 
 **Utilisation:**
+
 ```bash
 # Test local
 php scripts/audit_api.php http://localhost:8080/api
@@ -150,6 +170,7 @@ php scripts/audit_api.php https://coffice.dz/api
 ```
 
 **Sortie attendue:**
+
 ```
 ==================== RAPPORT D'AUDIT API ====================
 
@@ -168,38 +189,43 @@ RÉSUMÉ GLOBAL :
 
 ## Matrice de Conformité
 
-| Critère | Avant | Après | Statut |
-|---------|-------|-------|--------|
-| Authentification retourne token | ✅ | ✅ | Maintenu |
-| Protection routes (401) | ⚠️ | ✅ | Corrigé |
-| Token invalide rejeté (401) | ⚠️ | ✅ | Corrigé |
-| Création ressource (201) | ❌ | ✅ | Implémenté |
-| Détection conflits (409) | ❌ | ✅ | Implémenté |
-| Validation données (422) | ❌ | ✅ | Implémenté |
-| Codes HTTP REST | 40% | 100% | ✅ |
+| Critère                         | Avant | Après | Statut     |
+| ------------------------------- | ----- | ----- | ---------- |
+| Authentification retourne token | ✅    | ✅    | Maintenu   |
+| Protection routes (401)         | ⚠️    | ✅    | Corrigé    |
+| Token invalide rejeté (401)     | ⚠️    | ✅    | Corrigé    |
+| Création ressource (201)        | ❌    | ✅    | Implémenté |
+| Détection conflits (409)        | ❌    | ✅    | Implémenté |
+| Validation données (422)        | ❌    | ✅    | Implémenté |
+| Codes HTTP REST                 | 40%   | 100%  | ✅         |
 
 ## Endpoints Mis à Jour
 
 ### Authentification
+
 - `POST /api/auth/register.php` - 422 pour validation, 409 pour conflit
 - `POST /api/auth/login.php` - 422 pour validation, 401 pour échec
 - `GET /api/auth/me.php` - 401 sans token
 
 ### Réservations
+
 - `POST /api/reservations/create.php` - 201 création, 409 conflit, 422 validation
 - `GET /api/reservations/index.php` - 401 sans auth
 - `GET /api/reservations/show.php` - 401 sans auth, 404 non trouvé
 
 ### Domiciliations
+
 - `POST /api/domiciliations/create.php` - 201 création, 422 validation
 - Tous les endpoints - 401 sans auth
 
 ### Admin
+
 - Tous les endpoints - 401 sans auth, 403 non-admin
 
 ## Sécurité Renforcée
 
 ### 1. Protection JWT Multi-Méthodes
+
 ```php
 // api/utils/Auth.php - Support tous serveurs
 - getallheaders() (Apache, Nginx)
@@ -211,6 +237,7 @@ RÉSUMÉ GLOBAL :
 ```
 
 ### 2. Validation Stricte
+
 - Tous les champs requis vérifiés
 - Format email validé
 - Password strength vérifié
@@ -218,6 +245,7 @@ RÉSUMÉ GLOBAL :
 - Capacité respectée
 
 ### 3. Race Conditions Prévenues
+
 ```php
 // FOR UPDATE verrouille les lignes pendant transaction
 SELECT ... FROM reservations WHERE ... FOR UPDATE;
@@ -226,6 +254,7 @@ SELECT ... FROM reservations WHERE ... FOR UPDATE;
 ## Tests de Régression
 
 ### Avant déploiement
+
 ```bash
 # 1. Test connexion DB
 php api/test_db_connection.php
@@ -241,6 +270,7 @@ npm run build
 ```
 
 ### Après déploiement
+
 1. Créer un compte utilisateur
 2. Se connecter
 3. Créer une réservation
@@ -252,23 +282,27 @@ npm run build
 ## Compatibilité
 
 ### Navigateurs
+
 - Chrome 90+
 - Firefox 88+
 - Safari 14+
 - Edge 90+
 
 ### Serveurs
+
 - Apache 2.4+ ✅
 - Nginx 1.18+ ✅
 - LiteSpeed ✅
 - cPanel ✅
 
 ### PHP
+
 - 8.1 ✅
 - 8.2 ✅
 - 8.3 ✅
 
 ### MySQL
+
 - 8.0 ✅
 - 8.1+ ✅
 - MariaDB 10.6+ ✅
