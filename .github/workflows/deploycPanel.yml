@@ -1,4 +1,4 @@
-name: Publish Site to CPanel
+name: Deploy Webapp to cPanel
 
 on:
   push:
@@ -6,20 +6,33 @@ on:
       - main
 
 jobs:
-  ftp-deploy:
-    name: Deploy via FTP
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Récupérer le code
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
 
-      - name: FTP Deploy
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      # 2️⃣ Installer Node pour build (si nécessaire)
+      - name: Setup Node
+        uses: actions/setup-node@v3
         with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
- 
+          node-version: 20
+
+      # 3️⃣ Installer SSH agent avec ta clé
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.7.1
+        with:
+          ssh-private-key: ${{ secrets.CPANEL_SSH_KEY }}
+
+      # 4️⃣ Installer les dépendances et builder ton projet
+      - name: Build project
+        run: |
+          npm ci
+          npm run build
+
+      # 5️⃣ Déployer uniquement le contenu nécessaire sur cPanel
+      - name: Deploy build to cPanel
+        run: |
+          rsync -avz --delete ./build/ ${{ secrets.CPANEL_USER }}@${{ secrets.CPANEL_HOST }}:~/public_html/Webapp/
