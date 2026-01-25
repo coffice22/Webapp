@@ -61,8 +61,11 @@ try {
     $profession = $data->profession ?? null;
     $entreprise = $data->entreprise ?? null;
 
-    $query = "INSERT INTO users (id, email, password_hash, nom, prenom, telephone, profession, entreprise, role, statut)
-              VALUES (:id, :email, :password_hash, :nom, :prenom, :telephone, :profession, :entreprise, 'user', 'actif')";
+    // Générer le code de parrainage unique
+    $code_parrain = 'CPF' . strtoupper(substr(str_replace('-', '', $user_id), 0, 6));
+
+    $query = "INSERT INTO users (id, email, password_hash, nom, prenom, telephone, profession, entreprise, code_parrainage, role, statut)
+              VALUES (:id, :email, :password_hash, :nom, :prenom, :telephone, :profession, :entreprise, :code_parrainage, 'user', 'actif')";
 
     $stmt = $db->prepare($query);
     $result = $stmt->execute([
@@ -73,7 +76,8 @@ try {
         ':prenom' => $data->prenom,
         ':telephone' => $data->telephone ?? null,
         ':profession' => $profession,
-        ':entreprise' => $entreprise
+        ':entreprise' => $entreprise,
+        ':code_parrainage' => $code_parrain
     ]);
 
     if (!$result) {
@@ -81,9 +85,8 @@ try {
         Response::error("Erreur lors de la création de l'utilisateur", 500);
     }
 
-    error_log("User created successfully");
+    error_log("User created successfully with code parrainage: " . $code_parrain);
 
-    $code_parrain = 'COFFICE' . strtoupper(substr(str_replace('-', '', $user_id), 0, 6));
     $parrainage_id = UuidHelper::generate();
 
     $query = "INSERT INTO parrainages (id, parrain_id, code_parrain, parraines, recompenses_totales)
@@ -183,7 +186,8 @@ try {
             'email' => $data->email,
             'nom' => $data->nom,
             'prenom' => $data->prenom,
-            'role' => 'user'
+            'role' => 'user',
+            'code_parrainage' => $code_parrain
         ]
     ], "Inscription réussie", 201);
 

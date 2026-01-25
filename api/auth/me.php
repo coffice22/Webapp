@@ -22,8 +22,8 @@ try {
                      type_entreprise, nif, nis, registre_commerce,
                      article_imposition, numero_auto_entrepreneur, raison_sociale,
                      date_creation_entreprise, capital, siege_social,
-                     activite_principale, forme_juridique, absences,
-                     banned_until, derniere_connexion, created_at, updated_at
+                     activite_principale, forme_juridique, code_parrainage, credit,
+                     absences, banned_until, derniere_connexion, created_at, updated_at
               FROM users
               WHERE id = :id
               LIMIT 1";
@@ -66,6 +66,8 @@ try {
         'siegeSocial' => $user['siege_social'],
         'activitePrincipale' => $user['activite_principale'],
         'formeJuridique' => $user['forme_juridique'],
+        'codeParrainage' => $user['code_parrainage'],
+        'credit' => (float)($user['credit'] ?? 0),
         'absences' => $user['absences'],
         'bannedUntil' => $user['banned_until'],
         'derniereConnexion' => $user['derniere_connexion'],

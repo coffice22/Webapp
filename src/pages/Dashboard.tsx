@@ -14,6 +14,7 @@ import Domiciliation from "./dashboard/Domiciliation";
 import MyCompany from "./dashboard/MyCompany";
 import Parrainage from "./dashboard/Parrainage";
 import CodesPromo from "./dashboard/CodesPromo";
+import Abonnements from "./dashboard/Abonnements";
 // Admin pages
 import AdminUsers from "./dashboard/admin/Users";
 import UserDetail from "./dashboard/admin/UserDetail";
@@ -48,6 +49,7 @@ const Dashboard = () => {
           <Route path="notifications" element={<Notifications />} />
           <Route path="domiciliation" element={<Domiciliation />} />
           <Route path="mon-entreprise" element={<MyCompany />} />
+          <Route path="abonnements" element={<Abonnements />} />
           <Route path="parrainage" element={<Parrainage />} />
           <Route path="profil" element={<Profile />} />
 
