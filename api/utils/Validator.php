@@ -62,7 +62,12 @@ class Validator
     }
 
     /**
-     * Valider un mot de passe
+     * Valider un mot de passe fort
+     * - Au moins 8 caractères (politique renforcée)
+     * - Au moins une lettre majuscule
+     * - Au moins une lettre minuscule
+     * - Au moins un chiffre
+     * - Au moins un caractère spécial
      */
     public function validatePassword($password, $fieldName = 'password')
     {
@@ -71,12 +76,55 @@ class Validator
             return false;
         }
 
-        if (strlen($password) < 6) {
-            $this->errors[$fieldName] = "Le mot de passe doit contenir au moins 6 caractères";
+        if (strlen($password) < 8) {
+            $this->errors[$fieldName] = "Le mot de passe doit contenir au moins 8 caractères";
+            return false;
+        }
+
+        if (!preg_match('/[A-Z]/', $password)) {
+            $this->errors[$fieldName] = "Le mot de passe doit contenir au moins une lettre majuscule";
+            return false;
+        }
+
+        if (!preg_match('/[a-z]/', $password)) {
+            $this->errors[$fieldName] = "Le mot de passe doit contenir au moins une lettre minuscule";
+            return false;
+        }
+
+        if (!preg_match('/[0-9]/', $password)) {
+            $this->errors[$fieldName] = "Le mot de passe doit contenir au moins un chiffre";
+            return false;
+        }
+
+        if (!preg_match('/[!@#$%^&*(),.?":{}|<>_\-+=\[\]\\\/~`]/', $password)) {
+            $this->errors[$fieldName] = "Le mot de passe doit contenir au moins un caractère spécial (!@#$%^&*(),.?\":{}|<>_-+=[]\\/)";
             return false;
         }
 
         return true;
+    }
+
+    /**
+     * Calculer la force d'un mot de passe (0-100)
+     * Utile pour afficher un indicateur visuel côté frontend
+     */
+    public static function getPasswordStrength($password)
+    {
+        $strength = 0;
+        $length = strlen($password);
+
+        // Longueur (max 40 points)
+        if ($length >= 8) $strength += 20;
+        if ($length >= 12) $strength += 10;
+        if ($length >= 16) $strength += 10;
+
+        // Complexité (max 60 points)
+        if (preg_match('/[a-z]/', $password)) $strength += 15;
+        if (preg_match('/[A-Z]/', $password)) $strength += 15;
+        if (preg_match('/[0-9]/', $password)) $strength += 15;
+        if (preg_match('/[!@#$%^&*(),.?":{}|<>_\-+=\[\]\\\/~`]/', $password)) $strength += 15;
+
+        return min(100, $strength);
     }
 
     /**

@@ -15,140 +15,103 @@ try {
 
     $db = Database::getInstance()->getConnection();
 
-    // Nombre total d'utilisateurs
-    $query = "SELECT COUNT(*) as total FROM users";
+    // Requête optimisée unique pour toutes les statistiques
+    $query = "
+        SELECT
+            -- Utilisateurs
+            (SELECT COUNT(*) FROM users) as total_users,
+            (SELECT COUNT(*) FROM users WHERE statut = 'actif') as active_users,
+            (SELECT COUNT(*) FROM users WHERE statut = 'actif' AND created_at < DATE_SUB(NOW(), INTERVAL 1 MONTH)) as last_month_active_users,
+
+            -- Réservations
+            (SELECT COUNT(*) FROM reservations WHERE DATE(created_at) = CURDATE()) as today_reservations,
+            (SELECT COUNT(*) FROM reservations WHERE DATE(created_at) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)) as yesterday_reservations,
+            (SELECT COUNT(*) FROM reservations WHERE MONTH(created_at) = MONTH(NOW()) AND YEAR(created_at) = YEAR(NOW())) as month_reservations,
+
+            -- Revenus
+            (SELECT COALESCE(SUM(montant_total - COALESCE(reduction, 0)), 0)
+             FROM reservations
+             WHERE MONTH(created_at) = MONTH(NOW())
+             AND YEAR(created_at) = YEAR(NOW())
+             AND statut IN ('confirmee', 'terminee')) as month_revenue,
+
+            (SELECT COALESCE(SUM(montant_total - COALESCE(reduction, 0)), 0)
+             FROM reservations
+             WHERE MONTH(created_at) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+             AND YEAR(created_at) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+             AND statut IN ('confirmee', 'terminee')) as last_month_revenue,
+
+            -- Abonnements
+            (SELECT COUNT(*) FROM abonnements_utilisateurs WHERE statut = 'actif' AND date_fin > NOW()) as active_subscriptions,
+
+            -- Domiciliations
+            (SELECT COUNT(*) FROM domiciliations WHERE statut = 'en_attente') as pending_domiciliations,
+
+            -- Espaces et occupation
+            (SELECT COUNT(*) FROM espaces) as total_spaces,
+            (SELECT COUNT(DISTINCT espace_id) FROM reservations
+             WHERE DATE(date_debut) <= CURDATE()
+             AND DATE(date_fin) >= CURDATE()
+             AND statut IN ('confirmee', 'en_cours')) as occupied_spaces,
+
+            (SELECT COUNT(DISTINCT espace_id) FROM reservations
+             WHERE DATE(date_debut) <= LAST_DAY(DATE_SUB(NOW(), INTERVAL 1 MONTH))
+             AND DATE(date_fin) >= DATE_SUB(NOW(), INTERVAL 1 MONTH)
+             AND statut IN ('confirmee', 'en_cours', 'terminee')) as last_month_occupied_spaces
+    ";
+
     $stmt = $db->prepare($query);
     $stmt->execute();
-    $totalUsers = $stmt->fetch()['total'];
+    $stats = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Nombre d'utilisateurs actifs
-    $query = "SELECT COUNT(*) as total FROM users WHERE statut = 'actif'";
-    $stmt = $db->prepare($query);
-    $stmt->execute();
-    $activeUsers = $stmt->fetch()['total'];
+    // Calculs dérivés
+    $usersGrowth = $stats['last_month_active_users'] > 0
+        ? round((($stats['active_users'] - $stats['last_month_active_users']) / $stats['last_month_active_users']) * 100, 1)
+        : 0;
 
-    // Nombre de réservations ce mois
-    $query = "SELECT COUNT(*) as total FROM reservations
-              WHERE MONTH(created_at) = MONTH(NOW())
-              AND YEAR(created_at) = YEAR(NOW())";
-    $stmt = $db->prepare($query);
-    $stmt->execute();
-    $monthReservations = $stmt->fetch()['total'];
+    $revenueGrowth = $stats['last_month_revenue'] > 0
+        ? round((($stats['month_revenue'] - $stats['last_month_revenue']) / $stats['last_month_revenue']) * 100, 1)
+        : 0;
 
-    // Nombre de réservations aujourd'hui
-    $query = "SELECT COUNT(*) as total FROM reservations
-              WHERE DATE(created_at) = CURDATE()";
-    $stmt = $db->prepare($query);
-    $stmt->execute();
-    $todayReservations = $stmt->fetch()['total'];
+    $reservationsGrowth = (int)($stats['today_reservations'] - $stats['yesterday_reservations']);
 
-    // Revenu total ce mois
-    $query = "SELECT COALESCE(SUM(montant_total - COALESCE(reduction, 0)), 0) as total FROM reservations
-              WHERE MONTH(created_at) = MONTH(NOW())
-              AND YEAR(created_at) = YEAR(NOW())
-              AND statut IN ('confirmee', 'terminee')";
-    $stmt = $db->prepare($query);
-    $stmt->execute();
-    $monthRevenue = $stmt->fetch()['total'];
+    $occupancyRate = $stats['total_spaces'] > 0
+        ? round(($stats['occupied_spaces'] / $stats['total_spaces']) * 100, 2)
+        : 0;
 
-    // Revenu mois précédent pour calculer la croissance
-    $query = "SELECT COALESCE(SUM(montant_total - COALESCE(reduction, 0)), 0) as total FROM reservations
-              WHERE MONTH(created_at) = MONTH(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-              AND YEAR(created_at) = YEAR(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-              AND statut IN ('confirmee', 'terminee')";
-    $stmt = $db->prepare($query);
-    $stmt->execute();
-    $lastMonthRevenue = $stmt->fetch()['total'];
+    $lastMonthOccupancyRate = $stats['total_spaces'] > 0
+        ? round(($stats['last_month_occupied_spaces'] / $stats['total_spaces']) * 100, 2)
+        : 0;
 
-    $revenueGrowth = $lastMonthRevenue > 0 ? round((($monthRevenue - $lastMonthRevenue) / $lastMonthRevenue) * 100, 1) : 0;
-
-    // Nombre d'abonnements actifs
-    $query = "SELECT COUNT(*) as total FROM abonnements_utilisateurs
-              WHERE statut = 'actif'
-              AND date_fin > NOW()";
-    $stmt = $db->prepare($query);
-    $stmt->execute();
-    $activeSubscriptions = $stmt->fetch()['total'];
-
-    // Utilisateurs actifs mois précédent pour calculer la croissance
-    $query = "SELECT COUNT(*) as total FROM users
-              WHERE statut = 'actif'
-              AND created_at < DATE_SUB(NOW(), INTERVAL 1 MONTH)";
-    $stmt = $db->prepare($query);
-    $stmt->execute();
-    $lastMonthActiveUsers = $stmt->fetch()['total'];
-
-    $usersGrowth = $lastMonthActiveUsers > 0 ? round((($activeUsers - $lastMonthActiveUsers) / $lastMonthActiveUsers) * 100, 1) : 0;
-
-    // Nombre de demandes de domiciliation en attente
-    $query = "SELECT COUNT(*) as total FROM domiciliations
-              WHERE statut = 'en_attente'";
-    $stmt = $db->prepare($query);
-    $stmt->execute();
-    $pendingDomiciliations = $stmt->fetch()['total'];
-
-    // Taux d'occupation des espaces aujourd'hui
-    $query = "SELECT COUNT(DISTINCT espace_id) as total FROM reservations
-              WHERE DATE(date_debut) <= CURDATE()
-              AND DATE(date_fin) >= CURDATE()
-              AND statut IN ('confirmee', 'en_cours')";
-    $stmt = $db->prepare($query);
-    $stmt->execute();
-    $occupiedSpaces = $stmt->fetch()['total'];
-
-    $query = "SELECT COUNT(*) as total FROM espaces";
-    $stmt = $db->prepare($query);
-    $stmt->execute();
-    $totalSpaces = $stmt->fetch()['total'];
-
-    $occupancyRate = $totalSpaces > 0 ? round(($occupiedSpaces / $totalSpaces) * 100, 2) : 0;
-
-    // Taux d'occupation mois précédent
-    $query = "SELECT COUNT(DISTINCT espace_id) as total FROM reservations
-              WHERE DATE(date_debut) <= LAST_DAY(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-              AND DATE(date_fin) >= DATE_SUB(NOW(), INTERVAL 1 MONTH)
-              AND statut IN ('confirmee', 'en_cours', 'terminee')";
-    $stmt = $db->prepare($query);
-    $stmt->execute();
-    $lastMonthOccupiedSpaces = $stmt->fetch()['total'];
-
-    $lastMonthOccupancyRate = $totalSpaces > 0 ? round(($lastMonthOccupiedSpaces / $totalSpaces) * 100, 2) : 0;
-    $occupancyGrowth = $lastMonthOccupancyRate > 0 ? round($occupancyRate - $lastMonthOccupancyRate, 1) : 0;
-
-    // Réservations hier pour calculer la croissance
-    $query = "SELECT COUNT(*) as total FROM reservations
-              WHERE DATE(created_at) = DATE_SUB(CURDATE(), INTERVAL 1 DAY)";
-    $stmt = $db->prepare($query);
-    $stmt->execute();
-    $yesterdayReservations = $stmt->fetch()['total'];
-
-    $reservationsGrowth = $yesterdayReservations > 0 ? (int)($todayReservations - $yesterdayReservations) : $todayReservations;
+    $occupancyGrowth = $lastMonthOccupancyRate > 0
+        ? round($occupancyRate - $lastMonthOccupancyRate, 1)
+        : 0;
 
     Response::success([
         'users' => [
-            'total' => (int)$totalUsers,
-            'active' => (int)$activeUsers,
+            'total' => (int)$stats['total_users'],
+            'active' => (int)$stats['active_users'],
             'growth' => $usersGrowth
         ],
         'reservations' => [
-            'today' => (int)$todayReservations,
-            'month' => (int)$monthReservations,
+            'today' => (int)$stats['today_reservations'],
+            'month' => (int)$stats['month_reservations'],
             'growth' => $reservationsGrowth
         ],
         'revenue' => [
-            'month' => (float)$monthRevenue,
+            'month' => (float)$stats['month_revenue'],
             'growth' => $revenueGrowth
         ],
         'subscriptions' => [
-            'active' => (int)$activeSubscriptions
+            'active' => (int)$stats['active_subscriptions']
         ],
         'domiciliations' => [
-            'pending' => (int)$pendingDomiciliations
+            'pending' => (int)$stats['pending_domiciliations']
         ],
         'occupancy' => [
             'rate' => $occupancyRate,
-            'occupied' => (int)$occupiedSpaces,
-            'total' => (int)$totalSpaces,
+            'occupied' => (int)$stats['occupied_spaces'],
+            'total' => (int)$stats['total_spaces'],
             'growth' => $occupancyGrowth
         ]
     ]);
