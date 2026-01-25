@@ -14,10 +14,11 @@ class Logger {
   private logs: LogEntry[] = [];
   private maxLogs = 100;
 
-  private formatMessage(level: LogLevel, message: string, data?: any): string {
+  // Returns a static log prefix that does not include untrusted message content
+  private formatMessage(level: LogLevel): string {
     const timestamp = new Date().toISOString();
     const prefix = `[${timestamp}] [${level.toUpperCase()}]`;
-    return data ? `${prefix} ${message}` : `${prefix} ${message}`;
+    return prefix;
   }
 
   private addLog(level: LogLevel, message: string, data?: any) {
@@ -40,7 +41,7 @@ class Logger {
     this.addLog("error", message, data);
 
     if (isDev) {
-      console.error(this.formatMessage("error", message), data);
+      console.error(this.formatMessage("error"), message, data);
     } else {
       console.error(message);
     }
@@ -50,7 +51,7 @@ class Logger {
     this.addLog("warn", message, data);
 
     if (isDev) {
-      console.warn(this.formatMessage("warn", message), data);
+      console.warn(this.formatMessage("warn"), message, data);
     }
   }
 
@@ -58,7 +59,7 @@ class Logger {
     this.addLog("info", message, data);
 
     if (isDev) {
-      console.log(this.formatMessage("info", message), data);
+      console.log(this.formatMessage("info"), message, data);
     }
   }
 
@@ -66,7 +67,7 @@ class Logger {
     this.addLog("debug", message, data);
 
     if (isDev) {
-      console.debug(this.formatMessage("debug", message), data);
+      console.debug(this.formatMessage("debug"), message, data);
     }
   }
 
