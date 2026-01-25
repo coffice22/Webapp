@@ -76,7 +76,7 @@ export default function Calendar({ reservations, onDateClick, selectedDate }: Ca
             return (
               <button
                 key={index}
-                onClick={() => onDateClick && onDateClick(day)}
+                onClick={() => onDateClick?.(day)}
                 className={`
                   relative aspect-square p-2 rounded-lg text-sm transition-all
                   ${!isCurrentMonth ? 'text-gray-300' : 'text-gray-900'}
