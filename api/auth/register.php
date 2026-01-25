@@ -16,7 +16,7 @@ try {
     $data = json_decode(file_get_contents("php://input"));
 
     if (json_last_error() !== JSON_ERROR_NONE) {
-        Response::error("Données JSON invalides", 400);
+        Response::validationError("Données JSON invalides");
     }
 
     // Utiliser la classe Validator
@@ -37,7 +37,7 @@ try {
     }
 
     if ($validator->hasErrors()) {
-        Response::error($validator->getFirstError(), 400);
+        Response::validationError($validator->getFirstError());
     }
 
     $db = Database::getInstance()->getConnection();
@@ -49,7 +49,7 @@ try {
 
     if ($stmt->rowCount() > 0) {
         error_log("Email already exists: " . $data->email);
-        Response::error("Cet email est déjà utilisé", 409);
+        Response::conflict("Cet email est déjà utilisé");
     }
 
     error_log("Hashing password...");

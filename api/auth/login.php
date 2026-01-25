@@ -35,7 +35,7 @@ try {
     $data = json_decode($rawInput);
 
     if (json_last_error() !== JSON_ERROR_NONE) {
-        Response::error("Données JSON invalides", 400);
+        Response::validationError("Données JSON invalides");
     }
 
     // Utiliser la classe Validator
@@ -46,7 +46,7 @@ try {
     $validator->validateRequired($data->password ?? '', 'password');
 
     if ($validator->hasErrors()) {
-        Response::error($validator->getFirstError(), 400);
+        Response::validationError($validator->getFirstError());
     }
 
     $db = Database::getInstance()->getConnection();

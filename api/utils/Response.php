@@ -41,6 +41,22 @@ class Response
     }
 
     /**
+     * Conflit (409)
+     */
+    public static function conflict($message = "Conflit détecté")
+    {
+        self::error($message, 409);
+    }
+
+    /**
+     * Erreur de validation (422)
+     */
+    public static function validationError($message = "Erreur de validation", $details = null)
+    {
+        self::error($message, 422, $details);
+    }
+
+    /**
      * Non autorisé
      */
     public static function unauthorized($message = "Non autorisé")

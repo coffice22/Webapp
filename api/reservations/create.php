@@ -34,18 +34,23 @@ try {
     $auth = Auth::verifyAuth();
     $data = json_decode(file_get_contents("php://input"));
 
-    // Validation
-    if (empty($data->espace_id) || empty($data->date_debut) || empty($data->date_fin)) {
-        Response::error("Données manquantes", 400);
+    // Validation stricte des champs requis
+    $missingFields = [];
+    if (empty($data->espace_id)) $missingFields[] = 'espace_id';
+    if (empty($data->date_debut)) $missingFields[] = 'date_debut';
+    if (empty($data->date_fin)) $missingFields[] = 'date_fin';
+
+    if (!empty($missingFields)) {
+        Response::validationError("Champs requis manquants", ['missing' => $missingFields]);
     }
 
     // Valider le nombre de participants
     $participants = isset($data->participants) ? (int)$data->participants : 1;
     if ($participants < 1) {
-        Response::error("Le nombre de participants doit être au moins 1", 400);
+        Response::validationError("Le nombre de participants doit être au moins 1");
     }
     if ($participants > 100) {
-        Response::error("Le nombre de participants ne peut pas dépasser 100", 400);
+        Response::validationError("Le nombre de participants ne peut pas dépasser 100");
     }
 
     $db = Database::getInstance()->getConnection();
@@ -98,7 +103,7 @@ try {
         $conflits = $stmt->fetchAll();
         if (count($conflits) > 0) {
             $db->rollBack();
-            Response::error("Cet espace n'est pas disponible pour ces dates", 409);
+            Response::conflict("Cet espace n'est pas disponible pour ces dates");
         }
 
         // CALCULER LE MONTANT CÔTÉ SERVEUR (ne pas faire confiance au client)
@@ -289,6 +294,8 @@ try {
         $stmt->execute([':id' => $reservation_id]);
         $reservation = $stmt->fetch();
 
+        // Retourner 201 Created comme requis par REST
+        http_response_code(201);
         Response::success($reservation, "Réservation créée avec succès", 201);
 
     } catch (Exception $e) {
