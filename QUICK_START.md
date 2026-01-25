@@ -14,6 +14,7 @@ bash deploy-prod.sh
 ```
 
 Ce script va :
+
 - ✅ Nettoyer les fichiers de développement
 - ✅ Copier le build de production à la racine
 - ✅ Créer les dossiers nécessaires
@@ -26,11 +27,13 @@ bash setup-database.sh
 ```
 
 Le script va te demander :
+
 - Nom de la base (appuie sur Entrée pour `cofficed_coffice`)
 - Utilisateur MySQL
 - Mot de passe MySQL
 
 Il va automatiquement :
+
 - ✅ Créer la base si nécessaire
 - ✅ Importer le schéma
 - ✅ Exécuter toutes les migrations (002 à 006)
@@ -77,6 +80,7 @@ curl https://coffice.dz/api/test_db_connection.php
 ```
 
 ### Ouvre dans le navigateur :
+
 - 🌐 `https://coffice.dz`
 - Crée un compte test
 - Vérifie que ton code parrainage s'affiche (format: CPF + 6 caractères)
@@ -111,21 +115,25 @@ exit;
 ## 🆘 Problèmes ?
 
 ### Page blanche
+
 ```bash
 # Vérifier que index.html est à la racine
 ls -la index.html
 ```
 
 ### API erreur 500
+
 ```bash
 # Vérifier les logs
 tail -50 api/logs/app.log
 ```
 
 ### Code parrainage manquant
+
 ```bash
 mysql -u cofficed_coffice -p cofficed_coffice
 ```
+
 ```sql
 UPDATE users
 SET code_parrainage = CONCAT('CPF', UPPER(SUBSTRING(MD5(CONCAT(id, email, UNIX_TIMESTAMP())), 1, 6)))

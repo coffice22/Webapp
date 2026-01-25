@@ -1,6 +1,7 @@
 # ✅ Checklist de Déploiement - Coffice v4.2.0
 
 ## 📍 Situation actuelle
+
 Le repo a été cloné sur `public_html/`. Suivez cette checklist pour finaliser le déploiement.
 
 ---
@@ -23,6 +24,7 @@ rm -f .gitignore
 ```
 
 **Important** : Gardez uniquement :
+
 - `dist/` → sera copié à la racine
 - `api/` → backend PHP
 - `database/` → migrations
@@ -84,6 +86,7 @@ APP_DEBUG=false
 ```
 
 **Sécurité** :
+
 ```bash
 chmod 644 .env
 ```
@@ -138,6 +141,7 @@ chmod 644 .htaccess
 ## 🧪 Étape 6 : Tests
 
 ### A. Test API
+
 ```bash
 curl https://coffice.dz/api/check.php
 ```
@@ -145,6 +149,7 @@ curl https://coffice.dz/api/check.php
 **Attendu** : `{"status":"ok","php_version":"8.x.x",...}`
 
 ### B. Test connexion DB
+
 ```bash
 curl https://coffice.dz/api/test_db_connection.php
 ```
@@ -152,6 +157,7 @@ curl https://coffice.dz/api/test_db_connection.php
 **Attendu** : `{"success":true,...}`
 
 ### C. Test frontend
+
 1. Ouvrir `https://coffice.dz` dans un navigateur
 2. F12 → Console (vérifier aucune erreur)
 3. Tester l'inscription
@@ -163,16 +169,19 @@ curl https://coffice.dz/api/test_db_connection.php
 ## 🔍 Étape 7 : Vérifications de sécurité
 
 ### A. Headers HTTP
+
 ```bash
 curl -I https://coffice.dz/api/auth/me.php
 ```
 
 Doit contenir :
+
 - `X-Content-Type-Options: nosniff`
 - `X-Frame-Options: DENY`
 - `X-XSS-Protection: 1; mode=block`
 
 ### B. HTTPS actif
+
 ```bash
 curl -I https://coffice.dz
 ```
@@ -223,18 +232,22 @@ Cochez au fur et à mesure :
 ## 🐛 Problèmes fréquents
 
 ### "Module parse failed"
+
 **Cause** : Fichiers source (src/) présents sur le serveur
 **Solution** : Supprimer src/ et node_modules/
 
 ### API erreur 500
+
 **Cause** : Configuration .env incorrecte ou permissions
 **Solution** : Vérifier logs dans `api/logs/app.log`
 
 ### Page blanche
+
 **Cause** : Structure incorrecte (index.html pas à la racine)
 **Solution** : S'assurer que dist/ a été copié à la racine
 
 ### Pas de code parrainage
+
 **Cause** : Migration 006 non exécutée
 **Solution** : Exécuter `006_add_code_parrainage.sql`
 
@@ -243,6 +256,7 @@ Cochez au fur et à mesure :
 ## 📞 Support
 
 **Logs à vérifier** :
+
 - `api/logs/app.log` → Logs backend
 - Console navigateur (F12) → Erreurs frontend
 
