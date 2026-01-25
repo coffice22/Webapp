@@ -128,8 +128,7 @@ export default function WeekCalendar({
                           <button
                             key={espace.id}
                             onClick={() =>
-                              onSlotClick &&
-                              onSlotClick(
+                              onSlotClick?.(
                                 addHours(startOfDay(day), hour),
                                 espace.id,
                               )
