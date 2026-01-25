@@ -128,8 +128,10 @@ export default function WeekCalendar({
                           <button
                             key={espace.id}
                             onClick={() =>
-                              onSlotClick?.(addHours(startOfDay(day), hour),
-                                espace.id)
+                              onSlotClick?.(
+                                addHours(startOfDay(day), hour),
+                                espace.id,
+                              )
                             }
                             className={`
                               w-full text-xs px-2 py-1 rounded transition-colors text-left
