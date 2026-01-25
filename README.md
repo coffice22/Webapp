@@ -9,12 +9,14 @@ Application complète de gestion d'espaces de coworking au Mohammadia Mall, Alge
 ## 🎯 Fonctionnalités
 
 ### ✅ Réservations
+
 - Vue Liste / Calendrier Mensuel / Calendrier Hebdomadaire
 - Création, modification, annulation
 - Notifications automatiques
 - Rappels par email 24h avant
 
 ### ✅ Authentification & Sécurité
+
 - JWT avec expiration
 - Réinitialisation mot de passe
 - Politique mot de passe forte (v4.1.0)
@@ -23,12 +25,14 @@ Application complète de gestion d'espaces de coworking au Mohammadia Mall, Alge
 - Protection XSS/CSRF
 
 ### ✅ Domiciliation
+
 - Demandes avec upload documents
 - Validation admin
 - Workflow complet
 - Emails automatiques
 
 ### ✅ Dashboard Admin (ERP)
+
 - Gestion utilisateurs
 - Gestion espaces
 - Statistiques temps réel (+85% performance v4.1.0)
@@ -36,6 +40,7 @@ Application complète de gestion d'espaces de coworking au Mohammadia Mall, Alge
 - Codes promo et parrainages
 
 ### ✅ Performance v4.1.0
+
 - Index database optimisés (+70% vitesse)
 - Pagination intelligente (-97% mémoire)
 - Requêtes optimisées (13→1)
@@ -45,6 +50,7 @@ Application complète de gestion d'espaces de coworking au Mohammadia Mall, Alge
 ## 🔧 Installation Locale (Dev)
 
 ### 1. Prérequis
+
 - PHP 8.1+ avec extensions: pdo, pdo_mysql, mbstring
 - MySQL 8.0+
 - Node.js 18+
@@ -63,6 +69,7 @@ nano .env
 ```
 
 **Variables essentielles .env :**
+
 ```env
 DB_HOST=localhost
 DB_NAME=cofficed_coffice
@@ -145,6 +152,7 @@ public_html/
 ### 3. Supprimer du Serveur
 
 **Ces fichiers NE DOIVENT PAS être sur le serveur :**
+
 - `src/`
 - `node_modules/`
 - `package.json`
@@ -181,17 +189,20 @@ coffice/
 ## 🔒 Sécurité v4.1.0
 
 ### Politique Mot de Passe
+
 - Minimum 8 caractères
 - 1 majuscule, 1 minuscule, 1 chiffre, 1 spécial
 - Indicateur de force en temps réel
 
 ### Audit Logging
+
 - Toutes actions critiques loggées
 - IP, user agent, timestamp
 - Valeurs avant/après
 - Table `audit_logs` avec indexes
 
 ### Protection
+
 - JWT sécurisé avec expiration
 - Rate limiting API
 - Headers sécurité (CSP, HSTS, XSS)
@@ -203,12 +214,12 @@ coffice/
 
 ## 📊 Espaces & Tarifs
 
-| Espace | Capacité | Tarif |
-|--------|----------|-------|
-| Open Space | 12 places | 1 200 DA/jour |
-| Booth Hoggar | 2 places | 6 000 DA/jour |
-| Booth Aurès | 2 places | 6 000 DA/jour |
-| Booth Atlas | 4 places | 10 000 DA/jour |
+| Espace           | Capacité  | Tarif          |
+| ---------------- | --------- | -------------- |
+| Open Space       | 12 places | 1 200 DA/jour  |
+| Booth Hoggar     | 2 places  | 6 000 DA/jour  |
+| Booth Aurès      | 2 places  | 6 000 DA/jour  |
+| Booth Atlas      | 4 places  | 10 000 DA/jour |
 | Salle de Réunion | 12 places | 2 500 DA/heure |
 
 ---
@@ -232,14 +243,17 @@ curl -I https://coffice.dz/assets/index-XXX.js | grep "Content-Type"
 ## 🐛 Dépannage
 
 ### Erreur MIME Type
+
 **Symptôme:** `Expected a JavaScript module script...`
 
 **Solution:**
+
 1. Supprimer src/, node_modules/ du serveur
 2. Vérifier index.html et assets/ sont à la racine de public_html/
 3. Vérifier .htaccess présent avec types MIME corrects
 
 ### API Erreur 500
+
 ```bash
 # Vérifier .env
 cat .env | grep DB_
@@ -252,6 +266,7 @@ chmod 755 api/uploads/
 ```
 
 ### Page Blanche
+
 1. F12 → Console (voir erreurs)
 2. Vérifier structure public_html/ correcte
 3. Vérifier .htaccess présent
@@ -262,11 +277,13 @@ chmod 755 api/uploads/
 ## 📧 Configuration Email
 
 ### Gmail (Recommandé)
+
 1. Activer authentification 2 facteurs
 2. Créer mot de passe application: https://myaccount.google.com/apppasswords
 3. Utiliser dans `MAIL_PASSWORD`
 
 ### SMTP Personnalisé
+
 ```env
 MAIL_HOST=smtp.votre-domaine.com
 MAIL_PORT=587
@@ -279,12 +296,12 @@ MAIL_ENCRYPTION=tls
 
 ## 📈 Métriques Performance v4.1.0
 
-| Opération | Avant | Après | Gain |
-|-----------|-------|-------|------|
-| Recherche disponibilité | 350ms | 100ms | 71% |
-| Stats admin | 1200ms | 180ms | 85% |
-| Liste domiciliations | 8000ms | 200ms | 97% |
-| Mémoire (10k records) | 500MB | 15MB | 97% |
+| Opération               | Avant  | Après | Gain |
+| ----------------------- | ------ | ----- | ---- |
+| Recherche disponibilité | 350ms  | 100ms | 71%  |
+| Stats admin             | 1200ms | 180ms | 85%  |
+| Liste domiciliations    | 8000ms | 200ms | 97%  |
+| Mémoire (10k records)   | 500MB  | 15MB  | 97%  |
 
 ---
 
@@ -306,17 +323,20 @@ MAIL_ENCRYPTION=tls
 ## 🆕 Nouveautés v4.2.0
 
 **Fonctionnalités:**
+
 - ✅ Système de parrainage fonctionnel avec codes automatiques
 - ✅ Page d'abonnements complète avec interface intuitive
 - ✅ Amélioration du processus de domiciliation
 - ✅ Migration base de données pour le parrainage
 
 **Performance:**
+
 - ✅ Index database critiques (+70% vitesse)
 - ✅ Pagination optimisée (-97% mémoire)
 - ✅ Requêtes optimisées
 
 **Sécurité:**
+
 - ✅ Politique mot de passe forte
 - ✅ Audit logging complet
 - ✅ Headers HTTP sécurisés

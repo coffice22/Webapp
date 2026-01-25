@@ -38,6 +38,7 @@ public_html/
 ```
 
 **⚠️ Ne jamais uploader :**
+
 - `src/`
 - `node_modules/`
 - `package.json`
@@ -146,6 +147,7 @@ mysql -u root -p cofficed_coffice < database/migrations/006_add_code_parrainage.
 ```
 
 Cette migration :
+
 - Ajoute le champ `code_parrainage` aux utilisateurs
 - Génère les codes pour les utilisateurs existants
 - Crée les entrées parrainages manquantes
@@ -153,6 +155,7 @@ Cette migration :
 ### 3. Upload nouveaux fichiers
 
 Uploadez les fichiers modifiés :
+
 - `dist/` (nouveau build)
 - `api/auth/register.php`
 - `api/auth/me.php`
@@ -167,6 +170,7 @@ Uploadez les fichiers modifiés :
 **Symptôme** : `Expected a JavaScript module script...`
 
 **Solution** :
+
 1. Vérifier que `src/` et `node_modules/` ne sont pas sur le serveur
 2. Vérifier `.htaccess` présent à la racine
 3. Vider le cache du navigateur
@@ -215,6 +219,7 @@ WHERE code_parrainage IS NULL;
 ## 📧 Support
 
 En cas de problème :
+
 - Vérifier les logs : `api/logs/app.log`
 - Vérifier la console navigateur (F12)
 - Contacter : contact@coffice.dz
