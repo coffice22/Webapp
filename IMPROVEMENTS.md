@@ -5,6 +5,7 @@ Ce document détaille toutes les améliorations apportées à l'application Coff
 ## Résumé Exécutif
 
 Cette mise à jour majeure améliore drastiquement:
+
 - **Performance:** +70% sur les recherches, +85% sur les statistiques admin
 - **Sécurité:** Politique de mot de passe renforcée, headers HTTP sécurisés, audit logging complet
 - **Expérience utilisateur:** Pagination, filtres, messages d'erreur clairs
@@ -19,6 +20,7 @@ Cette mise à jour majeure améliore drastiquement:
 **Amélioration:** +70% de vitesse sur les recherches et filtres
 
 **Index créés:**
+
 ```sql
 -- Disponibilité espaces (70% plus rapide)
 idx_reservations_availability (espace_id, statut, date_debut, date_fin)
@@ -51,12 +53,14 @@ idx_password_resets_token_expiry (token, expires_at)
 ```
 
 **Impact:**
+
 - Recherche de disponibilité: 350ms → 100ms
 - Filtrage domiciliations: 500ms → 200ms
 - Recherche utilisateurs: 800ms → 150ms
 - Pagination: 300ms → 150ms
 
 **Installation:**
+
 ```bash
 mysql -u root -p cofficed_coffice < database/migrations/004_performance_indexes.sql
 ```
@@ -71,6 +75,7 @@ mysql -u root -p cofficed_coffice < database/migrations/004_performance_indexes.
 **Amélioration:** -85% de temps d'exécution
 
 **Technique:** Utilisation de sous-requêtes (subqueries) dans un seul SELECT:
+
 ```sql
 SELECT
     (SELECT COUNT(*) FROM users) as total_users,
@@ -79,6 +84,7 @@ SELECT
 ```
 
 **Bénéfices:**
+
 - Moins de round-trips vers la base de données
 - Utilisation des index créés
 - Transaction unique au lieu de 13
@@ -87,6 +93,7 @@ SELECT
 ### 1.3 Pagination des Endpoints (Critique)
 
 **Fichiers modifiés:**
+
 - `api/domiciliations/index.php`
 - `api/parrainages/index.php`
 
@@ -95,6 +102,7 @@ SELECT
 **Solution:** Pagination avec 20-50 enregistrements par page
 
 **Exemple de réponse:**
+
 ```json
 {
   "success": true,
@@ -111,6 +119,7 @@ SELECT
 ```
 
 **Utilisation:**
+
 ```bash
 # Page 1, 20 résultats
 GET /api/domiciliations/index.php?page=1&limit=20
@@ -120,6 +129,7 @@ GET /api/domiciliations/index.php?page=1&limit=20&statut=en_attente
 ```
 
 **Bénéfices:**
+
 - Mémoire: 500MB → 15MB pour 10000 enregistrements
 - Temps réponse: 8s → 200ms
 - Expérience utilisateur améliorée avec navigation pages
@@ -131,27 +141,32 @@ GET /api/domiciliations/index.php?page=1&limit=20&statut=en_attente
 **Fichier:** `api/utils/Validator.php`
 
 **Avant:**
+
 - Minimum 6 caractères
 - Aucune exigence de complexité
 
 **Après:**
+
 - Minimum 8 caractères
 - Au moins 1 majuscule
 - Au moins 1 minuscule
 - Au moins 1 chiffre
-- Au moins 1 caractère spécial (!@#$%^&*(),.?":{}|<>_-+=[]\\/)
+- Au moins 1 caractère spécial (!@#$%^&\*(),.?":{}|<>\_-+=[]\\/)
 
 **Nouvelle fonction:**
+
 ```php
 Validator::getPasswordStrength($password) // Retourne 0-100
 ```
 
 **Impact:**
+
 - Protection contre attaques par dictionnaire
 - Protection contre brute force
 - Conformité standards de sécurité (OWASP)
 
 **Note:** Les mots de passe existants continuent de fonctionner. La nouvelle politique s'applique uniquement aux:
+
 - Nouveaux comptes
 - Changements de mot de passe
 - Réinitialisations
@@ -159,12 +174,14 @@ Validator::getPasswordStrength($password) // Retourne 0-100
 ### 2.2 Audit Logging Complet (CRITIQUE)
 
 **Fichiers:**
+
 - `database/migrations/005_audit_logging.sql`
 - `api/utils/AuditLogger.php`
 
 **Nouvelle table:** `audit_logs`
 
 **Structure:**
+
 ```sql
 CREATE TABLE audit_logs (
     id CHAR(36) PRIMARY KEY,
@@ -181,6 +198,7 @@ CREATE TABLE audit_logs (
 ```
 
 **Actions loggées:**
+
 - LOGIN_SUCCESS / LOGIN_FAILED
 - LOGOUT
 - CREATE (toute création)
@@ -189,6 +207,7 @@ CREATE TABLE audit_logs (
 - Actions personnalisées
 
 **Utilisation:**
+
 ```php
 // Logger une connexion
 AuditLogger::logLogin($userId, true);
@@ -210,10 +229,12 @@ $logs = AuditLogger::getUserLogs($userId, 50, 0);
 ```
 
 **Triggers automatiques:**
+
 - Modifications utilisateurs loggées automatiquement
 - Suppressions utilisateurs loggées automatiquement
 
 **Bénéfices:**
+
 - Traçabilité complète (qui a fait quoi et quand)
 - Investigation de problèmes simplifiée
 - Conformité RGPD et audit
@@ -221,12 +242,14 @@ $logs = AuditLogger::getUserLogs($userId, 50, 0);
 - Analyse comportementale
 
 **Nettoyage automatique:**
+
 ```php
 // Supprimer logs > 1 an (via cron)
 AuditLogger::cleanup(365);
 ```
 
 **Installation:**
+
 ```bash
 mysql -u root -p cofficed_coffice < database/migrations/005_audit_logging.sql
 ```
@@ -236,6 +259,7 @@ mysql -u root -p cofficed_coffice < database/migrations/005_audit_logging.sql
 **Fichier:** `api/config/cors.php`
 
 **Headers ajoutés:**
+
 ```php
 X-Content-Type-Options: nosniff           // Prévient MIME sniffing
 X-Frame-Options: DENY                      // Prévient clickjacking
@@ -247,12 +271,14 @@ Strict-Transport-Security: max-age=31536000; includeSubDomains; preload // Force
 ```
 
 **Bénéfices:**
+
 - Score sécurité A+ sur SecurityHeaders.com
 - Protection contre XSS, clickjacking, MIME sniffing
 - Force utilisation HTTPS
 - Limite autorisations navigateur
 
 **Test:**
+
 ```bash
 curl -I https://coffice.dz/api/check.php | grep "X-"
 ```
@@ -262,6 +288,7 @@ curl -I https://coffice.dz/api/check.php | grep "X-"
 **Voir:** `API_CONFORMITY.md`
 
 **Améliorations:**
+
 - Codes HTTP corrects (201, 401, 409, 422)
 - Protection JWT stricte
 - Détection conflits
@@ -297,21 +324,21 @@ curl -I https://coffice.dz/api/check.php | grep "X-"
 
 ### Avant vs Après
 
-| Opération | Avant | Après | Gain |
-|-----------|-------|-------|------|
-| Recherche disponibilité | 350ms | 100ms | 71% |
-| Stats admin | 1200ms | 180ms | 85% |
-| Liste domiciliations (1000+) | 8000ms | 200ms | 97% |
-| Recherche utilisateurs | 800ms | 150ms | 81% |
-| Pagination réservations | 300ms | 150ms | 50% |
+| Opération                    | Avant  | Après | Gain |
+| ---------------------------- | ------ | ----- | ---- |
+| Recherche disponibilité      | 350ms  | 100ms | 71%  |
+| Stats admin                  | 1200ms | 180ms | 85%  |
+| Liste domiciliations (1000+) | 8000ms | 200ms | 97%  |
+| Recherche utilisateurs       | 800ms  | 150ms | 81%  |
+| Pagination réservations      | 300ms  | 150ms | 50%  |
 
 ### Taille Mémoire
 
-| Opération | Avant | Après | Gain |
-|-----------|-------|-------|------|
-| 10000 domiciliations | 500MB | 15MB | 97% |
-| 5000 parrainages | 250MB | 8MB | 97% |
-| Stats admin | 12MB | 2MB | 83% |
+| Opération            | Avant | Après | Gain |
+| -------------------- | ----- | ----- | ---- |
+| 10000 domiciliations | 500MB | 15MB  | 97%  |
+| 5000 parrainages     | 250MB | 8MB   | 97%  |
+| Stats admin          | 12MB  | 2MB   | 83%  |
 
 ## 6. Checklist Installation
 
@@ -355,12 +382,14 @@ npm run build
 ### Cron Jobs
 
 Ajouter au crontab:
+
 ```cron
 # Nettoyage audit logs > 1 an (tous les mois)
 0 3 1 * * php /path/to/project/scripts/cleanup_audit_logs.php
 ```
 
 Créer `scripts/cleanup_audit_logs.php`:
+
 ```php
 <?php
 require_once __DIR__ . '/../api/utils/AuditLogger.php';
@@ -433,6 +462,7 @@ php scripts/audit_api.php https://coffice.dz/api
 **Aucun** - Tous les changements sont additifs ou internes
 
 **Note sur mots de passe:** Les utilisateurs avec anciens mots de passe (6 caractères) peuvent continuer à se connecter. La nouvelle politique s'applique uniquement lors de:
+
 - Création nouveau compte
 - Changement de mot de passe
 - Réinitialisation
@@ -510,6 +540,7 @@ tail -f api/logs/app.log | grep -E "LOGIN_FAILED|403|401"
 ## Conclusion
 
 Cette mise à jour v4.1.0 améliore drastiquement Coffice en termes de:
+
 - **Performance:** 70-85% plus rapide
 - **Sécurité:** Politique forte, audit complet, headers sécurisés
 - **Conformité:** 100% REST compliant
