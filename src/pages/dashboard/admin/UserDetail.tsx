@@ -26,7 +26,7 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { logger } from "../../../utils/logger";
 
-interface UserDetail {
+interface UserDetailData {
   id: string;
   email: string;
   nom: string;
@@ -36,14 +36,15 @@ interface UserDetail {
   entreprise?: string;
   role: string;
   emailVerified: boolean;
-  createdAt: string;
+  createdAt?: string;
+  created_at?: string;
 }
 
 const UserDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { loadUsers } = useAppStore();
-  const [user, setUser] = useState<UserDetail | null>(null);
+  const [user, setUser] = useState<UserDetailData | null>(null);
   const [loading, setLoading] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -59,7 +60,12 @@ const UserDetail: React.FC = () => {
       setLoading(true);
       const response = await apiClient.getUser(id!);
       if (response.success && response.data) {
-        setUser(response.data as UserDetail);
+        const userData = response.data as any;
+        // Normaliser les noms de champs (snake_case → camelCase)
+        setUser({
+          ...userData,
+          createdAt: userData.createdAt || userData.created_at,
+        } as UserDetailData);
       } else {
         toast.error("Utilisateur introuvable");
         navigate("/app/admin/users");
@@ -248,14 +254,20 @@ const UserDetail: React.FC = () => {
             <div className="space-y-3">
               <div>
                 <p className="text-sm text-gray-600">Date d'inscription</p>
-                <p className="font-medium">
-                  {format(new Date(user.createdAt), "dd MMMM yyyy", {
-                    locale: fr,
-                  })}
-                </p>
-                <p className="text-xs text-gray-500">
-                  {format(new Date(user.createdAt), "HH:mm", { locale: fr })}
-                </p>
+                {user.createdAt ? (
+                  <>
+                    <p className="font-medium">
+                      {format(new Date(user.createdAt), "dd MMMM yyyy", {
+                        locale: fr,
+                      })}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {format(new Date(user.createdAt), "HH:mm", { locale: fr })}
+                    </p>
+                  </>
+                ) : (
+                  <p className="text-gray-500 italic">Non disponible</p>
+                )}
               </div>
               <div>
                 <p className="text-sm text-gray-600">ID Utilisateur</p>
