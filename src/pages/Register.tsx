@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Mail, Lock, User, Phone, ArrowRight, Gift } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -19,6 +19,7 @@ interface RegisterForm extends UserForm {
 
 const Register = () => {
   const { register: registerUser, user } = useAuthStore();
+  const [searchParams] = useSearchParams();
   const [isLoading, setIsLoading] = React.useState(false);
   const [validatingReferral, setValidatingReferral] = React.useState(false);
   const [referralValid, setReferralValid] = React.useState<boolean | null>(
@@ -29,10 +30,20 @@ const Register = () => {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<RegisterForm>();
 
   const password = watch("password");
+
+  // Auto-remplir le code de parrainage depuis l'URL
+  React.useEffect(() => {
+    const referralCode = searchParams.get("parrain");
+    if (referralCode) {
+      setValue("codeParrainage", referralCode);
+      validateReferralCode(referralCode);
+    }
+  }, [searchParams, setValue]);
 
   if (user) {
     return <Navigate to="/app" replace />;
