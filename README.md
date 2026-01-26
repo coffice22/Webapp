@@ -231,13 +231,24 @@ curl -I https://coffice.dz/assets/index-XXX.js | grep "Content-Type"
 
 ## 🐛 Dépannage
 
-### Erreur MIME Type
-**Symptôme:** `Expected a JavaScript module script...`
+### Erreur MIME Type / Failed to load module script
+**Symptôme:** `Expected a JavaScript-or-Wasm module script but the server responded with a MIME type of ""`
 
-**Solution:**
-1. Supprimer src/, node_modules/ du serveur
-2. Vérifier index.html et assets/ sont à la racine de public_html/
-3. Vérifier .htaccess présent avec types MIME corrects
+**Cause:** Apache ne sert pas les fichiers JavaScript avec le bon Content-Type.
+
+**Solutions:**
+1. **Rebuild complet** : `npm run build`
+2. **Upload .htaccess** : Vérifier que dist/.htaccess est uploadé sur le serveur
+3. **Vérifier via cPanel** : File Manager → Afficher fichiers cachés (.htaccess visible)
+4. **Test** : Accéder à `/test-mime.html` sur votre serveur
+5. **Vider cache** : Navigateur (Ctrl+Shift+Del) + Cloudflare (si activé)
+6. **Supprimer** : src/, node_modules/ du serveur (NE DOIVENT PAS être présents)
+
+**Vérification manuelle:**
+```bash
+curl -I https://coffice.dz/assets/index-DCeMU0wM.js
+# Doit afficher: Content-Type: application/javascript; charset=utf-8
+```
 
 ### API Erreur 500
 ```bash
