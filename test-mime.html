@@ -1,108 +1,122 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Test MIME Types - Coffice</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
-            background: #f5f5f5;
-        }
-        .test-result {
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 8px;
-            background: white;
-            border-left: 4px solid #3b82f6;
-        }
-        .success { border-left-color: #10b981; }
-        .error { border-left-color: #ef4444; }
-        .warning { border-left-color: #f59e0b; }
-        code {
-            background: #1f2937;
-            color: #10b981;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-        h1 { color: #1f2937; }
-        .loading { color: #6b7280; }
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+      .test-result {
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 8px;
+        background: white;
+        border-left: 4px solid #3b82f6;
+      }
+      .success {
+        border-left-color: #10b981;
+      }
+      .error {
+        border-left-color: #ef4444;
+      }
+      .warning {
+        border-left-color: #f59e0b;
+      }
+      code {
+        background: #1f2937;
+        color: #10b981;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+      h1 {
+        color: #1f2937;
+      }
+      .loading {
+        color: #6b7280;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <h1>🔍 Test MIME Types - Coffice</h1>
     <div id="results"></div>
 
     <script>
-        const resultsDiv = document.getElementById('results');
+      const resultsDiv = document.getElementById("results");
 
-        async function testMimeType(url, expectedType) {
-            try {
-                const response = await fetch(url);
-                const contentType = response.headers.get('Content-Type');
+      async function testMimeType(url, expectedType) {
+        try {
+          const response = await fetch(url);
+          const contentType = response.headers.get("Content-Type");
 
-                const isCorrect = contentType && contentType.includes(expectedType);
-                const className = isCorrect ? 'success' : 'error';
-                const icon = isCorrect ? '✅' : '❌';
+          const isCorrect = contentType && contentType.includes(expectedType);
+          const className = isCorrect ? "success" : "error";
+          const icon = isCorrect ? "✅" : "❌";
 
-                return `
+          return `
                     <div class="test-result ${className}">
                         ${icon} <strong>${url}</strong><br>
-                        Content-Type: <code>${contentType || 'VIDE'}</code><br>
+                        Content-Type: <code>${contentType || "VIDE"}</code><br>
                         Attendu: <code>${expectedType}</code>
                     </div>
                 `;
-            } catch (error) {
-                return `
+        } catch (error) {
+          return `
                     <div class="test-result error">
                         ❌ <strong>${url}</strong><br>
                         Erreur: ${error.message}
                     </div>
                 `;
-            }
+        }
+      }
+
+      async function runTests() {
+        resultsDiv.innerHTML =
+          '<div class="test-result loading">⏳ Tests en cours...</div>';
+
+        const tests = [
+          { url: "/assets/index-DCeMU0wM.js", type: "application/javascript" },
+          {
+            url: "/assets/react-vendor-CcrhpHCZ.js",
+            type: "application/javascript",
+          },
+          { url: "/assets/index-BJi5kjTk.css", type: "text/css" },
+        ];
+
+        const results = [];
+        for (const test of tests) {
+          const result = await testMimeType(test.url, test.type);
+          results.push(result);
         }
 
-        async function runTests() {
-            resultsDiv.innerHTML = '<div class="test-result loading">⏳ Tests en cours...</div>';
+        resultsDiv.innerHTML = results.join("");
 
-            const tests = [
-                { url: '/assets/index-DCeMU0wM.js', type: 'application/javascript' },
-                { url: '/assets/react-vendor-CcrhpHCZ.js', type: 'application/javascript' },
-                { url: '/assets/index-BJi5kjTk.css', type: 'text/css' }
-            ];
-
-            const results = [];
-            for (const test of tests) {
-                const result = await testMimeType(test.url, test.type);
-                results.push(result);
-            }
-
-            resultsDiv.innerHTML = results.join('');
-
-            // Test global
-            const allSuccess = results.every(r => r.includes('success'));
-            if (allSuccess) {
-                resultsDiv.innerHTML += `
+        // Test global
+        const allSuccess = results.every((r) => r.includes("success"));
+        if (allSuccess) {
+          resultsDiv.innerHTML += `
                     <div class="test-result success">
                         <strong>🎉 Tous les tests sont passés !</strong><br>
                         Les fichiers JavaScript sont servis avec le bon MIME type.
                     </div>
                 `;
-            } else {
-                resultsDiv.innerHTML += `
+        } else {
+          resultsDiv.innerHTML += `
                     <div class="test-result error">
                         <strong>⚠️ Certains tests ont échoué</strong><br>
                         Vérifiez que le fichier .htaccess est présent et correctement configuré.
                     </div>
                 `;
-            }
         }
+      }
 
-        runTests();
+      runTests();
     </script>
-</body>
+  </body>
 </html>
