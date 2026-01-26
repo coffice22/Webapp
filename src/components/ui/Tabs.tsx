@@ -16,9 +16,18 @@ interface TabsProps {
   className?: string;
 }
 
-const Tabs: React.FC<TabsProps> = ({ tabs, defaultTab, activeTab: controlledActiveTab, onChange, className = "" }) => {
-  const [internalActiveTab, setInternalActiveTab] = useState(defaultTab || tabs[0]?.id);
-  const activeTab = controlledActiveTab !== undefined ? controlledActiveTab : internalActiveTab;
+const Tabs: React.FC<TabsProps> = ({
+  tabs,
+  defaultTab,
+  activeTab: controlledActiveTab,
+  onChange,
+  className = "",
+}) => {
+  const [internalActiveTab, setInternalActiveTab] = useState(
+    defaultTab || tabs[0]?.id,
+  );
+  const activeTab =
+    controlledActiveTab !== undefined ? controlledActiveTab : internalActiveTab;
 
   return (
     <div className={className}>

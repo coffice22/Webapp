@@ -233,6 +233,7 @@ php api/test_db_connection.php
 ### SSL/HTTPS (Obligatoire)
 
 Via cPanel :
+
 1. SSL/TLS Status
 2. Run AutoSSL (Let's Encrypt gratuit)
 3. Activer "Force HTTPS Redirect"
@@ -240,6 +241,7 @@ Via cPanel :
 ### Headers Sécurité
 
 Le `.htaccess` contient déjà :
+
 - Protection XSS
 - Content Security Policy
 - Clickjacking protection
@@ -272,6 +274,7 @@ npm run build
 ### Erreur : Page blanche
 
 **Solution :**
+
 1. F12 → Console pour voir les erreurs
 2. Vérifier que `index.html` et `assets/` sont à la racine
 3. Vérifier `.htaccess` présent
@@ -280,6 +283,7 @@ npm run build
 ### Erreur : API ne répond pas
 
 **Solution :**
+
 1. Vérifier `.env` configuré
 2. Test : `https://coffice.dz/api/check.php`
 3. Vérifier logs : `api/logs/app.log`
@@ -288,6 +292,7 @@ npm run build
 ### Erreur : MIME type JavaScript
 
 **Solution :**
+
 1. Vérifier `.htaccess` présent à la racine
 2. Rebuild : `npm run build`
 3. Upload `dist/.htaccess`
@@ -296,6 +301,7 @@ npm run build
 ### Erreur : Emails ne partent pas
 
 **Solution :**
+
 1. Vérifier config email dans `.env`
 2. Test : créer un compte utilisateur
 3. Vérifier logs : `api/logs/app.log`
@@ -318,6 +324,7 @@ tail -f api/logs/audit.log
 ### Sauvegardes Automatiques
 
 Via cPanel :
+
 1. Backup Wizard → Generate Backup
 2. Download : Home Directory + MySQL Database
 3. Planifier : hebdomadaire minimum

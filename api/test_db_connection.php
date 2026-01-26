@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Script de test de connexion à la base de données
  * Vérifie que toutes les tables nécessaires existent
