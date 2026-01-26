@@ -24,6 +24,7 @@ import Modal from "../../../components/ui/Modal";
 import toast from "react-hot-toast";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { logger } from "../../../utils/logger";
 
 interface UserDetail {
   id: string;
@@ -64,7 +65,7 @@ const UserDetail: React.FC = () => {
         navigate("/app/admin/users");
       }
     } catch (error) {
-      console.error("Erreur chargement utilisateur:", error);
+      logger.error("Erreur chargement utilisateur:", error);
       toast.error("Erreur lors du chargement");
       navigate("/app/admin/users");
     } finally {

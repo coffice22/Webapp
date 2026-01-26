@@ -27,6 +27,7 @@ import Modal from "../../../components/ui/Modal";
 import { formatCurrency } from "../../../utils/formatters";
 import toast from "react-hot-toast";
 import { apiClient } from "../../../lib/api-client";
+import { logger } from "../../../utils/logger";
 
 interface Abonnement {
   id: string;
@@ -82,7 +83,7 @@ const AdminAbonnements = () => {
         setAbonnements(response.data || []);
       }
     } catch (error) {
-      console.error("Erreur chargement abonnements:", error);
+      logger.error("Erreur chargement abonnements:", error);
       toast.error("Erreur lors du chargement des abonnements");
     } finally {
       setLoading(false);
@@ -195,7 +196,7 @@ const AdminAbonnements = () => {
         }
       }
     } catch (error: any) {
-      console.error("Erreur:", error);
+      logger.error("Erreur:", error);
       toast.error(error.response?.data?.message || "Une erreur est survenue");
     } finally {
       setLoading(false);

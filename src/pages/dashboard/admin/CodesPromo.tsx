@@ -24,6 +24,7 @@ import Input from "../../../components/ui/Input";
 import LoadingSpinner from "../../../components/ui/LoadingSpinner";
 import toast from "react-hot-toast";
 import { format } from "date-fns";
+import { logger } from "../../../utils/logger";
 
 interface CodePromo {
   id: string;
@@ -68,7 +69,7 @@ const CodesPromo = () => {
       const response = await apiClient.getCodesPromo();
       setCodes((response.data || []) as any[]);
     } catch (error) {
-      console.error("Erreur chargement codes promo:", error);
+      logger.error("Erreur chargement codes promo:", error);
       toast.error("Erreur lors du chargement");
     } finally {
       setLoading(false);

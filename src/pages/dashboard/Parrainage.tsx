@@ -15,6 +15,7 @@ import Button from "../../components/ui/Button";
 import Badge from "../../components/ui/Badge";
 import toast from "react-hot-toast";
 import { apiClient } from "../../lib/api-client";
+import { logger } from "../../utils/logger";
 
 interface ParrainageStats {
   parraines: number;
@@ -49,7 +50,7 @@ const Parrainage = () => {
           });
         }
       } catch (error) {
-        console.error("Erreur chargement stats parrainage:", error);
+        logger.error("Erreur chargement stats parrainage:", error);
       } finally {
         setLoading(false);
       }

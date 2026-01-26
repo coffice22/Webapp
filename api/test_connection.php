@@ -74,7 +74,8 @@ try {
     echo "Test 4: Base de données...\n";
     $dbName = $_ENV['DB_NAME'] ?? '';
 
-    $stmt = $pdo->query("SHOW DATABASES LIKE '{$dbName}'");
+    $stmt = $pdo->prepare("SHOW DATABASES LIKE ?");
+    $stmt->execute([$dbName]);
     $exists = $stmt->rowCount() > 0;
 
     if ($exists) {

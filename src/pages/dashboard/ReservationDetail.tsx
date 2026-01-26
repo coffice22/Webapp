@@ -23,6 +23,7 @@ import Modal from "../../components/ui/Modal";
 import { formatDate, formatPrice } from "../../utils/formatters";
 import { getReservationStatutColor, STATUS_LABELS } from "../../constants";
 import toast from "react-hot-toast";
+import { logger } from "../../utils/logger";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 
@@ -82,7 +83,7 @@ const ReservationDetail: React.FC = () => {
         navigate("/app/reservations");
       }
     } catch (error) {
-      console.error("Erreur chargement réservation:", error);
+      logger.error("Erreur chargement réservation:", error);
       toast.error("Erreur lors du chargement");
       navigate("/app/reservations");
     } finally {

@@ -17,6 +17,7 @@ import Card from "../../../components/ui/Card";
 import Button from "../../../components/ui/Button";
 import Input from "../../../components/ui/Input";
 import toast from "react-hot-toast";
+import { logger } from "../../../utils/logger";
 
 const SETTINGS_KEY = "coffice-admin-settings";
 
@@ -65,7 +66,7 @@ const loadSettings = (): AllSettings => {
       return { ...defaultSettings, ...JSON.parse(saved) };
     }
   } catch (e) {
-    console.error("Erreur chargement parametres:", e);
+    logger.error("Erreur chargement parametres:", e);
   }
   return defaultSettings;
 };
@@ -74,7 +75,7 @@ const saveSettings = (settings: AllSettings): void => {
   try {
     localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
   } catch (e) {
-    console.error("Erreur sauvegarde parametres:", e);
+    logger.error("Erreur sauvegarde parametres:", e);
   }
 };
 

@@ -37,6 +37,7 @@ import { formatDate, formatCurrency } from "../../../utils/formatters";
 import toast from "react-hot-toast";
 import type { DemandeDomiciliation } from "../../../types";
 import { apiClient } from "../../../lib/api-client";
+import { logger } from "../../../utils/logger";
 
 const AdminDomiciliations = () => {
   const { demandesDomiciliation, loadDemandesDomiciliation } = useAppStore();
@@ -103,7 +104,7 @@ const AdminDomiciliations = () => {
         setUsers(response.data || []);
       }
     } catch (error) {
-      console.error("Erreur chargement utilisateurs:", error);
+      logger.error("Erreur chargement utilisateurs:", error);
     }
   };
 
@@ -262,7 +263,7 @@ const AdminDomiciliations = () => {
         toast.error(response.message || "Une erreur est survenue");
       }
     } catch (error) {
-      console.error("Action error:", error);
+      logger.error("Action error:", error);
       toast.error("Erreur lors du traitement de la demande");
     } finally {
       setLoading(false);
@@ -332,7 +333,7 @@ const AdminDomiciliations = () => {
         toast.error(response.message || "Erreur lors de la création");
       }
     } catch (error: any) {
-      console.error("Create domiciliation error:", error);
+      logger.error("Create domiciliation error:", error);
       toast.error(
         error.response?.data?.message ||
           "Erreur lors de la création de la domiciliation",

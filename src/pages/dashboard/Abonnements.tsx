@@ -17,6 +17,7 @@ import Badge from "../../components/ui/Badge";
 import Modal from "../../components/ui/Modal";
 import LoadingSpinner from "../../components/ui/LoadingSpinner";
 import toast from "react-hot-toast";
+import { logger } from "../../utils/logger";
 
 interface Abonnement {
   id: string;
@@ -65,7 +66,7 @@ const Abonnements = () => {
         setAbonnements(formatted.filter((a) => a.actif));
       }
     } catch (error) {
-      console.error("Erreur chargement abonnements:", error);
+      logger.error("Erreur chargement abonnements:", error);
       toast.error("Erreur lors du chargement des abonnements");
     } finally {
       setLoading(false);

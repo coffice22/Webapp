@@ -18,6 +18,7 @@ import Button from "../../components/ui/Button";
 import Card from "../../components/ui/Card";
 import Badge from "../../components/ui/Badge";
 import LoadingSpinner from "../../components/ui/LoadingSpinner";
+import { logger } from "../../utils/logger";
 import Modal from "../../components/ui/Modal";
 import { formatPrice } from "../../utils/formatters";
 import { getEspaceTypeLabel } from "../../constants";
@@ -65,7 +66,7 @@ const EspaceDetail: React.FC = () => {
         navigate("/app/admin/spaces");
       }
     } catch (error) {
-      console.error("Erreur chargement espace:", error);
+      logger.error("Erreur chargement espace:", error);
       toast.error("Erreur lors du chargement");
       navigate("/app/admin/spaces");
     } finally {

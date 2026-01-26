@@ -9,6 +9,7 @@ import Input from "../../components/ui/Input";
 import LoadingSpinner from "../../components/ui/LoadingSpinner";
 import toast from "react-hot-toast";
 import { format } from "date-fns";
+import { logger } from "../../utils/logger";
 
 const CodesPromo = () => {
   const [codes, setCodes] = useState<any[]>([]);
@@ -34,7 +35,7 @@ const CodesPromo = () => {
       );
       setCodes(activeCodes);
     } catch (error) {
-      console.error("Erreur chargement codes:", error);
+      logger.error("Erreur chargement codes:", error);
       toast.error("Erreur lors du chargement");
     } finally {
       setLoading(false);

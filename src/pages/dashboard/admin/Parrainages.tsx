@@ -18,6 +18,7 @@ import Button from "../../../components/ui/Button";
 import LoadingSpinner from "../../../components/ui/LoadingSpinner";
 import toast from "react-hot-toast";
 import { format } from "date-fns";
+import { logger } from "../../../utils/logger";
 
 interface Parrainage {
   id: string;
@@ -77,7 +78,7 @@ const Parrainages = () => {
       };
       setStats(statsData);
     } catch (error) {
-      console.error("Erreur chargement parrainages:", error);
+      logger.error("Erreur chargement parrainages:", error);
       toast.error("Erreur lors du chargement");
     } finally {
       setLoading(false);

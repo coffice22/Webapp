@@ -24,6 +24,7 @@ import Button from "../../../components/ui/Button";
 import Input from "../../../components/ui/Input";
 import { formatDate } from "../../../utils/formatters";
 import toast from "react-hot-toast";
+import { logger } from "../../../utils/logger";
 
 const Users = () => {
   const {
@@ -42,7 +43,7 @@ const Users = () => {
       try {
         await Promise.all([loadUsers(), loadReservations()]);
       } catch (error) {
-        console.error("Erreur chargement utilisateurs:", error);
+        logger.error("Erreur chargement utilisateurs:", error);
         toast.error("Erreur lors du chargement des utilisateurs");
       } finally {
         setIsLoading(false);

@@ -22,6 +22,7 @@ import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
 import toast from "react-hot-toast";
 import { wilayas } from "../../data/wilayas";
+import { logger } from "../../utils/logger";
 
 const MyCompany = () => {
   const { user } = useAuthStore();
@@ -77,7 +78,7 @@ const MyCompany = () => {
       toast.success("Informations de l'entreprise mises à jour avec succès");
       setIsEditing(false);
     } catch (error: any) {
-      console.error("Erreur mise à jour:", error);
+      logger.error("Erreur mise à jour:", error);
       toast.error(error.message || "Erreur lors de la mise à jour");
     }
   };

@@ -20,6 +20,7 @@ import Card from "../../../components/ui/Card";
 import LoadingSpinner from "../../../components/ui/LoadingSpinner";
 import { formatCurrency } from "../../../utils/formatters";
 import toast from "react-hot-toast";
+import { logger } from "../../../utils/logger";
 
 const Reports = () => {
   const { reservations, users, espaces, domiciliationServices } = useAppStore();
@@ -47,7 +48,7 @@ const Reports = () => {
         setRevenueData(revenueResponse.data);
       }
     } catch (error) {
-      console.error("Erreur chargement statistiques:", error);
+      logger.error("Erreur chargement statistiques:", error);
       toast.error("Erreur lors du chargement des statistiques");
     } finally {
       setLoading(false);

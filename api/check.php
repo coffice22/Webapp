@@ -146,7 +146,8 @@ if (isset($_ENV['DB_HOST']) && isset($_ENV['DB_USER']) && isset($_ENV['DB_PASSWO
 if (isset($pdo) && isset($_ENV['DB_NAME'])) {
     try {
         $dbName = $_ENV['DB_NAME'];
-        $stmt = $pdo->query("SHOW DATABASES LIKE '{$dbName}'");
+        $stmt = $pdo->prepare("SHOW DATABASES LIKE ?");
+        $stmt->execute([$dbName]);
         $exists = $stmt->rowCount() > 0;
 
         if ($exists) {

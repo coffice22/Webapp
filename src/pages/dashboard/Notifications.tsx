@@ -21,6 +21,7 @@ import Button from "../../components/ui/Button";
 import EmptyState from "../../components/ui/EmptyState";
 import LoadingSpinner from "../../components/ui/LoadingSpinner";
 import toast from "react-hot-toast";
+import { logger } from "../../utils/logger";
 
 interface Notification {
   id: string;
@@ -52,7 +53,7 @@ const Notifications: React.FC = () => {
       const data = (response.data as Notification[]) || [];
       setNotifications(data);
     } catch (error) {
-      console.error("Erreur chargement notifications:", error);
+      logger.error("Erreur chargement notifications:", error);
       toast.error("Impossible de charger les notifications");
     } finally {
       setLoading(false);
@@ -67,7 +68,7 @@ const Notifications: React.FC = () => {
       );
       toast.success("Notification marquée comme lue");
     } catch (error) {
-      console.error("Erreur marquage lu:", error);
+      logger.error("Erreur marquage lu:", error);
       toast.error("Erreur lors du marquage");
     }
   };
@@ -80,7 +81,7 @@ const Notifications: React.FC = () => {
       setNotifications(prev => prev.map(n => ({ ...n, lue: true })));
       toast.success("Toutes les notifications ont été marquées comme lues");
     } catch (error) {
-      console.error("Erreur marquage tout lu:", error);
+      logger.error("Erreur marquage tout lu:", error);
       toast.error("Erreur lors du marquage");
     }
   };
@@ -91,7 +92,7 @@ const Notifications: React.FC = () => {
       setNotifications(prev => prev.filter(n => n.id !== id));
       toast.success("Notification supprimée");
     } catch (error) {
-      console.error("Erreur suppression notification:", error);
+      logger.error("Erreur suppression notification:", error);
       toast.error("Erreur lors de la suppression");
     }
   };
@@ -110,7 +111,7 @@ const Notifications: React.FC = () => {
       setNotifications(prev => prev.filter(n => !n.lue));
       toast.success(`${readNotifications.length} notification(s) supprimée(s)`);
     } catch (error) {
-      console.error("Erreur suppression notifications:", error);
+      logger.error("Erreur suppression notifications:", error);
       toast.error("Erreur lors de la suppression");
     }
   };
