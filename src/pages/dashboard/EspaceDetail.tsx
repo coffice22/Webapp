@@ -201,7 +201,9 @@ const EspaceDetail: React.FC = () => {
 
           {espace.equipements && espace.equipements.length > 0 && (
             <Card className="p-6">
-              <h2 className="text-xl font-bold mb-4">Équipements disponibles</h2>
+              <h2 className="text-xl font-bold mb-4">
+                Équipements disponibles
+              </h2>
               <div className="grid grid-cols-2 gap-3">
                 {espace.equipements.map((equipement, index) => (
                   <div

@@ -417,7 +417,11 @@ const Users = () => {
 
                       <div className="flex flex-col gap-2">
                         <Link to={`/app/admin/users/${user.id}`}>
-                          <Button size="sm" variant="outline" className="w-full">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="w-full"
+                          >
                             <Eye className="w-4 h-4 mr-2" />
                             Voir détails
                           </Button>

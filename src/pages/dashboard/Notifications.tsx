@@ -32,7 +32,12 @@ interface Notification {
   created_at: string;
 }
 
-type FilterType = "all" | "unread" | "reservation" | "parrainage" | "domiciliation";
+type FilterType =
+  | "all"
+  | "unread"
+  | "reservation"
+  | "parrainage"
+  | "domiciliation";
 
 const Notifications: React.FC = () => {
   const { user } = useAuthStore();
@@ -63,8 +68,8 @@ const Notifications: React.FC = () => {
   const markAsRead = async (id: string) => {
     try {
       await apiClient.markNotificationRead(id);
-      setNotifications(prev =>
-        prev.map(n => n.id === id ? { ...n, lue: true } : n)
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === id ? { ...n, lue: true } : n)),
       );
       toast.success("Notification marquée comme lue");
     } catch (error) {
@@ -78,7 +83,7 @@ const Notifications: React.FC = () => {
 
     try {
       await apiClient.markAllNotificationsRead();
-      setNotifications(prev => prev.map(n => ({ ...n, lue: true })));
+      setNotifications((prev) => prev.map((n) => ({ ...n, lue: true })));
       toast.success("Toutes les notifications ont été marquées comme lues");
     } catch (error) {
       logger.error("Erreur marquage tout lu:", error);
@@ -89,7 +94,7 @@ const Notifications: React.FC = () => {
   const deleteNotification = async (id: string) => {
     try {
       await apiClient.deleteNotification(id);
-      setNotifications(prev => prev.filter(n => n.id !== id));
+      setNotifications((prev) => prev.filter((n) => n.id !== id));
       toast.success("Notification supprimée");
     } catch (error) {
       logger.error("Erreur suppression notification:", error);
@@ -98,7 +103,7 @@ const Notifications: React.FC = () => {
   };
 
   const deleteAllRead = async () => {
-    const readNotifications = notifications.filter(n => n.lue);
+    const readNotifications = notifications.filter((n) => n.lue);
     if (readNotifications.length === 0) {
       toast.error("Aucune notification lue à supprimer");
       return;
@@ -106,9 +111,9 @@ const Notifications: React.FC = () => {
 
     try {
       await Promise.all(
-        readNotifications.map(n => apiClient.deleteNotification(n.id))
+        readNotifications.map((n) => apiClient.deleteNotification(n.id)),
       );
-      setNotifications(prev => prev.filter(n => !n.lue));
+      setNotifications((prev) => prev.filter((n) => !n.lue));
       toast.success(`${readNotifications.length} notification(s) supprimée(s)`);
     } catch (error) {
       logger.error("Erreur suppression notifications:", error);
@@ -133,13 +138,13 @@ const Notifications: React.FC = () => {
     }
   };
 
-  const filteredNotifications = notifications.filter(notif => {
+  const filteredNotifications = notifications.filter((notif) => {
     if (filter === "all") return true;
     if (filter === "unread") return !notif.lue;
     return notif.type === filter;
   });
 
-  const unreadCount = notifications.filter(n => !n.lue).length;
+  const unreadCount = notifications.filter((n) => !n.lue).length;
 
   if (loading) {
     return (
@@ -157,7 +162,10 @@ const Notifications: React.FC = () => {
           <p className="text-gray-600 mt-1">
             {unreadCount > 0 ? (
               <>
-                Vous avez <span className="font-semibold text-accent">{unreadCount}</span> notification{unreadCount > 1 ? "s" : ""} non lue{unreadCount > 1 ? "s" : ""}
+                Vous avez{" "}
+                <span className="font-semibold text-accent">{unreadCount}</span>{" "}
+                notification{unreadCount > 1 ? "s" : ""} non lue
+                {unreadCount > 1 ? "s" : ""}
               </>
             ) : (
               "Aucune notification non lue"
@@ -175,7 +183,7 @@ const Notifications: React.FC = () => {
               Tout marquer comme lu
             </Button>
           )}
-          {notifications.some(n => n.lue) && (
+          {notifications.some((n) => n.lue) && (
             <Button
               onClick={deleteAllRead}
               variant="outline"
@@ -196,9 +204,24 @@ const Notifications: React.FC = () => {
             {[
               { value: "all", label: "Toutes", count: notifications.length },
               { value: "unread", label: "Non lues", count: unreadCount },
-              { value: "reservation", label: "Réservations", count: notifications.filter(n => n.type === "reservation").length },
-              { value: "parrainage", label: "Parrainages", count: notifications.filter(n => n.type === "parrainage").length },
-              { value: "domiciliation", label: "Domiciliations", count: notifications.filter(n => n.type === "domiciliation").length },
+              {
+                value: "reservation",
+                label: "Réservations",
+                count: notifications.filter((n) => n.type === "reservation")
+                  .length,
+              },
+              {
+                value: "parrainage",
+                label: "Parrainages",
+                count: notifications.filter((n) => n.type === "parrainage")
+                  .length,
+              },
+              {
+                value: "domiciliation",
+                label: "Domiciliations",
+                count: notifications.filter((n) => n.type === "domiciliation")
+                  .length,
+              },
             ].map(({ value, label, count }) => (
               <button
                 key={value}
@@ -224,8 +247,8 @@ const Notifications: React.FC = () => {
             filter === "all"
               ? "Vous n'avez aucune notification pour le moment"
               : filter === "unread"
-              ? "Aucune notification non lue"
-              : `Aucune notification de type "${filter}"`
+                ? "Aucune notification non lue"
+                : `Aucune notification de type "${filter}"`
           }
         />
       ) : (
@@ -248,7 +271,9 @@ const Notifications: React.FC = () => {
                 >
                   <div className="flex gap-4">
                     <div className="flex-shrink-0">
-                      <div className={`p-3 rounded-full ${!notif.lue ? "bg-white shadow-md" : "bg-gray-100"}`}>
+                      <div
+                        className={`p-3 rounded-full ${!notif.lue ? "bg-white shadow-md" : "bg-gray-100"}`}
+                      >
                         {getIcon(notif.type)}
                       </div>
                     </div>
@@ -281,13 +306,19 @@ const Notifications: React.FC = () => {
                         <div className="flex items-center gap-4 text-sm text-gray-500">
                           <span className="flex items-center gap-1">
                             <Calendar className="w-4 h-4" />
-                            {format(new Date(notif.created_at), "dd MMM yyyy 'à' HH:mm", { locale: fr })}
+                            {format(
+                              new Date(notif.created_at),
+                              "dd MMM yyyy 'à' HH:mm",
+                              { locale: fr },
+                            )}
                           </span>
                           <span>
-                            ({formatDistanceToNow(new Date(notif.created_at), {
+                            (
+                            {formatDistanceToNow(new Date(notif.created_at), {
                               addSuffix: true,
                               locale: fr,
-                            })})
+                            })}
+                            )
                           </span>
                         </div>
                         {!notif.lue && (
