@@ -262,7 +262,9 @@ const UserDetail: React.FC = () => {
                       })}
                     </p>
                     <p className="text-xs text-gray-500">
-                      {format(new Date(user.createdAt), "HH:mm", { locale: fr })}
+                      {format(new Date(user.createdAt), "HH:mm", {
+                        locale: fr,
+                      })}
                     </p>
                   </>
                 ) : (
