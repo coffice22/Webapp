@@ -338,9 +338,10 @@ MAIL_ENCRYPTION=tls
 - ✅ 54+ console.log remplacés par logger dans 28 fichiers
 - ✅ Configuration Deepsource optimisée (18 → 5 analyseurs)
 - ✅ GitHub Actions fonctionnelles
-- ✅ Build production sans erreurs (12.63s, 992KB)
+- ✅ Build production sans erreurs (14.14s, 993KB)
 - ✅ SQL injection fixes dans check.php et test_connection.php
 - ✅ Plus AUCUNE référence à Supabase/Bolt
+- ✅ Bug pagination API users corrigé (affichage utilisateurs/domiciliation)
 
 ---
 

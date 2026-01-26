@@ -100,8 +100,12 @@ const AdminDomiciliations = () => {
   const loadUsers = async () => {
     try {
       const response = await apiClient.get("/api/users/index.php");
-      if (response.success) {
-        setUsers(response.data || []);
+      if (response.success && response.data) {
+        // L'API retourne { data: { data: [...], pagination: {...} } }
+        const userData = Array.isArray(response.data)
+          ? response.data
+          : response.data.data || [];
+        setUsers(userData);
       }
     } catch (error) {
       logger.error("Erreur chargement utilisateurs:", error);

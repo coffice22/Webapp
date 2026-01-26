@@ -490,12 +490,13 @@ export const useAppStore = create<AppState>()(
       loadUsers: async () => {
         try {
           const response = await apiClient.getUsers();
-          if (
-            response.success &&
-            response.data &&
-            Array.isArray(response.data)
-          ) {
-            const users = response.data.map((u: any) => ({
+          if (response.success && response.data) {
+            // L'API retourne { data: { data: [...], pagination: {...} } }
+            const userData = Array.isArray(response.data)
+              ? response.data
+              : response.data.data || [];
+
+            const users = userData.map((u: any) => ({
               ...u,
               dateCreation: u.created_at,
               derniereConnexion: u.last_login,
@@ -503,7 +504,7 @@ export const useAppStore = create<AppState>()(
             set({ users });
           }
         } catch (error) {
-          console.error("Erreur chargement utilisateurs:", error);
+          logger.error("Erreur chargement utilisateurs:", error);
         }
       },
 
