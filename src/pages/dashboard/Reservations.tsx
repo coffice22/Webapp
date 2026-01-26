@@ -1,5 +1,14 @@
 import React, { useState } from "react";
-import { Calendar as CalendarIcon, Clock, MapPin, Plus, XCircle, Eye, List, CalendarDays } from "lucide-react";
+import {
+  Calendar as CalendarIcon,
+  Clock,
+  MapPin,
+  Plus,
+  XCircle,
+  Eye,
+  List,
+  CalendarDays,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
 import { useAppStore } from "../../store/store";
@@ -30,7 +39,9 @@ const Reservations = () => {
   const [cancellingId, setCancellingId] = useState<string | null>(null);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
-  const [activeView, setActiveView] = useState<'list' | 'month' | 'week'>('list');
+  const [activeView, setActiveView] = useState<"list" | "month" | "week">(
+    "list",
+  );
 
   const handleCancelReservation = async () => {
     if (!cancellingId) return;
@@ -59,7 +70,7 @@ const Reservations = () => {
   };
 
   const handleSlotClick = (date: Date, espaceId: string) => {
-    const espace = espaces.find(e => e.id === espaceId);
+    const espace = espaces.find((e) => e.id === espaceId);
     if (espace) {
       setSelectedEspace(espace);
       setShowForm(true);
@@ -73,16 +84,16 @@ const Reservations = () => {
   const userReservations = reservations.filter((r) => r.userId === user.id);
 
   const filteredReservations = selectedDate
-    ? userReservations.filter(r => {
+    ? userReservations.filter((r) => {
         const resDate = new Date(r.dateDebut);
         return resDate.toDateString() === selectedDate.toDateString();
       })
     : userReservations;
 
   const tabs = [
-    { id: 'list', label: 'Liste', icon: List },
-    { id: 'month', label: 'Mois', icon: CalendarDays },
-    { id: 'week', label: 'Semaine', icon: CalendarIcon },
+    { id: "list", label: "Liste", icon: List },
+    { id: "month", label: "Mois", icon: CalendarDays },
+    { id: "week", label: "Semaine", icon: CalendarIcon },
   ];
 
   return (
@@ -98,10 +109,10 @@ const Reservations = () => {
       <Tabs
         tabs={tabs}
         activeTab={activeView}
-        onChange={(tabId) => setActiveView(tabId as 'list' | 'month' | 'week')}
+        onChange={(tabId) => setActiveView(tabId as "list" | "month" | "week")}
       />
 
-      {activeView === 'list' && (
+      {activeView === "list" && (
         <>
           {userReservations.length === 0 ? (
             <Card>
@@ -145,14 +156,18 @@ const Reservations = () => {
                       {reservation.espace && (
                         <div className="flex items-center gap-2">
                           <MapPin className="w-4 h-4" />
-                          <span>{getEspaceTypeLabel(reservation.espace.type)}</span>
+                          <span>
+                            {getEspaceTypeLabel(reservation.espace.type)}
+                          </span>
                         </div>
                       )}
                     </div>
 
                     <div className="pt-4 border-t">
                       <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">Montant total</span>
+                        <span className="text-sm text-gray-600">
+                          Montant total
+                        </span>
                         <span className="font-bold text-accent">
                           {formatPrice(reservation.montantTotal)}
                         </span>
@@ -199,7 +214,7 @@ const Reservations = () => {
         </>
       )}
 
-      {activeView === 'month' && (
+      {activeView === "month" && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
             <Calendar
@@ -213,37 +228,57 @@ const Reservations = () => {
               <h3 className="font-semibold mb-4">
                 {selectedDate
                   ? `Réservations du ${formatDate(selectedDate)}`
-                  : 'Sélectionnez une date'}
+                  : "Sélectionnez une date"}
               </h3>
               {selectedDate ? (
                 filteredReservations.length > 0 ? (
                   <div className="space-y-3">
-                    {filteredReservations.map(res => (
-                      <div key={res.id} className="border-l-4 border-blue-600 pl-3 py-2">
+                    {filteredReservations.map((res) => (
+                      <div
+                        key={res.id}
+                        className="border-l-4 border-blue-600 pl-3 py-2"
+                      >
                         <p className="font-medium">{res.espace?.nom}</p>
                         <p className="text-sm text-gray-600">
-                          {new Date(res.dateDebut).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
-                          {' - '}
-                          {new Date(res.dateFin).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                          {new Date(res.dateDebut).toLocaleTimeString("fr-FR", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                          {" - "}
+                          {new Date(res.dateFin).toLocaleTimeString("fr-FR", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
                         </p>
-                        <Badge variant={getReservationStatutColor(res.statut)} className="mt-1">
-                          {STATUS_LABELS.RESERVATION[res.statut as keyof typeof STATUS_LABELS.RESERVATION]}
+                        <Badge
+                          variant={getReservationStatutColor(res.statut)}
+                          className="mt-1"
+                        >
+                          {
+                            STATUS_LABELS.RESERVATION[
+                              res.statut as keyof typeof STATUS_LABELS.RESERVATION
+                            ]
+                          }
                         </Badge>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm text-gray-500">Aucune réservation ce jour</p>
+                  <p className="text-sm text-gray-500">
+                    Aucune réservation ce jour
+                  </p>
                 )
               ) : (
-                <p className="text-sm text-gray-500">Cliquez sur une date pour voir les réservations</p>
+                <p className="text-sm text-gray-500">
+                  Cliquez sur une date pour voir les réservations
+                </p>
               )}
             </Card>
           </div>
         </div>
       )}
 
-      {activeView === 'week' && (
+      {activeView === "week" && (
         <WeekCalendar
           reservations={reservations}
           espaces={espaces}

@@ -66,7 +66,8 @@ try {
     Response::error('Une erreur est survenue', 500);
 }
 
-function formatFileSize($bytes) {
+function formatFileSize($bytes)
+{
     if ($bytes >= 1073741824) {
         return number_format($bytes / 1073741824, 2) . ' GB';
     } elseif ($bytes >= 1048576) {

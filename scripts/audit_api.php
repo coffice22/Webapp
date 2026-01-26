@@ -22,7 +22,8 @@ $results = [];
 $passed = 0;
 $total = 0;
 
-function makeRequest($endpoint, $method = 'GET', $data = null, $token = null) {
+function makeRequest($endpoint, $method = 'GET', $data = null, $token = null)
+{
     global $API_URL;
 
     $url = $API_URL . $endpoint;
@@ -55,13 +56,16 @@ function makeRequest($endpoint, $method = 'GET', $data = null, $token = null) {
     ];
 }
 
-function test($module, $name, $expected, $actual, $details = '', $time = 0) {
+function test($module, $name, $expected, $actual, $details = '', $time = 0)
+{
     global $results, $passed, $total;
 
     $total++;
     $status = ($expected == $actual || (is_array($expected) && in_array($actual, $expected)));
 
-    if ($status) $passed++;
+    if ($status) {
+        $passed++;
+    }
 
     $results[] = [
         'module' => $module,
@@ -80,8 +84,14 @@ echo C_BOLD . C_CYAN . "\n==================== RAPPORT D'AUDIT API =============
 
 // TEST 1: Détection API
 $result = makeRequest('/check.php');
-test('Routing', 'Détection API (/backend/public/api)', 'Endpoint joignable',
-     $result['code'], 'Prefix API valide détecté', $result['time']);
+test(
+    'Routing',
+    'Détection API (/backend/public/api)',
+    'Endpoint joignable',
+    $result['code'],
+    'Prefix API valide détecté',
+    $result['time']
+);
 
 // TEST 2: Connexion utilisateur (doit retourner 200 + token)
 $validEmail = 'admin@coffice.dz';
@@ -91,26 +101,50 @@ $result = makeRequest('/auth/login.php', 'POST', [
     'password' => $validPass
 ]);
 $hasToken = isset($result['data']['token']);
-test('Auth', 'Connexion utilisateur', 'HTTP 200 + token',
-     $result['code'], $hasToken ? 'Token JWT reçu' : 'Échec authentification', $result['time']);
+test(
+    'Auth',
+    'Connexion utilisateur',
+    'HTTP 200 + token',
+    $result['code'],
+    $hasToken ? 'Token JWT reçu' : 'Échec authentification',
+    $result['time']
+);
 
 $validToken = $hasToken ? $result['data']['token'] : null;
 
 // TEST 3: Accès sans token (doit retourner 401)
 $result = makeRequest('/auth/me.php', 'GET');
-test('Sécurité', 'Accès sans token', 'HTTP 401',
-     $result['code'], 'Protection des routes', $result['time']);
+test(
+    'Sécurité',
+    'Accès sans token',
+    'HTTP 401',
+    $result['code'],
+    'Protection des routes',
+    $result['time']
+);
 
 // TEST 4: Token invalide (doit retourner 401)
 $result = makeRequest('/auth/me.php', 'GET', null, 'invalid_token_xyz123');
-test('Sécurité', 'Token invalide', 'HTTP 401',
-     $result['code'], 'JWT invalide rejeté', $result['time']);
+test(
+    'Sécurité',
+    'Token invalide',
+    'HTTP 401',
+    $result['code'],
+    'JWT invalide rejeté',
+    $result['time']
+);
 
 // TEST 5: Récupération profil avec token valide
 if ($validToken) {
     $result = makeRequest('/auth/me.php', 'GET', null, $validToken);
-    test('Utilisateur', 'Profil utilisateur', 'HTTP 200',
-         $result['code'], 'Récupération profil', $result['time']);
+    test(
+        'Utilisateur',
+        'Profil utilisateur',
+        'HTTP 200',
+        $result['code'],
+        'Récupération profil',
+        $result['time']
+    );
 }
 
 // TEST 6: Création réservation (doit retourner 201)
@@ -133,8 +167,14 @@ if ($validToken) {
             'participants' => 1
         ], $validToken);
 
-        test('Métier', 'Création réservation', 'HTTP 201',
-             $result['code'], 'Création resource REST', $result['time']);
+        test(
+            'Métier',
+            'Création réservation',
+            'HTTP 201',
+            $result['code'],
+            'Création resource REST',
+            $result['time']
+        );
 
         $reservationId = $result['data']['data']['id'] ?? null;
 
@@ -147,8 +187,14 @@ if ($validToken) {
                 'participants' => 1
             ], $validToken);
 
-            test('Métier', 'Double réservation', [409, 422],
-                 $result['code'], 'Conflit horaire', $result['time']);
+            test(
+                'Métier',
+                'Double réservation',
+                [409, 422],
+                $result['code'],
+                'Conflit horaire',
+                $result['time']
+            );
         }
     }
 }
@@ -160,32 +206,66 @@ if ($validToken) {
         'date_debut' => 'invalid',
     ], $validToken);
 
-    test('Validation', 'Champs invalides', [400, 422],
-         $result['code'], 'Validation backend', $result['time']);
+    test(
+        'Validation',
+        'Champs invalides',
+        [400, 422],
+        $result['code'],
+        'Validation backend',
+        $result['time']
+    );
 }
 
 // TEST 9: Méthode HTTP non autorisée (405)
 $result = makeRequest('/auth/me.php', 'DELETE', null, $validToken);
-test('HTTP', 'Méthode interdite', 405,
-     $result['code'], 'Respect REST', $result['time']);
+test(
+    'HTTP',
+    'Méthode interdite',
+    405,
+    $result['code'],
+    'Respect REST',
+    $result['time']
+);
 
 // TEST 10: Performance globale
 $avgTime = array_sum(array_column($results, 'time')) / count($results);
-test('Performance', 'Temps réponse', '< 2s',
-     number_format($avgTime / 1000, 2) . 's', 'Temps réponse global', round($avgTime));
+test(
+    'Performance',
+    'Temps réponse',
+    '< 2s',
+    number_format($avgTime / 1000, 2) . 's',
+    'Temps réponse global',
+    round($avgTime)
+);
 
 // Affichage tableau
 echo str_repeat('-', 170) . "\n";
-printf("| %-10s | %-35s | %-20s | %-7s | %-8s | %-30s | %-8s |\n",
-    'MODULE', 'TEST', 'ATTENDU', 'REÇU', 'STATUT', 'DÉTAILS', 'TEMPS');
+printf(
+    "| %-10s | %-35s | %-20s | %-7s | %-8s | %-30s | %-8s |\n",
+    'MODULE',
+    'TEST',
+    'ATTENDU',
+    'REÇU',
+    'STATUT',
+    'DÉTAILS',
+    'TEMPS'
+);
 echo str_repeat('-', 170) . "\n";
 
 foreach ($results as $r) {
     $color = $r['status'] == 'OK' ? C_GREEN : C_RED;
-    printf("| %-10s | %-35s | %-20s | %-7s | %s%-8s%s | %-30s | %-8s |\n",
-        $r['module'], $r['test'], $r['expected'], $r['actual'],
-        $color, $r['status'], C_RESET,
-        substr($r['details'], 0, 30), $r['time']);
+    printf(
+        "| %-10s | %-35s | %-20s | %-7s | %s%-8s%s | %-30s | %-8s |\n",
+        $r['module'],
+        $r['test'],
+        $r['expected'],
+        $r['actual'],
+        $color,
+        $r['status'],
+        C_RESET,
+        substr($r['details'], 0, 30),
+        $r['time']
+    );
 }
 
 echo str_repeat('-', 170) . "\n";

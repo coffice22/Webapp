@@ -95,7 +95,8 @@ const Abonnements = () => {
   };
 
   const getDureeText = (duree: number) => {
-    if (duree >= 365) return `${Math.floor(duree / 365)} an${Math.floor(duree / 365) > 1 ? "s" : ""}`;
+    if (duree >= 365)
+      return `${Math.floor(duree / 365)} an${Math.floor(duree / 365) > 1 ? "s" : ""}`;
     if (duree >= 30) return `${Math.floor(duree / 30)} mois`;
     return `${duree} jours`;
   };

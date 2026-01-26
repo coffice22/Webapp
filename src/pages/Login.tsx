@@ -109,7 +109,10 @@ const Login = () => {
                   Se souvenir de moi
                 </span>
               </label>
-              <Link to="/mot-de-passe-oublie" className="text-sm text-accent hover:text-accent/80">
+              <Link
+                to="/mot-de-passe-oublie"
+                className="text-sm text-accent hover:text-accent/80"
+              >
                 Mot de passe oublié ?
               </Link>
             </div>

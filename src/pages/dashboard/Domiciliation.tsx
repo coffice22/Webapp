@@ -361,7 +361,9 @@ const Domiciliation = () => {
                   <h3 className="font-medium text-red-900 mb-2">
                     Raison du rejet
                   </h3>
-                  <p className="text-sm text-red-700">{demande.commentaireAdmin}</p>
+                  <p className="text-sm text-red-700">
+                    {demande.commentaireAdmin}
+                  </p>
                 </div>
               </div>
             </Card>

@@ -114,15 +114,29 @@ class Validator
         $length = strlen($password);
 
         // Longueur (max 40 points)
-        if ($length >= 8) $strength += 20;
-        if ($length >= 12) $strength += 10;
-        if ($length >= 16) $strength += 10;
+        if ($length >= 8) {
+            $strength += 20;
+        }
+        if ($length >= 12) {
+            $strength += 10;
+        }
+        if ($length >= 16) {
+            $strength += 10;
+        }
 
         // Complexité (max 60 points)
-        if (preg_match('/[a-z]/', $password)) $strength += 15;
-        if (preg_match('/[A-Z]/', $password)) $strength += 15;
-        if (preg_match('/[0-9]/', $password)) $strength += 15;
-        if (preg_match('/[!@#$%^&*(),.?":{}|<>_\-+=\[\]\\\/~`]/', $password)) $strength += 15;
+        if (preg_match('/[a-z]/', $password)) {
+            $strength += 15;
+        }
+        if (preg_match('/[A-Z]/', $password)) {
+            $strength += 15;
+        }
+        if (preg_match('/[0-9]/', $password)) {
+            $strength += 15;
+        }
+        if (preg_match('/[!@#$%^&*(),.?":{}|<>_\-+=\[\]\\\/~`]/', $password)) {
+            $strength += 15;
+        }
 
         return min(100, $strength);
     }

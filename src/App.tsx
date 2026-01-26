@@ -163,7 +163,10 @@ function App() {
             <Route path="/connexion" element={<Login />} />
             <Route path="/inscription" element={<Register />} />
             <Route path="/mot-de-passe-oublie" element={<ForgotPassword />} />
-            <Route path="/reinitialiser-mot-de-passe" element={<ResetPassword />} />
+            <Route
+              path="/reinitialiser-mot-de-passe"
+              element={<ResetPassword />}
+            />
 
             {/* Dashboard (application) */}
             <Route path="/app/*" element={<Dashboard />} />
