@@ -5,6 +5,7 @@ Application web complète de gestion d'espaces de coworking située au Mohammadi
 ## 📋 Vue d'ensemble
 
 Coffice est une plateforme moderne de réservation et gestion d'espaces de coworking comprenant :
+
 - 2 box de 4 places
 - 1 box de 3 places
 - 1 table open space de 12 places (dont 2 postes informatiques)
@@ -14,6 +15,7 @@ Coffice est une plateforme moderne de réservation et gestion d'espaces de cowor
 ## 🚀 Technologies
 
 ### Frontend
+
 - **React 18** avec TypeScript
 - **Vite** - Build tool moderne
 - **TailwindCSS** - Design system
@@ -24,6 +26,7 @@ Coffice est une plateforme moderne de réservation et gestion d'espaces de cowor
 - **date-fns** - Manipulation des dates
 
 ### Backend
+
 - **PHP 8+** - API REST
 - **MySQL** - Base de données
 - **JWT** - Authentication
@@ -31,6 +34,7 @@ Coffice est une plateforme moderne de réservation et gestion d'espaces de cowor
 ## 📦 Installation
 
 ### Prérequis
+
 - Node.js 18+
 - PHP 8+
 - MySQL 8+
@@ -39,22 +43,26 @@ Coffice est une plateforme moderne de réservation et gestion d'espaces de cowor
 ### Configuration
 
 1. **Cloner le projet**
+
 ```bash
 git clone <repository-url>
 cd coffice-app
 ```
 
 2. **Installer les dépendances frontend**
+
 ```bash
 npm install
 ```
 
 3. **Configurer l'environnement**
+
 ```bash
 cp .env.example .env
 ```
 
 Éditer `.env` avec vos paramètres :
+
 ```env
 # Base de données
 DB_HOST=localhost
@@ -76,11 +84,13 @@ SMTP_FROM=noreply@coffice.dz
 ```
 
 4. **Créer la base de données**
+
 ```bash
 mysql -u root -p < database/coffice.sql
 ```
 
 Ou via le script :
+
 ```bash
 chmod +x setup-database.sh
 ./setup-database.sh
@@ -89,11 +99,13 @@ chmod +x setup-database.sh
 5. **Lancer l'application**
 
 **Développement :**
+
 ```bash
 npm run dev
 ```
 
 **Production :**
+
 ```bash
 npm run build
 ```
@@ -103,23 +115,27 @@ npm run build
 ### Pour les Utilisateurs
 
 #### 🏠 Accueil
+
 - Présentation des espaces
 - Informations de contact
 - Formulaire de demande de renseignements
 
 #### 📅 Réservations
+
 - Calendrier interactif
 - Réservation d'espaces par heure/jour
 - Gestion de ses réservations
 - Historique complet
 
 #### 🏢 Domiciliation
+
 - Demande de domiciliation commerciale
 - Upload de documents (KBIS, etc.)
 - Suivi du statut de la demande
 - Validation administrative
 
 #### 🎁 Programme de Parrainage
+
 - **Code unique** généré automatiquement pour chaque utilisateur
 - **Partage facile** : copie de code et lien direct
 - **Statistiques en temps réel** :
@@ -134,6 +150,7 @@ npm run build
 - **Auto-remplissage** : le code est pré-rempli via le lien de parrainage
 
 #### 💳 Paiement
+
 - Résumé des réservations
 - Application des codes promo
 - Utilisation des crédits de parrainage
@@ -142,36 +159,43 @@ npm run build
 ### Pour les Administrateurs
 
 #### 📊 Dashboard Admin
+
 - Vue d'ensemble des statistiques
 - Graphiques de revenus
 - Taux d'occupation des espaces
 
 #### 👥 Gestion des Utilisateurs
+
 - Liste complète des utilisateurs
 - Détails et historique
 - Gestion des rôles
 
 #### 🏢 Gestion des Espaces
+
 - CRUD complet des espaces
 - Configuration des tarifs
 - Disponibilités et horaires
 
 #### 📅 Gestion des Réservations
+
 - Validation des réservations
 - Annulations et modifications
 - Export des données
 
 #### 🎫 Codes Promo
+
 - Création de codes promotionnels
 - Gestion des validités
 - Statistiques d'utilisation
 
 #### 💼 Abonnements
+
 - Création de formules d'abonnement
 - Gestion des membres
 - Renouvellements
 
 #### 🎁 Suivi des Parrainages
+
 - Liste de tous les parrainages
 - Validation des récompenses
 - Statistiques globales
@@ -180,12 +204,14 @@ npm run build
 ## 🔐 Sécurité
 
 ### Authentification
+
 - JWT tokens avec expiration
 - Refresh tokens
 - Password hashing (bcrypt)
 - Protection CSRF
 
 ### API
+
 - Rate limiting
 - Validation des entrées
 - Sanitization des données
@@ -193,6 +219,7 @@ npm run build
 - Protection contre les injections SQL
 
 ### Base de données
+
 - Requêtes préparées (PDO)
 - Transactions pour l'intégrité
 - Audit logging
@@ -201,6 +228,7 @@ npm run build
 ## 🌐 API Endpoints
 
 ### Auth
+
 ```
 POST   /api/auth/register       - Inscription
 POST   /api/auth/login          - Connexion
@@ -212,6 +240,7 @@ POST   /api/auth/reset-password  - Réinitialisation
 ```
 
 ### Réservations
+
 ```
 GET    /api/reservations        - Liste
 POST   /api/reservations/create - Créer
@@ -221,6 +250,7 @@ DELETE /api/reservations/cancel - Annuler
 ```
 
 ### Espaces
+
 ```
 GET    /api/espaces             - Liste
 POST   /api/espaces/create      - Créer (admin)
@@ -230,12 +260,14 @@ DELETE /api/espaces/delete      - Supprimer (admin)
 ```
 
 ### Parrainage
+
 ```
 GET    /api/parrainages         - Liste des parrainages
 POST   /api/parrainages/verify  - Vérifier un code
 ```
 
 ### Domiciliation
+
 ```
 GET    /api/domiciliations      - Liste
 POST   /api/domiciliations/create - Créer
@@ -246,6 +278,7 @@ PUT    /api/domiciliations/reject   - Rejeter (admin)
 ## 📱 Responsive Design
 
 L'application est entièrement responsive avec des breakpoints optimisés :
+
 - Mobile : < 768px
 - Tablet : 768px - 1024px
 - Desktop : > 1024px
@@ -253,6 +286,7 @@ L'application est entièrement responsive avec des breakpoints optimisés :
 ## 🎨 Design System
 
 ### Couleurs
+
 - **Primary** : Bleu (#0066CC)
 - **Accent** : Teal (#0D9488)
 - **Success** : Vert (#10B981)
@@ -260,17 +294,20 @@ L'application est entièrement responsive avec des breakpoints optimisés :
 - **Danger** : Rouge (#EF4444)
 
 ### Typographie
+
 - **Display** : System fonts avec fallbacks
 - **Body** : Inter, system-ui
 - **Line heights** : 120% (headings), 150% (body)
 
 ### Espacements
+
 - Système de 8px (0.5rem, 1rem, 1.5rem, etc.)
 - Grille responsive avec gap uniforme
 
 ## 📈 Performance
 
 ### Optimisations
+
 - Code splitting automatique (Vite)
 - Lazy loading des routes
 - Images optimisées
@@ -279,6 +316,7 @@ L'application est entièrement responsive avec des breakpoints optimisés :
 - Cache headers
 
 ### Métriques cibles
+
 - First Contentful Paint : < 1.5s
 - Time to Interactive : < 3s
 - Lighthouse Score : > 90
@@ -298,11 +336,13 @@ npm run test:local
 ### Production
 
 1. **Build**
+
 ```bash
 npm run build
 ```
 
 2. **Upload**
+
 ```bash
 ./deploy-prod.sh
 ```
@@ -310,6 +350,7 @@ npm run build
 ### Configuration serveur
 
 **Apache (.htaccess)**
+
 ```apache
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
@@ -318,6 +359,7 @@ RewriteRule ^ index.html [L]
 ```
 
 **Nginx**
+
 ```nginx
 location / {
     try_files $uri $uri/ /index.html;
@@ -370,6 +412,7 @@ Projet propriétaire - Tous droits réservés © 2026 Coffice
 **v4.2.3** - Janvier 2026
 
 ### Dernières mises à jour
+
 - ✅ Page de parrainage refaite complètement
 - ✅ Statistiques en temps réel
 - ✅ Auto-remplissage du code depuis l'URL

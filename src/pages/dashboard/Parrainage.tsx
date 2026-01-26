@@ -79,30 +79,33 @@ const Parrainage = () => {
         const parrainages = Array.isArray(response.data.data)
           ? response.data.data
           : Array.isArray(response.data)
-          ? response.data
-          : [];
+            ? response.data
+            : [];
 
         setFilleuls(parrainages);
 
         // Calculer les statistiques
         const recompensesTotales = parrainages.reduce(
-          (sum: number, p: ParrainageDetail) => sum + (p.recompenseParrain || 0),
-          0
+          (sum: number, p: ParrainageDetail) =>
+            sum + (p.recompenseParrain || 0),
+          0,
         );
         const recompensesPayees = parrainages
           .filter((p: ParrainageDetail) => p.statut === "paye")
           .reduce(
-            (sum: number, p: ParrainageDetail) => sum + (p.recompenseParrain || 0),
-            0
+            (sum: number, p: ParrainageDetail) =>
+              sum + (p.recompenseParrain || 0),
+            0,
           );
         const recompensesEnAttente = parrainages
           .filter(
             (p: ParrainageDetail) =>
-              p.statut === "en_attente" || p.statut === "valide"
+              p.statut === "en_attente" || p.statut === "valide",
           )
           .reduce(
-            (sum: number, p: ParrainageDetail) => sum + (p.recompenseParrain || 0),
-            0
+            (sum: number, p: ParrainageDetail) =>
+              sum + (p.recompenseParrain || 0),
+            0,
           );
 
         setStats({
@@ -183,7 +186,9 @@ const Parrainage = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Programme de Parrainage</h1>
+        <h1 className="text-3xl font-bold text-gray-900">
+          Programme de Parrainage
+        </h1>
         <p className="text-gray-600 mt-1">
           Partagez votre code et gagnez des récompenses
         </p>
@@ -219,7 +224,9 @@ const Parrainage = () => {
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-4">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex-1">
-                  <p className="text-white/70 text-sm mb-2">Votre code unique</p>
+                  <p className="text-white/70 text-sm mb-2">
+                    Votre code unique
+                  </p>
                   <p className="text-5xl font-bold tracking-widest font-mono">
                     {stats.codeParrainage || "---"}
                   </p>
@@ -242,7 +249,8 @@ const Parrainage = () => {
               <p className="text-white/70 text-xs mb-2">Lien de parrainage</p>
               <div className="flex items-center gap-2">
                 <code className="flex-1 text-sm text-white/90 truncate">
-                  {window.location.origin}/register?parrain={stats.codeParrainage}
+                  {window.location.origin}/register?parrain=
+                  {stats.codeParrainage}
                 </code>
                 <Button
                   onClick={handleCopyUrl}
@@ -398,7 +406,7 @@ const Parrainage = () => {
                             ? format(
                                 new Date(filleul.dateInscription),
                                 "dd MMM yyyy",
-                                { locale: fr }
+                                { locale: fr },
                               )
                             : "N/A"}
                         </div>
