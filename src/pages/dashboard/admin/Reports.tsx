@@ -368,7 +368,7 @@ const Reports = () => {
 
                 return (
                   <div
-                    key={`espace-revenu-${espace.id || espace.nom}`}
+                    key={`espace-revenu-${index}-${espace.nom}`}
                     className="space-y-2"
                   >
                     <div className="flex justify-between items-center text-sm">

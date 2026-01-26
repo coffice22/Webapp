@@ -1,224 +1,365 @@
-# 📤 Guide de Déploiement - Coffice v4.2.0
+# 🚀 Guide de Déploiement - Coffice v4.2.0
 
-## 🎯 Prérequis
+## 📋 Prérequis Serveur
 
-- Serveur web avec PHP 8.1+ et MySQL 8.0+
-- Accès SSH ou FTP au serveur
-- Node.js 18+ (pour le build local)
-- Base de données MySQL configurée
+- **PHP** : 8.1 ou supérieur
+- **MySQL** : 8.0 ou supérieur
+- **Apache** : avec mod_rewrite activé
+- **SSL/HTTPS** : Obligatoire en production
+- **Node.js** : 18+ (pour le build uniquement)
 
----
+## 🔧 Installation Complète
 
-## 📋 Étapes de déploiement
-
-### 1. Build local
+### 1. Préparation Locale
 
 ```bash
-# Installer les dépendances
+# Cloner le projet
+git clone <repo-url>
+cd coffice-app
+
+# Installer dépendances
 npm install
 
-# Build de production
-npm run build
+# Configurer .env
+cp .env.example .env
+nano .env
 ```
 
-Le build génère un dossier `dist/` avec les fichiers optimisés.
-
-### 2. Upload sur le serveur
-
-Uploadez **UNIQUEMENT** ces fichiers/dossiers :
-
-```
-public_html/
-├── index.html           (depuis dist/)
-├── assets/              (depuis dist/)
-├── api/                 (tout le dossier)
-├── database/migrations/ (seulement les migrations)
-├── .htaccess
-└── .env
-```
-
-**⚠️ Ne jamais uploader :**
-- `src/`
-- `node_modules/`
-- `package.json`
-- `package-lock.json`
-- `*.config.js`
-- `*.config.ts`
-
-### 3. Configuration `.env`
-
-Créez ou modifiez le fichier `.env` sur le serveur :
+**Configuration .env minimale :**
 
 ```env
-# Base de données
+# API Backend
+VITE_API_URL=https://coffice.dz/api
+
+# Database
 DB_HOST=localhost
 DB_NAME=cofficed_coffice
-DB_USER=votre_user
-DB_PASSWORD=votre_password
+DB_USER=cofficed_user
+DB_PASSWORD=VotreMotDePasseSecurise
 
-# JWT
-JWT_SECRET=votre_secret_32_caracteres_minimum
+# JWT Security
+JWT_SECRET=generer_avec_openssl_rand_base64_64
 
-# Email
+# Email (Gmail recommandé)
 MAIL_HOST=smtp.gmail.com
 MAIL_PORT=587
 MAIL_USERNAME=votre@email.com
-MAIL_PASSWORD=votre_app_password
+MAIL_PASSWORD=mot_de_passe_application
 MAIL_FROM_ADDRESS=noreply@coffice.dz
-MAIL_FROM_NAME=Coffice
 ```
 
-### 4. Migrations de la base de données
-
-Connectez-vous en SSH et exécutez :
+### 2. Base de Données
 
 ```bash
-# Se connecter à MySQL
-mysql -u root -p
+# Créer la database
+mysql -u root -p -e "CREATE DATABASE cofficed_coffice CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 
-# Créer la base si elle n'existe pas
-CREATE DATABASE IF NOT EXISTS cofficed_coffice;
-USE cofficed_coffice;
+# Créer l'utilisateur
+mysql -u root -p -e "CREATE USER 'cofficed_user'@'localhost' IDENTIFIED BY 'MotDePasseSecurise';"
+mysql -u root -p -e "GRANT ALL PRIVILEGES ON cofficed_coffice.* TO 'cofficed_user'@'localhost';"
+mysql -u root -p -e "FLUSH PRIVILEGES;"
 
-# Importer le schéma de base
-source /chemin/vers/database/coffice.sql;
+# Importer le schéma
+mysql -u root -p cofficed_coffice < database/coffice.sql
 
-# Exécuter les migrations dans l'ordre
-source /chemin/vers/database/migrations/002_password_resets.sql;
-source /chemin/vers/database/migrations/003_add_rappel_envoye.sql;
-source /chemin/vers/database/migrations/004_performance_indexes.sql;
-source /chemin/vers/database/migrations/005_audit_logging.sql;
-source /chemin/vers/database/migrations/006_add_code_parrainage.sql;
+# Appliquer TOUTES les migrations dans l'ordre
+mysql -u root -p cofficed_coffice < database/migrations/002_password_resets.sql
+mysql -u root -p cofficed_coffice < database/migrations/003_add_rappel_envoye.sql
+mysql -u root -p cofficed_coffice < database/migrations/004_performance_indexes.sql
+mysql -u root -p cofficed_coffice < database/migrations/005_audit_logging.sql
+mysql -u root -p cofficed_coffice < database/migrations/006_add_code_parrainage.sql
 
 # Optimiser les tables
-ANALYZE TABLE users, reservations, domiciliations, espaces, parrainages;
-
-exit;
+mysql -u root -p cofficed_coffice -e "ANALYZE TABLE users, reservations, domiciliations, espaces, abonnements, codes_promo, parrainages;"
 ```
 
-### 5. Permissions
+### 3. Build Production
 
 ```bash
-# Dossiers d'upload et logs
+# Build optimisé
+npm run build
+
+# Vérifier le build
+ls -la dist/
+```
+
+Le dossier `dist/` contient maintenant tous les fichiers frontend compilés.
+
+### 4. Upload vers le Serveur
+
+**Via cPanel File Manager :**
+
+1. Connectez-vous à cPanel
+2. File Manager → `public_html/`
+3. Supprimez TOUT le contenu existant
+4. Uploadez TOUS les fichiers depuis `dist/` à la racine de `public_html/`
+5. Uploadez le dossier `api/` complet
+6. Uploadez le dossier `database/migrations/`
+7. Uploadez le fichier `.env` (configuré pour le serveur)
+
+**Via FTP/SFTP :**
+
+```bash
+# Exemple avec rsync
+rsync -avz --delete dist/ user@serveur:/home/user/public_html/
+rsync -avz api/ user@serveur:/home/user/public_html/api/
+rsync -avz database/migrations/ user@serveur:/home/user/public_html/database/migrations/
+scp .env user@serveur:/home/user/public_html/
+```
+
+**Structure finale sur le serveur :**
+
+```
+public_html/
+├── index.html              ✅ (depuis dist/)
+├── assets/                 ✅ (depuis dist/)
+│   ├── *.js
+│   ├── *.css
+│   └── images/
+├── api/                    ✅ (dossier complet)
+│   ├── auth/
+│   ├── reservations/
+│   ├── domiciliations/
+│   ├── espaces/
+│   ├── users/
+│   ├── abonnements/
+│   ├── codes-promo/
+│   ├── parrainages/
+│   ├── notifications/
+│   ├── admin/
+│   ├── uploads/            ✅ (créer si absent)
+│   │   └── documents/      ✅ (créer si absent)
+│   └── logs/               ✅ (créer si absent)
+├── database/
+│   └── migrations/         ✅ (optionnel mais recommandé)
+├── .htaccess               ✅ (depuis dist/)
+└── .env                    ✅ (configuré pour prod)
+```
+
+### 5. Permissions Serveur
+
+```bash
+# Via cPanel Terminal ou SSH
 chmod 755 api/uploads
 chmod 755 api/uploads/documents
 chmod 755 api/logs
-
-# Fichier .env (sécurité)
 chmod 644 .env
+chmod 644 .htaccess
+
+# Vérifier propriétaire
+chown -R user:user public_html/
 ```
 
-### 6. Vérification
+### 6. Configuration .env Serveur
 
-1. **Test API** : `curl https://votre-domaine.com/api/check.php`
-   - Doit retourner : `{"status": "ok", ...}`
+Éditer `.env` sur le serveur avec les vraies valeurs :
 
-2. **Test frontend** : Ouvrir le site dans un navigateur
-   - Vérifier la console F12 (pas d'erreurs)
-   - Tester la connexion
-   - Créer un compte test
+```env
+VITE_API_URL=https://coffice.dz/api
+APP_URL=https://coffice.dz
+APP_ENV=production
 
-3. **Test MIME types** : `curl -I https://votre-domaine.com/assets/index-XXX.js`
-   - Doit contenir : `Content-Type: application/javascript`
+DB_HOST=localhost
+DB_NAME=cofficed_coffice
+DB_USER=cofficed_user
+DB_PASSWORD=MotDePasseReel
 
----
+JWT_SECRET=VotreSecretJWTSecurise64Caracteres
 
-## 🔄 Mise à jour depuis v4.1.0
-
-Si vous mettez à jour depuis la version 4.1.0 :
-
-### 1. Sauvegarde
-
-```bash
-# Sauvegarde base de données
-mysqldump -u root -p cofficed_coffice > backup_$(date +%Y%m%d).sql
-
-# Sauvegarde fichiers
-tar -czf backup_files_$(date +%Y%m%d).tar.gz api/uploads/
+MAIL_HOST=mail.coffice.dz
+MAIL_PORT=465
+MAIL_USERNAME=noreply@coffice.dz
+MAIL_PASSWORD=MotDePasseEmailReel
 ```
 
-### 2. Migration spécifique v4.2.0
+## 📧 Configuration Email Gmail
 
-Exécutez **uniquement** :
+1. Activer l'authentification à 2 facteurs : https://myaccount.google.com/security
+2. Créer un mot de passe d'application : https://myaccount.google.com/apppasswords
+3. Utiliser ce mot de passe dans `MAIL_PASSWORD`
 
-```bash
-mysql -u root -p cofficed_coffice < database/migrations/006_add_code_parrainage.sql
+**Configuration Gmail dans .env :**
+
+```env
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=votre@gmail.com
+MAIL_PASSWORD=abcd efgh ijkl mnop
+MAIL_ENCRYPTION=tls
 ```
 
-Cette migration :
-- Ajoute le champ `code_parrainage` aux utilisateurs
-- Génère les codes pour les utilisateurs existants
-- Crée les entrées parrainages manquantes
+## 🧪 Tests Post-Déploiement
 
-### 3. Upload nouveaux fichiers
-
-Uploadez les fichiers modifiés :
-- `dist/` (nouveau build)
-- `api/auth/register.php`
-- `api/auth/me.php`
-- `api/parrainages/index.php`
-
----
-
-## 🐛 Dépannage
-
-### Erreur MIME Type
-
-**Symptôme** : `Expected a JavaScript module script...`
-
-**Solution** :
-1. Vérifier que `src/` et `node_modules/` ne sont pas sur le serveur
-2. Vérifier `.htaccess` présent à la racine
-3. Vider le cache du navigateur
-
-### API Erreur 500
+### 1. Test API
 
 ```bash
-# Vérifier les logs
-tail -50 api/logs/app.log
+# Depuis votre navigateur
+https://coffice.dz/api/check.php
 
-# Vérifier la connexion DB
+# Doit retourner:
+{
+  "status": "ok",
+  "message": "API is running",
+  "timestamp": "2026-01-26T10:00:00+00:00"
+}
+```
+
+### 2. Test MIME Types
+
+```
+https://coffice.dz/test-mime.html
+```
+
+Tous les tests doivent être verts.
+
+### 3. Test Connexion DB
+
+```bash
+# Via cPanel Terminal
+cd public_html
 php api/test_db_connection.php
 ```
 
-### Page blanche
+### 4. Test Complet Application
 
-1. F12 → Console (voir erreurs JavaScript)
-2. Vérifier structure : `index.html` et `assets/` à la racine
-3. Vérifier permissions des fichiers
+1. Accéder à `https://coffice.dz`
+2. Créer un compte utilisateur
+3. Se connecter
+4. Créer une réservation test
+5. Vérifier réception email
 
-### Code parrainage manquant
+## 🔐 Sécurité Production
 
-Si un utilisateur n'a pas de code parrainage :
+### SSL/HTTPS (Obligatoire)
 
-```sql
-UPDATE users
-SET code_parrainage = CONCAT('CPF', UPPER(SUBSTRING(MD5(CONCAT(id, email, UNIX_TIMESTAMP())), 1, 6)))
-WHERE code_parrainage IS NULL;
+Via cPanel :
+1. SSL/TLS Status
+2. Run AutoSSL (Let's Encrypt gratuit)
+3. Activer "Force HTTPS Redirect"
+
+### Headers Sécurité
+
+Le `.htaccess` contient déjà :
+- Protection XSS
+- Content Security Policy
+- Clickjacking protection
+- MIME type sniffing protection
+
+### Fichiers Sensibles
+
+```apache
+# Déjà dans .htaccess
+<Files ".env">
+    Order allow,deny
+    Deny from all
+</Files>
 ```
 
----
+## 🔄 Mises à Jour
 
-## ✅ Checklist post-déploiement
+```bash
+# Local
+git pull origin main
+npm install
+npm run build
 
-- [ ] API répond correctement (`/api/check.php`)
-- [ ] Site accessible sans erreur console
-- [ ] Connexion/Inscription fonctionnelle
-- [ ] Réservations créables
-- [ ] Codes de parrainage générés
+# Upload uniquement dist/ vers serveur
+# NE PAS upload src/, node_modules/
+```
+
+## 🐛 Dépannage
+
+### Erreur : Page blanche
+
+**Solution :**
+1. F12 → Console pour voir les erreurs
+2. Vérifier que `index.html` et `assets/` sont à la racine
+3. Vérifier `.htaccess` présent
+4. Vider cache navigateur (Ctrl+Shift+Del)
+
+### Erreur : API ne répond pas
+
+**Solution :**
+1. Vérifier `.env` configuré
+2. Test : `https://coffice.dz/api/check.php`
+3. Vérifier logs : `api/logs/app.log`
+4. Vérifier permissions `api/uploads/` = 755
+
+### Erreur : MIME type JavaScript
+
+**Solution :**
+1. Vérifier `.htaccess` présent à la racine
+2. Rebuild : `npm run build`
+3. Upload `dist/.htaccess`
+4. Test : `/test-mime.html`
+
+### Erreur : Emails ne partent pas
+
+**Solution :**
+1. Vérifier config email dans `.env`
+2. Test : créer un compte utilisateur
+3. Vérifier logs : `api/logs/app.log`
+4. Gmail : vérifier mot de passe d'application
+
+## 📊 Maintenance
+
+### Logs à Surveiller
+
+```bash
+# Erreurs application
+tail -f api/logs/app.log
+
+# Audit (actions critiques)
+tail -f api/logs/audit.log
+
+# Via cPanel : Metrics → Errors
+```
+
+### Sauvegardes Automatiques
+
+Via cPanel :
+1. Backup Wizard → Generate Backup
+2. Download : Home Directory + MySQL Database
+3. Planifier : hebdomadaire minimum
+
+### Nettoyage Base de Données
+
+Ajouter dans cron (cPanel → Cron Jobs) :
+
+```cron
+# Tous les jours à 2h du matin
+0 2 * * * mysql cofficed_coffice -e "DELETE FROM password_resets WHERE expires_at < NOW() - INTERVAL 24 HOUR;"
+
+# Toutes les semaines
+0 3 * * 0 mysql cofficed_coffice -e "OPTIMIZE TABLE users, reservations, domiciliations, espaces;"
+```
+
+## ✅ Checklist Finale
+
+Avant de considérer le déploiement terminé :
+
+- [ ] `npm run build` exécuté sans erreur
+- [ ] Base de données créée + toutes migrations appliquées
+- [ ] `.env` configuré avec les vraies valeurs
+- [ ] Structure `public_html/` correcte (dist/ + api/)
+- [ ] Permissions correctes (755 uploads/, 644 .env)
+- [ ] `.htaccess` présent à la racine
+- [ ] SSL/HTTPS actif et fonctionnel
+- [ ] `https://coffice.dz` accessible sans erreur
+- [ ] `/test-mime.html` : tous tests verts
+- [ ] API répond : `/api/check.php`
+- [ ] Création compte + login fonctionnel
 - [ ] Emails envoyés correctement
-- [ ] Dashboard admin accessible
-- [ ] HTTPS actif (SSL)
+- [ ] Test réservation complète OK
+
+## 📞 Support
+
+**Email** : contact@coffice.dz
+**Site** : https://coffice.dz
+**Documentation** : README.md
 
 ---
 
-## 📧 Support
-
-En cas de problème :
-- Vérifier les logs : `api/logs/app.log`
-- Vérifier la console navigateur (F12)
-- Contacter : contact@coffice.dz
-
----
-
-**Version du guide** : 4.2.0 | Janvier 2026
+**Version** : 4.2.0
+**Dernière mise à jour** : Janvier 2026
+**Statut** : Production Ready ✅

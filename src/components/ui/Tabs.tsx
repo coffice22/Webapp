@@ -11,11 +11,14 @@ export interface Tab {
 interface TabsProps {
   tabs: Tab[];
   defaultTab?: string;
+  activeTab?: string;
+  onChange?: (tabId: string) => void;
   className?: string;
 }
 
-const Tabs: React.FC<TabsProps> = ({ tabs, defaultTab, className = "" }) => {
-  const [activeTab, setActiveTab] = useState(defaultTab || tabs[0]?.id);
+const Tabs: React.FC<TabsProps> = ({ tabs, defaultTab, activeTab: controlledActiveTab, onChange, className = "" }) => {
+  const [internalActiveTab, setInternalActiveTab] = useState(defaultTab || tabs[0]?.id);
+  const activeTab = controlledActiveTab !== undefined ? controlledActiveTab : internalActiveTab;
 
   return (
     <div className={className}>
@@ -26,7 +29,13 @@ const Tabs: React.FC<TabsProps> = ({ tabs, defaultTab, className = "" }) => {
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => {
+                  if (onChange) {
+                    onChange(tab.id);
+                  } else {
+                    setInternalActiveTab(tab.id);
+                  }
+                }}
                 className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center gap-2 ${
                   activeTab === tab.id
                     ? "border-accent text-accent"

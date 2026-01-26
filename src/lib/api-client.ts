@@ -27,12 +27,9 @@ class ApiClient {
     this.refreshToken = localStorage.getItem("refresh_token");
 
     if (!import.meta.env.VITE_API_URL) {
-      console.warn(
-        "[API] VITE_API_URL non configuré, utilisation de:",
-        API_URL,
-      );
+      logger.warn(`[API] VITE_API_URL non configuré, utilisation par défaut: ${API_URL}`);
     } else {
-      console.log("[API] URL configurée:", API_URL);
+      logger.info(`[API] URL configurée: ${API_URL}`);
     }
 
     logger.info("API Client initialized");
@@ -229,13 +226,12 @@ class ApiClient {
         data = await response.json();
       } else {
         const text = await response.text();
-        console.error("[API] Non-JSON response:", {
+        logger.error("[API] Non-JSON response:", {
           url,
           status: response.status,
           contentType,
           preview: text.substring(0, 200),
         });
-        logger.error("Non-JSON response received");
 
         if (response.status >= 500 && retryCount < MAX_RETRIES) {
           logger.debug(
@@ -285,12 +281,11 @@ class ApiClient {
 
       return data;
     } catch (error: any) {
-      console.error("[API] Request failed:", {
+      logger.error("[API] Request failed:", {
         url,
         method: options.method || "GET",
         error: error.message,
       });
-      logger.error("Request error:", error);
 
       if (error.message === "Failed to fetch" && retryCount < MAX_RETRIES) {
         logger.debug(

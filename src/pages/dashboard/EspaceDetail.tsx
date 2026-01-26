@@ -59,7 +59,7 @@ const EspaceDetail: React.FC = () => {
       setLoading(true);
       const response = await apiClient.getEspace(id!);
       if (response.success && response.data) {
-        setEspace(response.data);
+        setEspace(response.data as EspaceDetail);
       } else {
         toast.error("Espace introuvable");
         navigate("/app/admin/spaces");

@@ -224,9 +224,7 @@ const AdminAbonnements = () => {
 
     setLoading(true);
     try {
-      const response = await apiClient.delete("/api/abonnements/delete.php", {
-        id: selectedAbonnement.id,
-      });
+      const response = await apiClient.deleteAbonnement(selectedAbonnement.id);
       if (response.success) {
         toast.success("Abonnement archivé avec succès");
         setShowDeleteModal(false);

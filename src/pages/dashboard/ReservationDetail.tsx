@@ -76,7 +76,7 @@ const ReservationDetail: React.FC = () => {
       setLoading(true);
       const response = await apiClient.getReservation(id!);
       if (response.success && response.data) {
-        setReservation(response.data);
+        setReservation(response.data as ReservationDetail);
       } else {
         toast.error("Réservation introuvable");
         navigate("/app/reservations");

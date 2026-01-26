@@ -353,7 +353,7 @@ const Domiciliation = () => {
           )}
 
           {/* Commentaire admin si rejetée */}
-          {demande.statut === "rejetee" && demande.notesAdmin && (
+          {demande.statut === "rejetee" && demande.commentaireAdmin && (
             <Card className="p-6 bg-red-50 border-2 border-red-200">
               <div className="flex items-start gap-3">
                 <AlertCircle className="w-5 h-5 text-red-600 mt-0.5" />
@@ -361,7 +361,7 @@ const Domiciliation = () => {
                   <h3 className="font-medium text-red-900 mb-2">
                     Raison du rejet
                   </h3>
-                  <p className="text-sm text-red-700">{demande.notesAdmin}</p>
+                  <p className="text-sm text-red-700">{demande.commentaireAdmin}</p>
                 </div>
               </div>
             </Card>
@@ -377,7 +377,7 @@ const Domiciliation = () => {
                     Tarif mensuel
                   </h3>
                   <p className="text-2xl font-bold text-green-900">
-                    {parseFloat(demande.montantMensuel).toLocaleString()} DA
+                    {Number(demande.montantMensuel).toLocaleString()} DA
                     <span className="text-sm font-normal text-green-700">
                       {" "}
                       / mois
