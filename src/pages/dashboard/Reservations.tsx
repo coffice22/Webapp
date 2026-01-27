@@ -148,7 +148,7 @@ const Reservations = () => {
                         {format(
                           new Date(reservation.date_debut),
                           "dd MMM yyyy à HH:mm",
-                          { locale: fr }
+                          { locale: fr },
                         )}
                       </span>
                     </div>
@@ -159,7 +159,7 @@ const Reservations = () => {
                         {format(
                           new Date(reservation.date_fin),
                           "dd MMM yyyy à HH:mm",
-                          { locale: fr }
+                          { locale: fr },
                         )}
                       </span>
                     </div>
@@ -199,10 +199,7 @@ const Reservations = () => {
         </div>
       )}
 
-      <ReservationForm
-        isOpen={showForm}
-        onClose={() => setShowForm(false)}
-      />
+      <ReservationForm isOpen={showForm} onClose={() => setShowForm(false)} />
 
       <Modal
         isOpen={!!cancelId}
