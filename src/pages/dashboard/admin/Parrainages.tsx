@@ -78,8 +78,8 @@ const Parrainages = () => {
       const data = Array.isArray(response.data?.data)
         ? response.data.data
         : Array.isArray(response.data)
-        ? response.data
-        : [];
+          ? response.data
+          : [];
 
       setParrainages(data);
       calculateStats(data);
@@ -94,7 +94,7 @@ const Parrainages = () => {
   const calculateStats = (data: ParrainageDetail[]) => {
     const totalRecompenses = data.reduce(
       (sum, p) => sum + (p.recompenseParrain || 0),
-      0
+      0,
     );
     const recompensesPayees = data
       .filter((p) => p.statut === "paye")
@@ -148,7 +148,7 @@ const Parrainages = () => {
   const filteredParrainages = parrainages.filter(
     (p) =>
       p.filleulNom?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.filleulEmail?.toLowerCase().includes(searchQuery.toLowerCase())
+      p.filleulEmail?.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const exportToCSV = () => {
@@ -165,14 +165,18 @@ const Parrainages = () => {
       p.filleulNom || "N/A",
       p.filleulEmail || "N/A",
       p.dateInscription
-        ? format(new Date(p.dateInscription), "dd/MM/yyyy HH:mm", { locale: fr })
+        ? format(new Date(p.dateInscription), "dd/MM/yyyy HH:mm", {
+            locale: fr,
+          })
         : "N/A",
       p.recompenseParrain.toString(),
       p.recompenseFilleul.toString(),
       p.statut,
     ]);
 
-    const csvContent = [headers, ...rows].map((row) => row.join(",")).join("\n");
+    const csvContent = [headers, ...rows]
+      .map((row) => row.join(","))
+      .join("\n");
 
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
@@ -406,7 +410,7 @@ const Parrainages = () => {
                             ? format(
                                 new Date(parrainage.dateInscription),
                                 "dd MMM yyyy",
-                                { locale: fr }
+                                { locale: fr },
                               )
                             : "N/A"}
                         </div>
@@ -416,7 +420,7 @@ const Parrainages = () => {
                           <CreditCard className="w-4 h-4 text-green-600" />
                           <span className="text-sm font-medium text-gray-900">
                             {parrainage.recompenseParrain.toLocaleString(
-                              "fr-DZ"
+                              "fr-DZ",
                             )}{" "}
                             DA
                           </span>
@@ -427,7 +431,7 @@ const Parrainages = () => {
                           <CreditCard className="w-4 h-4 text-blue-600" />
                           <span className="text-sm font-medium text-gray-900">
                             {parrainage.recompenseFilleul.toLocaleString(
-                              "fr-DZ"
+                              "fr-DZ",
                             )}{" "}
                             DA
                           </span>
