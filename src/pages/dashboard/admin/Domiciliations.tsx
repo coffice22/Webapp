@@ -140,12 +140,12 @@ const AdminDomiciliations = () => {
 
   const loadUsers = async () => {
     try {
-      const response = await apiClient.get("/api/users/index.php");
+      const response = await apiClient.getUsers();
       if (response.success && response.data) {
-        // L'API retourne { data: { data: [...], pagination: {...} } }
-        const userData = Array.isArray(response.data)
-          ? response.data
-          : response.data.data || [];
+        const responseData = response.data as { data?: Array<{ id: string; nom: string; prenom: string; email: string }> } | Array<{ id: string; nom: string; prenom: string; email: string }>;
+        const userData = Array.isArray(responseData)
+          ? responseData
+          : responseData.data || [];
         setUsers(userData);
       }
     } catch (error) {
