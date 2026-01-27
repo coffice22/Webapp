@@ -61,7 +61,8 @@ const Reservations = () => {
       setLoading(true);
       const response = await apiClient.getReservations();
       if (response.success) {
-        setReservations(response.data || []);
+        const data = Array.isArray(response.data) ? response.data : [];
+        setReservations(data);
       }
     } catch (error) {
       console.error("Erreur:", error);
