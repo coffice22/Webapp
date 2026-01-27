@@ -227,7 +227,8 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
       console.log("[ReservationForm] Résultat:", result);
 
       if (!result || result.success === false) {
-        const errorMsg = result?.error || "Erreur lors de la création de la réservation";
+        const errorMsg =
+          result?.error || "Erreur lors de la création de la réservation";
         console.error("[ReservationForm] Erreur:", errorMsg);
         toast.error(errorMsg);
         return;
