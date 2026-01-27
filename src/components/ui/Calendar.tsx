@@ -15,8 +15,14 @@ import {
 } from "date-fns";
 import { fr } from "date-fns/locale";
 
+interface ReservationData {
+  date_debut: string;
+  date_fin?: string;
+  statut?: string;
+}
+
 interface CalendarProps {
-  reservations: any[];
+  reservations: ReservationData[];
   onDateClick?: (date: Date) => void;
   selectedDate?: Date;
 }

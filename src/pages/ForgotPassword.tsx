@@ -22,8 +22,8 @@ export default function ForgotPassword() {
       await apiClient.post('/auth/forgot-password', { email });
       setIsSubmitted(true);
       toast.success('Email envoyé ! Vérifiez votre boîte de réception.');
-    } catch (err: any) {
-      const message = err.response?.data?.error || 'Une erreur est survenue';
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Une erreur est survenue';
       setError(message);
       toast.error(message);
     } finally {

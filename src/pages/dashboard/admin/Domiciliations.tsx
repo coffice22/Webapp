@@ -39,6 +39,47 @@ import type { DemandeDomiciliation } from "../../../types";
 import { apiClient } from "../../../lib/api-client";
 import { logger } from "../../../utils/logger";
 
+interface CreateDomiciliationForm {
+  user_id: string;
+  raison_sociale: string;
+  forme_juridique: string;
+  nif: string;
+  nis: string;
+  registre_commerce: string;
+  article_imposition: string;
+  numero_auto_entrepreneur: string;
+  capital: string;
+  activite_principale: string;
+  domaine_activite: string;
+  wilaya: string;
+  commune: string;
+  adresse_actuelle: string;
+  adresse_siege_social: string;
+  representant_nom: string;
+  representant_prenom: string;
+  representant_fonction: string;
+  representant_telephone: string;
+  representant_email: string;
+  coordonnees_fiscales: string;
+  coordonnees_administratives: string;
+  date_creation_entreprise: string;
+  statut: string;
+  montant_mensuel: number;
+  date_debut: string;
+  date_fin: string;
+  mode_paiement: string;
+  notes_admin: string;
+}
+
+interface ActionPayload {
+  domiciliation_id: string;
+  commentaire?: string;
+  montant_mensuel?: number;
+  date_debut?: string;
+  date_fin?: string;
+  mode_paiement?: string;
+}
+
 const AdminDomiciliations = () => {
   const { demandesDomiciliation, loadDemandesDomiciliation } = useAppStore();
   const [searchTerm, setSearchTerm] = useState("");
@@ -57,8 +98,8 @@ const AdminDomiciliations = () => {
   const [dateFin, setDateFin] = useState("");
   const [modePaiement, setModePaiement] = useState("cash");
   const [loading, setLoading] = useState(false);
-  const [users, setUsers] = useState<any[]>([]);
-  const [createFormData, setCreateFormData] = useState<any>({
+  const [users, setUsers] = useState<{ id: string; nom: string; prenom: string; email: string }[]>([]);
+  const [createFormData, setCreateFormData] = useState<CreateDomiciliationForm>({
     user_id: "",
     raison_sociale: "",
     forme_juridique: "SARL",
@@ -232,7 +273,7 @@ const AdminDomiciliations = () => {
     setLoading(true);
     try {
       let endpoint = "";
-      let payload: any = { domiciliation_id: selectedDemande.id };
+      const payload: ActionPayload = { domiciliation_id: selectedDemande.id };
 
       if (actionType === "valider") {
         endpoint = "/api/domiciliations/validate.php";
@@ -242,13 +283,10 @@ const AdminDomiciliations = () => {
         payload.commentaire = commentaire;
       } else if (actionType === "activer") {
         endpoint = "/api/domiciliations/activate.php";
-        payload = {
-          ...payload,
-          montant_mensuel: montantMensuel,
-          date_debut: dateDebut,
-          date_fin: dateFin,
-          mode_paiement: modePaiement,
-        };
+        payload.montant_mensuel = montantMensuel;
+        payload.date_debut = dateDebut;
+        payload.date_fin = dateFin;
+        payload.mode_paiement = modePaiement;
       }
 
       const response = await apiClient.post(endpoint, payload);
@@ -336,12 +374,9 @@ const AdminDomiciliations = () => {
       } else {
         toast.error(response.message || "Erreur lors de la création");
       }
-    } catch (error: any) {
-      logger.error("Create domiciliation error:", error);
-      toast.error(
-        error.response?.data?.message ||
-          "Erreur lors de la création de la domiciliation",
-      );
+    } catch (error) {
+      logger.error("Create domiciliation error:", error instanceof Error ? error.message : "Unknown error");
+      toast.error("Erreur lors de la création de la domiciliation");
     } finally {
       setLoading(false);
     }

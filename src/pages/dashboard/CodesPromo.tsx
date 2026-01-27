@@ -11,8 +11,23 @@ import toast from "react-hot-toast";
 import { format } from "date-fns";
 import { logger } from "../../utils/logger";
 
+interface CodePromo {
+  id: string;
+  code: string;
+  description?: string;
+  type_reduction: "pourcentage" | "montant";
+  valeur: number;
+  date_debut: string;
+  date_fin: string;
+  montant_min_commande: number;
+  utilisations_max: number;
+  utilisations_actuelles: number;
+  type_applicable: string;
+  actif: boolean;
+}
+
 const CodesPromo = () => {
-  const [codes, setCodes] = useState<any[]>([]);
+  const [codes, setCodes] = useState<CodePromo[]>([]);
   const [loading, setLoading] = useState(true);
   const [verifyCode, setVerifyCode] = useState("");
   const [verifying, setVerifying] = useState(false);
@@ -25,10 +40,9 @@ const CodesPromo = () => {
     setLoading(true);
     try {
       const response = await apiClient.getCodesPromo();
-      const data = (response.data || []) as any[];
-      // Filtrer uniquement les codes actifs et non expirés
+      const data = (response.data || []) as CodePromo[];
       const activeCodes = data.filter(
-        (code: any) =>
+        (code) =>
           code.actif &&
           new Date(code.date_fin) > new Date() &&
           code.utilisations_actuelles < code.utilisations_max,

@@ -10,44 +10,51 @@ interface ErrorHandlerOptions {
   customMessage?: string;
 }
 
+interface ErrorWithDetails extends Error {
+  code?: string;
+  status?: number;
+}
+
 export const useErrorHandler = () => {
   const navigate = useNavigate();
   const { logout } = useAuthStore();
 
   const handleError = useCallback(
-    (error: any, options: ErrorHandlerOptions = {}) => {
+    (error: Error | ErrorWithDetails | unknown, options: ErrorHandlerOptions = {}) => {
       const {
         showToast = true,
         redirectOnAuth = true,
         customMessage,
       } = options;
 
+      const errorObj = error as ErrorWithDetails;
+
       logger.error("Error caught", {
-        error: error?.message || error,
-        code: error?.code,
-        status: error?.status,
-        stack: error?.stack,
+        error: errorObj?.message || String(error),
+        code: errorObj?.code,
+        status: errorObj?.status,
+        stack: errorObj?.stack,
       });
 
       let message = customMessage || "Une erreur est survenue";
 
-      if (error?.message) {
-        message = error.message;
+      if (errorObj?.message) {
+        message = errorObj.message;
       }
 
-      if (error?.code === "PGRST301" || error?.status === 401) {
+      if (errorObj?.code === "PGRST301" || errorObj?.status === 401) {
         message = "Session expirée. Veuillez vous reconnecter.";
         if (redirectOnAuth) {
           logout();
           navigate("/connexion", { replace: true });
         }
-      } else if (error?.code === "PGRST116") {
+      } else if (errorObj?.code === "PGRST116") {
         message = "Données introuvables";
-      } else if (error?.code === "23505") {
+      } else if (errorObj?.code === "23505") {
         message = "Cette donnée existe déjà";
-      } else if (error?.code === "23503") {
+      } else if (errorObj?.code === "23503") {
         message = "Référence invalide";
-      } else if (error?.message?.includes("network")) {
+      } else if (errorObj?.message?.includes("network")) {
         message = "Erreur de connexion. Vérifiez votre internet.";
       }
 

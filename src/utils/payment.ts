@@ -21,10 +21,10 @@ export const processPayment = async (
       success: true,
       transactionId: `TXN-${Date.now()}-${Math.random().toString(36).substring(7)}`,
     };
-  } catch (error: any) {
+  } catch (error) {
     return {
       success: false,
-      error: error.message || "Erreur lors du traitement du paiement",
+      error: error instanceof Error ? error.message : "Erreur lors du traitement du paiement",
     };
   }
 };

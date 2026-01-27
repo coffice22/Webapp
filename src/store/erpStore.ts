@@ -12,26 +12,58 @@ import type {
   Analytics,
 } from "../types/erp";
 
+interface Subscription {
+  id: string;
+  memberId: string;
+  status: "active" | "inactive" | "cancelled";
+  planId?: string;
+  startDate?: Date;
+  endDate?: Date;
+}
+
+interface Membership {
+  id: string;
+  name: string;
+  price: number;
+  status: "active" | "inactive";
+}
+
+interface StaffMember {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: string;
+}
+
+interface InvoiceItemInput {
+  description: string;
+  quantity: number;
+  unitPrice: number;
+  discount?: number;
+  type?: string;
+}
+
 interface ERPState {
   members: Member[];
   spaces: Space[];
   reservations: ERPReservation[];
   invoices: Invoice[];
   payments: Payment[];
-  subscriptions: any[];
-  memberships: any[];
+  subscriptions: Subscription[];
+  memberships: Membership[];
   expenses: Expense[];
   inventory: Inventory[];
   maintenanceTasks: MaintenanceTask[];
   maintenanceRequests: MaintenanceTask[];
-  staff: any[];
+  staff: StaffMember[];
   events: CommunityEvent[];
   analytics: Analytics;
   getLowStockItems: () => Inventory[];
   getInvoiceById: (id: string) => Invoice | undefined;
   generateInvoice: (
     memberId: string,
-    items: any[],
+    items: InvoiceItemInput[],
   ) => { success: boolean; error?: string };
   markInvoiceAsPaid: (
     id: string,
@@ -60,7 +92,7 @@ interface ERPState {
   updateMember: (id: string, data: Partial<Member>) => void;
   deleteMember: (id: string) => void;
   getMemberById: (id: string) => Member | undefined;
-  getMemberSubscription: (memberId: string) => any;
+  getMemberSubscription: (memberId: string) => Subscription | undefined;
   processSubscriptionPayment: (
     subscriptionId: string,
     amount: number,
@@ -137,10 +169,10 @@ interface ERPState {
     success: boolean;
     error?: string;
   };
-  getStaffMemberById: (id: string) => any;
+  getStaffMemberById: (id: string) => StaffMember | undefined;
 
   // Membership actions
-  getMembershipById: (id: string) => any;
+  getMembershipById: (id: string) => Membership | undefined;
 
   // Event actions
   addEvent: (event: CommunityEvent) => void;
@@ -149,7 +181,7 @@ interface ERPState {
   getEventById: (id: string) => CommunityEvent | undefined;
   registerForEvent: (
     eventId: string,
-    attendeeData: any,
+    attendeeData: Record<string, unknown>,
   ) => { success: boolean; error?: string };
   cancelEvent: (
     eventId: string,
@@ -206,7 +238,7 @@ export const useERPStore = create<ERPState>()((set, get) => ({
       if (!member) return { success: false, error: "Membre non trouvé" };
 
       const subtotal = items.reduce(
-        (sum: number, item: any) => sum + item.quantity * item.unitPrice,
+        (sum: number, item: InvoiceItemInput) => sum + item.quantity * item.unitPrice,
         0,
       );
       const taxAmount = subtotal * 0.19;
@@ -225,7 +257,7 @@ export const useERPStore = create<ERPState>()((set, get) => ({
         dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
         issueDate: new Date(),
         status: "pending",
-        items: items.map((item: any, idx: number) => ({
+        items: items.map((item: InvoiceItemInput, idx: number) => ({
           id: `item-${idx}`,
           description: item.description,
           quantity: item.quantity,
@@ -237,8 +269,9 @@ export const useERPStore = create<ERPState>()((set, get) => ({
 
       set((state) => ({ invoices: [...state.invoices, invoice] }));
       return { success: true };
-    } catch (error: any) {
-      return { success: false, error: error.message };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      return { success: false, error: message };
     }
   },
   markInvoiceAsPaid: (id, paymentMethod) => {
@@ -256,8 +289,9 @@ export const useERPStore = create<ERPState>()((set, get) => ({
         ),
       }));
       return { success: true };
-    } catch (error: any) {
-      return { success: false, error: error.message };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      return { success: false, error: message };
     }
   },
   addPayment: (invoiceId, amount, method) => {
@@ -271,7 +305,7 @@ export const useERPStore = create<ERPState>()((set, get) => ({
         memberId: invoice.memberId,
         amount,
         date: new Date(),
-        method: method as any,
+        method: method as Payment["method"],
         paymentMethod: method,
         status: "completed",
         createdAt: new Date(),
@@ -280,8 +314,9 @@ export const useERPStore = create<ERPState>()((set, get) => ({
 
       set((state) => ({ payments: [...state.payments, payment] }));
       return { success: true };
-    } catch (error: any) {
-      return { success: false, error: error.message };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      return { success: false, error: message };
     }
   },
   getPaymentById: (id) => get().payments.find((p) => p.id === id),
@@ -293,7 +328,7 @@ export const useERPStore = create<ERPState>()((set, get) => ({
         memberId,
         amount,
         date: new Date(),
-        method: method as any,
+        method: method as Payment["method"],
         paymentMethod: method,
         status: "completed",
         createdAt: new Date(),
@@ -313,8 +348,9 @@ export const useERPStore = create<ERPState>()((set, get) => ({
       }
 
       return { success: true };
-    } catch (error: any) {
-      return { success: false, error: error.message };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      return { success: false, error: message };
     }
   },
   refundPayment: (id, amount, reason) => {
@@ -333,8 +369,9 @@ export const useERPStore = create<ERPState>()((set, get) => ({
         ),
       }));
       return { success: true };
-    } catch (error: any) {
-      return { success: false, error: error.message };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      return { success: false, error: message };
     }
   },
 
@@ -369,7 +406,7 @@ export const useERPStore = create<ERPState>()((set, get) => ({
         memberId: subscription.memberId,
         amount,
         date: new Date(),
-        method: method as any,
+        method: method as Payment["method"],
         paymentMethod: method,
         status: "completed",
         createdAt: new Date(),
@@ -378,8 +415,9 @@ export const useERPStore = create<ERPState>()((set, get) => ({
 
       set((state) => ({ payments: [...state.payments, payment] }));
       return { success: true };
-    } catch (error: any) {
-      return { success: false, error: error.message };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      return { success: false, error: message };
     }
   },
 
@@ -425,8 +463,9 @@ export const useERPStore = create<ERPState>()((set, get) => ({
         ),
       }));
       return { success: true };
-    } catch (error: any) {
-      return { success: false, error: error.message };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      return { success: false, error: message };
     }
   },
   cancelReservation: (id) => {
@@ -441,8 +480,9 @@ export const useERPStore = create<ERPState>()((set, get) => ({
         ),
       }));
       return { success: true };
-    } catch (error: any) {
-      return { success: false, error: error.message };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      return { success: false, error: message };
     }
   },
   checkInReservation: (reservationId) => {
@@ -459,8 +499,9 @@ export const useERPStore = create<ERPState>()((set, get) => ({
         ),
       }));
       return { success: true };
-    } catch (error: any) {
-      return { success: false, error: error.message };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      return { success: false, error: message };
     }
   },
   checkOutReservation: (reservationId) => {
@@ -479,8 +520,9 @@ export const useERPStore = create<ERPState>()((set, get) => ({
         ),
       }));
       return { success: true };
-    } catch (error: any) {
-      return { success: false, error: error.message };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      return { success: false, error: message };
     }
   },
 
@@ -584,8 +626,9 @@ export const useERPStore = create<ERPState>()((set, get) => ({
         ),
       }));
       return { success: true };
-    } catch (error: any) {
-      return { success: false, error: error.message };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      return { success: false, error: message };
     }
   },
 
@@ -635,8 +678,9 @@ export const useERPStore = create<ERPState>()((set, get) => ({
       });
 
       return { success: true };
-    } catch (error: any) {
-      return { success: false, error: error.message };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      return { success: false, error: message };
     }
   },
   completeMaintenanceRequest: (requestId) => {
@@ -650,8 +694,9 @@ export const useERPStore = create<ERPState>()((set, get) => ({
       });
 
       return { success: true };
-    } catch (error: any) {
-      return { success: false, error: error.message };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      return { success: false, error: message };
     }
   },
   getStaffMemberById: (id) => get().staff.find((s) => s.id === id),

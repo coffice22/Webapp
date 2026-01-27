@@ -77,12 +77,12 @@ const ERPSystem = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showActionModal, setShowActionModal] = useState(false);
   const [actionType, setActionType] = useState("");
-  const [selectedItem, setSelectedItem] = useState<any>(null);
+  const [selectedItem, setSelectedItem] = useState<Record<string, unknown> | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [notificationSettings, setNotificationSettings] = useState(
     getNotificationSettings(),
   );
-  const [formData, setFormData] = useState<any>({});
+  const [formData, setFormData] = useState<Record<string, unknown>>({});
   const location = useLocation();
 
   React.useEffect(() => {
@@ -129,27 +129,26 @@ const ERPSystem = () => {
     { name: "Paramètres", id: "settings", icon: Settings },
   ];
 
-  // Actions fonctionnelles
-  const handleConfirmReservation = async (reservationId) => {
+  const handleConfirmReservation = async (reservationId: string) => {
     await updateReservation(reservationId, { statut: "confirmee" });
     toast.success("Réservation confirmée");
     setShowActionModal(false);
   };
 
-  const handleCancelReservation = async (reservationId) => {
+  const handleCancelReservation = async (reservationId: string) => {
     await updateReservation(reservationId, { statut: "annulee" });
     toast.success("Réservation annulée");
     setShowActionModal(false);
   };
 
-  const handleToggleUserStatus = async (userId, currentStatus) => {
+  const handleToggleUserStatus = async (userId: string, currentStatus: string) => {
     const newStatus = currentStatus === "actif" ? "suspendu" : "actif";
     await updateUser(userId, { statut: newStatus });
     toast.success(`Utilisateur ${newStatus}`);
     setShowActionModal(false);
   };
 
-  const handleDeleteUser = async (userId) => {
+  const handleDeleteUser = async (userId: string) => {
     if (window.confirm("Supprimer cet utilisateur définitivement ?")) {
       await deleteUser(userId);
       toast.success("Utilisateur supprimé");
@@ -157,13 +156,13 @@ const ERPSystem = () => {
     }
   };
 
-  const handleToggleSpaceAvailability = (spaceId, currentStatus) => {
+  const handleToggleSpaceAvailability = (spaceId: string, currentStatus: boolean) => {
     updateEspace(spaceId, { disponible: !currentStatus });
     toast.success(`Espace ${!currentStatus ? "activé" : "désactivé"}`);
     setShowActionModal(false);
   };
 
-  const openActionModal = (type, item = null) => {
+  const openActionModal = (type: string, item: Record<string, unknown> | null = null) => {
     setActionType(type);
     setSelectedItem(item);
 
@@ -216,7 +215,7 @@ const ERPSystem = () => {
       toast.error("Email est obligatoire");
       return;
     }
-    const updatedData: any = {
+    const updatedData: Record<string, unknown> = {
       email: formData.email,
       nom: formData.nom,
       prenom: formData.prenom,

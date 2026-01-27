@@ -84,7 +84,7 @@ interface AppState {
   addUser: (
     data: Partial<User>,
   ) => Promise<{ success: boolean; error?: string }>;
-  updateUser: (userId: string, data: any) => Promise<void>;
+  updateUser: (userId: string, data: Record<string, unknown>) => Promise<void>;
   deleteUser: (userId: string) => Promise<{ success: boolean; error?: string }>;
 
   getAdminStats: () => AdminStats;
@@ -140,7 +140,7 @@ export const useAppStore = create<AppState>()(
             response.data &&
             Array.isArray(response.data)
           ) {
-            const espaces = response.data.map((e: any) => ({
+            const espaces = response.data.map((e: Record<string, unknown>) => ({
               id: e.id,
               nom: e.nom,
               type: e.type,
@@ -173,21 +173,21 @@ export const useAppStore = create<AppState>()(
             return { success: true };
           }
           return { success: false, error: response.error };
-        } catch (error: any) {
-          return { success: false, error: error.message };
+        } catch (error) {
+          return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
         }
       },
 
       updateEspace: async (id, data) => {
         try {
-          const response = await apiClient.updateEspace(id, data);
+          const response = await apiClient.updateEspace(id, data as Record<string, unknown>);
           if (response.success) {
             await get().loadEspaces();
             return { success: true };
           }
           return { success: false, error: response.error };
-        } catch (error: any) {
-          return { success: false, error: error.message };
+        } catch (error) {
+          return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
         }
       },
 
@@ -199,8 +199,8 @@ export const useAppStore = create<AppState>()(
             return { success: true };
           }
           return { success: false, error: response.error };
-        } catch (error: any) {
-          return { success: false, error: error.message };
+        } catch (error) {
+          return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
         }
       },
 
@@ -212,7 +212,7 @@ export const useAppStore = create<AppState>()(
             response.data &&
             Array.isArray(response.data)
           ) {
-            const abonnements = response.data.map((a: any) => ({
+            const abonnements = response.data.map((a: Record<string, unknown>) => ({
               id: a.id,
               nom: a.nom,
               type: a.type,
@@ -240,27 +240,27 @@ export const useAppStore = create<AppState>()(
 
       addAbonnement: async (data) => {
         try {
-          const response = await apiClient.createAbonnement(data);
+          const response = await apiClient.createAbonnement(data as Record<string, unknown>);
           if (response.success) {
             await get().loadAbonnements();
             return { success: true };
           }
           return { success: false, error: response.error };
-        } catch (error: any) {
-          return { success: false, error: error.message };
+        } catch (error) {
+          return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
         }
       },
 
       updateAbonnement: async (id, data) => {
         try {
-          const response = await apiClient.updateAbonnement(id, data);
+          const response = await apiClient.updateAbonnement(id, data as Record<string, unknown>);
           if (response.success) {
             await get().loadAbonnements();
             return { success: true };
           }
           return { success: false, error: response.error };
-        } catch (error: any) {
-          return { success: false, error: error.message };
+        } catch (error) {
+          return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
         }
       },
 
@@ -272,7 +272,7 @@ export const useAppStore = create<AppState>()(
             response.data &&
             Array.isArray(response.data)
           ) {
-            const reservations = response.data.map((r: any) => ({
+            const reservations = response.data.map((r: Record<string, unknown>) => ({
               id: r.id,
               userId: r.user_id,
               espaceId: r.espace_id,
@@ -325,27 +325,28 @@ export const useAppStore = create<AppState>()(
 
           if (response.success) {
             await get().loadReservations();
-            return { success: true, id: (response.data as any)?.id };
+            const responseData = response.data as { id?: string } | undefined;
+            return { success: true, id: responseData?.id };
           }
           return {
             success: false,
             error: response.error || "Erreur lors de la creation",
           };
-        } catch (error: any) {
-          return { success: false, error: error.message };
+        } catch (error) {
+          return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
         }
       },
 
       updateReservation: async (id, data) => {
         try {
-          const response = await apiClient.updateReservation(id, data);
+          const response = await apiClient.updateReservation(id, data as Record<string, unknown>);
           if (response.success) {
             await get().loadReservations();
             return { success: true };
           }
           return { success: false, error: response.error };
-        } catch (error: any) {
-          return { success: false, error: error.message };
+        } catch (error) {
+          return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
         }
       },
 
@@ -381,7 +382,7 @@ export const useAppStore = create<AppState>()(
           const response = await apiClient.getDomiciliations();
           if (response.success && response.data) {
             const demandesDomiciliation = Array.isArray(response.data)
-              ? response.data.map((d: any) => ({
+              ? response.data.map((d: Record<string, unknown>) => ({
                   id: d.id,
                   userId: d.user_id,
                   utilisateur: d.utilisateur,
@@ -482,8 +483,8 @@ export const useAppStore = create<AppState>()(
             return { success: true };
           }
           return { success: false, error: response.error || "Erreur creation" };
-        } catch (error: any) {
-          return { success: false, error: error.message };
+        } catch (error) {
+          return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
         }
       },
 
@@ -496,7 +497,7 @@ export const useAppStore = create<AppState>()(
               ? response.data
               : response.data.data || [];
 
-            const users = userData.map((u: any) => ({
+            const users = userData.map((u: Record<string, unknown>) => ({
               ...u,
               dateCreation: u.created_at,
               derniereConnexion: u.last_login,
@@ -525,8 +526,8 @@ export const useAppStore = create<AppState>()(
             return { success: true };
           }
           return { success: false, error: response.error };
-        } catch (error: any) {
-          return { success: false, error: error.message };
+        } catch (error) {
+          return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
         }
       },
 
@@ -550,8 +551,8 @@ export const useAppStore = create<AppState>()(
           }
 
           toast.success("Informations mises a jour");
-        } catch (error: any) {
-          toast.error(error.message || "Erreur");
+        } catch (error) {
+          toast.error(error instanceof Error ? error.message : "Erreur");
           throw error;
         }
       },
@@ -564,8 +565,8 @@ export const useAppStore = create<AppState>()(
             return { success: true };
           }
           return { success: false, error: response.error };
-        } catch (error: any) {
-          return { success: false, error: error.message };
+        } catch (error) {
+          return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
         }
       },
 

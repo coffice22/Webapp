@@ -14,9 +14,26 @@ import {
 } from "date-fns";
 import { fr } from "date-fns/locale";
 
+interface ReservationData {
+  id?: string;
+  espace_id: string;
+  date_debut: string;
+  date_fin: string;
+  statut?: string;
+  user_nom?: string;
+  user_prenom?: string;
+}
+
+interface EspaceData {
+  id: string;
+  nom: string;
+  type?: string;
+  capacite?: number;
+}
+
 interface WeekCalendarProps {
-  reservations: any[];
-  espaces: any[];
+  reservations: ReservationData[];
+  espaces: EspaceData[];
   onSlotClick?: (date: Date, espaceId: string) => void;
 }
 

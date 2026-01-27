@@ -9,7 +9,7 @@ import { ERROR_MESSAGES } from "../constants/messages";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost/api";
 
-interface ApiResponse<T = any> {
+interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
   message?: string;
@@ -219,7 +219,7 @@ class ApiClient {
 
       logger.debug(`Response status: ${response.status}`);
 
-      let data: any;
+      let data: Record<string, unknown>;
       const contentType = response.headers.get("content-type");
 
       if (contentType?.includes("application/json")) {
@@ -280,14 +280,15 @@ class ApiClient {
       }
 
       return data;
-    } catch (error: any) {
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Unknown error";
       logger.error("[API] Request failed:", {
         url,
         method: options.method || "GET",
-        error: error.message,
+        error: errorMessage,
       });
 
-      if (error.message === "Failed to fetch" && retryCount < MAX_RETRIES) {
+      if (errorMessage === "Failed to fetch" && retryCount < MAX_RETRIES) {
         logger.debug(
           `Network error, retrying... (${retryCount + 1}/${MAX_RETRIES})`,
         );
@@ -302,7 +303,7 @@ class ApiClient {
         );
       }
 
-      if (error.message === "Failed to fetch") {
+      if (errorMessage === "Failed to fetch") {
         return {
           success: false,
           error: `Impossible de contacter l'API (${API_URL}). Vérifiez que le serveur est accessible.`,
@@ -311,7 +312,7 @@ class ApiClient {
 
       return {
         success: false,
-        error: error.message || ERROR_MESSAGES.UNKNOWN_ERROR,
+        error: errorMessage || ERROR_MESSAGES.UNKNOWN_ERROR,
       };
     }
   }
@@ -395,7 +396,7 @@ class ApiClient {
     return this.request(`/users/show.php?id=${id}`);
   }
 
-  async updateUser(id: string, data: any) {
+  async updateUser(id: string, data: Record<string, unknown>) {
     const snakeCaseData = objectToSnakeCase(data);
     return this.request(`/users/update.php?id=${id}`, {
       method: "PUT",
@@ -418,7 +419,7 @@ class ApiClient {
     return this.request(`/espaces/show.php?id=${id}`);
   }
 
-  async createEspace(data: any) {
+  async createEspace(data: Record<string, unknown>) {
     const snakeCaseData = objectToSnakeCase(data);
     return this.request("/espaces/create.php", {
       method: "POST",
@@ -426,7 +427,7 @@ class ApiClient {
     });
   }
 
-  async updateEspace(id: string, data: any) {
+  async updateEspace(id: string, data: Record<string, unknown>) {
     const snakeCaseData = objectToSnakeCase(data);
     return this.request("/espaces/update.php", {
       method: "PUT",
@@ -459,7 +460,7 @@ class ApiClient {
     notes?: string;
     codePromo?: string;
   }) {
-    const apiData: Record<string, any> = {
+    const apiData: Record<string, unknown> = {
       espace_id: data.espaceId,
       date_debut: data.dateDebut,
       date_fin: data.dateFin,
@@ -477,7 +478,7 @@ class ApiClient {
     });
   }
 
-  async updateReservation(id: string, data: any) {
+  async updateReservation(id: string, data: Record<string, unknown>) {
     const snakeCaseData = objectToSnakeCase(data);
     return this.request("/reservations/update.php", {
       method: "PUT",
@@ -501,8 +502,8 @@ class ApiClient {
     return this.request(`/domiciliations/user.php?user_id=${userId}`);
   }
 
-  async createDemandeDomiciliation(data: any) {
-    const transformedData: any = { ...data };
+  async createDemandeDomiciliation(data: Record<string, unknown> & { representantLegal?: { nom: string; prenom: string; fonction: string; telephone: string; email: string } }) {
+    const transformedData: Record<string, unknown> = { ...data };
 
     if (data.representantLegal) {
       transformedData.representant_nom = data.representantLegal.nom;
@@ -520,8 +521,8 @@ class ApiClient {
     });
   }
 
-  async updateDemandeDomiciliation(id: string, data: any) {
-    const transformedData: any = { id, ...data };
+  async updateDemandeDomiciliation(id: string, data: Record<string, unknown> & { representantLegal?: { nom: string; prenom: string; fonction: string; telephone: string; email: string } }) {
+    const transformedData: Record<string, unknown> = { id, ...data };
 
     if (data.representantLegal) {
       transformedData.representant_nom = data.representantLegal.nom;
@@ -565,7 +566,7 @@ class ApiClient {
     return this.request("/abonnements/index.php");
   }
 
-  async createAbonnement(data: any) {
+  async createAbonnement(data: Record<string, unknown>) {
     const snakeCaseData = objectToSnakeCase(data);
     return this.request("/abonnements/create.php", {
       method: "POST",
@@ -573,7 +574,7 @@ class ApiClient {
     });
   }
 
-  async updateAbonnement(id: string, data: any) {
+  async updateAbonnement(id: string, data: Record<string, unknown>) {
     const snakeCaseData = objectToSnakeCase(data);
     return this.request("/abonnements/update.php", {
       method: "PUT",
@@ -595,7 +596,7 @@ class ApiClient {
       body: JSON.stringify({ code, montant, type }),
     }).then((response) => {
       if (response.success && response.data) {
-        const data = response.data as any;
+        const data = response.data as { id?: string; code?: string; reduction?: number };
         return {
           valid: true,
           codePromoId: data.id || data.code,
@@ -613,7 +614,7 @@ class ApiClient {
     return this.request("/codes-promo/index.php");
   }
 
-  async createCodePromo(data: any) {
+  async createCodePromo(data: Record<string, unknown>) {
     const snakeCaseData = objectToSnakeCase(data);
     return this.request("/codes-promo/create.php", {
       method: "POST",
@@ -621,7 +622,7 @@ class ApiClient {
     });
   }
 
-  async updateCodePromo(id: string, data: any) {
+  async updateCodePromo(id: string, data: Record<string, unknown>) {
     const snakeCaseData = objectToSnakeCase(data);
     return this.request(
       `/codes-promo/update.php?id=${encodeURIComponent(id)}`,
@@ -686,26 +687,25 @@ class ApiClient {
     });
   }
 
-  // ============= GENERIC METHODS =============
-  async get<T = any>(endpoint: string): Promise<ApiResponse<T>> {
+  async get<T = unknown>(endpoint: string): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, { method: "GET" });
   }
 
-  async post<T = any>(endpoint: string, data?: any): Promise<ApiResponse<T>> {
+  async post<T = unknown>(endpoint: string, data?: Record<string, unknown>): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       method: "POST",
       body: data ? JSON.stringify(data) : undefined,
     });
   }
 
-  async put<T = any>(endpoint: string, data?: any): Promise<ApiResponse<T>> {
+  async put<T = unknown>(endpoint: string, data?: Record<string, unknown>): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       method: "PUT",
       body: data ? JSON.stringify(data) : undefined,
     });
   }
 
-  async delete<T = any>(endpoint: string): Promise<ApiResponse<T>> {
+  async delete<T = unknown>(endpoint: string): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, { method: "DELETE" });
   }
 }

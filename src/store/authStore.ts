@@ -97,21 +97,20 @@ export const useAuthStore = create<AuthState>()(
             throw new Error(response.error || "Erreur de connexion");
           }
 
-          // Sauvegarder les tokens
-          const responseData = response.data as any;
+          const responseData = response.data as { token: string; refreshToken?: string; user: User };
           apiClient.setToken(responseData.token, responseData.refreshToken);
 
           set({
-            user: responseData.user as User,
-            isAdmin: (responseData.user as User).role === "admin",
+            user: responseData.user,
+            isAdmin: responseData.user.role === "admin",
             isLoading: false,
           });
 
           toast.success("Connexion réussie");
-        } catch (error: any) {
+        } catch (error) {
           set({ isLoading: false });
           console.error("Login error:", error);
-          toast.error(error.message || "Erreur de connexion");
+          toast.error(error instanceof Error ? error.message : "Erreur de connexion");
           throw error;
         }
       },
@@ -126,26 +125,24 @@ export const useAuthStore = create<AuthState>()(
             throw new Error(response.error || "Erreur lors de l'inscription");
           }
 
-          // Sauvegarder les tokens
-          const responseData = response.data as any;
+          const responseData = response.data as { token: string; refreshToken?: string; user: User };
           apiClient.setToken(responseData.token, responseData.refreshToken);
 
           set({
-            user: responseData.user as User,
+            user: responseData.user,
             isAdmin: false,
             isLoading: false,
           });
 
-          // Message spécial si code parrainage utilisé
           if (data.codeParrainage) {
-            toast.success("Inscription réussie! Bonus parrainage appliqué 🎉");
+            toast.success("Inscription réussie! Bonus parrainage applique");
           } else {
             toast.success("Inscription réussie!");
           }
-        } catch (error: any) {
+        } catch (error) {
           set({ isLoading: false });
           console.error("Register error:", error);
-          toast.error(error.message || "Erreur lors de l'inscription");
+          toast.error(error instanceof Error ? error.message : "Erreur lors de l'inscription");
           throw error;
         }
       },
@@ -194,10 +191,10 @@ export const useAuthStore = create<AuthState>()(
           });
 
           toast.success("Profil mis à jour");
-        } catch (error: any) {
+        } catch (error) {
           set({ isLoading: false });
           console.error("Update profile error:", error);
-          toast.error(error.message || "Erreur lors de la mise à jour");
+          toast.error(error instanceof Error ? error.message : "Erreur lors de la mise à jour");
           throw error;
         }
       },

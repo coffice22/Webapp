@@ -145,8 +145,8 @@ const Reservations = () => {
         setError(response.error || response.message || "Erreur lors du chargement");
         setReservations([]);
       }
-    } catch (err: any) {
-      setError(err.message || "Erreur de connexion");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erreur de connexion");
       setReservations([]);
     } finally {
       setLoading(false);
@@ -172,8 +172,8 @@ const Reservations = () => {
       } else {
         toast.error(response.error || response.message || "Erreur lors de l'annulation");
       }
-    } catch (err: any) {
-      toast.error(err.message || "Erreur lors de l'annulation");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erreur lors de l'annulation");
     } finally {
       setCancelling(false);
     }

@@ -33,6 +33,7 @@ import {
   getEspaceTypeColor,
   type EspaceType,
 } from "../../../constants";
+import type { Espace } from "../../../types";
 
 const equipementsList = [
   { id: "wifi", label: "WiFi", icon: Wifi },
@@ -46,7 +47,7 @@ const Spaces = () => {
   const { espaces, addEspace, updateEspace, deleteEspace, loadEspaces } =
     useAppStore();
   const [showModal, setShowModal] = useState(false);
-  const [editingSpace, setEditingSpace] = useState<any>(null);
+  const [editingSpace, setEditingSpace] = useState<Espace | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState<string>("all");
   const [filterStatus, setFilterStatus] = useState<string>("all");
@@ -107,8 +108,8 @@ const Spaces = () => {
           toast.error(result.error || "Erreur lors de la creation");
         }
       }
-    } catch (error: any) {
-      toast.error(error.message || "Erreur lors de l'operation");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Erreur lors de l'operation");
     } finally {
       setLoading(false);
     }
@@ -130,7 +131,7 @@ const Spaces = () => {
     setEditingSpace(null);
   };
 
-  const handleEdit = (space: any) => {
+  const handleEdit = (space: Espace) => {
     setEditingSpace(space);
     setFormData({
       nom: space.nom,
@@ -158,8 +159,8 @@ const Spaces = () => {
       } else {
         toast.error(result.error || "Erreur lors de la suppression");
       }
-    } catch (error: any) {
-      toast.error(error.message || "Erreur lors de la suppression");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Erreur lors de la suppression");
     }
   };
 

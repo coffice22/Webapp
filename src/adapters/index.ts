@@ -1,8 +1,3 @@
-/**
- * Adapters - Transformation de données entre API et frontend
- * Centralise la logique de transformation snake_case <-> camelCase
- */
-
 import type {
   Espace,
   Reservation,
@@ -11,29 +6,81 @@ import type {
   DemandeDomiciliation,
 } from "../types";
 
-/**
- * Adapter pour les espaces
- */
+type ApiEspace = Record<string, unknown>;
+type ApiReservation = Record<string, unknown>;
+type ApiAbonnement = Record<string, unknown>;
+type ApiUser = Record<string, unknown>;
+type ApiDomiciliation = Record<string, unknown>;
+
+interface ApiEspaceData {
+  nom?: string;
+  type?: string;
+  capacite?: number;
+  prix_heure?: number;
+  prix_demi_journee?: number;
+  prix_jour?: number;
+  prix_semaine?: number;
+  description?: string;
+  equipements?: string[];
+  disponible?: boolean;
+  etage?: string;
+  image_url?: string;
+}
+
+interface ApiReservationData {
+  espace_id?: string;
+  date_debut?: string;
+  date_fin?: string;
+  statut?: string;
+  notes?: string;
+}
+
+interface ApiAbonnementData {
+  nom?: string;
+  type?: string;
+  prix?: number;
+  prix_avec_domiciliation?: number;
+  duree_mois?: number;
+  description?: string;
+  avantages?: string[];
+  actif?: boolean;
+  ordre?: number;
+}
+
+interface ApiDomiciliationData {
+  raison_sociale?: string;
+  forme_juridique?: string;
+  nif?: string;
+  nis?: string;
+  registre_commerce?: string;
+  article_imposition?: string;
+  representant_legal?: unknown;
+  domaine_activite?: string;
+  adresse_siege_social?: string;
+  capital?: string;
+  date_creation_entreprise?: string;
+}
+
 export const espaceAdapter = {
-  fromAPI: (apiData: any): Espace => ({
-    id: apiData.id,
-    nom: apiData.nom,
-    type: apiData.type,
-    capacite: apiData.capacite,
-    prixHeure: apiData.prix_heure,
-    prixDemiJournee: apiData.prix_demi_journee || 0,
-    prixJour: apiData.prix_jour,
-    prixSemaine: apiData.prix_semaine,
-    description: apiData.description,
-    equipements: apiData.equipements || [],
-    disponible: apiData.disponible,
-    etage: apiData.etage,
-    imageUrl: apiData.image_url,
-    createdAt: apiData.created_at,
-    updatedAt: apiData.updated_at,
+  fromAPI: (apiData: ApiEspace): Espace => ({
+    id: String(apiData.id || ""),
+    nom: String(apiData.nom || ""),
+    type: String(apiData.type || ""),
+    capacite: Number(apiData.capacite || 0),
+    prixHeure: Number(apiData.prix_heure || 0),
+    prixDemiJournee: Number(apiData.prix_demi_journee || 0),
+    prixJour: Number(apiData.prix_jour || 0),
+    prixSemaine: Number(apiData.prix_semaine || 0),
+    description: String(apiData.description || ""),
+    equipements: (apiData.equipements as string[]) || [],
+    disponible: Boolean(apiData.disponible),
+    etage: apiData.etage as string | undefined,
+    imageUrl: apiData.image_url as string | undefined,
+    createdAt: apiData.created_at as string | undefined,
+    updatedAt: apiData.updated_at as string | undefined,
   }),
 
-  toAPI: (espace: Partial<Espace>): any => ({
+  toAPI: (espace: Partial<Espace>): ApiEspaceData => ({
     nom: espace.nom,
     type: espace.type,
     capacite: espace.capacite,
@@ -49,44 +96,41 @@ export const espaceAdapter = {
   }),
 };
 
-/**
- * Adapter pour les réservations
- */
 export const reservationAdapter = {
-  fromAPI: (apiData: any): Reservation => ({
-    id: apiData.id,
-    userId: apiData.user_id,
-    espaceId: apiData.espace_id,
-    dateDebut: apiData.date_debut,
-    dateFin: apiData.date_fin,
-    statut: apiData.statut,
-    typeReservation: apiData.type_reservation,
-    montantTotal: apiData.montant_total,
-    reduction: apiData.reduction,
-    montantPaye: apiData.montant_paye,
-    modePaiement: apiData.mode_paiement,
-    notes: apiData.notes,
-    dateCreation: apiData.created_at,
-    createdAt: apiData.created_at,
+  fromAPI: (apiData: ApiReservation): Reservation => ({
+    id: String(apiData.id || ""),
+    userId: String(apiData.user_id || ""),
+    espaceId: String(apiData.espace_id || ""),
+    dateDebut: String(apiData.date_debut || ""),
+    dateFin: String(apiData.date_fin || ""),
+    statut: String(apiData.statut || "en_attente") as Reservation["statut"],
+    typeReservation: apiData.type_reservation as string | undefined,
+    montantTotal: Number(apiData.montant_total || 0),
+    reduction: Number(apiData.reduction || 0),
+    montantPaye: Number(apiData.montant_paye || 0),
+    modePaiement: apiData.mode_paiement as string | undefined,
+    notes: apiData.notes as string | undefined,
+    dateCreation: apiData.created_at as string | undefined,
+    createdAt: apiData.created_at as string | undefined,
     espace: apiData.espace_nom
       ? {
-          id: apiData.espace_id,
-          nom: apiData.espace_nom,
-          type: apiData.espace_type,
+          id: String(apiData.espace_id || ""),
+          nom: String(apiData.espace_nom || ""),
+          type: String(apiData.espace_type || ""),
         }
       : undefined,
     utilisateur: apiData.user_nom
       ? {
-          id: apiData.user_id,
-          nom: apiData.user_nom,
-          prenom: apiData.user_prenom,
-          email: apiData.user_email,
+          id: String(apiData.user_id || ""),
+          nom: String(apiData.user_nom || ""),
+          prenom: String(apiData.user_prenom || ""),
+          email: String(apiData.user_email || ""),
           role: "user" as const,
         }
       : undefined,
   }),
 
-  toAPI: (reservation: Partial<Reservation>): any => ({
+  toAPI: (reservation: Partial<Reservation>): ApiReservationData => ({
     espace_id: reservation.espaceId,
     date_debut: reservation.dateDebut,
     date_fin: reservation.dateFin,
@@ -95,30 +139,27 @@ export const reservationAdapter = {
   }),
 };
 
-/**
- * Adapter pour les abonnements
- */
 export const abonnementAdapter = {
-  fromAPI: (apiData: any): Abonnement => ({
-    id: apiData.id,
-    nom: apiData.nom,
-    type: apiData.type,
-    prix: apiData.prix,
-    prixAvecDomiciliation: apiData.prix_avec_domiciliation,
-    creditsMensuels: apiData.credits_mensuels,
-    creditMensuel: apiData.credits_mensuels,
-    dureeMois: apiData.duree_mois,
-    dureeJours: (apiData.duree_mois || 1) * 30,
-    description: apiData.description,
-    avantages: apiData.avantages || [],
-    actif: apiData.actif,
-    couleur: apiData.couleur || "#3B82F6",
-    ordre: apiData.ordre,
-    createdAt: apiData.created_at,
-    updatedAt: apiData.updated_at || apiData.created_at,
+  fromAPI: (apiData: ApiAbonnement): Abonnement => ({
+    id: String(apiData.id || ""),
+    nom: String(apiData.nom || ""),
+    type: String(apiData.type || ""),
+    prix: Number(apiData.prix || 0),
+    prixAvecDomiciliation: Number(apiData.prix_avec_domiciliation || 0),
+    creditsMensuels: Number(apiData.credits_mensuels || 0),
+    creditMensuel: Number(apiData.credits_mensuels || 0),
+    dureeMois: Number(apiData.duree_mois || 1),
+    dureeJours: (Number(apiData.duree_mois) || 1) * 30,
+    description: String(apiData.description || ""),
+    avantages: (apiData.avantages as string[]) || [],
+    actif: Boolean(apiData.actif),
+    couleur: String(apiData.couleur || "#3B82F6"),
+    ordre: Number(apiData.ordre || 0),
+    createdAt: apiData.created_at as string | undefined,
+    updatedAt: (apiData.updated_at || apiData.created_at) as string | undefined,
   }),
 
-  toAPI: (abonnement: Partial<Abonnement>): any => ({
+  toAPI: (abonnement: Partial<Abonnement>): ApiAbonnementData => ({
     nom: abonnement.nom,
     type: abonnement.type,
     prix: abonnement.prix,
@@ -131,47 +172,44 @@ export const abonnementAdapter = {
   }),
 };
 
-/**
- * Adapter pour les utilisateurs
- */
 export const userAdapter = {
-  fromAPI: (apiData: any): User => ({
-    id: apiData.id,
-    email: apiData.email,
-    nom: apiData.nom,
-    prenom: apiData.prenom,
-    telephone: apiData.telephone,
-    role: apiData.role,
-    statut: apiData.statut,
-    avatar: apiData.avatar,
-    profession: apiData.profession,
-    entreprise: apiData.entreprise,
-    adresse: apiData.adresse,
-    bio: apiData.bio,
-    wilaya: apiData.wilaya,
-    commune: apiData.commune,
-    typeEntreprise: apiData.type_entreprise,
-    nif: apiData.nif,
-    nis: apiData.nis,
-    registreCommerce: apiData.registre_commerce,
-    articleImposition: apiData.article_imposition,
-    numeroAutoEntrepreneur: apiData.numero_auto_entrepreneur,
-    raisonSociale: apiData.raison_sociale,
-    dateCreationEntreprise: apiData.date_creation_entreprise,
-    capital: apiData.capital,
-    siegeSocial: apiData.siege_social,
-    activitePrincipale: apiData.activite_principale,
-    formeJuridique: apiData.forme_juridique,
-    absences: apiData.absences,
-    bannedUntil: apiData.banned_until,
-    derniereConnexion: apiData.derniere_connexion,
-    dateCreation: apiData.created_at,
-    createdAt: apiData.created_at,
-    updatedAt: apiData.updated_at,
+  fromAPI: (apiData: ApiUser): User => ({
+    id: String(apiData.id || ""),
+    email: String(apiData.email || ""),
+    nom: String(apiData.nom || ""),
+    prenom: String(apiData.prenom || ""),
+    telephone: apiData.telephone as string | undefined,
+    role: String(apiData.role || "user") as User["role"],
+    statut: String(apiData.statut || "actif") as User["statut"],
+    avatar: apiData.avatar as string | undefined,
+    profession: apiData.profession as string | undefined,
+    entreprise: apiData.entreprise as string | undefined,
+    adresse: apiData.adresse as string | undefined,
+    bio: apiData.bio as string | undefined,
+    wilaya: apiData.wilaya as string | undefined,
+    commune: apiData.commune as string | undefined,
+    typeEntreprise: apiData.type_entreprise as string | undefined,
+    nif: apiData.nif as string | undefined,
+    nis: apiData.nis as string | undefined,
+    registreCommerce: apiData.registre_commerce as string | undefined,
+    articleImposition: apiData.article_imposition as string | undefined,
+    numeroAutoEntrepreneur: apiData.numero_auto_entrepreneur as string | undefined,
+    raisonSociale: apiData.raison_sociale as string | undefined,
+    dateCreationEntreprise: apiData.date_creation_entreprise as string | undefined,
+    capital: apiData.capital as string | undefined,
+    siegeSocial: apiData.siege_social as string | undefined,
+    activitePrincipale: apiData.activite_principale as string | undefined,
+    formeJuridique: apiData.forme_juridique as string | undefined,
+    absences: apiData.absences as number | undefined,
+    bannedUntil: apiData.banned_until as string | undefined,
+    derniereConnexion: apiData.derniere_connexion as string | undefined,
+    dateCreation: apiData.created_at as string | undefined,
+    createdAt: apiData.created_at as string | undefined,
+    updatedAt: apiData.updated_at as string | undefined,
   }),
 
-  toAPI: (user: Partial<User>): any => {
-    const apiData: any = {};
+  toAPI: (user: Partial<User>): Record<string, unknown> => {
+    const apiData: Record<string, unknown> = {};
 
     const fieldMapping: Record<string, string> = {
       nom: "nom",
@@ -208,38 +246,35 @@ export const userAdapter = {
   },
 };
 
-/**
- * Adapter pour les domiciliations
- */
 export const domiciliationAdapter = {
-  fromAPI: (apiData: any): DemandeDomiciliation => ({
-    id: apiData.id,
-    userId: apiData.user_id,
-    utilisateur: apiData.utilisateur,
-    raisonSociale: apiData.raison_sociale,
-    formeJuridique: apiData.forme_juridique,
-    nif: apiData.nif,
-    nis: apiData.nis,
-    registreCommerce: apiData.registre_commerce,
-    articleImposition: apiData.article_imposition,
-    coordonneesFiscales: apiData.coordonnees_fiscales,
-    coordonneesAdministratives: apiData.coordonnees_administratives,
+  fromAPI: (apiData: ApiDomiciliation): DemandeDomiciliation => ({
+    id: String(apiData.id || ""),
+    userId: String(apiData.user_id || ""),
+    utilisateur: apiData.utilisateur as User | undefined,
+    raisonSociale: String(apiData.raison_sociale || ""),
+    formeJuridique: String(apiData.forme_juridique || ""),
+    nif: String(apiData.nif || ""),
+    nis: String(apiData.nis || ""),
+    registreCommerce: String(apiData.registre_commerce || ""),
+    articleImposition: String(apiData.article_imposition || ""),
+    coordonneesFiscales: apiData.coordonnees_fiscales as string | undefined,
+    coordonneesAdministratives: apiData.coordonnees_administratives as string | undefined,
     representantLegal:
       typeof apiData.representant_legal === "string"
         ? JSON.parse(apiData.representant_legal)
-        : apiData.representant_legal,
-    domaineActivite: apiData.domaine_activite,
-    adresseSiegeSocial: apiData.adresse_siege_social,
-    capital: apiData.capital,
-    dateCreationEntreprise: apiData.date_creation_entreprise,
-    statut: apiData.statut,
-    commentaireAdmin: apiData.commentaire_admin,
-    dateValidation: apiData.date_validation,
-    dateCreation: apiData.created_at,
-    updatedAt: apiData.updated_at,
+        : (apiData.representant_legal as DemandeDomiciliation["representantLegal"]),
+    domaineActivite: String(apiData.domaine_activite || ""),
+    adresseSiegeSocial: String(apiData.adresse_siege_social || ""),
+    capital: apiData.capital as string | undefined,
+    dateCreationEntreprise: apiData.date_creation_entreprise as string | undefined,
+    statut: String(apiData.statut || "en_attente") as DemandeDomiciliation["statut"],
+    commentaireAdmin: apiData.commentaire_admin as string | undefined,
+    dateValidation: apiData.date_validation as string | undefined,
+    dateCreation: apiData.created_at as string | undefined,
+    updatedAt: apiData.updated_at as string | undefined,
   }),
 
-  toAPI: (domiciliation: Partial<DemandeDomiciliation>): any => ({
+  toAPI: (domiciliation: Partial<DemandeDomiciliation>): ApiDomiciliationData => ({
     raison_sociale: domiciliation.raisonSociale,
     forme_juridique: domiciliation.formeJuridique,
     nif: domiciliation.nif,

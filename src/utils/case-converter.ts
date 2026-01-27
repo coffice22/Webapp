@@ -1,55 +1,45 @@
-/**
- * Fonctions utilitaires pour conversion camelCase <-> snake_case
- * Utilisé pour synchroniser les données entre frontend (camelCase) et backend (snake_case)
- */
+type Primitive = string | number | boolean | null | undefined;
+type JsonValue = Primitive | JsonObject | JsonArray;
+type JsonObject = { [key: string]: JsonValue };
+type JsonArray = JsonValue[];
 
-/**
- * Convertit une chaîne camelCase en snake_case
- */
 export function camelToSnake(str: string): string {
   return str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
 }
 
-/**
- * Convertit une chaîne snake_case en camelCase
- */
 export function snakeToCamel(str: string): string {
   return str.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
 }
 
-/**
- * Convertit récursivement toutes les clés d'un objet de camelCase vers snake_case
- */
-export function objectToSnakeCase<T = any>(obj: any): T {
+export function objectToSnakeCase<T extends JsonObject = JsonObject>(obj: JsonValue): T {
   if (obj === null || obj === undefined) {
-    return obj;
+    return obj as T;
   }
 
   if (Array.isArray(obj)) {
-    return obj.map((item) => objectToSnakeCase(item)) as any;
+    return obj.map((item) => objectToSnakeCase(item as JsonObject)) as unknown as T;
   }
 
   if (typeof obj !== "object") {
-    return obj;
+    return obj as T;
   }
 
-  const result: any = {};
+  if (obj instanceof Date) {
+    return obj as unknown as T;
+  }
+
+  const result: JsonObject = {};
 
   for (const key in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
       const snakeKey = camelToSnake(key);
       const value = obj[key];
 
-      if (
-        value !== null &&
-        typeof value === "object" &&
-        !Array.isArray(value) &&
-        !(value instanceof Date)
-      ) {
-        result[snakeKey] = objectToSnakeCase(value);
+      if (value !== null && typeof value === "object" && !Array.isArray(value) && !(value instanceof Date)) {
+        result[snakeKey] = objectToSnakeCase(value as JsonObject);
       } else if (Array.isArray(value)) {
         result[snakeKey] = value.map((item) =>
-          typeof item === "object" ? objectToSnakeCase(item) : item,
+          typeof item === "object" && item !== null ? objectToSnakeCase(item as JsonObject) : item
         );
       } else {
         result[snakeKey] = value;
@@ -57,42 +47,38 @@ export function objectToSnakeCase<T = any>(obj: any): T {
     }
   }
 
-  return result;
+  return result as T;
 }
 
-/**
- * Convertit récursivement toutes les clés d'un objet de snake_case vers camelCase
- */
-export function objectToCamelCase<T = any>(obj: any): T {
+export function objectToCamelCase<T extends JsonObject = JsonObject>(obj: JsonValue): T {
   if (obj === null || obj === undefined) {
-    return obj;
+    return obj as T;
   }
 
   if (Array.isArray(obj)) {
-    return obj.map((item) => objectToCamelCase(item)) as any;
+    return obj.map((item) => objectToCamelCase(item as JsonObject)) as unknown as T;
   }
 
   if (typeof obj !== "object") {
-    return obj;
+    return obj as T;
   }
 
-  const result: any = {};
+  if (obj instanceof Date) {
+    return obj as unknown as T;
+  }
+
+  const result: JsonObject = {};
 
   for (const key in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
       const camelKey = snakeToCamel(key);
       const value = obj[key];
 
-      if (
-        value !== null &&
-        typeof value === "object" &&
-        !Array.isArray(value) &&
-        !(value instanceof Date)
-      ) {
-        result[camelKey] = objectToCamelCase(value);
+      if (value !== null && typeof value === "object" && !Array.isArray(value) && !(value instanceof Date)) {
+        result[camelKey] = objectToCamelCase(value as JsonObject);
       } else if (Array.isArray(value)) {
         result[camelKey] = value.map((item) =>
-          typeof item === "object" ? objectToCamelCase(item) : item,
+          typeof item === "object" && item !== null ? objectToCamelCase(item as JsonObject) : item
         );
       } else {
         result[camelKey] = value;
@@ -100,13 +86,10 @@ export function objectToCamelCase<T = any>(obj: any): T {
     }
   }
 
-  return result;
+  return result as T;
 }
 
-/**
- * Convertit les paramètres de requête en snake_case pour l'API
- */
-export function queryParamsToSnakeCase(params: Record<string, any>): string {
+export function queryParamsToSnakeCase(params: Record<string, JsonValue>): string {
   const snakeParams = objectToSnakeCase(params);
   const searchParams = new URLSearchParams();
 

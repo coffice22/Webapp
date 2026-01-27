@@ -195,9 +195,9 @@ const AdminAbonnements = () => {
           await loadAbonnements();
         }
       }
-    } catch (error: any) {
-      logger.error("Erreur:", error);
-      toast.error(error.response?.data?.message || "Une erreur est survenue");
+    } catch (error) {
+      logger.error("Erreur:", error instanceof Error ? error.message : "Unknown error");
+      toast.error("Une erreur est survenue");
     } finally {
       setLoading(false);
     }
@@ -232,10 +232,8 @@ const AdminAbonnements = () => {
         setSelectedAbonnement(null);
         await loadAbonnements();
       }
-    } catch (error: any) {
-      toast.error(
-        error.response?.data?.message || "Erreur lors de la suppression",
-      );
+    } catch (error) {
+      toast.error("Erreur lors de la suppression");
     } finally {
       setLoading(false);
     }
@@ -660,7 +658,7 @@ const AdminAbonnements = () => {
               <select
                 value={formData.statut}
                 onChange={(e) =>
-                  setFormData({ ...formData, statut: e.target.value as any })
+                  setFormData({ ...formData, statut: e.target.value as "actif" | "inactif" | "archive" })
                 }
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
               >

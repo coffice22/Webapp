@@ -35,9 +35,9 @@ export default function ResetPassword() {
       const response = await apiClient.get(`/auth/verify-reset-token?token=${token}`);
       setIsValidToken(true);
       setEmail(response.data.data.email);
-    } catch (err: any) {
+    } catch (err) {
       setIsValidToken(false);
-      const message = err.response?.data?.error || 'Token invalide ou expiré';
+      const message = err instanceof Error ? err.message : 'Token invalide ou expiré';
       setError(message);
     } finally {
       setIsVerifying(false);
@@ -69,8 +69,8 @@ export default function ResetPassword() {
 
       toast.success('Mot de passe réinitialisé avec succès !');
       setTimeout(() => navigate('/login'), 2000);
-    } catch (err: any) {
-      const message = err.response?.data?.error || 'Une erreur est survenue';
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Une erreur est survenue';
       setError(message);
       toast.error(message);
     } finally {

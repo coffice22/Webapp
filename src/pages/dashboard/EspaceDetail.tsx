@@ -87,8 +87,8 @@ const EspaceDetail: React.FC = () => {
       } else {
         toast.error(response.error || "Erreur lors de la suppression");
       }
-    } catch (error: any) {
-      toast.error(error.message || "Erreur lors de la suppression");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Erreur lors de la suppression");
     } finally {
       setDeleting(false);
     }

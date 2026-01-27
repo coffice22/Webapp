@@ -60,12 +60,11 @@ const UserDetail: React.FC = () => {
       setLoading(true);
       const response = await apiClient.getUser(id!);
       if (response.success && response.data) {
-        const userData = response.data as any;
-        // Normaliser les noms de champs (snake_case → camelCase)
+        const userData = response.data as UserDetailData;
         setUser({
           ...userData,
           createdAt: userData.createdAt || userData.created_at,
-        } as UserDetailData);
+        });
       } else {
         toast.error("Utilisateur introuvable");
         navigate("/app/admin/users");
@@ -92,8 +91,8 @@ const UserDetail: React.FC = () => {
       } else {
         toast.error(response.error || "Erreur lors de la suppression");
       }
-    } catch (error: any) {
-      toast.error(error.message || "Erreur lors de la suppression");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Erreur lors de la suppression");
     } finally {
       setDeleting(false);
     }

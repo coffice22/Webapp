@@ -2,10 +2,12 @@ const isDev = import.meta.env.DEV;
 
 type LogLevel = "error" | "warn" | "info" | "debug";
 
+type LogData = Record<string, unknown> | Error | string | number | boolean | null | undefined;
+
 interface LogEntry {
   level: LogLevel;
   message: string;
-  data?: any;
+  data?: LogData;
   timestamp: string;
   userAgent?: string;
 }
@@ -14,20 +16,19 @@ class Logger {
   private logs: LogEntry[] = [];
   private maxLogs = 100;
 
-  // Returns a static log prefix that does not include untrusted message content
   private formatMessage(level: LogLevel): string {
     const timestamp = new Date().toISOString();
     const prefix = `[${timestamp}] [${level.toUpperCase()}]`;
     return prefix;
   }
 
-  private addLog(level: LogLevel, message: string, data?: any) {
+  private addLog(level: LogLevel, message: string, data?: LogData) {
     const entry: LogEntry = {
       level,
       message,
       data,
       timestamp: new Date().toISOString(),
-      userAgent: navigator.userAgent,
+      userAgent: typeof navigator !== "undefined" ? navigator.userAgent : undefined,
     };
 
     this.logs.push(entry);
@@ -37,7 +38,7 @@ class Logger {
     }
   }
 
-  error(message: string, data?: any) {
+  error(message: string, data?: LogData) {
     this.addLog("error", message, data);
 
     if (isDev) {
@@ -47,7 +48,7 @@ class Logger {
     }
   }
 
-  warn(message: string, data?: any) {
+  warn(message: string, data?: LogData) {
     this.addLog("warn", message, data);
 
     if (isDev) {
@@ -55,7 +56,7 @@ class Logger {
     }
   }
 
-  info(message: string, data?: any) {
+  info(message: string, data?: LogData) {
     this.addLog("info", message, data);
 
     if (isDev) {
@@ -63,7 +64,7 @@ class Logger {
     }
   }
 
-  debug(message: string, data?: any) {
+  debug(message: string, data?: LogData) {
     this.addLog("debug", message, data);
 
     if (isDev) {

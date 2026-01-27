@@ -87,7 +87,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loadingEspaces, setLoadingEspaces] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [debugInfo, setDebugInfo] = useState<any>(null);
+  const [debugInfo, setDebugInfo] = useState<Record<string, unknown> | null>(null);
 
   const {
     register,
@@ -181,8 +181,8 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
         setLoadError(response.error || "Erreur lors du chargement");
         setEspaces([]);
       }
-    } catch (error: any) {
-      setLoadError(error.message || "Erreur de connexion");
+    } catch (error) {
+      setLoadError(error instanceof Error ? error.message : "Erreur de connexion");
       setEspaces([]);
     } finally {
       setLoadingEspaces(false);
@@ -212,7 +212,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
       notes: data.notes || "",
     };
 
-    const debug = {
+    const debug: Record<string, unknown> = {
       timestamp: new Date().toISOString(),
       formData: {
         espace_id: data.espace_id,
@@ -248,13 +248,13 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
         toast.error(response.error || response.message || "Erreur lors de la creation");
         console.error("Erreur de reservation:", debug);
       }
-    } catch (error: any) {
+    } catch (error) {
       debug.exception = {
-        message: error.message,
-        stack: error.stack,
+        message: error instanceof Error ? error.message : "Unknown error",
+        stack: error instanceof Error ? error.stack : undefined,
       };
       setDebugInfo(debug);
-      toast.error(error.message || "Erreur de connexion");
+      toast.error(error instanceof Error ? error.message : "Erreur de connexion");
       console.error("Exception de reservation:", debug);
     } finally {
       setIsSubmitting(false);

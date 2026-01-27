@@ -286,7 +286,7 @@ const InvoiceManagement = () => {
   const updateInvoiceItem = (
     index: number,
     field: keyof InvoiceItem,
-    value: any,
+    value: string | number,
   ) => {
     setNewInvoice((prev) => ({
       ...prev,
@@ -296,11 +296,19 @@ const InvoiceManagement = () => {
     }));
   };
 
-  const calculateSubtotal = (items: any[]) => {
+  interface ItemWithTax {
+    description: string;
+    quantity: number;
+    unitPrice: number;
+    taxRate: number;
+    discount: number;
+  }
+
+  const calculateSubtotal = (items: ItemWithTax[]) => {
     return items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
   };
 
-  const calculateTax = (items: any[]) => {
+  const calculateTax = (items: ItemWithTax[]) => {
     return items.reduce(
       (sum, item) =>
         sum + (item.quantity * item.unitPrice * item.taxRate) / 100,
@@ -308,11 +316,11 @@ const InvoiceManagement = () => {
     );
   };
 
-  const calculateDiscount = (items: any[]) => {
+  const calculateDiscount = (items: ItemWithTax[]) => {
     return items.reduce((sum, item) => sum + (item.discount || 0), 0);
   };
 
-  const calculateTotal = (items: any[]) => {
+  const calculateTotal = (items: ItemWithTax[]) => {
     const subtotal = calculateSubtotal(items);
     const tax = calculateTax(items);
     const discount = calculateDiscount(items);

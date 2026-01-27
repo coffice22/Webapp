@@ -51,7 +51,7 @@ const Abonnements = () => {
         const abonnementsData = Array.isArray(response.data)
           ? response.data
           : [];
-        const formatted = abonnementsData.map((a: any) => ({
+        const formatted = abonnementsData.map((a: Record<string, unknown>) => ({
           id: a.id,
           nom: a.nom,
           description: a.description || "",

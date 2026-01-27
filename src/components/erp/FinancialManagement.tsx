@@ -423,7 +423,7 @@ const FinancialManagement = () => {
     }));
   };
 
-  const updateInvoiceItem = (index: number, field: string, value: any) => {
+  const updateInvoiceItem = (index: number, field: string, value: string | number) => {
     setNewInvoice((prev) => ({
       ...prev,
       items: prev.items.map((item, i) =>

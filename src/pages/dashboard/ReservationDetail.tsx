@@ -102,8 +102,8 @@ const ReservationDetail: React.FC = () => {
       } else {
         toast.error(response.error || "Erreur lors de l'annulation");
       }
-    } catch (error: any) {
-      toast.error(error.message || "Erreur lors de l'annulation");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Erreur lors de l'annulation");
     }
   };
 

@@ -77,9 +77,9 @@ const MyCompany = () => {
       await useAuthStore.getState().loadUser();
       toast.success("Informations de l'entreprise mises à jour avec succès");
       setIsEditing(false);
-    } catch (error: any) {
-      logger.error("Erreur mise à jour:", error);
-      toast.error(error.message || "Erreur lors de la mise à jour");
+    } catch (error) {
+      logger.error("Erreur mise à jour:", error instanceof Error ? error.message : "Unknown error");
+      toast.error(error instanceof Error ? error.message : "Erreur lors de la mise à jour");
     }
   };
 

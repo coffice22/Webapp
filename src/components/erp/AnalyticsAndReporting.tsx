@@ -37,22 +37,33 @@ import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 import toast from "react-hot-toast";
 
-// Composant pour les graphiques (simulé)
+interface ChartData {
+  labels?: string[];
+  datasets?: Array<{
+    label?: string;
+    data?: number[];
+    backgroundColor?: string | string[];
+  }>;
+}
+
+interface ChartOptions {
+  responsive?: boolean;
+  maintainAspectRatio?: boolean;
+}
+
 const Chart = ({
   type,
-  data,
-  options,
 }: {
   type: string;
-  data: any;
-  options: any;
+  data?: ChartData;
+  options?: ChartOptions;
 }) => {
   return (
     <div className="w-full h-64 bg-gray-50 rounded-lg flex items-center justify-center">
       {type === "bar" && <BarChart3 className="w-12 h-12 text-gray-300" />}
       {type === "pie" && <PieChart className="w-12 h-12 text-gray-300" />}
       {type === "line" && <LineChart className="w-12 h-12 text-gray-300" />}
-      <p className="text-gray-500 ml-2">Graphique {type} (simulé)</p>
+      <p className="text-gray-500 ml-2">Graphique {type} (simule)</p>
     </div>
   );
 };
@@ -197,8 +208,8 @@ const AnalyticsAndReporting = () => {
         doc.text("85%", 80, 110);
       }
 
-      // Tableau de données
-      let tableData: any[] = [];
+      type TableRow = string[];
+      let tableData: TableRow[] = [];
       let tableColumns: string[] = [];
 
       if (reportType === "financial") {
@@ -332,13 +343,13 @@ const AnalyticsAndReporting = () => {
                 </label>
                 <select
                   value={period}
-                  onChange={(e) => setPeriod(e.target.value as any)}
+                  onChange={(e) => setPeriod(e.target.value as "day" | "week" | "month" | "year")}
                   className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-accent focus:outline-none"
                 >
                   <option value="day">Aujourd'hui</option>
                   <option value="week">Cette semaine</option>
                   <option value="month">Ce mois</option>
-                  <option value="year">Cette année</option>
+                  <option value="year">Cette annee</option>
                 </select>
               </div>
 

@@ -52,8 +52,8 @@ export function useEntityActions<T>(
         toast.error(result.error || "Erreur lors de la mise à jour");
         return false;
       }
-    } catch (error: any) {
-      toast.error(error.message || "Erreur lors de la mise à jour");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Erreur lors de la mise à jour");
       return false;
     } finally {
       setIsLoading(false);
@@ -84,8 +84,8 @@ export function useEntityActions<T>(
         toast.error(result.error || "Erreur lors de la suppression");
         return false;
       }
-    } catch (error: any) {
-      toast.error(error.message || "Erreur lors de la suppression");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Erreur lors de la suppression");
       return false;
     } finally {
       setIsLoading(false);
@@ -111,8 +111,8 @@ export function useEntityActions<T>(
         toast.error(result.error || "Erreur lors de la création");
         return false;
       }
-    } catch (error: any) {
-      toast.error(error.message || "Erreur lors de la création");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Erreur lors de la création");
       return false;
     } finally {
       setIsLoading(false);

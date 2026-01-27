@@ -1,14 +1,10 @@
 import { useMemo } from "react";
 
-/**
- * Hook personnalisé pour filtrer des données selon un terme de recherche et des filtres
- * Optimise les performances avec useMemo
- */
-export function useFilteredData<T extends Record<string, any>>(
+export function useFilteredData<T extends Record<string, unknown>>(
   data: T[],
   searchTerm: string,
   searchFields: (keyof T)[],
-  filters: Record<string, any> = {},
+  filters: Record<string, unknown> = {},
 ): T[] {
   return useMemo(() => {
     return data.filter((item) => {
@@ -57,17 +53,17 @@ export function useDataStats<T>(
   inactive?: number;
 } {
   return useMemo(() => {
-    const stats: any = {
+    const result: { total: number; active?: number; inactive?: number } = {
       total: data.length,
     };
 
     if (countField) {
-      stats.active = data.filter((item) => item[countField] === "actif").length;
-      stats.inactive = data.filter(
+      result.active = data.filter((item) => item[countField] === "actif").length;
+      result.inactive = data.filter(
         (item) => item[countField] === "inactif",
       ).length;
     }
 
-    return stats;
+    return result;
   }, [data, countField]);
 }
