@@ -50,7 +50,7 @@ try {
                 $stmt = $db->query("SELECT id, nom, type, prix_heure, prix_jour, disponible FROM espaces ORDER BY nom");
                 $espaces = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                $diagnostic['espaces'] = array_map(function($e) {
+                $diagnostic['espaces'] = array_map(function ($e) {
                     return [
                         'id' => $e['id'],
                         'nom' => $e['nom'],
@@ -143,8 +143,12 @@ $hasWarnings = false;
 foreach ($diagnostic['checks'] as $check) {
     if (is_array($check)) {
         if (isset($check['status'])) {
-            if ($check['status'] === 'ERROR') $hasErrors = true;
-            if ($check['status'] === 'WARNING') $hasWarnings = true;
+            if ($check['status'] === 'ERROR') {
+                $hasErrors = true;
+            }
+            if ($check['status'] === 'WARNING') {
+                $hasWarnings = true;
+            }
         } else {
             // Pour les checks imbriqués comme php_extensions
             foreach ($check as $subcheck) {

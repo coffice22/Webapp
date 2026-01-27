@@ -41,7 +41,8 @@ try {
     echo "Aucun espace trouvé. Initialisation...\n\n";
 
     // Fonction pour générer un UUID v4
-    function generateUuid() {
+    function generateUuid()
+    {
         return sprintf(
             '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
             mt_rand(0, 0xffff),

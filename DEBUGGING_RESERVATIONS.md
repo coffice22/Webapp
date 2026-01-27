@@ -22,6 +22,7 @@ php scripts/init_espaces.php
 ```
 
 Ce script va :
+
 - Vérifier si des espaces existent
 - Afficher les UUIDs des espaces existants
 - Créer les espaces s'ils n'existent pas
@@ -31,16 +32,19 @@ Ce script va :
 Les logs ont été ajoutés pour déboguer. Consultez les logs PHP de votre serveur :
 
 **Pour Apache :**
+
 ```bash
 tail -f /var/log/apache2/error.log
 ```
 
 **Pour cPanel :**
+
 - Connectez-vous à cPanel
 - Allez dans "Erreurs" ou "Error Log"
 - Recherchez les logs récents avec "RESERVATION CREATE REQUEST"
 
 **Logs à surveiller :**
+
 ```
 === RESERVATION CREATE REQUEST ===
 Raw input: {...}
@@ -59,6 +63,7 @@ curl https://votredomaine.com/api/espaces/index.php
 ```
 
 Ou via le navigateur :
+
 ```
 https://votredomaine.com/api/debug/test-espaces.php
 ```
@@ -122,11 +127,13 @@ mysql -u votreuser -p votrebase < database/coffice.sql
 ### Solution 3 : Vérifier le Format des Dates
 
 Le frontend envoie les dates au format ISO8601 :
+
 ```
 2026-01-27T14:00:51.772Z
 ```
 
 Le PHP les convertit en :
+
 ```
 2026-01-27 14:00:51
 ```
