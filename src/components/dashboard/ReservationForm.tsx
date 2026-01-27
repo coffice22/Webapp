@@ -1,20 +1,30 @@
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { Calendar, Clock, Users, CreditCard, Check } from "lucide-react";
+import { Calendar, Clock, Users, Check, AlertCircle } from "lucide-react";
 import Modal from "../ui/Modal";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
 import DateTimePicker from "../ui/DateTimePicker";
-import { Espace } from "../../types";
 import { apiClient } from "../../lib/api-client";
-import { format, differenceInHours } from "date-fns";
-import { fr } from "date-fns/locale";
+import { differenceInHours } from "date-fns";
+
+interface EspaceAPI {
+  id: string;
+  nom: string;
+  type: string;
+  capacite: number;
+  prix_heure?: number;
+  prix_jour?: number;
+  prixHeure?: number;
+  prixJour?: number;
+  disponible: boolean | number;
+}
 
 interface ReservationFormProps {
   isOpen: boolean;
   onClose: () => void;
-  selectedEspace?: Espace;
+  selectedEspace?: EspaceAPI;
 }
 
 interface FormData {
@@ -25,15 +35,35 @@ interface FormData {
   notes: string;
 }
 
+const getPrixHeure = (espace: EspaceAPI | null): number => {
+  if (!espace) return 0;
+  const prix = espace.prix_heure ?? espace.prixHeure ?? 0;
+  return typeof prix === "string" ? parseFloat(prix) : prix;
+};
+
+const getPrixJour = (espace: EspaceAPI | null): number => {
+  if (!espace) return 0;
+  const prix = espace.prix_jour ?? espace.prixJour ?? 0;
+  return typeof prix === "string" ? parseFloat(prix) : prix;
+};
+
+const isDisponible = (espace: EspaceAPI): boolean => {
+  if (typeof espace.disponible === "boolean") return espace.disponible;
+  if (typeof espace.disponible === "number") return espace.disponible === 1;
+  return espace.disponible !== false && espace.disponible !== 0;
+};
+
 const ReservationForm: React.FC<ReservationFormProps> = ({
   isOpen,
   onClose,
   selectedEspace,
 }) => {
-  const [espaces, setEspaces] = useState<Espace[]>([]);
-  const [selectedEspace2, setSelectedEspace2] = useState<Espace | null>(selectedEspace || null);
+  const [espaces, setEspaces] = useState<EspaceAPI[]>([]);
+  const [currentEspace, setCurrentEspace] = useState<EspaceAPI | null>(null);
   const [estimatedAmount, setEstimatedAmount] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loadingEspaces, setLoadingEspaces] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const {
     register,
@@ -57,63 +87,85 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
   const watchDateFin = watch("date_fin");
 
   useEffect(() => {
-    loadEspaces();
-  }, []);
-
-  useEffect(() => {
-    if (selectedEspace) {
-      setValue("espace_id", selectedEspace.id);
-      setSelectedEspace2(selectedEspace);
+    if (isOpen) {
+      loadEspaces();
     }
-  }, [selectedEspace, setValue]);
+  }, [isOpen]);
 
   useEffect(() => {
-    const espace = espaces.find((e) => e.id === watchEspaceId);
-    setSelectedEspace2(espace || null);
+    if (selectedEspace && isOpen) {
+      setValue("espace_id", selectedEspace.id);
+      setCurrentEspace(selectedEspace);
+    }
+  }, [selectedEspace, isOpen, setValue]);
+
+  useEffect(() => {
+    if (watchEspaceId && espaces.length > 0) {
+      const found = espaces.find((e) => e.id === watchEspaceId);
+      setCurrentEspace(found || null);
+    } else {
+      setCurrentEspace(null);
+    }
   }, [watchEspaceId, espaces]);
 
   useEffect(() => {
-    calculateAmount();
-  }, [watchEspaceId, watchDateDebut, watchDateFin, selectedEspace2]);
-
-  const loadEspaces = async () => {
-    try {
-      const response = await apiClient.getEspaces();
-      if (response.success) {
-        setEspaces(response.data || []);
-      }
-    } catch (error) {
-      console.error("Erreur chargement espaces:", error);
-    }
-  };
-
-  const calculateAmount = () => {
-    if (!selectedEspace2 || !watchDateDebut || !watchDateFin) {
+    if (!currentEspace || !watchDateDebut || !watchDateFin) {
       setEstimatedAmount(0);
       return;
     }
 
     const hours = differenceInHours(watchDateFin, watchDateDebut);
-
     if (hours <= 0) {
       setEstimatedAmount(0);
       return;
     }
 
-    let amount = 0;
+    const prixH = getPrixHeure(currentEspace);
+    const prixJ = getPrixJour(currentEspace);
 
+    let amount = 0;
     if (hours < 24) {
-      amount = Math.ceil(hours) * (selectedEspace2.prixHeure || 0);
+      amount = Math.ceil(hours) * prixH;
     } else {
       const days = Math.ceil(hours / 24);
-      amount = days * (selectedEspace2.prixJour || 0);
+      amount = days * prixJ;
     }
 
     setEstimatedAmount(amount);
+  }, [currentEspace, watchDateDebut, watchDateFin]);
+
+  const loadEspaces = async () => {
+    try {
+      setLoadingEspaces(true);
+      setLoadError(null);
+      const response = await apiClient.getEspaces();
+
+      if (response.success && response.data) {
+        const data = Array.isArray(response.data) ? response.data : [];
+        setEspaces(data);
+        if (data.length === 0) {
+          setLoadError("Aucun espace disponible");
+        }
+      } else {
+        setLoadError(response.error || "Erreur lors du chargement des espaces");
+        setEspaces([]);
+      }
+    } catch (error: any) {
+      console.error("Erreur chargement espaces:", error);
+      setLoadError(error.message || "Erreur de connexion");
+      setEspaces([]);
+    } finally {
+      setLoadingEspaces(false);
+    }
   };
 
   const onSubmit = async (data: FormData) => {
     if (isSubmitting) return;
+
+    if (!data.espace_id) {
+      toast.error("Veuillez selectionner un espace");
+      return;
+    }
 
     try {
       setIsSubmitting(true);
@@ -127,58 +179,89 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
       });
 
       if (response.success) {
-        toast.success("Réservation créée avec succès");
+        toast.success("Reservation creee avec succes");
         reset();
         onClose();
-        window.location.reload();
       } else {
-        toast.error(response.message || "Erreur lors de la création");
+        toast.error(response.error || response.message || "Erreur lors de la creation");
       }
     } catch (error: any) {
       console.error("Erreur:", error);
-      toast.error(error.message || "Erreur lors de la création de la réservation");
+      toast.error(error.message || "Erreur lors de la creation de la reservation");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleClose = () => {
-    reset();
+    reset({
+      espace_id: "",
+      date_debut: new Date(),
+      date_fin: new Date(Date.now() + 2 * 60 * 60 * 1000),
+      participants: 1,
+      notes: "",
+    });
     setEstimatedAmount(0);
+    setCurrentEspace(null);
     onClose();
   };
 
+  const availableEspaces = espaces.filter(isDisponible);
+
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} title="Nouvelle Réservation">
+    <Modal isOpen={isOpen} onClose={handleClose} title="Nouvelle Reservation">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             <Calendar className="inline w-4 h-4 mr-2" />
             Espace
           </label>
-          <select
-            {...register("espace_id", { required: "L'espace est requis" })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-          >
-            <option value="">Sélectionner un espace</option>
-            {espaces
-              .filter((e) => e.disponible)
-              .map((espace) => (
+
+          {loadingEspaces ? (
+            <div className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 flex items-center">
+              <div className="w-4 h-4 border-2 border-amber-500 border-t-transparent rounded-full animate-spin mr-2" />
+              Chargement des espaces...
+            </div>
+          ) : loadError ? (
+            <div className="w-full px-4 py-3 border border-red-300 rounded-lg bg-red-50 text-red-600 flex items-center">
+              <AlertCircle className="w-4 h-4 mr-2" />
+              {loadError}
+              <button
+                type="button"
+                onClick={loadEspaces}
+                className="ml-auto text-sm underline hover:no-underline"
+              >
+                Reessayer
+              </button>
+            </div>
+          ) : availableEspaces.length === 0 ? (
+            <div className="w-full px-4 py-3 border border-yellow-300 rounded-lg bg-yellow-50 text-yellow-700">
+              Aucun espace disponible pour le moment
+            </div>
+          ) : (
+            <select
+              {...register("espace_id", { required: "L'espace est requis" })}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+            >
+              <option value="">Selectionner un espace</option>
+              {availableEspaces.map((espace) => (
                 <option key={espace.id} value={espace.id}>
-                  {espace.nom} - {espace.prixHeure} DA/h
+                  {espace.nom} - {getPrixHeure(espace)} DA/h
                 </option>
               ))}
-          </select>
+            </select>
+          )}
+
           {errors.espace_id && (
             <p className="text-red-500 text-sm mt-1">{errors.espace_id.message}</p>
           )}
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               <Clock className="inline w-4 h-4 mr-2" />
-              Date début
+              Date debut
             </label>
             <DateTimePicker
               value={watchDateDebut}
@@ -210,8 +293,10 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
             {...register("participants", {
               required: "Le nombre de participants est requis",
               min: { value: 1, message: "Minimum 1 participant" },
+              valueAsNumber: true,
             })}
             placeholder="1"
+            min={1}
           />
           {errors.participants && (
             <p className="text-red-500 text-sm mt-1">
@@ -222,20 +307,20 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Notes
+            Notes (optionnel)
           </label>
           <textarea
             {...register("notes")}
             rows={3}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent resize-none"
             placeholder="Notes optionnelles..."
           />
         </div>
 
-        {selectedEspace2 && estimatedAmount > 0 && (
+        {currentEspace && estimatedAmount > 0 && (
           <div className="bg-amber-50 p-4 rounded-lg border border-amber-200">
             <div className="flex items-center justify-between">
-              <span className="font-medium text-gray-700">Montant estimé:</span>
+              <span className="font-medium text-gray-700">Montant estime:</span>
               <span className="text-2xl font-bold text-amber-600">
                 {estimatedAmount.toLocaleString()} DA
               </span>
@@ -243,7 +328,7 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
           </div>
         )}
 
-        <div className="flex gap-3 justify-end">
+        <div className="flex gap-3 justify-end pt-2">
           <Button
             type="button"
             variant="secondary"
@@ -255,13 +340,13 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
           <Button
             type="submit"
             variant="primary"
-            disabled={isSubmitting}
-            className="min-w-[120px]"
+            disabled={isSubmitting || loadingEspaces || availableEspaces.length === 0}
+            className="min-w-[140px]"
           >
             {isSubmitting ? (
               <span className="flex items-center gap-2">
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                Création...
+                Creation...
               </span>
             ) : (
               <span className="flex items-center gap-2">
