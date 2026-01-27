@@ -23,7 +23,15 @@ import {
 import Modal from "../ui/Modal";
 import Button from "../ui/Button";
 import { apiClient } from "../../lib/api-client";
-import { differenceInHours, addHours, setHours, setMinutes, format, isBefore, startOfDay } from "date-fns";
+import {
+  differenceInHours,
+  addHours,
+  setHours,
+  setMinutes,
+  format,
+  isBefore,
+  startOfDay,
+} from "date-fns";
 import { fr } from "date-fns/locale";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -87,16 +95,29 @@ const getDefaultEndDate = (): Date => {
 const getEquipmentIcon = (equip: string) => {
   const lower = equip.toLowerCase();
   if (lower.includes("wifi") || lower.includes("internet")) return Wifi;
-  if (lower.includes("cafe") || lower.includes("café") || lower.includes("boisson")) return Coffee;
-  if (lower.includes("ecran") || lower.includes("écran") || lower.includes("projecteur")) return Monitor;
+  if (
+    lower.includes("cafe") ||
+    lower.includes("café") ||
+    lower.includes("boisson")
+  )
+    return Coffee;
+  if (
+    lower.includes("ecran") ||
+    lower.includes("écran") ||
+    lower.includes("projecteur")
+  )
+    return Monitor;
   return Zap;
 };
 
 const getSpaceTypeColor = (type: string): string => {
   const lower = type?.toLowerCase() || "";
-  if (lower.includes("reunion") || lower.includes("réunion")) return "from-blue-500 to-blue-600";
-  if (lower.includes("box") || lower.includes("bureau")) return "from-amber-500 to-orange-500";
-  if (lower.includes("open") || lower.includes("coworking")) return "from-emerald-500 to-teal-500";
+  if (lower.includes("reunion") || lower.includes("réunion"))
+    return "from-blue-500 to-blue-600";
+  if (lower.includes("box") || lower.includes("bureau"))
+    return "from-amber-500 to-orange-500";
+  if (lower.includes("open") || lower.includes("coworking"))
+    return "from-emerald-500 to-teal-500";
   return "from-gray-500 to-gray-600";
 };
 
@@ -206,7 +227,9 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
         setEspaces([]);
       }
     } catch (error) {
-      setLoadError(error instanceof Error ? error.message : "Erreur de connexion");
+      setLoadError(
+        error instanceof Error ? error.message : "Erreur de connexion",
+      );
       setEspaces([]);
     } finally {
       setLoadingEspaces(false);
@@ -266,10 +289,14 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
         toast.success("Reservation creee avec succes !");
         handleClose();
       } else {
-        toast.error(response.error || response.message || "Erreur lors de la creation");
+        toast.error(
+          response.error || response.message || "Erreur lors de la creation",
+        );
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Erreur de connexion");
+      toast.error(
+        error instanceof Error ? error.message : "Erreur de connexion",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -295,7 +322,10 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
     setStep(2);
   };
 
-  const availableEspaces = useMemo(() => espaces.filter(isDisponible), [espaces]);
+  const availableEspaces = useMemo(
+    () => espaces.filter(isDisponible),
+    [espaces],
+  );
 
   const durationInfo = useMemo(() => {
     if (!watchDateDebut || !watchDateFin) return null;
@@ -323,9 +353,19 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
     const hours = durationInfo.hours;
 
     if (hours <= 4) {
-      return { type: "hourly", rate: prixH, quantity: Math.ceil(hours), unit: "heure" };
+      return {
+        type: "hourly",
+        rate: prixH,
+        quantity: Math.ceil(hours),
+        unit: "heure",
+      };
     } else if (hours <= 8) {
-      return { type: "halfday", rate: Math.round(prixJ / 2), quantity: 1, unit: "demi-journee" };
+      return {
+        type: "halfday",
+        rate: Math.round(prixJ / 2),
+        quantity: 1,
+        unit: "demi-journee",
+      };
     } else if (hours < 24) {
       return { type: "fullday", rate: prixJ, quantity: 1, unit: "journee" };
     } else {
@@ -349,15 +389,21 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                   <div className="w-14 h-14 border-4 border-amber-200 rounded-full animate-pulse" />
                   <div className="absolute inset-0 w-14 h-14 border-4 border-amber-500 border-t-transparent rounded-full animate-spin" />
                 </div>
-                <p className="text-gray-500 mt-4 font-medium">Chargement des espaces...</p>
+                <p className="text-gray-500 mt-4 font-medium">
+                  Chargement des espaces...
+                </p>
               </div>
             ) : loadError ? (
               <div className="flex flex-col items-center justify-center py-16">
                 <div className="w-16 h-16 bg-gradient-to-br from-red-100 to-red-50 rounded-2xl flex items-center justify-center mb-4">
                   <AlertCircle className="w-8 h-8 text-red-500" />
                 </div>
-                <p className="text-gray-900 font-semibold mb-2">Erreur de chargement</p>
-                <p className="text-gray-500 text-sm mb-4 text-center">{loadError}</p>
+                <p className="text-gray-900 font-semibold mb-2">
+                  Erreur de chargement
+                </p>
+                <p className="text-gray-500 text-sm mb-4 text-center">
+                  {loadError}
+                </p>
                 <Button onClick={loadEspaces} variant="secondary">
                   Reessayer
                 </Button>
@@ -367,7 +413,9 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                 <div className="w-16 h-16 bg-gradient-to-br from-amber-100 to-amber-50 rounded-2xl flex items-center justify-center mb-4">
                   <MapPin className="w-8 h-8 text-amber-500" />
                 </div>
-                <p className="text-gray-900 font-semibold">Aucun espace disponible</p>
+                <p className="text-gray-900 font-semibold">
+                  Aucun espace disponible
+                </p>
                 <p className="text-gray-500 text-sm mt-1">Revenez plus tard</p>
               </div>
             ) : (
@@ -385,14 +433,18 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                       onClick={() => selectEspace(espace)}
                       className="w-full p-4 bg-white border-2 border-gray-100 rounded-2xl hover:border-amber-200 hover:shadow-lg transition-all duration-300 text-left group relative overflow-hidden"
                     >
-                      <div className={`absolute top-0 left-0 w-1 h-full bg-gradient-to-b ${typeColor}`} />
+                      <div
+                        className={`absolute top-0 left-0 w-1 h-full bg-gradient-to-b ${typeColor}`}
+                      />
                       <div className="flex items-center justify-between pl-3">
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
                             <h3 className="font-bold text-gray-900 text-lg group-hover:text-amber-600 transition-colors">
                               {espace.nom}
                             </h3>
-                            <span className={`px-2.5 py-1 bg-gradient-to-r ${typeColor} text-white rounded-full text-xs font-medium`}>
+                            <span
+                              className={`px-2.5 py-1 bg-gradient-to-r ${typeColor} text-white rounded-full text-xs font-medium`}
+                            >
                               {espace.type}
                             </span>
                           </div>
@@ -406,19 +458,25 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                               {getPrixHeure(espace).toLocaleString()} DA/h
                             </span>
                           </div>
-                          {espace.equipements && espace.equipements.length > 0 && (
-                            <div className="flex items-center gap-2 mt-3">
-                              {espace.equipements.slice(0, 3).map((equip, i) => {
-                                const Icon = getEquipmentIcon(equip);
-                                return (
-                                  <span key={i} className="flex items-center gap-1 text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded-full">
-                                    <Icon className="w-3 h-3" />
-                                    {equip}
-                                  </span>
-                                );
-                              })}
-                            </div>
-                          )}
+                          {espace.equipements &&
+                            espace.equipements.length > 0 && (
+                              <div className="flex items-center gap-2 mt-3">
+                                {espace.equipements
+                                  .slice(0, 3)
+                                  .map((equip, i) => {
+                                    const Icon = getEquipmentIcon(equip);
+                                    return (
+                                      <span
+                                        key={i}
+                                        className="flex items-center gap-1 text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded-full"
+                                      >
+                                        <Icon className="w-3 h-3" />
+                                        {equip}
+                                      </span>
+                                    );
+                                  })}
+                              </div>
+                            )}
                         </div>
                         <div className="w-10 h-10 bg-gray-100 group-hover:bg-amber-100 rounded-xl flex items-center justify-center transition-colors">
                           <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-amber-600 transition-colors" />
@@ -434,7 +492,9 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
 
         {step === 2 && currentEspace && (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            <div className={`p-4 rounded-2xl bg-gradient-to-r ${getSpaceTypeColor(currentEspace.type)} relative overflow-hidden`}>
+            <div
+              className={`p-4 rounded-2xl bg-gradient-to-r ${getSpaceTypeColor(currentEspace.type)} relative overflow-hidden`}
+            >
               <div className="absolute inset-0 bg-black/10" />
               <div className="relative flex items-center justify-between">
                 <div className="text-white">
@@ -443,7 +503,8 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                   </p>
                   <p className="font-bold text-xl">{currentEspace.nom}</p>
                   <p className="text-sm opacity-90 mt-1">
-                    {currentEspace.capacite} places - {getPrixHeure(currentEspace).toLocaleString()} DA/h
+                    {currentEspace.capacite} places -{" "}
+                    {getPrixHeure(currentEspace).toLocaleString()} DA/h
                   </p>
                 </div>
                 <button
@@ -491,7 +552,9 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                 </label>
                 <DatePicker
                   selected={watchDateFin}
-                  onChange={(date: Date | null) => date && setValue("date_fin", date)}
+                  onChange={(date: Date | null) =>
+                    date && setValue("date_fin", date)
+                  }
                   showTimeSelect
                   timeFormat="HH:mm"
                   timeIntervals={30}
@@ -521,7 +584,12 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
               <div className="flex items-center gap-3">
                 <button
                   type="button"
-                  onClick={() => setValue("participants", Math.max(1, (watchParticipants || 1) - 1))}
+                  onClick={() =>
+                    setValue(
+                      "participants",
+                      Math.max(1, (watchParticipants || 1) - 1),
+                    )
+                  }
                   className="w-12 h-12 flex items-center justify-center bg-gray-100 hover:bg-amber-100 rounded-xl text-gray-700 font-bold text-xl transition-colors"
                 >
                   -
@@ -545,7 +613,10 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                   onClick={() =>
                     setValue(
                       "participants",
-                      Math.min(currentEspace.capacite, (watchParticipants || 1) + 1)
+                      Math.min(
+                        currentEspace.capacite,
+                        (watchParticipants || 1) + 1,
+                      ),
                     )
                   }
                   className="w-12 h-12 flex items-center justify-center bg-gray-100 hover:bg-amber-100 rounded-xl text-gray-700 font-bold text-xl transition-colors"
@@ -582,10 +653,17 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                   <div>
                     <div className="flex items-center gap-2 mb-2">
                       <Sparkles className="w-5 h-5 text-amber-600" />
-                      <p className="font-semibold text-gray-900">Estimation du tarif</p>
+                      <p className="font-semibold text-gray-900">
+                        Estimation du tarif
+                      </p>
                     </div>
                     <p className="text-sm text-gray-500">
-                      {pricingBreakdown.quantity} {pricingBreakdown.unit}{pricingBreakdown.quantity > 1 && pricingBreakdown.type !== "halfday" ? "s" : ""} x {pricingBreakdown.rate.toLocaleString()} DA
+                      {pricingBreakdown.quantity} {pricingBreakdown.unit}
+                      {pricingBreakdown.quantity > 1 &&
+                      pricingBreakdown.type !== "halfday"
+                        ? "s"
+                        : ""}{" "}
+                      x {pricingBreakdown.rate.toLocaleString()} DA
                     </p>
                     <p className="text-xs text-gray-400 mt-1">
                       {currentEspace.nom} - {durationInfo?.text}
