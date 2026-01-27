@@ -1,127 +1,106 @@
 <?php
 
-/**
- * API: Mise à jour d'une réservation
- * PUT /api/reservations/update.php
- */
-
 require_once '../config/cors.php';
 require_once '../config/database.php';
 require_once '../utils/Auth.php';
 require_once '../utils/Response.php';
 
+header('Content-Type: application/json');
+
+if ($_SERVER['REQUEST_METHOD'] !== 'PUT' && $_SERVER['REQUEST_METHOD'] !== 'POST') {
+    Response::error("Methode non autorisee", 405);
+}
+
 try {
     $auth = Auth::verifyAuth();
-    $data = json_decode(file_get_contents("php://input"));
+    $userId = $auth['id'];
+    $isAdmin = $auth['role'] === 'admin';
 
-    if (empty($data->id)) {
-        Response::error("ID réservation requis", 400);
+    $input = file_get_contents("php://input");
+    $data = json_decode($input, true);
+
+    if (!$data || empty($data['id'])) {
+        Response::error("ID reservation requis", 400);
     }
 
-    $database = Database::getInstance();
-    $db = $database->getConnection();
+    $id = $data['id'];
 
-    // Vérifier que la réservation existe et appartient à l'utilisateur
-    $query = "SELECT user_id FROM reservations WHERE id = :id LIMIT 1";
-    $stmt = $db->prepare($query);
-    $stmt->bindParam(':id', $data->id);
-    $stmt->execute();
+    $db = Database::getInstance()->getConnection();
 
-    if ($stmt->rowCount() === 0) {
-        Response::error("Réservation non trouvée", 404);
-    }
-
+    $stmt = $db->prepare("
+        SELECT r.*, e.prix_heure, e.prix_jour
+        FROM reservations r
+        JOIN espaces e ON r.espace_id = e.id
+        WHERE r.id = ?
+    ");
+    $stmt->execute([$id]);
     $reservation = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Les users ne peuvent modifier que leurs propres réservations
-    if ($auth['role'] !== 'admin' && $reservation['user_id'] !== $auth['id']) {
-        Response::error("Accès non autorisé", 403);
+    if (!$reservation) {
+        Response::error("Reservation introuvable", 404);
     }
 
-    // Construire la requête de mise à jour
-    $updateFields = [];
-    $params = [':id' => $data->id];
-
-    $allowedFields = ['date_debut', 'date_fin', 'participants', 'notes'];
-
-    // Admin peut aussi modifier le statut et le mode de paiement
-    if ($auth['role'] === 'admin') {
-        $allowedFields[] = 'statut';
-        $allowedFields[] = 'mode_paiement';
-        $allowedFields[] = 'montant_paye';
+    if (!$isAdmin && $reservation['user_id'] !== $userId) {
+        Response::error("Acces refuse", 403);
     }
 
-    foreach ($allowedFields as $field) {
-        if (isset($data->$field)) {
-            $updateFields[] = "$field = :$field";
-            $params[":$field"] = $data->$field;
+    $updates = [];
+    $params = [];
+
+    if ($isAdmin && isset($data['statut'])) {
+        $validStatuts = ['en_attente', 'confirmee', 'en_cours', 'terminee', 'annulee'];
+        if (in_array($data['statut'], $validStatuts)) {
+            $updates[] = "statut = ?";
+            $params[] = $data['statut'];
         }
     }
 
-    if (empty($updateFields)) {
-        Response::error("Aucune donnée à mettre à jour", 400);
+    if ($isAdmin && isset($data['montant_paye'])) {
+        $updates[] = "montant_paye = ?";
+        $params[] = floatval($data['montant_paye']);
     }
 
-    // Si les dates sont modifiées, recalculer le montant côté serveur
-    if (isset($data->date_debut) || isset($data->date_fin)) {
-        // Récupérer les informations actuelles de la réservation
-        $query = "SELECT r.*, e.prix_heure, e.prix_jour, e.prix_semaine
-                  FROM reservations r
-                  LEFT JOIN espaces e ON r.espace_id = e.id
-                  WHERE r.id = :id";
-        $stmt = $db->prepare($query);
-        $stmt->execute([':id' => $data->id]);
-        $currentReservation = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        $dateDebut = isset($data->date_debut) ? $data->date_debut : $currentReservation['date_debut'];
-        $dateFin = isset($data->date_fin) ? $data->date_fin : $currentReservation['date_fin'];
-
-        // Calculer le nouveau montant
-        $debut = new DateTime($dateDebut);
-        $fin = new DateTime($dateFin);
-        $heures = ($fin->getTimestamp() - $debut->getTimestamp()) / 3600;
-
-        if ($heures <= 0) {
-            Response::error("Dates invalides", 400);
-        }
-
-        $montant_total = 0;
-        $type_reservation = 'heure';
-
-        if ($heures < 24) {
-            $montant_total = ceil($heures) * $currentReservation['prix_heure'];
-            $type_reservation = 'heure';
-        } else {
-            $jours = ceil($heures / 24);
-
-            if ($jours >= 7 && !empty($currentReservation['prix_semaine'])) {
-                $semaines = floor($jours / 7);
-                $jours_restants = $jours % 7;
-                $montant_total = ($semaines * $currentReservation['prix_semaine']) + ($jours_restants * $currentReservation['prix_jour']);
-                $type_reservation = $semaines > 0 ? 'semaine' : 'jour';
-            } else {
-                $montant_total = $jours * $currentReservation['prix_jour'];
-                $type_reservation = 'jour';
-            }
-        }
-
-        // Conserver la réduction existante
-        $montant_final = $montant_total - ($currentReservation['reduction'] ?? 0);
-
-        // Ajouter les champs de montant à la mise à jour
-        $updateFields[] = "montant_total = :montant_total";
-        $params[":montant_total"] = $montant_total;
-        $updateFields[] = "type_reservation = :type_reservation";
-        $params[":type_reservation"] = $type_reservation;
+    if ($isAdmin && isset($data['mode_paiement'])) {
+        $updates[] = "mode_paiement = ?";
+        $params[] = $data['mode_paiement'];
     }
 
-    $query = "UPDATE reservations SET " . implode(', ', $updateFields) . " WHERE id = :id";
-    $stmt = $db->prepare($query);
-    $stmt->execute($params);
+    if (isset($data['participants'])) {
+        $updates[] = "participants = ?";
+        $params[] = intval($data['participants']);
+    }
 
-    Response::success(null, "Réservation mise à jour avec succès");
+    if (isset($data['notes'])) {
+        $updates[] = "notes = ?";
+        $params[] = trim($data['notes']);
+    }
+
+    if (empty($updates)) {
+        Response::error("Aucune donnee a mettre a jour", 400);
+    }
+
+    $params[] = $id;
+    $sql = "UPDATE reservations SET " . implode(", ", $updates) . " WHERE id = ?";
+
+    $stmt = $db->prepare($sql);
+    $result = $stmt->execute($params);
+
+    if (!$result) {
+        Response::error("Erreur lors de la mise a jour", 500);
+    }
+
+    $stmt = $db->prepare("
+        SELECT r.*, e.nom as espace_nom, e.type as espace_type
+        FROM reservations r
+        JOIN espaces e ON r.espace_id = e.id
+        WHERE r.id = ?
+    ");
+    $stmt->execute([$id]);
+    $updated = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    Response::success($updated, "Reservation mise a jour");
 
 } catch (Exception $e) {
-    error_log("Update reservation error: " . $e->getMessage());
-    Response::serverError("Erreur lors de la mise à jour");
+    error_log("Erreur reservation update: " . $e->getMessage());
+    Response::error("Erreur serveur", 500);
 }
