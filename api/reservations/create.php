@@ -19,7 +19,13 @@ try {
     $input = file_get_contents("php://input");
     $data = json_decode($input, true);
 
+    error_log("=== RESERVATION CREATE REQUEST ===");
+    error_log("Raw input: " . $input);
+    error_log("Decoded data: " . json_encode($data));
+    error_log("User ID: " . $userId);
+
     if (!$data || json_last_error() !== JSON_ERROR_NONE) {
+        error_log("JSON decode error: " . json_last_error_msg());
         Response::error("Donnees JSON invalides", 400);
     }
 
@@ -31,8 +37,11 @@ try {
     $codePromo = $data['code_promo'] ?? null;
 
     if (empty($espaceId)) {
+        error_log("ERROR: espace_id is empty");
         Response::error("L'espace est requis", 400);
     }
+
+    error_log("Checking espace with ID: " . $espaceId);
 
     if (empty($dateDebut)) {
         Response::error("La date de debut est requise", 400);
@@ -72,8 +81,17 @@ try {
     $espace = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$espace) {
-        Response::error("Espace introuvable", 404);
+        error_log("ERROR: Espace not found with ID: " . $espaceId);
+
+        // List available espaces for debugging
+        $stmtAll = $db->query("SELECT id, nom FROM espaces LIMIT 10");
+        $allEspaces = $stmtAll->fetchAll(PDO::FETCH_ASSOC);
+        error_log("Available espaces: " . json_encode($allEspaces));
+
+        Response::error("Espace introuvable avec l'ID: " . $espaceId, 404);
     }
+
+    error_log("Espace found: " . $espace['nom'] . " (" . $espace['id'] . ")");
 
     if (!$espace['disponible']) {
         Response::error("Cet espace n'est pas disponible", 400);
@@ -190,7 +208,19 @@ try {
     if (!$result) {
         $errorInfo = $stmt->errorInfo();
         error_log("Reservation INSERT error: " . json_encode($errorInfo));
-        Response::error("Erreur lors de l'enregistrement: " . ($errorInfo[2] ?? 'inconnue'), 500);
+        error_log("Reservation data: " . json_encode([
+            'id' => $id,
+            'user_id' => $userId,
+            'espace_id' => $espaceId,
+            'date_debut' => $debutMysql,
+            'date_fin' => $finMysql,
+            'type' => $type,
+            'montant' => $montant,
+            'participants' => $participants,
+            'notes' => $notes,
+            'code_promo_id' => $codePromoId
+        ]));
+        Response::error("Erreur lors de la creation de la reservation: " . ($errorInfo[2] ?? 'inconnue'), 500);
     }
 
     if ($codePromoId) {
@@ -210,8 +240,10 @@ try {
 
 } catch (PDOException $e) {
     error_log("Reservation create PDO error: " . $e->getMessage());
+    error_log("PDO Stack trace: " . $e->getTraceAsString());
     Response::error("Erreur base de donnees: " . $e->getMessage(), 500);
 } catch (Exception $e) {
-    error_log("Reservation create error: " . $e->getMessage() . "\n" . $e->getTraceAsString());
-    Response::error("Erreur: " . $e->getMessage(), 500);
+    error_log("Reservation create error: " . $e->getMessage());
+    error_log("Stack trace: " . $e->getTraceAsString());
+    Response::error("Erreur lors de la creation de la reservation: " . $e->getMessage(), 500);
 }

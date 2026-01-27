@@ -171,6 +171,28 @@ php scripts/test_api.php https://coffice.dz/api
 php scripts/test_api.php http://localhost/api
 ```
 
+## Débogage
+
+### Problèmes de Réservations
+
+Si vous rencontrez des erreurs lors de la création de réservations :
+
+1. **Vérifier et initialiser les espaces** :
+   ```bash
+   php scripts/init_espaces.php
+   ```
+
+2. **Consulter le guide complet** :
+   Voir `DEBUGGING_RESERVATIONS.md` pour :
+   - Étapes de débogage détaillées
+   - Consultation des logs PHP
+   - Vérification de la base de données
+   - Solutions aux problèmes courants
+
+3. **Activer les logs détaillés** :
+   Les logs ont été ajoutés dans `api/reservations/create.php`
+   Consultez les logs Apache/PHP pour voir les détails des erreurs.
+
 ## Support
 
 Pour toute question ou problème, consulter la documentation ou contacter l'équipe de développement.
