@@ -24,8 +24,13 @@ try {
         // Compter le total
         $total = Pagination::countTotal($db, 'reservations');
 
-        $query = "SELECT r.*, e.nom as espace_nom, e.type as espace_type,
-                         u.nom as user_nom, u.prenom as user_prenom, u.email as user_email
+        $query = "SELECT r.*,
+                         e.nom as espace_nom,
+                         e.type as espace_type,
+                         e.capacite as espace_capacite,
+                         u.nom as user_nom,
+                         u.prenom as user_prenom,
+                         u.email as user_email
                   FROM reservations r
                   LEFT JOIN espaces e ON r.espace_id = e.id
                   LEFT JOIN users u ON r.user_id = u.id
@@ -36,7 +41,10 @@ try {
         // Compter le total pour l'utilisateur
         $total = Pagination::countTotal($db, 'reservations', 'user_id = :user_id', [':user_id' => $auth['id']]);
 
-        $query = "SELECT r.*, e.nom as espace_nom, e.type as espace_type
+        $query = "SELECT r.*,
+                         e.nom as espace_nom,
+                         e.type as espace_type,
+                         e.capacite as espace_capacite
                   FROM reservations r
                   LEFT JOIN espaces e ON r.espace_id = e.id
                   WHERE r.user_id = :user_id

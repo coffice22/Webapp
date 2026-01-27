@@ -205,6 +205,15 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
     }
 
     try {
+      console.log("[ReservationForm] Création de la réservation...", {
+        userId: user.id,
+        espaceId: data.espaceId,
+        dateDebut: dateDebut.toISOString(),
+        dateFin: dateFin.toISOString(),
+        participants,
+        codePromo: data.codePromo || null,
+      });
+
       const result = await createReservation({
         userId: user.id,
         espaceId: data.espaceId,
@@ -215,21 +224,19 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
         participants: participants,
       });
 
-      if (result?.success === false) {
-        const errorMsg = result.error || "Erreur lors de la création";
-        toast.error(errorMsg);
-        return;
-      }
+      console.log("[ReservationForm] Résultat:", result);
 
-      if (!result || !result.id) {
-        toast.error("Erreur: réponse invalide du serveur");
+      if (!result || result.success === false) {
+        const errorMsg = result?.error || "Erreur lors de la création de la réservation";
+        console.error("[ReservationForm] Erreur:", errorMsg);
+        toast.error(errorMsg);
         return;
       }
 
       toast.success("Réservation créée avec succès!");
       handleClose();
     } catch (error: any) {
-      console.error("Erreur réservation:", error);
+      console.error("[ReservationForm] Exception:", error);
       const errorMsg =
         error?.message ||
         error?.error ||

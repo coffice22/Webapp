@@ -458,8 +458,9 @@ class ApiClient {
     participants?: number;
     notes?: string;
     codePromo?: string;
-    montantTotal?: number;
   }) {
+    // Ne PAS envoyer montant_total - le serveur le calcule de manière sécurisée
+    // Ne PAS envoyer statut, type_reservation, mode_paiement - gérés par le serveur
     const apiData = {
       espace_id: data.espaceId,
       date_debut: data.dateDebut,
@@ -467,12 +468,9 @@ class ApiClient {
       participants: data.participants || 1,
       notes: data.notes || null,
       code_promo: data.codePromo || null,
-      montant_total: data.montantTotal || 0,
-      statut: "en_attente",
-      type_reservation: "heure",
-      mode_paiement: null,
-      montant_paye: 0,
     };
+
+    logger.debug("[API] Creating reservation:", apiData);
 
     return this.request("/reservations/create.php", {
       method: "POST",

@@ -21,8 +21,17 @@ try {
     $database = Database::getInstance();
     $db = $database->getConnection();
 
-    $query = "SELECT r.*, e.nom as espace_nom, e.type as espace_type,
-                     u.nom as user_nom, u.prenom as user_prenom
+    $query = "SELECT r.*,
+                     e.nom as espace_nom,
+                     e.type as espace_type,
+                     e.capacite as espace_capacite,
+                     e.prix_heure as espace_prix_heure,
+                     e.prix_jour as espace_prix_jour,
+                     e.prix_semaine as espace_prix_semaine,
+                     u.nom as user_nom,
+                     u.prenom as user_prenom,
+                     u.email as user_email,
+                     u.telephone as user_telephone
               FROM reservations r
               LEFT JOIN espaces e ON r.espace_id = e.id
               LEFT JOIN users u ON r.user_id = u.id
