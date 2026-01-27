@@ -28,7 +28,14 @@ import Card from "../../components/ui/Card";
 import EmptyState from "../../components/ui/EmptyState";
 import Modal from "../../components/ui/Modal";
 import ReservationForm from "../../components/dashboard/ReservationForm";
-import { format, isPast, isFuture, isToday, differenceInDays, differenceInHours } from "date-fns";
+import {
+  format,
+  isPast,
+  isFuture,
+  isToday,
+  differenceInDays,
+  differenceInHours,
+} from "date-fns";
 import { fr } from "date-fns/locale";
 import toast from "react-hot-toast";
 
@@ -49,7 +56,16 @@ interface Reservation {
 type FilterType = "all" | "upcoming" | "past" | "cancelled";
 type ViewMode = "cards" | "list";
 
-const statusConfig: Record<string, { label: string; bg: string; text: string; dot: string; icon: React.ElementType }> = {
+const statusConfig: Record<
+  string,
+  {
+    label: string;
+    bg: string;
+    text: string;
+    dot: string;
+    icon: React.ElementType;
+  }
+> = {
   en_attente: {
     label: "En attente",
     bg: "bg-amber-50",
@@ -116,19 +132,45 @@ const formatTimeDisplay = (dateStr: string): string => {
   }
 };
 
-const getTimeLabel = (dateDebut: string): { text: string; color: string; urgent: boolean } => {
+const getTimeLabel = (
+  dateDebut: string,
+): { text: string; color: string; urgent: boolean } => {
   try {
     const date = new Date(dateDebut);
-    if (isToday(date)) return { text: "Aujourd'hui", color: "bg-emerald-500 text-white", urgent: true };
+    if (isToday(date))
+      return {
+        text: "Aujourd'hui",
+        color: "bg-emerald-500 text-white",
+        urgent: true,
+      };
     if (isFuture(date)) {
       const days = differenceInDays(date, new Date());
       if (days === 0) {
         const hours = differenceInHours(date, new Date());
-        return { text: `Dans ${hours}h`, color: "bg-emerald-500 text-white", urgent: true };
+        return {
+          text: `Dans ${hours}h`,
+          color: "bg-emerald-500 text-white",
+          urgent: true,
+        };
       }
-      if (days === 1) return { text: "Demain", color: "bg-blue-500 text-white", urgent: false };
-      if (days <= 3) return { text: `Dans ${days} jours`, color: "bg-blue-100 text-blue-700", urgent: false };
-      if (days <= 7) return { text: `Dans ${days} jours`, color: "bg-gray-100 text-gray-600", urgent: false };
+      if (days === 1)
+        return {
+          text: "Demain",
+          color: "bg-blue-500 text-white",
+          urgent: false,
+        };
+      if (days <= 3)
+        return {
+          text: `Dans ${days} jours`,
+          color: "bg-blue-100 text-blue-700",
+          urgent: false,
+        };
+      if (days <= 7)
+        return {
+          text: `Dans ${days} jours`,
+          color: "bg-gray-100 text-gray-600",
+          urgent: false,
+        };
     }
     return { text: "", color: "", urgent: false };
   } catch {
@@ -176,7 +218,9 @@ const Reservations = () => {
         if (!Array.isArray(data)) data = [];
         setReservations(data as Reservation[]);
       } else {
-        setError(response.error || response.message || "Erreur lors du chargement");
+        setError(
+          response.error || response.message || "Erreur lors du chargement",
+        );
         setReservations([]);
       }
     } catch (err) {
@@ -204,10 +248,14 @@ const Reservations = () => {
         setCancelId(null);
         await loadReservations(true);
       } else {
-        toast.error(response.error || response.message || "Erreur lors de l'annulation");
+        toast.error(
+          response.error || response.message || "Erreur lors de l'annulation",
+        );
       }
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Erreur lors de l'annulation");
+      toast.error(
+        err instanceof Error ? err.message : "Erreur lors de l'annulation",
+      );
     } finally {
       setCancelling(false);
     }
@@ -245,16 +293,21 @@ const Reservations = () => {
       (r) =>
         r.statut !== "annulee" &&
         r.statut !== "terminee" &&
-        (isFuture(new Date(r.date_debut)) || isToday(new Date(r.date_debut)))
+        (isFuture(new Date(r.date_debut)) || isToday(new Date(r.date_debut))),
     ).length;
 
-    const completed = reservations.filter((r) => r.statut === "terminee").length;
+    const completed = reservations.filter(
+      (r) => r.statut === "terminee",
+    ).length;
     const cancelled = reservations.filter((r) => r.statut === "annulee").length;
 
     const totalSpent = reservations
       .filter((r) => r.statut === "terminee" || r.statut === "confirmee")
       .reduce((sum, r) => {
-        const amount = typeof r.montant_total === "string" ? parseFloat(r.montant_total) : r.montant_total;
+        const amount =
+          typeof r.montant_total === "string"
+            ? parseFloat(r.montant_total)
+            : r.montant_total;
         return sum + (isNaN(amount) ? 0 : amount);
       }, 0);
 
@@ -269,8 +322,16 @@ const Reservations = () => {
 
   const nextReservation = useMemo(() => {
     return reservations
-      .filter((r) => r.statut !== "annulee" && r.statut !== "terminee" && isFuture(new Date(r.date_debut)))
-      .sort((a, b) => new Date(a.date_debut).getTime() - new Date(b.date_debut).getTime())[0];
+      .filter(
+        (r) =>
+          r.statut !== "annulee" &&
+          r.statut !== "terminee" &&
+          isFuture(new Date(r.date_debut)),
+      )
+      .sort(
+        (a, b) =>
+          new Date(a.date_debut).getTime() - new Date(b.date_debut).getTime(),
+      )[0];
   }, [reservations]);
 
   if (loading) {
@@ -281,7 +342,9 @@ const Reservations = () => {
             <div className="w-16 h-16 border-4 border-amber-200 rounded-full animate-pulse" />
             <div className="absolute inset-0 w-16 h-16 border-4 border-amber-500 border-t-transparent rounded-full animate-spin" />
           </div>
-          <p className="text-gray-500 mt-4 font-medium">Chargement des reservations...</p>
+          <p className="text-gray-500 mt-4 font-medium">
+            Chargement des reservations...
+          </p>
         </div>
       </div>
     );
@@ -298,7 +361,10 @@ const Reservations = () => {
             Impossible de charger les reservations
           </h2>
           <p className="text-gray-500 mb-6">{error}</p>
-          <Button onClick={() => loadReservations()} className="bg-amber-500 hover:bg-amber-600">
+          <Button
+            onClick={() => loadReservations()}
+            className="bg-amber-500 hover:bg-amber-600"
+          >
             <RefreshCw className="w-4 h-4 mr-2" />
             Reessayer
           </Button>
@@ -326,7 +392,9 @@ const Reservations = () => {
               className="p-2.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-xl transition-all"
               title="Actualiser"
             >
-              <RefreshCw className={`w-5 h-5 ${refreshing ? "animate-spin" : ""}`} />
+              <RefreshCw
+                className={`w-5 h-5 ${refreshing ? "animate-spin" : ""}`}
+              />
             </button>
           )}
           <Button
@@ -367,7 +435,8 @@ const Reservations = () => {
                       </span>
                       <span className="flex items-center gap-1.5">
                         <Clock className="w-4 h-4" />
-                        {formatTimeDisplay(nextReservation.date_debut)} - {formatTimeDisplay(nextReservation.date_fin)}
+                        {formatTimeDisplay(nextReservation.date_debut)} -{" "}
+                        {formatTimeDisplay(nextReservation.date_fin)}
                       </span>
                     </div>
                   </div>
@@ -375,7 +444,9 @@ const Reservations = () => {
                 <div className="flex items-center gap-3">
                   <div className="text-right hidden md:block">
                     <p className="text-white/70 text-sm">Montant</p>
-                    <p className="text-2xl font-bold text-white">{formatMontant(nextReservation.montant_total)} DA</p>
+                    <p className="text-2xl font-bold text-white">
+                      {formatMontant(nextReservation.montant_total)} DA
+                    </p>
                   </div>
                   <Link to={`/app/reservations/${nextReservation.id}`}>
                     <Button className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white border-0 shadow-none">
@@ -402,7 +473,9 @@ const Reservations = () => {
                 <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
                   <CalendarDays className="w-5 h-5 text-blue-600" />
                 </div>
-                <span className="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded-full">Total</span>
+                <span className="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded-full">
+                  Total
+                </span>
               </div>
               <p className="text-3xl font-bold text-gray-900">{stats.total}</p>
               <p className="text-sm text-gray-500 mt-1">Reservations</p>
@@ -419,9 +492,13 @@ const Reservations = () => {
                 <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center">
                   <Sparkles className="w-5 h-5 text-emerald-600" />
                 </div>
-                <span className="text-xs font-medium text-emerald-600 bg-emerald-100 px-2 py-1 rounded-full">Actif</span>
+                <span className="text-xs font-medium text-emerald-600 bg-emerald-100 px-2 py-1 rounded-full">
+                  Actif
+                </span>
               </div>
-              <p className="text-3xl font-bold text-gray-900">{stats.upcoming}</p>
+              <p className="text-3xl font-bold text-gray-900">
+                {stats.upcoming}
+              </p>
               <p className="text-sm text-gray-500 mt-1">A venir</p>
             </Card>
           </motion.div>
@@ -436,9 +513,13 @@ const Reservations = () => {
                 <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center">
                   <CheckCircle2 className="w-5 h-5 text-gray-600" />
                 </div>
-                <span className="text-xs font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded-full">Passe</span>
+                <span className="text-xs font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded-full">
+                  Passe
+                </span>
               </div>
-              <p className="text-3xl font-bold text-gray-900">{stats.completed}</p>
+              <p className="text-3xl font-bold text-gray-900">
+                {stats.completed}
+              </p>
               <p className="text-sm text-gray-500 mt-1">Terminees</p>
             </Card>
           </motion.div>
@@ -453,9 +534,13 @@ const Reservations = () => {
                 <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center">
                   <TrendingUp className="w-5 h-5 text-amber-600" />
                 </div>
-                <span className="text-xs font-medium text-amber-600 bg-amber-100 px-2 py-1 rounded-full">Total</span>
+                <span className="text-xs font-medium text-amber-600 bg-amber-100 px-2 py-1 rounded-full">
+                  Total
+                </span>
               </div>
-              <p className="text-2xl font-bold text-gray-900">{formatMontant(stats.totalSpent)}</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {formatMontant(stats.totalSpent)}
+              </p>
               <p className="text-sm text-gray-500 mt-1">DA depenses</p>
             </Card>
           </motion.div>
@@ -485,10 +570,12 @@ const Reservations = () => {
               >
                 <Filter className="w-4 h-4" />
                 {item.label}
-                <span className={`
+                <span
+                  className={`
                   px-2 py-0.5 rounded-full text-xs font-bold
                   ${filter === item.key ? "bg-white/20" : "bg-gray-200"}
-                `}>
+                `}
+                >
                   {item.count}
                 </span>
               </button>
@@ -523,8 +610,8 @@ const Reservations = () => {
                   filter === "upcoming"
                     ? "a venir"
                     : filter === "past"
-                    ? "passee"
-                    : "annulee"
+                      ? "passee"
+                      : "annulee"
                 }`
           }
           description={
@@ -545,7 +632,8 @@ const Reservations = () => {
         <div className="grid gap-4 md:grid-cols-2">
           <AnimatePresence mode="popLayout">
             {filteredReservations.map((reservation, index) => {
-              const status = statusConfig[reservation.statut] || statusConfig.en_attente;
+              const status =
+                statusConfig[reservation.statut] || statusConfig.en_attente;
               const timeLabel = getTimeLabel(reservation.date_debut);
               const StatusIcon = status.icon;
 
@@ -558,15 +646,18 @@ const Reservations = () => {
                   transition={{ delay: index * 0.05 }}
                   layout
                 >
-                  <Card className={`overflow-hidden hover:shadow-xl transition-all duration-300 border-l-4 ${
-                    reservation.statut === "confirmee" || reservation.statut === "en_cours"
-                      ? "border-l-emerald-500"
-                      : reservation.statut === "annulee"
-                      ? "border-l-red-500"
-                      : reservation.statut === "terminee"
-                      ? "border-l-gray-400"
-                      : "border-l-amber-500"
-                  }`}>
+                  <Card
+                    className={`overflow-hidden hover:shadow-xl transition-all duration-300 border-l-4 ${
+                      reservation.statut === "confirmee" ||
+                      reservation.statut === "en_cours"
+                        ? "border-l-emerald-500"
+                        : reservation.statut === "annulee"
+                          ? "border-l-red-500"
+                          : reservation.statut === "terminee"
+                            ? "border-l-gray-400"
+                            : "border-l-amber-500"
+                    }`}
+                  >
                     <div className="p-5">
                       <div className="flex items-start justify-between gap-3 mb-4">
                         <div className="flex-1 min-w-0">
@@ -575,7 +666,9 @@ const Reservations = () => {
                               {reservation.espace_nom || "Espace"}
                             </h3>
                             {timeLabel.text && (
-                              <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${timeLabel.color}`}>
+                              <span
+                                className={`px-2.5 py-1 rounded-full text-xs font-semibold ${timeLabel.color}`}
+                              >
                                 {timeLabel.text}
                               </span>
                             )}
@@ -587,7 +680,9 @@ const Reservations = () => {
                             </p>
                           )}
                         </div>
-                        <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium ${status.bg} ${status.text}`}>
+                        <div
+                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium ${status.bg} ${status.text}`}
+                        >
                           <StatusIcon className="w-3.5 h-3.5" />
                           {status.label}
                         </div>
@@ -609,7 +704,8 @@ const Reservations = () => {
                             <span className="text-xs font-medium">Horaire</span>
                           </div>
                           <p className="text-sm font-semibold text-gray-900">
-                            {formatTimeDisplay(reservation.date_debut)} - {formatTimeDisplay(reservation.date_fin)}
+                            {formatTimeDisplay(reservation.date_debut)} -{" "}
+                            {formatTimeDisplay(reservation.date_fin)}
                           </p>
                         </div>
                         <div className="bg-amber-50 rounded-xl p-3">
@@ -633,12 +729,19 @@ const Reservations = () => {
                           )}
                           <span className="flex items-center gap-1.5">
                             <Timer className="w-4 h-4" />
-                            {getDuration(reservation.date_debut, reservation.date_fin)}
+                            {getDuration(
+                              reservation.date_debut,
+                              reservation.date_fin,
+                            )}
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
                           <Link to={`/app/reservations/${reservation.id}`}>
-                            <Button variant="secondary" size="sm" className="gap-2">
+                            <Button
+                              variant="secondary"
+                              size="sm"
+                              className="gap-2"
+                            >
                               <Eye className="w-4 h-4" />
                               Details
                             </Button>
@@ -669,18 +772,32 @@ const Reservations = () => {
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Espace</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Horaire</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Statut</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Montant</th>
-                  <th className="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    Espace
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    Date
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    Horaire
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    Statut
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    Montant
+                  </th>
+                  <th className="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-100">
                 <AnimatePresence mode="popLayout">
                   {filteredReservations.map((reservation) => {
-                    const status = statusConfig[reservation.statut] || statusConfig.en_attente;
+                    const status =
+                      statusConfig[reservation.statut] ||
+                      statusConfig.en_attente;
                     const timeLabel = getTimeLabel(reservation.date_debut);
 
                     return (
@@ -697,27 +814,40 @@ const Reservations = () => {
                               <MapPin className="w-5 h-5 text-amber-600" />
                             </div>
                             <div>
-                              <p className="font-semibold text-gray-900">{reservation.espace_nom || "Espace"}</p>
-                              <p className="text-xs text-gray-500">{reservation.espace_type}</p>
+                              <p className="font-semibold text-gray-900">
+                                {reservation.espace_nom || "Espace"}
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                {reservation.espace_type}
+                              </p>
                             </div>
                           </div>
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-2">
-                            <span className="text-sm text-gray-900">{formatDateDisplay(reservation.date_debut)}</span>
+                            <span className="text-sm text-gray-900">
+                              {formatDateDisplay(reservation.date_debut)}
+                            </span>
                             {timeLabel.text && (
-                              <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${timeLabel.color}`}>
+                              <span
+                                className={`px-2 py-0.5 rounded-full text-xs font-medium ${timeLabel.color}`}
+                              >
                                 {timeLabel.text}
                               </span>
                             )}
                           </div>
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-600">
-                          {formatTimeDisplay(reservation.date_debut)} - {formatTimeDisplay(reservation.date_fin)}
+                          {formatTimeDisplay(reservation.date_debut)} -{" "}
+                          {formatTimeDisplay(reservation.date_fin)}
                         </td>
                         <td className="px-6 py-4">
-                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${status.bg} ${status.text}`}>
-                            <span className={`w-1.5 h-1.5 rounded-full ${status.dot}`} />
+                          <span
+                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${status.bg} ${status.text}`}
+                          >
+                            <span
+                              className={`w-1.5 h-1.5 rounded-full ${status.dot}`}
+                            />
                             {status.label}
                           </span>
                         </td>
