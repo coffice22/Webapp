@@ -160,6 +160,14 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
   };
 
   const onSubmit = async (data: ReservationFormType) => {
+    console.log("[ReservationForm] onSubmit appelé", { currentStep, data });
+
+    // IMPORTANT: Ne soumettre QUE si on est à l'étape 3
+    if (currentStep !== 3) {
+      console.log("[ReservationForm] Soumission bloquée - pas à l'étape 3");
+      return;
+    }
+
     if (!user) {
       toast.error("Vous devez être connecté pour réserver");
       return;
@@ -324,7 +332,17 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
       title="Nouvelle Réservation"
       size="xl"
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="space-y-6"
+        onKeyDown={(e) => {
+          // Empêcher la soumission du formulaire avec la touche Enter
+          // sauf si c'est le bouton de confirmation qui est focus
+          if (e.key === "Enter" && currentStep !== 3) {
+            e.preventDefault();
+          }
+        }}
+      >
         {/* Indicateur d'étapes */}
         <div className="relative">
           <div className="flex items-center justify-between mb-8">
@@ -690,6 +708,12 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                       icon={<Tag className="w-5 h-5" />}
                       placeholder="Entrez votre code promo"
                       {...register("codePromo")}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          validatePromoCode();
+                        }
+                      }}
                     />
                     {codePromoValid !== null && (
                       <div className="absolute right-3 top-1/2 -translate-y-1/2">
