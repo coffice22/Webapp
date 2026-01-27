@@ -20,7 +20,10 @@ export const useErrorHandler = () => {
   const { logout } = useAuthStore();
 
   const handleError = useCallback(
-    (error: Error | ErrorWithDetails | unknown, options: ErrorHandlerOptions = {}) => {
+    (
+      error: Error | ErrorWithDetails | unknown,
+      options: ErrorHandlerOptions = {},
+    ) => {
       const {
         showToast = true,
         redirectOnAuth = true,

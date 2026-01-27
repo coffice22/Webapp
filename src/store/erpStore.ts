@@ -238,7 +238,8 @@ export const useERPStore = create<ERPState>()((set, get) => ({
       if (!member) return { success: false, error: "Membre non trouvé" };
 
       const subtotal = items.reduce(
-        (sum: number, item: InvoiceItemInput) => sum + item.quantity * item.unitPrice,
+        (sum: number, item: InvoiceItemInput) =>
+          sum + item.quantity * item.unitPrice,
         0,
       );
       const taxAmount = subtotal * 0.19;

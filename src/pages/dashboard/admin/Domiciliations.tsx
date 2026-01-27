@@ -98,40 +98,44 @@ const AdminDomiciliations = () => {
   const [dateFin, setDateFin] = useState("");
   const [modePaiement, setModePaiement] = useState("cash");
   const [loading, setLoading] = useState(false);
-  const [users, setUsers] = useState<{ id: string; nom: string; prenom: string; email: string }[]>([]);
-  const [createFormData, setCreateFormData] = useState<CreateDomiciliationForm>({
-    user_id: "",
-    raison_sociale: "",
-    forme_juridique: "SARL",
-    nif: "",
-    nis: "",
-    registre_commerce: "",
-    article_imposition: "",
-    numero_auto_entrepreneur: "",
-    capital: "",
-    activite_principale: "",
-    domaine_activite: "",
-    wilaya: "",
-    commune: "",
-    adresse_actuelle: "",
-    adresse_siege_social: "",
-    representant_nom: "",
-    representant_prenom: "",
-    representant_fonction: "",
-    representant_telephone: "",
-    representant_email: "",
-    coordonnees_fiscales: "",
-    coordonnees_administratives: "",
-    date_creation_entreprise: "",
-    statut: "active",
-    montant_mensuel: 15000,
-    date_debut: new Date().toISOString().split("T")[0],
-    date_fin: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
-      .toISOString()
-      .split("T")[0],
-    mode_paiement: "cash",
-    notes_admin: "",
-  });
+  const [users, setUsers] = useState<
+    { id: string; nom: string; prenom: string; email: string }[]
+  >([]);
+  const [createFormData, setCreateFormData] = useState<CreateDomiciliationForm>(
+    {
+      user_id: "",
+      raison_sociale: "",
+      forme_juridique: "SARL",
+      nif: "",
+      nis: "",
+      registre_commerce: "",
+      article_imposition: "",
+      numero_auto_entrepreneur: "",
+      capital: "",
+      activite_principale: "",
+      domaine_activite: "",
+      wilaya: "",
+      commune: "",
+      adresse_actuelle: "",
+      adresse_siege_social: "",
+      representant_nom: "",
+      representant_prenom: "",
+      representant_fonction: "",
+      representant_telephone: "",
+      representant_email: "",
+      coordonnees_fiscales: "",
+      coordonnees_administratives: "",
+      date_creation_entreprise: "",
+      statut: "active",
+      montant_mensuel: 15000,
+      date_debut: new Date().toISOString().split("T")[0],
+      date_fin: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .split("T")[0],
+      mode_paiement: "cash",
+      notes_admin: "",
+    },
+  );
 
   useEffect(() => {
     loadDemandesDomiciliation();
@@ -375,7 +379,10 @@ const AdminDomiciliations = () => {
         toast.error(response.message || "Erreur lors de la création");
       }
     } catch (error) {
-      logger.error("Create domiciliation error:", error instanceof Error ? error.message : "Unknown error");
+      logger.error(
+        "Create domiciliation error:",
+        error instanceof Error ? error.message : "Unknown error",
+      );
       toast.error("Erreur lors de la création de la domiciliation");
     } finally {
       setLoading(false);

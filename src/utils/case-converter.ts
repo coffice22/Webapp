@@ -11,13 +11,17 @@ export function snakeToCamel(str: string): string {
   return str.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
 }
 
-export function objectToSnakeCase<T extends JsonObject = JsonObject>(obj: JsonValue): T {
+export function objectToSnakeCase<T extends JsonObject = JsonObject>(
+  obj: JsonValue,
+): T {
   if (obj === null || obj === undefined) {
     return obj as T;
   }
 
   if (Array.isArray(obj)) {
-    return obj.map((item) => objectToSnakeCase(item as JsonObject)) as unknown as T;
+    return obj.map((item) =>
+      objectToSnakeCase(item as JsonObject),
+    ) as unknown as T;
   }
 
   if (typeof obj !== "object") {
@@ -35,11 +39,18 @@ export function objectToSnakeCase<T extends JsonObject = JsonObject>(obj: JsonVa
       const snakeKey = camelToSnake(key);
       const value = obj[key];
 
-      if (value !== null && typeof value === "object" && !Array.isArray(value) && !(value instanceof Date)) {
+      if (
+        value !== null &&
+        typeof value === "object" &&
+        !Array.isArray(value) &&
+        !(value instanceof Date)
+      ) {
         result[snakeKey] = objectToSnakeCase(value as JsonObject);
       } else if (Array.isArray(value)) {
         result[snakeKey] = value.map((item) =>
-          typeof item === "object" && item !== null ? objectToSnakeCase(item as JsonObject) : item
+          typeof item === "object" && item !== null
+            ? objectToSnakeCase(item as JsonObject)
+            : item,
         );
       } else {
         result[snakeKey] = value;
@@ -50,13 +61,17 @@ export function objectToSnakeCase<T extends JsonObject = JsonObject>(obj: JsonVa
   return result as T;
 }
 
-export function objectToCamelCase<T extends JsonObject = JsonObject>(obj: JsonValue): T {
+export function objectToCamelCase<T extends JsonObject = JsonObject>(
+  obj: JsonValue,
+): T {
   if (obj === null || obj === undefined) {
     return obj as T;
   }
 
   if (Array.isArray(obj)) {
-    return obj.map((item) => objectToCamelCase(item as JsonObject)) as unknown as T;
+    return obj.map((item) =>
+      objectToCamelCase(item as JsonObject),
+    ) as unknown as T;
   }
 
   if (typeof obj !== "object") {
@@ -74,11 +89,18 @@ export function objectToCamelCase<T extends JsonObject = JsonObject>(obj: JsonVa
       const camelKey = snakeToCamel(key);
       const value = obj[key];
 
-      if (value !== null && typeof value === "object" && !Array.isArray(value) && !(value instanceof Date)) {
+      if (
+        value !== null &&
+        typeof value === "object" &&
+        !Array.isArray(value) &&
+        !(value instanceof Date)
+      ) {
         result[camelKey] = objectToCamelCase(value as JsonObject);
       } else if (Array.isArray(value)) {
         result[camelKey] = value.map((item) =>
-          typeof item === "object" && item !== null ? objectToCamelCase(item as JsonObject) : item
+          typeof item === "object" && item !== null
+            ? objectToCamelCase(item as JsonObject)
+            : item,
         );
       } else {
         result[camelKey] = value;
@@ -89,7 +111,9 @@ export function objectToCamelCase<T extends JsonObject = JsonObject>(obj: JsonVa
   return result as T;
 }
 
-export function queryParamsToSnakeCase(params: Record<string, JsonValue>): string {
+export function queryParamsToSnakeCase(
+  params: Record<string, JsonValue>,
+): string {
   const snakeParams = objectToSnakeCase(params);
   const searchParams = new URLSearchParams();
 

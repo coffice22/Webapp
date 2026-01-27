@@ -58,7 +58,9 @@ export function useDataStats<T>(
     };
 
     if (countField) {
-      result.active = data.filter((item) => item[countField] === "actif").length;
+      result.active = data.filter(
+        (item) => item[countField] === "actif",
+      ).length;
       result.inactive = data.filter(
         (item) => item[countField] === "inactif",
       ).length;

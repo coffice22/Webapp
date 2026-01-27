@@ -78,8 +78,15 @@ const MyCompany = () => {
       toast.success("Informations de l'entreprise mises à jour avec succès");
       setIsEditing(false);
     } catch (error) {
-      logger.error("Erreur mise à jour:", error instanceof Error ? error.message : "Unknown error");
-      toast.error(error instanceof Error ? error.message : "Erreur lors de la mise à jour");
+      logger.error(
+        "Erreur mise à jour:",
+        error instanceof Error ? error.message : "Unknown error",
+      );
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Erreur lors de la mise à jour",
+      );
     }
   };
 

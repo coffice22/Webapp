@@ -193,9 +193,13 @@ export const userAdapter = {
     nis: apiData.nis as string | undefined,
     registreCommerce: apiData.registre_commerce as string | undefined,
     articleImposition: apiData.article_imposition as string | undefined,
-    numeroAutoEntrepreneur: apiData.numero_auto_entrepreneur as string | undefined,
+    numeroAutoEntrepreneur: apiData.numero_auto_entrepreneur as
+      | string
+      | undefined,
     raisonSociale: apiData.raison_sociale as string | undefined,
-    dateCreationEntreprise: apiData.date_creation_entreprise as string | undefined,
+    dateCreationEntreprise: apiData.date_creation_entreprise as
+      | string
+      | undefined,
     capital: apiData.capital as string | undefined,
     siegeSocial: apiData.siege_social as string | undefined,
     activitePrincipale: apiData.activite_principale as string | undefined,
@@ -258,7 +262,9 @@ export const domiciliationAdapter = {
     registreCommerce: String(apiData.registre_commerce || ""),
     articleImposition: String(apiData.article_imposition || ""),
     coordonneesFiscales: apiData.coordonnees_fiscales as string | undefined,
-    coordonneesAdministratives: apiData.coordonnees_administratives as string | undefined,
+    coordonneesAdministratives: apiData.coordonnees_administratives as
+      | string
+      | undefined,
     representantLegal:
       typeof apiData.representant_legal === "string"
         ? JSON.parse(apiData.representant_legal)
@@ -266,15 +272,21 @@ export const domiciliationAdapter = {
     domaineActivite: String(apiData.domaine_activite || ""),
     adresseSiegeSocial: String(apiData.adresse_siege_social || ""),
     capital: apiData.capital as string | undefined,
-    dateCreationEntreprise: apiData.date_creation_entreprise as string | undefined,
-    statut: String(apiData.statut || "en_attente") as DemandeDomiciliation["statut"],
+    dateCreationEntreprise: apiData.date_creation_entreprise as
+      | string
+      | undefined,
+    statut: String(
+      apiData.statut || "en_attente",
+    ) as DemandeDomiciliation["statut"],
     commentaireAdmin: apiData.commentaire_admin as string | undefined,
     dateValidation: apiData.date_validation as string | undefined,
     dateCreation: apiData.created_at as string | undefined,
     updatedAt: apiData.updated_at as string | undefined,
   }),
 
-  toAPI: (domiciliation: Partial<DemandeDomiciliation>): ApiDomiciliationData => ({
+  toAPI: (
+    domiciliation: Partial<DemandeDomiciliation>,
+  ): ApiDomiciliationData => ({
     raison_sociale: domiciliation.raisonSociale,
     forme_juridique: domiciliation.formeJuridique,
     nif: domiciliation.nif,

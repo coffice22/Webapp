@@ -2,7 +2,14 @@ const isDev = import.meta.env.DEV;
 
 type LogLevel = "error" | "warn" | "info" | "debug";
 
-type LogData = Record<string, unknown> | Error | string | number | boolean | null | undefined;
+type LogData =
+  | Record<string, unknown>
+  | Error
+  | string
+  | number
+  | boolean
+  | null
+  | undefined;
 
 interface LogEntry {
   level: LogLevel;
@@ -28,7 +35,8 @@ class Logger {
       message,
       data,
       timestamp: new Date().toISOString(),
-      userAgent: typeof navigator !== "undefined" ? navigator.userAgent : undefined,
+      userAgent:
+        typeof navigator !== "undefined" ? navigator.userAgent : undefined,
     };
 
     this.logs.push(entry);

@@ -174,20 +174,29 @@ export const useAppStore = create<AppState>()(
           }
           return { success: false, error: response.error };
         } catch (error) {
-          return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
+          return {
+            success: false,
+            error: error instanceof Error ? error.message : "Unknown error",
+          };
         }
       },
 
       updateEspace: async (id, data) => {
         try {
-          const response = await apiClient.updateEspace(id, data as Record<string, unknown>);
+          const response = await apiClient.updateEspace(
+            id,
+            data as Record<string, unknown>,
+          );
           if (response.success) {
             await get().loadEspaces();
             return { success: true };
           }
           return { success: false, error: response.error };
         } catch (error) {
-          return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
+          return {
+            success: false,
+            error: error instanceof Error ? error.message : "Unknown error",
+          };
         }
       },
 
@@ -200,7 +209,10 @@ export const useAppStore = create<AppState>()(
           }
           return { success: false, error: response.error };
         } catch (error) {
-          return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
+          return {
+            success: false,
+            error: error instanceof Error ? error.message : "Unknown error",
+          };
         }
       },
 
@@ -212,25 +224,27 @@ export const useAppStore = create<AppState>()(
             response.data &&
             Array.isArray(response.data)
           ) {
-            const abonnements = response.data.map((a: Record<string, unknown>) => ({
-              id: a.id,
-              nom: a.nom,
-              type: a.type,
-              prix: a.prix,
-              prixAvecDomiciliation: a.prix_avec_domiciliation,
-              creditsMensuels: a.credits_mensuels,
-              creditMensuel: a.credits_mensuels,
-              dureeMois: a.duree_mois,
-              dureeJours: (a.duree_mois || 1) * 30,
-              description: a.description,
-              avantages: a.avantages || [],
-              actif: a.actif,
-              statut: a.statut,
-              couleur: a.couleur || "#3B82F6",
-              ordre: a.ordre,
-              createdAt: a.created_at,
-              updatedAt: a.updated_at,
-            }));
+            const abonnements = response.data.map(
+              (a: Record<string, unknown>) => ({
+                id: a.id,
+                nom: a.nom,
+                type: a.type,
+                prix: a.prix,
+                prixAvecDomiciliation: a.prix_avec_domiciliation,
+                creditsMensuels: a.credits_mensuels,
+                creditMensuel: a.credits_mensuels,
+                dureeMois: a.duree_mois,
+                dureeJours: (a.duree_mois || 1) * 30,
+                description: a.description,
+                avantages: a.avantages || [],
+                actif: a.actif,
+                statut: a.statut,
+                couleur: a.couleur || "#3B82F6",
+                ordre: a.ordre,
+                createdAt: a.created_at,
+                updatedAt: a.updated_at,
+              }),
+            );
             set({ abonnements });
           }
         } catch (error) {
@@ -240,27 +254,38 @@ export const useAppStore = create<AppState>()(
 
       addAbonnement: async (data) => {
         try {
-          const response = await apiClient.createAbonnement(data as Record<string, unknown>);
+          const response = await apiClient.createAbonnement(
+            data as Record<string, unknown>,
+          );
           if (response.success) {
             await get().loadAbonnements();
             return { success: true };
           }
           return { success: false, error: response.error };
         } catch (error) {
-          return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
+          return {
+            success: false,
+            error: error instanceof Error ? error.message : "Unknown error",
+          };
         }
       },
 
       updateAbonnement: async (id, data) => {
         try {
-          const response = await apiClient.updateAbonnement(id, data as Record<string, unknown>);
+          const response = await apiClient.updateAbonnement(
+            id,
+            data as Record<string, unknown>,
+          );
           if (response.success) {
             await get().loadAbonnements();
             return { success: true };
           }
           return { success: false, error: response.error };
         } catch (error) {
-          return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
+          return {
+            success: false,
+            error: error instanceof Error ? error.message : "Unknown error",
+          };
         }
       },
 
@@ -272,38 +297,40 @@ export const useAppStore = create<AppState>()(
             response.data &&
             Array.isArray(response.data)
           ) {
-            const reservations = response.data.map((r: Record<string, unknown>) => ({
-              id: r.id,
-              userId: r.user_id,
-              espaceId: r.espace_id,
-              dateDebut: r.date_debut,
-              dateFin: r.date_fin,
-              statut: r.statut,
-              typeReservation: r.type_reservation,
-              montantTotal: r.montant_total,
-              reduction: r.reduction,
-              montantPaye: r.montant_paye,
-              modePaiement: r.mode_paiement,
-              notes: r.notes,
-              dateCreation: r.created_at,
-              createdAt: r.created_at,
-              espace: r.espace_nom
-                ? {
-                    id: r.espace_id,
-                    nom: r.espace_nom,
-                    type: r.espace_type,
-                  }
-                : undefined,
-              utilisateur: r.user_nom
-                ? {
-                    id: r.user_id,
-                    nom: r.user_nom,
-                    prenom: r.user_prenom,
-                    email: r.user_email,
-                    role: "user" as const,
-                  }
-                : undefined,
-            }));
+            const reservations = response.data.map(
+              (r: Record<string, unknown>) => ({
+                id: r.id,
+                userId: r.user_id,
+                espaceId: r.espace_id,
+                dateDebut: r.date_debut,
+                dateFin: r.date_fin,
+                statut: r.statut,
+                typeReservation: r.type_reservation,
+                montantTotal: r.montant_total,
+                reduction: r.reduction,
+                montantPaye: r.montant_paye,
+                modePaiement: r.mode_paiement,
+                notes: r.notes,
+                dateCreation: r.created_at,
+                createdAt: r.created_at,
+                espace: r.espace_nom
+                  ? {
+                      id: r.espace_id,
+                      nom: r.espace_nom,
+                      type: r.espace_type,
+                    }
+                  : undefined,
+                utilisateur: r.user_nom
+                  ? {
+                      id: r.user_id,
+                      nom: r.user_nom,
+                      prenom: r.user_prenom,
+                      email: r.user_email,
+                      role: "user" as const,
+                    }
+                  : undefined,
+              }),
+            );
             set({ reservations });
           }
         } catch (error) {
@@ -333,20 +360,29 @@ export const useAppStore = create<AppState>()(
             error: response.error || "Erreur lors de la creation",
           };
         } catch (error) {
-          return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
+          return {
+            success: false,
+            error: error instanceof Error ? error.message : "Unknown error",
+          };
         }
       },
 
       updateReservation: async (id, data) => {
         try {
-          const response = await apiClient.updateReservation(id, data as Record<string, unknown>);
+          const response = await apiClient.updateReservation(
+            id,
+            data as Record<string, unknown>,
+          );
           if (response.success) {
             await get().loadReservations();
             return { success: true };
           }
           return { success: false, error: response.error };
         } catch (error) {
-          return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
+          return {
+            success: false,
+            error: error instanceof Error ? error.message : "Unknown error",
+          };
         }
       },
 
@@ -484,7 +520,10 @@ export const useAppStore = create<AppState>()(
           }
           return { success: false, error: response.error || "Erreur creation" };
         } catch (error) {
-          return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
+          return {
+            success: false,
+            error: error instanceof Error ? error.message : "Unknown error",
+          };
         }
       },
 
@@ -527,7 +566,10 @@ export const useAppStore = create<AppState>()(
           }
           return { success: false, error: response.error };
         } catch (error) {
-          return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
+          return {
+            success: false,
+            error: error instanceof Error ? error.message : "Unknown error",
+          };
         }
       },
 
@@ -566,7 +608,10 @@ export const useAppStore = create<AppState>()(
           }
           return { success: false, error: response.error };
         } catch (error) {
-          return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
+          return {
+            success: false,
+            error: error instanceof Error ? error.message : "Unknown error",
+          };
         }
       },
 

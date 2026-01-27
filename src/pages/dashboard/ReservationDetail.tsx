@@ -62,7 +62,9 @@ const ReservationDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuthStore();
-  const [reservation, setReservation] = useState<ReservationDetail | null>(null);
+  const [reservation, setReservation] = useState<ReservationDetail | null>(
+    null,
+  );
   const [loading, setLoading] = useState(true);
   const [showCancelModal, setShowCancelModal] = useState(false);
 
@@ -103,7 +105,9 @@ const ReservationDetail: React.FC = () => {
         toast.error(response.error || "Erreur lors de l'annulation");
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Erreur lors de l'annulation");
+      toast.error(
+        error instanceof Error ? error.message : "Erreur lors de l'annulation",
+      );
     }
   };
 
@@ -187,7 +191,9 @@ const ReservationDetail: React.FC = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-gray-600">Type</p>
-                  <p className="font-medium">{reservation.espace?.type || "N/A"}</p>
+                  <p className="font-medium">
+                    {reservation.espace?.type || "N/A"}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Capacité</p>
@@ -198,7 +204,9 @@ const ReservationDetail: React.FC = () => {
               </div>
               {reservation.participants && (
                 <div>
-                  <p className="text-sm text-gray-600">Nombre de participants</p>
+                  <p className="text-sm text-gray-600">
+                    Nombre de participants
+                  </p>
                   <p className="font-medium">{reservation.participants}</p>
                 </div>
               )}
@@ -269,7 +277,9 @@ const ReservationDetail: React.FC = () => {
                   {reservation.user.telephone && (
                     <div>
                       <p className="text-sm text-gray-600">Téléphone</p>
-                      <p className="font-medium">{reservation.user.telephone}</p>
+                      <p className="font-medium">
+                        {reservation.user.telephone}
+                      </p>
                     </div>
                   )}
                 </div>
@@ -336,9 +346,13 @@ const ReservationDetail: React.FC = () => {
               <div>
                 <p className="text-gray-600">Date de création</p>
                 <p className="font-medium">
-                  {format(new Date(reservation.createdAt), "dd MMM yyyy à HH:mm", {
-                    locale: fr,
-                  })}
+                  {format(
+                    new Date(reservation.createdAt),
+                    "dd MMM yyyy à HH:mm",
+                    {
+                      locale: fr,
+                    },
+                  )}
                 </p>
               </div>
             </div>
