@@ -119,21 +119,25 @@ Le système de réservation a été entièrement reconstruit de zéro avec une a
 ## Avantages de la refonte
 
 ✅ **Simplicité**
+
 - Code réduit de 70%
 - Moins de dépendances entre composants
 - Flux linéaire sans étapes multiples
 
 ✅ **Performance**
+
 - Moins de calculs côté frontend
 - Moins de re-renders React
 - Build plus léger (263 KB vs 280+ KB avant)
 
 ✅ **Maintenabilité**
+
 - Code plus lisible
 - Moins de bugs potentiels
 - Facile à débugger
 
 ✅ **Sécurité**
+
 - Calculs sensibles (montant) côté serveur
 - Validation stricte des données
 - Protection contre les conflits de réservation
@@ -143,18 +147,21 @@ Le système de réservation a été entièrement reconstruit de zéro avec une a
 Pour tester sur le serveur de production :
 
 1. **Vérifier l'extension MySQL**
+
 ```bash
 ssh votre_serveur
 php -m | grep pdo_mysql
 ```
 
 Si absent, installer :
+
 ```bash
 sudo apt-get install php-mysql
 sudo systemctl restart apache2
 ```
 
 2. **Tester la création**
+
 ```bash
 # Dans la console navigateur (F12)
 # Se connecter, puis aller sur /app/reservations
@@ -164,6 +171,7 @@ sudo systemctl restart apache2
 ```
 
 3. **Vérifier les logs serveur**
+
 ```bash
 tail -f /var/log/apache2/error.log
 # ou

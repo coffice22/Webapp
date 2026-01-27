@@ -31,7 +31,9 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
   selectedEspace,
 }) => {
   const [espaces, setEspaces] = useState<Espace[]>([]);
-  const [selectedEspace2, setSelectedEspace2] = useState<Espace | null>(selectedEspace || null);
+  const [selectedEspace2, setSelectedEspace2] = useState<Espace | null>(
+    selectedEspace || null,
+  );
   const [estimatedAmount, setEstimatedAmount] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -136,7 +138,9 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
       }
     } catch (error: any) {
       console.error("Erreur:", error);
-      toast.error(error.message || "Erreur lors de la création de la réservation");
+      toast.error(
+        error.message || "Erreur lors de la création de la réservation",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -170,7 +174,9 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
               ))}
           </select>
           {errors.espace_id && (
-            <p className="text-red-500 text-sm mt-1">{errors.espace_id.message}</p>
+            <p className="text-red-500 text-sm mt-1">
+              {errors.espace_id.message}
+            </p>
           )}
         </div>
 
