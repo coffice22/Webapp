@@ -39,7 +39,10 @@ interface Reservation {
 
 type FilterType = "all" | "upcoming" | "past" | "cancelled";
 
-const statusConfig: Record<string, { label: string; bg: string; text: string; dot: string }> = {
+const statusConfig: Record<
+  string,
+  { label: string; bg: string; text: string; dot: string }
+> = {
   en_attente: {
     label: "En attente",
     bg: "bg-amber-50",
@@ -106,7 +109,9 @@ const getTimeLabel = (dateDebut: string): string => {
     const date = new Date(dateDebut);
     if (isToday(date)) return "Aujourd'hui";
     if (isFuture(date)) {
-      const days = Math.ceil((date.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+      const days = Math.ceil(
+        (date.getTime() - Date.now()) / (1000 * 60 * 60 * 24),
+      );
       if (days === 1) return "Demain";
       if (days <= 7) return `Dans ${days} jours`;
     }
@@ -142,7 +147,9 @@ const Reservations = () => {
         if (!Array.isArray(data)) data = [];
         setReservations(data);
       } else {
-        setError(response.error || response.message || "Erreur lors du chargement");
+        setError(
+          response.error || response.message || "Erreur lors du chargement",
+        );
         setReservations([]);
       }
     } catch (err: any) {
@@ -170,7 +177,9 @@ const Reservations = () => {
         setCancelId(null);
         await loadReservations(true);
       } else {
-        toast.error(response.error || response.message || "Erreur lors de l'annulation");
+        toast.error(
+          response.error || response.message || "Erreur lors de l'annulation",
+        );
       }
     } catch (err: any) {
       toast.error(err.message || "Erreur lors de l'annulation");
@@ -210,7 +219,7 @@ const Reservations = () => {
       (r) =>
         r.statut !== "annulee" &&
         r.statut !== "terminee" &&
-        (isFuture(new Date(r.date_debut)) || isToday(new Date(r.date_debut)))
+        (isFuture(new Date(r.date_debut)) || isToday(new Date(r.date_debut))),
     ).length,
     completed: reservations.filter((r) => r.statut === "terminee").length,
   };
@@ -304,7 +313,9 @@ const Reservations = () => {
             disabled={refreshing}
             className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition-colors"
           >
-            <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
+            <RefreshCw
+              className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`}
+            />
             {refreshing ? "Actualisation..." : "Actualiser"}
           </button>
         </div>
@@ -320,8 +331,8 @@ const Reservations = () => {
                   filter === "upcoming"
                     ? "a venir"
                     : filter === "past"
-                    ? "passee"
-                    : "annulee"
+                      ? "passee"
+                      : "annulee"
                 }`
           }
           description={
@@ -342,7 +353,8 @@ const Reservations = () => {
         <div className="space-y-4">
           <AnimatePresence mode="popLayout">
             {filteredReservations.map((reservation, index) => {
-              const status = statusConfig[reservation.statut] || statusConfig.en_attente;
+              const status =
+                statusConfig[reservation.statut] || statusConfig.en_attente;
               const timeLabel = getTimeLabel(reservation.date_debut);
 
               return (
@@ -368,7 +380,9 @@ const Reservations = () => {
                                   ${status.bg} ${status.text}
                                 `}
                               >
-                                <span className={`w-1.5 h-1.5 rounded-full ${status.dot}`} />
+                                <span
+                                  className={`w-1.5 h-1.5 rounded-full ${status.dot}`}
+                                />
                                 {status.label}
                               </span>
                               {timeLabel && (
@@ -434,7 +448,10 @@ const Reservations = () => {
                       </div>
 
                       <div className="flex lg:flex-col items-center justify-end gap-2 p-4 lg:p-6 bg-gray-50 lg:bg-transparent border-t lg:border-t-0 lg:border-l border-gray-100">
-                        <Link to={`/app/reservations/${reservation.id}`} className="w-full lg:w-auto">
+                        <Link
+                          to={`/app/reservations/${reservation.id}`}
+                          className="w-full lg:w-auto"
+                        >
                           <Button
                             variant="secondary"
                             size="sm"
