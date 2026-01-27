@@ -1,29 +1,29 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams, Link } from 'react-router-dom';
-import { apiClient } from '../lib/api-client';
-import Button from '../components/ui/Button';
-import Input from '../components/ui/Input';
-import ErrorMessage from '../components/ui/ErrorMessage';
-import Logo from '../components/Logo';
-import toast from 'react-hot-toast';
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
+import { apiClient } from "../lib/api-client";
+import Button from "../components/ui/Button";
+import Input from "../components/ui/Input";
+import ErrorMessage from "../components/ui/ErrorMessage";
+import Logo from "../components/Logo";
+import toast from "react-hot-toast";
 
 export default function ResetPassword() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const token = searchParams.get('token');
+  const token = searchParams.get("token");
 
-  const [password, setPassword] = useState('');
-  const [passwordConfirmation, setPasswordConfirmation] = useState('');
+  const [password, setPassword] = useState("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isVerifying, setIsVerifying] = useState(true);
   const [isValidToken, setIsValidToken] = useState(false);
-  const [error, setError] = useState('');
-  const [email, setEmail] = useState('');
+  const [error, setError] = useState("");
+  const [email, setEmail] = useState("");
 
   useEffect(() => {
     if (!token) {
       setIsVerifying(false);
-      setError('Token manquant');
+      setError("Token manquant");
       return;
     }
 
@@ -32,12 +32,15 @@ export default function ResetPassword() {
 
   const verifyToken = async () => {
     try {
-      const response = await apiClient.get(`/auth/verify-reset-token?token=${token}`);
+      const response = await apiClient.get(
+        `/auth/verify-reset-token?token=${token}`,
+      );
       setIsValidToken(true);
       setEmail(response.data.data.email);
     } catch (err) {
       setIsValidToken(false);
-      const message = err instanceof Error ? err.message : 'Token invalide ou expiré';
+      const message =
+        err instanceof Error ? err.message : "Token invalide ou expiré";
       setError(message);
     } finally {
       setIsVerifying(false);
@@ -46,31 +49,32 @@ export default function ResetPassword() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     if (password !== passwordConfirmation) {
-      setError('Les mots de passe ne correspondent pas');
+      setError("Les mots de passe ne correspondent pas");
       return;
     }
 
     if (password.length < 6) {
-      setError('Le mot de passe doit contenir au moins 6 caractères');
+      setError("Le mot de passe doit contenir au moins 6 caractères");
       return;
     }
 
     setIsLoading(true);
 
     try {
-      await apiClient.post('/auth/reset-password', {
+      await apiClient.post("/auth/reset-password", {
         token,
         password,
-        password_confirmation: passwordConfirmation
+        password_confirmation: passwordConfirmation,
       });
 
-      toast.success('Mot de passe réinitialisé avec succès !');
-      setTimeout(() => navigate('/login'), 2000);
+      toast.success("Mot de passe réinitialisé avec succès !");
+      setTimeout(() => navigate("/login"), 2000);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Une erreur est survenue';
+      const message =
+        err instanceof Error ? err.message : "Une erreur est survenue";
       setError(message);
       toast.error(message);
     } finally {
@@ -97,11 +101,23 @@ export default function ResetPassword() {
             <div className="text-center mb-8">
               <Logo className="mx-auto mb-6" size="lg" />
               <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="w-8 h-8 text-red-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Lien invalide</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                Lien invalide
+              </h2>
               <p className="text-gray-600 mb-6">{error}</p>
 
               <div className="space-y-3">
@@ -129,7 +145,9 @@ export default function ResetPassword() {
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <div className="text-center mb-8">
             <Logo className="mx-auto mb-6" size="lg" />
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Nouveau mot de passe</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              Nouveau mot de passe
+            </h2>
             <p className="text-gray-600">
               Créez un nouveau mot de passe pour <strong>{email}</strong>
             </p>
@@ -160,15 +178,21 @@ export default function ResetPassword() {
               minLength={6}
             />
 
-            {password && passwordConfirmation && password !== passwordConfirmation && (
-              <p className="text-sm text-red-600">Les mots de passe ne correspondent pas</p>
-            )}
+            {password &&
+              passwordConfirmation &&
+              password !== passwordConfirmation && (
+                <p className="text-sm text-red-600">
+                  Les mots de passe ne correspondent pas
+                </p>
+              )}
 
             <Button
               type="submit"
               className="w-full"
               loading={isLoading}
-              disabled={password !== passwordConfirmation || password.length < 6}
+              disabled={
+                password !== passwordConfirmation || password.length < 6
+              }
             >
               Réinitialiser le mot de passe
             </Button>

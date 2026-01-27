@@ -92,7 +92,11 @@ const UserDetail: React.FC = () => {
         toast.error(response.error || "Erreur lors de la suppression");
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Erreur lors de la suppression");
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Erreur lors de la suppression",
+      );
     } finally {
       setDeleting(false);
     }
@@ -261,7 +265,9 @@ const UserDetail: React.FC = () => {
                       })}
                     </p>
                     <p className="text-xs text-gray-500">
-                      {format(new Date(user.createdAt), "HH:mm", { locale: fr })}
+                      {format(new Date(user.createdAt), "HH:mm", {
+                        locale: fr,
+                      })}
                     </p>
                   </>
                 ) : (

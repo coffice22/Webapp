@@ -109,7 +109,9 @@ const Spaces = () => {
         }
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Erreur lors de l'operation");
+      toast.error(
+        error instanceof Error ? error.message : "Erreur lors de l'operation",
+      );
     } finally {
       setLoading(false);
     }
@@ -160,7 +162,11 @@ const Spaces = () => {
         toast.error(result.error || "Erreur lors de la suppression");
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Erreur lors de la suppression");
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Erreur lors de la suppression",
+      );
     }
   };
 
@@ -407,12 +413,11 @@ const Spaces = () => {
                   )}
 
                   <div className="flex gap-2 pt-4 border-t border-gray-100">
-                    <Link to={`/app/admin/spaces/${space.id}`} className="flex-1">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="w-full"
-                      >
+                    <Link
+                      to={`/app/admin/spaces/${space.id}`}
+                      className="flex-1"
+                    >
+                      <Button size="sm" variant="outline" className="w-full">
                         <Eye className="w-4 h-4 mr-2" />
                         Détails
                       </Button>

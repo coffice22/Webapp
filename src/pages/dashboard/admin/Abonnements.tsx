@@ -196,7 +196,10 @@ const AdminAbonnements = () => {
         }
       }
     } catch (error) {
-      logger.error("Erreur:", error instanceof Error ? error.message : "Unknown error");
+      logger.error(
+        "Erreur:",
+        error instanceof Error ? error.message : "Unknown error",
+      );
       toast.error("Une erreur est survenue");
     } finally {
       setLoading(false);
@@ -658,7 +661,10 @@ const AdminAbonnements = () => {
               <select
                 value={formData.statut}
                 onChange={(e) =>
-                  setFormData({ ...formData, statut: e.target.value as "actif" | "inactif" | "archive" })
+                  setFormData({
+                    ...formData,
+                    statut: e.target.value as "actif" | "inactif" | "archive",
+                  })
                 }
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
               >

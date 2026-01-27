@@ -27,7 +27,9 @@ class ApiClient {
     this.refreshToken = localStorage.getItem("refresh_token");
 
     if (!import.meta.env.VITE_API_URL) {
-      logger.warn(`[API] VITE_API_URL non configuré, utilisation par défaut: ${API_URL}`);
+      logger.warn(
+        `[API] VITE_API_URL non configuré, utilisation par défaut: ${API_URL}`,
+      );
     } else {
       logger.info(`[API] URL configurée: ${API_URL}`);
     }
@@ -281,7 +283,8 @@ class ApiClient {
 
       return data;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Unknown error";
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
       logger.error("[API] Request failed:", {
         url,
         method: options.method || "GET",
@@ -502,7 +505,17 @@ class ApiClient {
     return this.request(`/domiciliations/user.php?user_id=${userId}`);
   }
 
-  async createDemandeDomiciliation(data: Record<string, unknown> & { representantLegal?: { nom: string; prenom: string; fonction: string; telephone: string; email: string } }) {
+  async createDemandeDomiciliation(
+    data: Record<string, unknown> & {
+      representantLegal?: {
+        nom: string;
+        prenom: string;
+        fonction: string;
+        telephone: string;
+        email: string;
+      };
+    },
+  ) {
     const transformedData: Record<string, unknown> = { ...data };
 
     if (data.representantLegal) {
@@ -521,7 +534,18 @@ class ApiClient {
     });
   }
 
-  async updateDemandeDomiciliation(id: string, data: Record<string, unknown> & { representantLegal?: { nom: string; prenom: string; fonction: string; telephone: string; email: string } }) {
+  async updateDemandeDomiciliation(
+    id: string,
+    data: Record<string, unknown> & {
+      representantLegal?: {
+        nom: string;
+        prenom: string;
+        fonction: string;
+        telephone: string;
+        email: string;
+      };
+    },
+  ) {
     const transformedData: Record<string, unknown> = { id, ...data };
 
     if (data.representantLegal) {
@@ -596,7 +620,11 @@ class ApiClient {
       body: JSON.stringify({ code, montant, type }),
     }).then((response) => {
       if (response.success && response.data) {
-        const data = response.data as { id?: string; code?: string; reduction?: number };
+        const data = response.data as {
+          id?: string;
+          code?: string;
+          reduction?: number;
+        };
         return {
           valid: true,
           codePromoId: data.id || data.code,
@@ -691,14 +719,20 @@ class ApiClient {
     return this.request<T>(endpoint, { method: "GET" });
   }
 
-  async post<T = unknown>(endpoint: string, data?: Record<string, unknown>): Promise<ApiResponse<T>> {
+  async post<T = unknown>(
+    endpoint: string,
+    data?: Record<string, unknown>,
+  ): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       method: "POST",
       body: data ? JSON.stringify(data) : undefined,
     });
   }
 
-  async put<T = unknown>(endpoint: string, data?: Record<string, unknown>): Promise<ApiResponse<T>> {
+  async put<T = unknown>(
+    endpoint: string,
+    data?: Record<string, unknown>,
+  ): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       method: "PUT",
       body: data ? JSON.stringify(data) : undefined,

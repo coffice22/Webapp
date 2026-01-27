@@ -343,7 +343,11 @@ const AnalyticsAndReporting = () => {
                 </label>
                 <select
                   value={period}
-                  onChange={(e) => setPeriod(e.target.value as "day" | "week" | "month" | "year")}
+                  onChange={(e) =>
+                    setPeriod(
+                      e.target.value as "day" | "week" | "month" | "year",
+                    )
+                  }
                   className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-accent focus:outline-none"
                 >
                   <option value="day">Aujourd'hui</option>

@@ -97,7 +97,11 @@ export const useAuthStore = create<AuthState>()(
             throw new Error(response.error || "Erreur de connexion");
           }
 
-          const responseData = response.data as { token: string; refreshToken?: string; user: User };
+          const responseData = response.data as {
+            token: string;
+            refreshToken?: string;
+            user: User;
+          };
           apiClient.setToken(responseData.token, responseData.refreshToken);
 
           set({
@@ -110,7 +114,9 @@ export const useAuthStore = create<AuthState>()(
         } catch (error) {
           set({ isLoading: false });
           console.error("Login error:", error);
-          toast.error(error instanceof Error ? error.message : "Erreur de connexion");
+          toast.error(
+            error instanceof Error ? error.message : "Erreur de connexion",
+          );
           throw error;
         }
       },
@@ -125,7 +131,11 @@ export const useAuthStore = create<AuthState>()(
             throw new Error(response.error || "Erreur lors de l'inscription");
           }
 
-          const responseData = response.data as { token: string; refreshToken?: string; user: User };
+          const responseData = response.data as {
+            token: string;
+            refreshToken?: string;
+            user: User;
+          };
           apiClient.setToken(responseData.token, responseData.refreshToken);
 
           set({
@@ -142,7 +152,11 @@ export const useAuthStore = create<AuthState>()(
         } catch (error) {
           set({ isLoading: false });
           console.error("Register error:", error);
-          toast.error(error instanceof Error ? error.message : "Erreur lors de l'inscription");
+          toast.error(
+            error instanceof Error
+              ? error.message
+              : "Erreur lors de l'inscription",
+          );
           throw error;
         }
       },
@@ -194,7 +208,11 @@ export const useAuthStore = create<AuthState>()(
         } catch (error) {
           set({ isLoading: false });
           console.error("Update profile error:", error);
-          toast.error(error instanceof Error ? error.message : "Erreur lors de la mise à jour");
+          toast.error(
+            error instanceof Error
+              ? error.message
+              : "Erreur lors de la mise à jour",
+          );
           throw error;
         }
       },

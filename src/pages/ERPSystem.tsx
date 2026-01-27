@@ -77,7 +77,10 @@ const ERPSystem = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showActionModal, setShowActionModal] = useState(false);
   const [actionType, setActionType] = useState("");
-  const [selectedItem, setSelectedItem] = useState<Record<string, unknown> | null>(null);
+  const [selectedItem, setSelectedItem] = useState<Record<
+    string,
+    unknown
+  > | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [notificationSettings, setNotificationSettings] = useState(
     getNotificationSettings(),
@@ -141,7 +144,10 @@ const ERPSystem = () => {
     setShowActionModal(false);
   };
 
-  const handleToggleUserStatus = async (userId: string, currentStatus: string) => {
+  const handleToggleUserStatus = async (
+    userId: string,
+    currentStatus: string,
+  ) => {
     const newStatus = currentStatus === "actif" ? "suspendu" : "actif";
     await updateUser(userId, { statut: newStatus });
     toast.success(`Utilisateur ${newStatus}`);
@@ -156,13 +162,19 @@ const ERPSystem = () => {
     }
   };
 
-  const handleToggleSpaceAvailability = (spaceId: string, currentStatus: boolean) => {
+  const handleToggleSpaceAvailability = (
+    spaceId: string,
+    currentStatus: boolean,
+  ) => {
     updateEspace(spaceId, { disponible: !currentStatus });
     toast.success(`Espace ${!currentStatus ? "activé" : "désactivé"}`);
     setShowActionModal(false);
   };
 
-  const openActionModal = (type: string, item: Record<string, unknown> | null = null) => {
+  const openActionModal = (
+    type: string,
+    item: Record<string, unknown> | null = null,
+  ) => {
     setActionType(type);
     setSelectedItem(item);
 

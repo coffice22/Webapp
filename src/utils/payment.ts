@@ -24,7 +24,10 @@ export const processPayment = async (
   } catch (error) {
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Erreur lors du traitement du paiement",
+      error:
+        error instanceof Error
+          ? error.message
+          : "Erreur lors du traitement du paiement",
     };
   }
 };
