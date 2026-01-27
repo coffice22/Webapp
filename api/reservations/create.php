@@ -8,7 +8,8 @@ require_once '../utils/UuidHelper.php';
 
 header('Content-Type: application/json');
 
-function parseDateTime($dateStr) {
+function parseDateTime($dateStr)
+{
     if (empty($dateStr)) {
         return null;
     }
