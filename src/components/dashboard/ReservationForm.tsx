@@ -183,11 +183,15 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
         reset();
         onClose();
       } else {
-        toast.error(response.error || response.message || "Erreur lors de la creation");
+        toast.error(
+          response.error || response.message || "Erreur lors de la creation",
+        );
       }
     } catch (error: any) {
       console.error("Erreur:", error);
-      toast.error(error.message || "Erreur lors de la creation de la reservation");
+      toast.error(
+        error.message || "Erreur lors de la creation de la reservation",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -253,7 +257,9 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
           )}
 
           {errors.espace_id && (
-            <p className="text-red-500 text-sm mt-1">{errors.espace_id.message}</p>
+            <p className="text-red-500 text-sm mt-1">
+              {errors.espace_id.message}
+            </p>
           )}
         </div>
 
@@ -340,7 +346,9 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
           <Button
             type="submit"
             variant="primary"
-            disabled={isSubmitting || loadingEspaces || availableEspaces.length === 0}
+            disabled={
+              isSubmitting || loadingEspaces || availableEspaces.length === 0
+            }
             className="min-w-[140px]"
           >
             {isSubmitting ? (
