@@ -187,7 +187,8 @@ try {
             'nom' => $data->nom,
             'prenom' => $data->prenom,
             'role' => 'user',
-            'code_parrainage' => $code_parrain
+            'codeParrainage' => $code_parrain,
+            'credit' => 0
         ]
     ], "Inscription réussie", 201);
 

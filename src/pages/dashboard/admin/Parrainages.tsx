@@ -9,6 +9,11 @@ import {
   Calendar,
   Search,
   Download,
+  CheckCircle,
+  Clock,
+  User,
+  Mail,
+  CreditCard,
 } from "lucide-react";
 import { apiClient } from "../../../lib/api-client";
 import Card from "../../../components/ui/Card";
@@ -18,38 +23,47 @@ import Button from "../../../components/ui/Button";
 import LoadingSpinner from "../../../components/ui/LoadingSpinner";
 import toast from "react-hot-toast";
 import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 import { logger } from "../../../utils/logger";
 
-interface Parrainage {
+interface ParrainageDetail {
   id: string;
-  parrain_id: string;
-  parrain_nom: string;
-  parrain_prenom: string;
-  parrain_email: string;
-  filleul_id: string;
-  filleul_nom: string;
-  filleul_prenom: string;
-  filleul_email: string;
-  statut: string;
-  credits_accordes: number;
-  date_parrainage: string;
+  parrainageId: string;
+  filleulId: string;
+  filleulNom: string;
+  filleulEmail: string;
+  recompenseParrain: number;
+  recompenseFilleul: number;
+  statut: "en_attente" | "valide" | "paye";
+  dateInscription: string;
+  dateValidation?: string;
 }
 
 interface Stats {
-  total_parrainages: number;
-  total_credits_distribues: number;
-  parrainages_actifs: number;
-  meilleurs_parrains: any[];
+  totalParrainages: number;
+  totalRecompenses: number;
+  recompensesPayees: number;
+  recompensesEnAttente: number;
+}
+
+interface TopParrain {
+  id: string;
+  nom: string;
+  prenom: string;
+  email: string;
+  count: number;
+  credits: number;
 }
 
 const Parrainages = () => {
-  const [parrainages, setParrainages] = useState<Parrainage[]>([]);
+  const [parrainages, setParrainages] = useState<ParrainageDetail[]>([]);
   const [stats, setStats] = useState<Stats>({
-    total_parrainages: 0,
-    total_credits_distribues: 0,
-    parrainages_actifs: 0,
-    meilleurs_parrains: [],
+    totalParrainages: 0,
+    totalRecompenses: 0,
+    recompensesPayees: 0,
+    recompensesEnAttente: 0,
   });
+  const [topParrains, setTopParrains] = useState<TopParrain[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -61,302 +75,384 @@ const Parrainages = () => {
     setLoading(true);
     try {
       const response = await apiClient.getParrainages();
-      const data = (response.data || []) as any[];
-      setParrainages(data);
+      const data = Array.isArray(response.data?.data)
+        ? response.data.data
+        : Array.isArray(response.data)
+        ? response.data
+        : [];
 
-      // Calculer les stats
-      const statsData = {
-        total_parrainages: data.length,
-        total_credits_distribues: data.reduce(
-          (sum: number, p: Parrainage) => sum + p.credits_accordes,
-          0,
-        ),
-        parrainages_actifs: data.filter(
-          (p: Parrainage) => p.statut === "valide",
-        ).length,
-        meilleurs_parrains: calculateTopSponsors(data),
-      };
-      setStats(statsData);
+      setParrainages(data);
+      calculateStats(data);
     } catch (error) {
       logger.error("Erreur chargement parrainages:", error);
-      toast.error("Erreur lors du chargement");
+      toast.error("Erreur lors du chargement des données");
     } finally {
       setLoading(false);
     }
   };
 
-  const calculateTopSponsors = (data: Parrainage[]) => {
-    const sponsorMap = new Map();
+  const calculateStats = (data: ParrainageDetail[]) => {
+    const totalRecompenses = data.reduce(
+      (sum, p) => sum + (p.recompenseParrain || 0),
+      0
+    );
+    const recompensesPayees = data
+      .filter((p) => p.statut === "paye")
+      .reduce((sum, p) => sum + (p.recompenseParrain || 0), 0);
+    const recompensesEnAttente = data
+      .filter((p) => p.statut === "en_attente" || p.statut === "valide")
+      .reduce((sum, p) => sum + (p.recompenseParrain || 0), 0);
+
+    setStats({
+      totalParrainages: data.length,
+      totalRecompenses,
+      recompensesPayees,
+      recompensesEnAttente,
+    });
+
+    calculateTopParrains(data);
+  };
+
+  const calculateTopParrains = (data: ParrainageDetail[]) => {
+    const parrainMap = new Map<string, TopParrain>();
 
     data.forEach((p) => {
-      if (!sponsorMap.has(p.parrain_id)) {
-        sponsorMap.set(p.parrain_id, {
-          id: p.parrain_id,
-          nom: p.parrain_nom,
-          prenom: p.parrain_prenom,
-          email: p.parrain_email,
+      const parrainId = p.parrainageId;
+      if (!parrainId) return;
+
+      if (!parrainMap.has(parrainId)) {
+        parrainMap.set(parrainId, {
+          id: parrainId,
+          nom: p.filleulNom?.split(" ")[1] || "",
+          prenom: p.filleulNom?.split(" ")[0] || "",
+          email: p.filleulEmail || "",
           count: 0,
           credits: 0,
         });
       }
-      const sponsor = sponsorMap.get(p.parrain_id);
-      sponsor.count++;
-      sponsor.credits += p.credits_accordes;
+
+      const parrain = parrainMap.get(parrainId);
+      if (parrain) {
+        parrain.count++;
+        parrain.credits += p.recompenseParrain || 0;
+      }
     });
 
-    return Array.from(sponsorMap.values())
+    const top = Array.from(parrainMap.values())
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
+
+    setTopParrains(top);
   };
 
   const filteredParrainages = parrainages.filter(
     (p) =>
-      p.parrain_nom?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.parrain_email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.filleul_nom?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.filleul_email?.toLowerCase().includes(searchQuery.toLowerCase()),
+      p.filleulNom?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.filleulEmail?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const exportData = () => {
-    const csv = [
-      [
-        "Parrain",
-        "Email Parrain",
-        "Filleul",
-        "Email Filleul",
-        "Date",
-        "Crédits",
-        "Statut",
-      ],
-      ...filteredParrainages.map((p) => [
-        `${p.parrain_prenom} ${p.parrain_nom}`,
-        p.parrain_email,
-        `${p.filleul_prenom} ${p.filleul_nom}`,
-        p.filleul_email,
-        format(new Date(p.date_parrainage), "dd/MM/yyyy HH:mm"),
-        `${p.credits_accordes} DA`,
-        p.statut,
-      ]),
-    ]
-      .map((row) => row.join(","))
-      .join("\n");
+  const exportToCSV = () => {
+    const headers = [
+      "Filleul",
+      "Email",
+      "Date d'inscription",
+      "Récompense Parrain (DA)",
+      "Récompense Filleul (DA)",
+      "Statut",
+    ];
 
-    const blob = new Blob([csv], { type: "text/csv" });
+    const rows = filteredParrainages.map((p) => [
+      p.filleulNom || "N/A",
+      p.filleulEmail || "N/A",
+      p.dateInscription
+        ? format(new Date(p.dateInscription), "dd/MM/yyyy HH:mm", { locale: fr })
+        : "N/A",
+      p.recompenseParrain.toString(),
+      p.recompenseFilleul.toString(),
+      p.statut,
+    ]);
+
+    const csvContent = [headers, ...rows].map((row) => row.join(",")).join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
     a.download = `parrainages_${format(new Date(), "yyyy-MM-dd")}.csv`;
     a.click();
     URL.revokeObjectURL(url);
-    toast.success("Export réussi");
+    toast.success("Export CSV réussi");
+  };
+
+  const getStatutBadge = (statut: string) => {
+    switch (statut) {
+      case "paye":
+        return <Badge variant="success">Payé</Badge>;
+      case "valide":
+        return <Badge variant="primary">Validé</Badge>;
+      case "en_attente":
+        return <Badge variant="warning">En attente</Badge>;
+      default:
+        return <Badge>{statut}</Badge>;
+    }
   };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <LoadingSpinner size="lg" />
+        <LoadingSpinner size="large" />
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-display font-bold text-primary">
-          Programme de Parrainage
-        </h1>
-        <Button onClick={exportData} variant="outline">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Gestion des Parrainages
+          </h1>
+          <p className="text-gray-600 mt-1">
+            Suivi et validation des parrainages
+          </p>
+        </div>
+        <Button onClick={exportToCSV} variant="outline">
           <Download className="w-4 h-4 mr-2" />
-          Exporter
+          Export CSV
         </Button>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
+      {/* Statistiques */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+      >
+        <Card className="p-6">
           <div className="flex items-center gap-4">
-            <div className="p-3 bg-accent/10 rounded-xl">
-              <Users className="w-6 h-6 text-accent" />
+            <div className="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center">
+              <Users className="w-7 h-7 text-blue-600" />
             </div>
             <div>
-              <p className="text-sm text-gray-600">Total Parrainages</p>
-              <p className="text-2xl font-bold text-primary">
-                {stats.total_parrainages}
+              <p className="text-sm text-gray-600 mb-1">Total Parrainages</p>
+              <p className="text-3xl font-bold text-gray-900">
+                {stats.totalParrainages}
               </p>
             </div>
           </div>
         </Card>
 
-        <Card>
+        <Card className="p-6">
           <div className="flex items-center gap-4">
-            <div className="p-3 bg-green-100 rounded-xl">
-              <DollarSign className="w-6 h-6 text-green-600" />
+            <div className="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center">
+              <TrendingUp className="w-7 h-7 text-green-600" />
             </div>
             <div>
-              <p className="text-sm text-gray-600">Crédits Distribués</p>
-              <p className="text-2xl font-bold text-primary">
-                {stats.total_credits_distribues} DA
+              <p className="text-sm text-gray-600 mb-1">Total Récompenses</p>
+              <p className="text-3xl font-bold text-gray-900">
+                {stats.totalRecompenses.toLocaleString("fr-DZ")} DA
               </p>
             </div>
           </div>
         </Card>
 
-        <Card>
+        <Card className="p-6">
           <div className="flex items-center gap-4">
-            <div className="p-3 bg-teal/10 rounded-xl">
-              <TrendingUp className="w-6 h-6 text-teal" />
+            <div className="w-14 h-14 bg-emerald-100 rounded-2xl flex items-center justify-center">
+              <CheckCircle className="w-7 h-7 text-emerald-600" />
             </div>
             <div>
-              <p className="text-sm text-gray-600">Parrainages Actifs</p>
-              <p className="text-2xl font-bold text-primary">
-                {stats.parrainages_actifs}
+              <p className="text-sm text-gray-600 mb-1">Récompenses Payées</p>
+              <p className="text-3xl font-bold text-gray-900">
+                {stats.recompensesPayees.toLocaleString("fr-DZ")} DA
               </p>
             </div>
           </div>
         </Card>
-      </div>
 
-      {/* Top Sponsors */}
-      {stats.meilleurs_parrains.length > 0 && (
-        <Card>
-          <h2 className="text-xl font-bold text-primary mb-4 flex items-center gap-2">
-            <Award className="w-6 h-6 text-accent" />
-            Meilleurs Parrains
-          </h2>
-          <div className="space-y-3">
-            {stats.meilleurs_parrains.map((sponsor, index) => (
-              <div
-                key={sponsor.id}
-                className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
-              >
-                <div className="flex items-center gap-4">
-                  <div
-                    className={`w-8 h-8 flex items-center justify-center rounded-full font-bold ${
-                      index === 0
-                        ? "bg-yellow-400 text-yellow-900"
-                        : index === 1
-                          ? "bg-gray-300 text-gray-700"
-                          : index === 2
-                            ? "bg-orange-400 text-orange-900"
-                            : "bg-gray-200 text-gray-600"
-                    }`}
-                  >
-                    {index + 1}
+        <Card className="p-6">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 bg-orange-100 rounded-2xl flex items-center justify-center">
+              <Clock className="w-7 h-7 text-orange-600" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-600 mb-1">En Attente</p>
+              <p className="text-3xl font-bold text-gray-900">
+                {stats.recompensesEnAttente.toLocaleString("fr-DZ")} DA
+              </p>
+            </div>
+          </div>
+        </Card>
+      </motion.div>
+
+      {/* Top Parrains */}
+      {topParrains.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+        >
+          <Card className="p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <Award className="w-6 h-6 text-yellow-600" />
+              <h2 className="text-xl font-bold text-gray-900">
+                Top 5 Parrains
+              </h2>
+            </div>
+            <div className="space-y-4">
+              {topParrains.map((parrain, index) => (
+                <div
+                  key={parrain.id}
+                  className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center justify-center w-10 h-10 bg-white rounded-full border-2 border-gray-200">
+                      <span className="font-bold text-gray-700">
+                        #{index + 1}
+                      </span>
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">
+                        {parrain.prenom} {parrain.nom}
+                      </p>
+                      <p className="text-sm text-gray-500">{parrain.email}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-medium text-gray-900">
-                      {sponsor.prenom} {sponsor.nom}
+                  <div className="text-right">
+                    <p className="font-bold text-blue-600">
+                      {parrain.count} parrainages
                     </p>
-                    <p className="text-sm text-gray-500">{sponsor.email}</p>
+                    <p className="text-sm text-gray-600">
+                      {parrain.credits.toLocaleString("fr-DZ")} DA
+                    </p>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="font-bold text-accent">
-                    {sponsor.count} parrainages
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    {sponsor.credits} DA distribués
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </Card>
-      )}
-
-      {/* Search */}
-      <div className="flex gap-4">
-        <div className="flex-1">
-          <Input
-            type="search"
-            placeholder="Rechercher un parrainage..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            icon={<Search className="w-5 h-5" />}
-          />
-        </div>
-      </div>
-
-      {/* Parrainages Table */}
-      <Card>
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Parrain
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Filleul
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Date
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Crédits
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Statut
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredParrainages.map((parrainage) => (
-                <tr key={parrainage.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div>
-                      <div className="font-medium text-gray-900">
-                        {parrainage.parrain_prenom} {parrainage.parrain_nom}
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        {parrainage.parrain_email}
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div>
-                      <div className="font-medium text-gray-900">
-                        {parrainage.filleul_prenom} {parrainage.filleul_nom}
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        {parrainage.filleul_email}
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {format(
-                      new Date(parrainage.date_parrainage),
-                      "dd/MM/yyyy HH:mm",
-                    )}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="font-bold text-accent">
-                      {parrainage.credits_accordes} DA
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <Badge
-                      variant={
-                        parrainage.statut === "valide" ? "success" : "warning"
-                      }
-                    >
-                      {parrainage.statut}
-                    </Badge>
-                  </td>
-                </tr>
               ))}
-            </tbody>
-          </table>
-        </div>
-      </Card>
-
-      {filteredParrainages.length === 0 && (
-        <div className="text-center py-12">
-          <Gift className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <p className="text-gray-500">Aucun parrainage trouvé</p>
-        </div>
+            </div>
+          </Card>
+        </motion.div>
       )}
+
+      {/* Liste des parrainages */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+      >
+        <Card className="overflow-hidden">
+          <div className="p-6 border-b border-gray-200">
+            <div className="flex items-center justify-between gap-4">
+              <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                <Gift className="w-6 h-6 text-blue-600" />
+                Tous les Parrainages ({filteredParrainages.length})
+              </h2>
+              <div className="w-full max-w-sm">
+                <Input
+                  type="search"
+                  placeholder="Rechercher un filleul..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  icon={<Search className="w-4 h-4" />}
+                />
+              </div>
+            </div>
+          </div>
+
+          {filteredParrainages.length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Filleul
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Date d'inscription
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Récompense Parrain
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Récompense Filleul
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Statut
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {filteredParrainages.map((parrainage) => (
+                    <tr key={parrainage.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                            <User className="w-5 h-5 text-blue-600" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-gray-900">
+                              {parrainage.filleulNom || "Utilisateur"}
+                            </p>
+                            <p className="text-xs text-gray-500 flex items-center gap-1">
+                              <Mail className="w-3 h-3" />
+                              {parrainage.filleulEmail}
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <Calendar className="w-4 h-4" />
+                          {parrainage.dateInscription
+                            ? format(
+                                new Date(parrainage.dateInscription),
+                                "dd MMM yyyy",
+                                { locale: fr }
+                              )
+                            : "N/A"}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center gap-2">
+                          <CreditCard className="w-4 h-4 text-green-600" />
+                          <span className="text-sm font-medium text-gray-900">
+                            {parrainage.recompenseParrain.toLocaleString(
+                              "fr-DZ"
+                            )}{" "}
+                            DA
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center gap-2">
+                          <CreditCard className="w-4 h-4 text-blue-600" />
+                          <span className="text-sm font-medium text-gray-900">
+                            {parrainage.recompenseFilleul.toLocaleString(
+                              "fr-DZ"
+                            )}{" "}
+                            DA
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {getStatutBadge(parrainage.statut)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <Gift className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <p className="text-gray-500">
+                {searchQuery
+                  ? "Aucun parrainage trouvé pour cette recherche"
+                  : "Aucun parrainage enregistré"}
+              </p>
+            </div>
+          )}
+        </Card>
+      </motion.div>
     </div>
   );
 };

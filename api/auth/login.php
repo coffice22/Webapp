@@ -51,7 +51,7 @@ try {
 
     $db = Database::getInstance()->getConnection();
 
-    $query = "SELECT id, email, password_hash, nom, prenom, role, statut
+    $query = "SELECT id, email, password_hash, nom, prenom, role, statut, code_parrainage, credit
               FROM users
               WHERE email = :email
               LIMIT 1";
@@ -93,7 +93,9 @@ try {
             'email' => $user['email'],
             'nom' => $user['nom'],
             'prenom' => $user['prenom'],
-            'role' => $user['role']
+            'role' => $user['role'],
+            'codeParrainage' => $user['code_parrainage'],
+            'credit' => (float)($user['credit'] ?? 0)
         ]
     ], "Connexion réussie");
 
