@@ -245,7 +245,9 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
         toast.success("Reservation creee avec succes !");
         handleClose();
       } else {
-        toast.error(response.error || response.message || "Erreur lors de la creation");
+        toast.error(
+          response.error || response.message || "Erreur lors de la creation",
+        );
         console.error("Erreur de reservation:", debug);
       }
     } catch (error: any) {
@@ -311,7 +313,9 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                 <div className="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mb-4">
                   <AlertCircle className="w-7 h-7 text-red-500" />
                 </div>
-                <p className="text-gray-700 font-medium mb-2">Erreur de chargement</p>
+                <p className="text-gray-700 font-medium mb-2">
+                  Erreur de chargement
+                </p>
                 <p className="text-gray-500 text-sm mb-4">{loadError}</p>
                 <Button onClick={loadEspaces} variant="secondary">
                   Reessayer
@@ -322,7 +326,9 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                 <div className="w-14 h-14 bg-amber-100 rounded-full flex items-center justify-center mb-4">
                   <MapPin className="w-7 h-7 text-amber-500" />
                 </div>
-                <p className="text-gray-700 font-medium">Aucun espace disponible</p>
+                <p className="text-gray-700 font-medium">
+                  Aucun espace disponible
+                </p>
                 <p className="text-gray-500 text-sm">Revenez plus tard</p>
               </div>
             ) : (
@@ -337,7 +343,9 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-semibold text-gray-900">{espace.nom}</h3>
+                          <h3 className="font-semibold text-gray-900">
+                            {espace.nom}
+                          </h3>
                           <span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-xs">
                             {espace.type}
                           </span>
@@ -369,9 +377,12 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                   <p className="text-xs text-amber-600 font-medium uppercase tracking-wide">
                     Espace selectionne
                   </p>
-                  <p className="font-semibold text-gray-900 mt-1">{currentEspace.nom}</p>
+                  <p className="font-semibold text-gray-900 mt-1">
+                    {currentEspace.nom}
+                  </p>
                   <p className="text-sm text-gray-500">
-                    {currentEspace.capacite} places - {getPrixHeure(currentEspace).toLocaleString()} DA/h
+                    {currentEspace.capacite} places -{" "}
+                    {getPrixHeure(currentEspace).toLocaleString()} DA/h
                   </p>
                 </div>
                 <button
@@ -418,7 +429,9 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                 </label>
                 <DatePicker
                   selected={watchDateFin}
-                  onChange={(date: Date | null) => date && setValue("date_fin", date)}
+                  onChange={(date: Date | null) =>
+                    date && setValue("date_fin", date)
+                  }
                   showTimeSelect
                   timeFormat="HH:mm"
                   timeIntervals={30}
@@ -448,7 +461,12 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
               <div className="flex items-center gap-3">
                 <button
                   type="button"
-                  onClick={() => setValue("participants", Math.max(1, (watchParticipants || 1) - 1))}
+                  onClick={() =>
+                    setValue(
+                      "participants",
+                      Math.max(1, (watchParticipants || 1) - 1),
+                    )
+                  }
                   className="w-10 h-10 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 font-bold transition-colors"
                 >
                   -
@@ -470,7 +488,10 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                   onClick={() =>
                     setValue(
                       "participants",
-                      Math.min(currentEspace.capacite, (watchParticipants || 1) + 1)
+                      Math.min(
+                        currentEspace.capacite,
+                        (watchParticipants || 1) + 1,
+                      ),
                     )
                   }
                   className="w-10 h-10 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 font-bold transition-colors"
@@ -527,7 +548,9 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                     <button
                       type="button"
                       onClick={() => {
-                        navigator.clipboard.writeText(JSON.stringify(debugInfo, null, 2));
+                        navigator.clipboard.writeText(
+                          JSON.stringify(debugInfo, null, 2),
+                        );
                         toast.success("Debug info copie");
                       }}
                       className="px-2 py-1 bg-blue-100 hover:bg-blue-200 text-blue-700 text-xs rounded transition-colors"
