@@ -163,6 +163,6 @@ try {
     Response::success($reservation, "Reservation creee avec succes", 201);
 
 } catch (Exception $e) {
-    error_log("Erreur reservation create: " . $e->getMessage());
-    Response::error("Erreur serveur", 500);
+    error_log("Erreur reservation create: " . $e->getMessage() . "\n" . $e->getTraceAsString());
+    Response::error("Erreur: " . $e->getMessage(), 500);
 }

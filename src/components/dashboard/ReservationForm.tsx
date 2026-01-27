@@ -211,6 +211,14 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
       notes: data.notes || "",
     };
 
+    const apiPayload = {
+      espace_id: data.espace_id,
+      date_debut: data.date_debut.toISOString(),
+      date_fin: data.date_fin.toISOString(),
+      participants: data.participants || 1,
+      notes: data.notes || "",
+    };
+
     try {
       setIsSubmitting(true);
 
@@ -224,8 +232,8 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
 === ERREUR RESERVATION ===
 Date: ${new Date().toISOString()}
 
---- DONNEES ENVOYEES ---
-${JSON.stringify(requestData, null, 2)}
+--- DONNEES ENVOYEES A L'API (snake_case) ---
+${JSON.stringify(apiPayload, null, 2)}
 
 --- REPONSE API ---
 ${JSON.stringify(response, null, 2)}
@@ -238,8 +246,8 @@ ${JSON.stringify(response, null, 2)}
 === EXCEPTION ===
 Date: ${new Date().toISOString()}
 
---- DONNEES ENVOYEES ---
-${JSON.stringify(requestData, null, 2)}
+--- DONNEES ENVOYEES A L'API (snake_case) ---
+${JSON.stringify(apiPayload, null, 2)}
 
 --- ERREUR ---
 Message: ${error.message || "Inconnu"}
