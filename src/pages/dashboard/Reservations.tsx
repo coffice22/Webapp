@@ -1,5 +1,13 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Calendar, Clock, Plus, Eye, XCircle, RefreshCw, AlertCircle } from "lucide-react";
+import {
+  Calendar,
+  Clock,
+  Plus,
+  Eye,
+  XCircle,
+  RefreshCw,
+  AlertCircle,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import { apiClient } from "../../lib/api-client";
 import Button from "../../components/ui/Button";
@@ -85,7 +93,8 @@ const Reservations = () => {
         }
         setReservations(data);
       } else {
-        const errMsg = response.error || response.message || "Erreur lors du chargement";
+        const errMsg =
+          response.error || response.message || "Erreur lors du chargement";
         setError(errMsg);
         setReservations([]);
       }
@@ -114,7 +123,9 @@ const Reservations = () => {
         setCancelId(null);
         await loadReservations();
       } else {
-        toast.error(response.error || response.message || "Erreur lors de l'annulation");
+        toast.error(
+          response.error || response.message || "Erreur lors de l'annulation",
+        );
       }
     } catch (err: any) {
       toast.error(err.message || "Erreur lors de l'annulation");
@@ -168,7 +179,11 @@ const Reservations = () => {
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Mes Reservations</h1>
         <div className="flex gap-2">
-          <Button variant="secondary" onClick={loadReservations} title="Actualiser">
+          <Button
+            variant="secondary"
+            onClick={loadReservations}
+            title="Actualiser"
+          >
             <RefreshCw className="w-4 h-4" />
           </Button>
           <Button onClick={() => setShowForm(true)}>
@@ -198,7 +213,9 @@ const Reservations = () => {
                     <h3 className="text-lg font-semibold">
                       {reservation.espace_nom || "Espace"}
                     </h3>
-                    <Badge variant={statusColors[reservation.statut] || "secondary"}>
+                    <Badge
+                      variant={statusColors[reservation.statut] || "secondary"}
+                    >
                       {statusLabels[reservation.statut] || reservation.statut}
                     </Badge>
                   </div>
@@ -249,10 +266,7 @@ const Reservations = () => {
         </div>
       )}
 
-      <ReservationForm
-        isOpen={showForm}
-        onClose={handleFormClose}
-      />
+      <ReservationForm isOpen={showForm} onClose={handleFormClose} />
 
       <Modal
         isOpen={!!cancelId}
