@@ -1,6 +1,7 @@
 # TEST SYSTÈME DE RÉSERVATION - COFFICE
 
 ## Problème identifié
+
 L'erreur "Erreur lors de la création de la réservation" se produit.
 
 ## Tests effectués
@@ -8,6 +9,7 @@ L'erreur "Erreur lors de la création de la réservation" se produit.
 ### 1. Structure du flux de données
 
 **Frontend → API**
+
 ```javascript
 // src/lib/api-client.ts:454-479
 async createReservation(data: {
@@ -36,6 +38,7 @@ async createReservation(data: {
 ```
 
 **API PHP attend** (create.php:39-41)
+
 ```php
 if (empty($data->espace_id)) $missingFields[] = 'espace_id';   // ✓ Match
 if (empty($data->date_debut)) $missingFields[] = 'date_debut'; // ✓ Match
@@ -45,12 +48,14 @@ if (empty($data->date_fin)) $missingFields[] = 'date_fin';     // ✓ Match
 ### 2. Format des dates
 
 **Frontend envoie** (ReservationForm.tsx:319-323)
+
 ```typescript
 dateDebut: data.dateDebut.toISOString(),  // Ex: "2026-01-27T12:00:00.000Z"
 dateFin: data.dateFin.toISOString(),      // Ex: "2026-01-27T14:00:00.000Z"
 ```
 
 **API PHP utilise**
+
 ```php
 $debut = new DateTime($data->date_debut);  // ✓ Compatible ISO 8601
 $fin = new DateTime($data->date_fin);
@@ -59,6 +64,7 @@ $fin = new DateTime($data->date_fin);
 ### 3. Points de vérification
 
 #### ✓ Format de données : OK
+
 - snake_case correctement appliqué
 - Dates en format ISO 8601
 - Participants avec valeur par défaut
@@ -66,17 +72,20 @@ $fin = new DateTime($data->date_fin);
 #### ⚠️ À vérifier sur le serveur
 
 1. **Extension PDO MySQL**
+
    ```bash
    php -m | grep -i pdo
    # Doit afficher: pdo_mysql
    ```
 
 2. **Connexion base de données**
+
    ```bash
    php -r "new PDO('mysql:host=localhost;dbname=cofficed_coffice', 'cofficed_user', 'password');"
    ```
 
 3. **Permissions table reservations**
+
    ```sql
    SHOW GRANTS FOR 'cofficed_user'@'localhost';
    -- Doit avoir INSERT, SELECT sur reservations
@@ -93,6 +102,7 @@ $fin = new DateTime($data->date_fin);
 ### Étape 1 : Activer les logs détaillés
 
 Modifier `/api/reservations/create.php` ligne 35 :
+
 ```php
 $data = json_decode(file_get_contents("php://input"));
 
@@ -106,6 +116,7 @@ error_log("Auth: " . json_encode($auth));
 ### Étape 2 : Vérifier les erreurs PHP
 
 Sur le serveur :
+
 ```bash
 tail -f /var/log/php_errors.log
 # ou
@@ -135,26 +146,32 @@ curl -X POST https://coffice.dz/api/reservations/create.php \
 ## Erreurs possibles et solutions
 
 ### Erreur 1: "Champs requis manquants"
+
 **Cause**: Données pas envoyées ou format JSON invalide
 **Solution**: Vérifier JSON.stringify dans api-client.ts
 
 ### Erreur 2: "Espace introuvable"
+
 **Cause**: ID espace invalide
 **Solution**: Vérifier que l'ID existe dans la table `espaces`
 
 ### Erreur 3: "Cet espace n'est pas disponible"
+
 **Cause**: Colonne `disponible` = 0
 **Solution**: `UPDATE espaces SET disponible = 1 WHERE id = 'ID'`
 
 ### Erreur 4: "Conflit de réservation"
+
 **Cause**: Dates qui se chevauchent avec une réservation existante
 **Solution**: Choisir d'autres dates ou vérifier les réservations existantes
 
 ### Erreur 5: "Session expirée"
+
 **Cause**: Token JWT invalide ou expiré
 **Solution**: Se reconnecter pour obtenir un nouveau token
 
 ### Erreur 6: Erreur DB sans message
+
 **Cause**: Extension PDO MySQL manquante
 **Solution**: Installer sur le serveur: `apt-get install php-mysql && systemctl restart apache2`
 

@@ -7,16 +7,19 @@ Le système de réservation affichait "Erreur lors de la création de la réserv
 ## 🔧 Corrections appliquées
 
 ### 1. **Base de données** (`api/config/database.php`)
+
 - ✅ Ajout de la gestion du cas où PDO::MYSQL_ATTR_INIT_COMMAND n'existe pas
 - ✅ Fallback avec `SET NAMES` en cas d'absence de l'extension
 - ✅ Gestion propre des erreurs de connexion
 
 ### 2. **API Client** (`src/lib/api-client.ts`)
+
 - ✅ Suppression des champs calculés côté serveur (montant_total, statut, etc.)
 - ✅ Envoi uniquement des données nécessaires
 - ✅ Logs de debug ajoutés
 
 ### 3. **Formulaire de réservation** (`src/components/dashboard/ReservationForm.tsx`)
+
 - ✅ Protection contre la soumission automatique (vérifie currentStep === 3)
 - ✅ Blocage de la touche Enter avant l'étape de confirmation
 - ✅ Gestion correcte du code promo avec Enter
@@ -24,6 +27,7 @@ Le système de réservation affichait "Erreur lors de la création de la réserv
 - ✅ Meilleure gestion des erreurs
 
 ### 4. **APIs de récupération** (`api/reservations/index.php` & `show.php`)
+
 - ✅ Ajout de toutes les informations nécessaires (capacite, prix)
 - ✅ Données complètes pour l'affichage
 
@@ -37,11 +41,13 @@ php -m | grep -i pdo
 ```
 
 **Résultat attendu:**
+
 ```
 pdo_mysql
 ```
 
 **Si absent**, installer:
+
 ```bash
 # Ubuntu/Debian
 sudo apt-get install php-mysql
@@ -55,6 +61,7 @@ sudo systemctl restart httpd
 ### Étape 2: Activer le mode debug
 
 Dans `.env` sur le serveur:
+
 ```bash
 APP_ENV=development
 ```
@@ -74,6 +81,7 @@ tail -f /var/log/php_errors.log
 L'API `/api/reservations/create-debug.php` a été créée avec des logs détaillés.
 
 **Test avec curl:**
+
 ```bash
 # Récupérer votre token JWT en vous connectant
 TOKEN="votre_token_ici"
@@ -128,34 +136,44 @@ Sur votre serveur de production, vérifiez:
 ## 🐛 Erreurs courantes et solutions
 
 ### "Champs requis manquants"
+
 **Cause**: Données mal formatées
 **Solution**: Vérifier que l'ID espace est valide
 
 ### "Espace introuvable"
+
 **Cause**: ID espace n'existe pas en BDD
 **Solution**:
+
 ```sql
 SELECT id, nom FROM espaces WHERE disponible = 1;
 ```
+
 Utiliser un ID de cette liste.
 
 ### "JWT token invalide"
+
 **Cause**: Token expiré ou secret différent
 **Solution**:
+
 1. Se déconnecter
 2. Se reconnecter
 3. Vérifier que JWT_SECRET est le même partout
 
 ### "Erreur de connexion à la base de données"
+
 **Cause**: PDO MySQL pas installé ou identifiants incorrects
 **Solution**:
+
 1. Installer php-mysql
 2. Vérifier .env : DB_HOST, DB_NAME, DB_USER, DB_PASSWORD
 3. Tester: `mysql -h localhost -u cofficed_user -p`
 
 ### "403 Forbidden" sur les APIs
+
 **Cause**: .htaccess ou permissions
 **Solution**:
+
 ```bash
 # Vérifier .htaccess dans api/
 cat api/.htaccess

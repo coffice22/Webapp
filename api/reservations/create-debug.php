@@ -59,9 +59,15 @@ try {
     // TEST 3: VALIDATION CHAMPS
     error_log("TEST 3: Validation des champs...");
     $missingFields = [];
-    if (empty($data->espace_id)) $missingFields[] = 'espace_id';
-    if (empty($data->date_debut)) $missingFields[] = 'date_debut';
-    if (empty($data->date_fin)) $missingFields[] = 'date_fin';
+    if (empty($data->espace_id)) {
+        $missingFields[] = 'espace_id';
+    }
+    if (empty($data->date_debut)) {
+        $missingFields[] = 'date_debut';
+    }
+    if (empty($data->date_fin)) {
+        $missingFields[] = 'date_fin';
+    }
 
     if (!empty($missingFields)) {
         error_log("✗ Champs manquants: " . implode(', ', $missingFields));
