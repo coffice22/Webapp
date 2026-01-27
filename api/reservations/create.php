@@ -19,7 +19,7 @@ try {
     $input = file_get_contents("php://input");
     $data = json_decode($input, true);
 
-    if (!$data) {
+    if (!$data || json_last_error() !== JSON_ERROR_NONE) {
         Response::error("Donnees JSON invalides", 400);
     }
 
@@ -28,6 +28,7 @@ try {
     $dateFin = $data['date_fin'] ?? null;
     $participants = isset($data['participants']) ? intval($data['participants']) : 1;
     $notes = isset($data['notes']) ? trim($data['notes']) : '';
+    $codePromo = $data['code_promo'] ?? null;
 
     if (empty($espaceId)) {
         Response::error("L'espace est requis", 400);
@@ -50,11 +51,11 @@ try {
     $fin = strtotime($dateFin);
 
     if ($debut === false) {
-        Response::error("Format de date de debut invalide", 400);
+        Response::error("Format de date de debut invalide: $dateDebut", 400);
     }
 
     if ($fin === false) {
-        Response::error("Format de date de fin invalide", 400);
+        Response::error("Format de date de fin invalide: $dateFin", 400);
     }
 
     if ($fin <= $debut) {
@@ -66,7 +67,7 @@ try {
 
     $db = Database::getInstance()->getConnection();
 
-    $stmt = $db->prepare("SELECT * FROM espaces WHERE id = ?");
+    $stmt = $db->prepare("SELECT id, nom, type, capacite, prix_heure, prix_jour, disponible FROM espaces WHERE id = ?");
     $stmt->execute([$espaceId]);
     $espace = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -82,8 +83,8 @@ try {
         $participants = 1;
     }
 
-    if ($participants > $espace['capacite']) {
-        $participants = $espace['capacite'];
+    if ($participants > intval($espace['capacite'])) {
+        $participants = intval($espace['capacite']);
     }
 
     $stmt = $db->prepare("
@@ -127,12 +128,50 @@ try {
         $type = 'jour';
     }
 
+    $reduction = 0;
+    $codePromoId = null;
+    if (!empty($codePromo)) {
+        $stmt = $db->prepare("
+            SELECT id, type_reduction, valeur, montant_minimum, utilisations_max, utilisations_actuelles, date_expiration, actif
+            FROM codes_promo
+            WHERE code = ? AND actif = 1
+        ");
+        $stmt->execute([$codePromo]);
+        $promo = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($promo) {
+            $isValid = true;
+
+            if ($promo['date_expiration'] && strtotime($promo['date_expiration']) < time()) {
+                $isValid = false;
+            }
+
+            if ($promo['utilisations_max'] > 0 && $promo['utilisations_actuelles'] >= $promo['utilisations_max']) {
+                $isValid = false;
+            }
+
+            if ($promo['montant_minimum'] > 0 && $montant < $promo['montant_minimum']) {
+                $isValid = false;
+            }
+
+            if ($isValid) {
+                $codePromoId = $promo['id'];
+                if ($promo['type_reduction'] === 'pourcentage') {
+                    $reduction = $montant * ($promo['valeur'] / 100);
+                } else {
+                    $reduction = min($promo['valeur'], $montant);
+                }
+                $montant = max(0, $montant - $reduction);
+            }
+        }
+    }
+
     $id = UuidHelper::generate();
 
     $stmt = $db->prepare("
         INSERT INTO reservations
-        (id, user_id, espace_id, date_debut, date_fin, statut, type_reservation, montant_total, montant_paye, participants, notes, created_at)
-        VALUES (?, ?, ?, ?, ?, 'en_attente', ?, ?, 0, ?, ?, NOW())
+        (id, user_id, espace_id, date_debut, date_fin, statut, type_reservation, montant_total, montant_paye, participants, notes, code_promo_id, created_at)
+        VALUES (?, ?, ?, ?, ?, 'en_attente', ?, ?, 0, ?, ?, ?, NOW())
     ");
 
     $result = $stmt->execute([
@@ -144,11 +183,18 @@ try {
         $type,
         $montant,
         $participants,
-        $notes
+        $notes,
+        $codePromoId
     ]);
 
     if (!$result) {
-        Response::error("Erreur lors de la creation", 500);
+        $errorInfo = $stmt->errorInfo();
+        error_log("Reservation INSERT error: " . json_encode($errorInfo));
+        Response::error("Erreur lors de l'enregistrement: " . ($errorInfo[2] ?? 'inconnue'), 500);
+    }
+
+    if ($codePromoId) {
+        $db->prepare("UPDATE codes_promo SET utilisations_actuelles = utilisations_actuelles + 1 WHERE id = ?")->execute([$codePromoId]);
     }
 
     $stmt = $db->prepare("
@@ -162,7 +208,10 @@ try {
 
     Response::success($reservation, "Reservation creee avec succes", 201);
 
+} catch (PDOException $e) {
+    error_log("Reservation create PDO error: " . $e->getMessage());
+    Response::error("Erreur base de donnees: " . $e->getMessage(), 500);
 } catch (Exception $e) {
-    error_log("Erreur reservation create: " . $e->getMessage() . "\n" . $e->getTraceAsString());
+    error_log("Reservation create error: " . $e->getMessage() . "\n" . $e->getTraceAsString());
     Response::error("Erreur: " . $e->getMessage(), 500);
 }

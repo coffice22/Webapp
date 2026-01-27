@@ -15,7 +15,7 @@ import {
 import Modal from "../ui/Modal";
 import Button from "../ui/Button";
 import { apiClient } from "../../lib/api-client";
-import { differenceInHours, format, addHours, setHours, setMinutes } from "date-fns";
+import { differenceInHours, addHours, setHours, setMinutes } from "date-fns";
 import { fr } from "date-fns/locale";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -68,8 +68,7 @@ const isDisponible = (espace: EspaceAPI): boolean => {
 
 const getDefaultStartDate = (): Date => {
   const now = new Date();
-  const rounded = setMinutes(setHours(now, now.getHours() + 1), 0);
-  return rounded;
+  return setMinutes(setHours(now, now.getHours() + 1), 0);
 };
 
 const getDefaultEndDate = (): Date => {
@@ -88,7 +87,6 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loadingEspaces, setLoadingEspaces] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [debugError, setDebugError] = useState<string | null>(null);
 
   const {
     register,
@@ -152,8 +150,10 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
     const prixJ = getPrixJour(currentEspace);
 
     let amount = 0;
-    if (hours < 8) {
+    if (hours <= 4) {
       amount = Math.ceil(hours) * prixH;
+    } else if (hours <= 8) {
+      amount = prixJ / 2;
     } else if (hours < 24) {
       amount = prixJ;
     } else {
@@ -190,7 +190,6 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
 
   const onSubmit = async (data: FormData) => {
     if (isSubmitting) return;
-    setDebugError(null);
 
     if (!data.espace_id) {
       toast.error("Veuillez selectionner un espace");
@@ -203,58 +202,25 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
       return;
     }
 
-    const requestData = {
-      espaceId: data.espace_id,
-      dateDebut: data.date_debut.toISOString(),
-      dateFin: data.date_fin.toISOString(),
-      participants: data.participants || 1,
-      notes: data.notes || "",
-    };
-
-    const apiPayload = {
-      espace_id: data.espace_id,
-      date_debut: data.date_debut.toISOString(),
-      date_fin: data.date_fin.toISOString(),
-      participants: data.participants || 1,
-      notes: data.notes || "",
-    };
-
     try {
       setIsSubmitting(true);
 
-      const response = await apiClient.createReservation(requestData);
+      const response = await apiClient.createReservation({
+        espaceId: data.espace_id,
+        dateDebut: data.date_debut.toISOString(),
+        dateFin: data.date_fin.toISOString(),
+        participants: data.participants || 1,
+        notes: data.notes || "",
+      });
 
       if (response.success) {
         toast.success("Reservation creee avec succes !");
         handleClose();
       } else {
-        const errorDetail = `
-=== ERREUR RESERVATION ===
-Date: ${new Date().toISOString()}
-
---- DONNEES ENVOYEES A L'API (snake_case) ---
-${JSON.stringify(apiPayload, null, 2)}
-
---- REPONSE API ---
-${JSON.stringify(response, null, 2)}
-`;
-        setDebugError(errorDetail);
-        toast.error(response.error || response.message || "Erreur - voir details");
+        toast.error(response.error || "Erreur lors de la creation");
       }
     } catch (error: any) {
-      const errorDetail = `
-=== EXCEPTION ===
-Date: ${new Date().toISOString()}
-
---- DONNEES ENVOYEES A L'API (snake_case) ---
-${JSON.stringify(apiPayload, null, 2)}
-
---- ERREUR ---
-Message: ${error.message || "Inconnu"}
-Stack: ${error.stack || "N/A"}
-`;
-      setDebugError(errorDetail);
-      toast.error("Exception - voir details");
+      toast.error(error.message || "Erreur de connexion");
     } finally {
       setIsSubmitting(false);
     }
@@ -512,27 +478,6 @@ Stack: ${error.stack || "N/A"}
                     {estimatedAmount.toLocaleString()} DA
                   </p>
                 </div>
-              </div>
-            )}
-
-            {debugError && (
-              <div className="p-4 bg-red-50 border-2 border-red-300 rounded-xl">
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-red-700 font-bold text-sm">ERREUR DEBUG</p>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      navigator.clipboard.writeText(debugError);
-                      toast.success("Copie dans le presse-papier");
-                    }}
-                    className="px-2 py-1 bg-red-100 hover:bg-red-200 text-red-700 text-xs rounded"
-                  >
-                    Copier
-                  </button>
-                </div>
-                <pre className="text-xs text-red-800 whitespace-pre-wrap overflow-auto max-h-48 bg-red-100 p-2 rounded">
-                  {debugError}
-                </pre>
               </div>
             )}
 

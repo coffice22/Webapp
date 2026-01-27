@@ -457,14 +457,19 @@ class ApiClient {
     dateFin: string;
     participants?: number;
     notes?: string;
+    codePromo?: string;
   }) {
-    const apiData = {
+    const apiData: Record<string, any> = {
       espace_id: data.espaceId,
       date_debut: data.dateDebut,
       date_fin: data.dateFin,
       participants: data.participants || 1,
-      notes: data.notes || null,
+      notes: data.notes || "",
     };
+
+    if (data.codePromo) {
+      apiData.code_promo = data.codePromo;
+    }
 
     return this.request("/reservations/create.php", {
       method: "POST",
