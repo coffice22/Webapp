@@ -27,7 +27,9 @@ class ApiClient {
     this.refreshToken = localStorage.getItem("refresh_token");
 
     if (!import.meta.env.VITE_API_URL) {
-      logger.warn(`[API] VITE_API_URL non configuré, utilisation par défaut: ${API_URL}`);
+      logger.warn(
+        `[API] VITE_API_URL non configuré, utilisation par défaut: ${API_URL}`,
+      );
     } else {
       logger.info(`[API] URL configurée: ${API_URL}`);
     }
