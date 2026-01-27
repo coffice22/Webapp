@@ -5,6 +5,7 @@ Application web complète de gestion d'espaces de coworking au Mohammadia Mall, 
 ## Vue d'ensemble
 
 Coffice est une plateforme moderne de réservation et gestion d'espaces de coworking comprenant :
+
 - 2 box de 4 places
 - 1 box de 3 places
 - 1 table open space de 12 places (dont 2 postes informatiques)
@@ -14,6 +15,7 @@ Coffice est une plateforme moderne de réservation et gestion d'espaces de cowor
 ## Technologies
 
 ### Frontend
+
 - React 18 avec TypeScript
 - Vite - Build tool moderne
 - TailwindCSS - Design system
@@ -22,6 +24,7 @@ Coffice est une plateforme moderne de réservation et gestion d'espaces de cowor
 - date-fns - Manipulation des dates
 
 ### Backend
+
 - PHP 8+ - API REST
 - MySQL - Base de données
 - JWT - Authentication
@@ -29,6 +32,7 @@ Coffice est une plateforme moderne de réservation et gestion d'espaces de cowor
 ## Installation
 
 ### Prérequis
+
 - Node.js 18+
 - PHP 8+
 - MySQL 8+
@@ -36,22 +40,26 @@ Coffice est une plateforme moderne de réservation et gestion d'espaces de cowor
 ### Configuration
 
 1. Cloner le projet
+
 ```bash
 git clone <repository-url>
 cd coffice-app
 ```
 
 2. Installer les dépendances frontend
+
 ```bash
 npm install
 ```
 
 3. Configurer l'environnement
+
 ```bash
 cp .env.example .env
 ```
 
 Modifier `.env` avec vos informations :
+
 ```env
 # Base de données
 DB_HOST=localhost
@@ -67,11 +75,13 @@ VITE_API_URL=https://coffice.dz/api
 ```
 
 4. Créer la base de données
+
 ```bash
 mysql -u root -p < database/coffice.sql
 ```
 
 5. Build frontend
+
 ```bash
 npm run build
 ```
@@ -114,6 +124,7 @@ coffice-app/
 ## Fonctionnalités
 
 ### Utilisateurs
+
 - Inscription / Connexion
 - Gestion du profil
 - Réservation d'espaces
@@ -122,6 +133,7 @@ coffice-app/
 - Parrainage
 
 ### Administrateurs
+
 - Dashboard complet
 - Gestion des espaces
 - Gestion des réservations
@@ -134,12 +146,14 @@ coffice-app/
 ## API Backend
 
 ### Authentification
+
 - `POST /api/auth/register` - Inscription
 - `POST /api/auth/login` - Connexion
 - `POST /api/auth/logout` - Déconnexion
 - `GET /api/auth/me` - Profil utilisateur
 
 ### Espaces
+
 - `GET /api/espaces/index.php` - Liste des espaces
 - `GET /api/espaces/show.php?id=xxx` - Détails d'un espace
 - `POST /api/espaces/create.php` - Créer un espace (admin)
@@ -147,12 +161,14 @@ coffice-app/
 - `DELETE /api/espaces/delete.php` - Supprimer un espace (admin)
 
 ### Réservations
+
 - `GET /api/reservations/index.php` - Liste des réservations
 - `GET /api/reservations/show.php?id=xxx` - Détails d'une réservation
 - `POST /api/reservations/create.php` - Créer une réservation
 - `POST /api/reservations/cancel.php` - Annuler une réservation
 
 ### Domiciliations
+
 - `GET /api/domiciliations/index.php` - Liste (admin)
 - `GET /api/domiciliations/user.php?user_id=xxx` - Par utilisateur
 - `POST /api/domiciliations/create.php` - Créer une demande
@@ -162,11 +178,13 @@ coffice-app/
 ## Tests
 
 ### Test API
+
 ```bash
 php scripts/test_api.php https://coffice.dz/api
 ```
 
 ### Test local
+
 ```bash
 php scripts/test_api.php http://localhost/api
 ```
