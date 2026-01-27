@@ -8,6 +8,38 @@ require_once '../utils/UuidHelper.php';
 
 header('Content-Type: application/json');
 
+function parseDateTime($dateStr) {
+    if (empty($dateStr)) {
+        return null;
+    }
+
+    $dateStr = str_replace(['T', 'Z'], [' ', ''], $dateStr);
+    $dateStr = preg_replace('/\.\d+/', '', $dateStr);
+
+    $formats = [
+        'Y-m-d H:i:s',
+        'Y-m-d H:i',
+        'Y-m-d\TH:i:s',
+        'Y-m-d\TH:i:sP',
+        'Y-m-d\TH:i:s.uP',
+        'd/m/Y H:i:s',
+        'd/m/Y H:i',
+    ];
+
+    foreach ($formats as $format) {
+        $dt = DateTime::createFromFormat($format, trim($dateStr));
+        if ($dt !== false) {
+            return $dt;
+        }
+    }
+
+    try {
+        return new DateTime($dateStr);
+    } catch (Exception $e) {
+        return null;
+    }
+}
+
 try {
     $auth = Auth::verifyAuth();
 
@@ -15,7 +47,7 @@ try {
     $data = json_decode($input);
 
     if (!$data) {
-        Response::error("Données invalides", 400);
+        Response::error("Donnees invalides", 400);
     }
 
     if (empty($data->espace_id)) {
@@ -23,41 +55,70 @@ try {
     }
 
     if (empty($data->date_debut)) {
-        Response::error("La date de début est requise", 400);
+        Response::error("La date de debut est requise", 400);
     }
 
     if (empty($data->date_fin)) {
         Response::error("La date de fin est requise", 400);
     }
 
+    $debut = parseDateTime($data->date_debut);
+    $fin = parseDateTime($data->date_fin);
+
+    if (!$debut) {
+        Response::error("Format de date de debut invalide", 400);
+    }
+
+    if (!$fin) {
+        Response::error("Format de date de fin invalide", 400);
+    }
+
+    if ($fin <= $debut) {
+        Response::error("La date de fin doit etre apres la date de debut", 400);
+    }
+
     $db = Database::getInstance()->getConnection();
 
-    $stmt = $db->prepare("SELECT * FROM espaces WHERE id = ? AND disponible = 1");
+    $stmt = $db->prepare("SELECT * FROM espaces WHERE id = ?");
     $stmt->execute([$data->espace_id]);
     $espace = $stmt->fetch();
 
     if (!$espace) {
-        Response::error("Espace non trouvé ou non disponible", 404);
+        Response::error("Espace non trouve", 404);
     }
 
-    $debut = new DateTime($data->date_debut);
-    $fin = new DateTime($data->date_fin);
-
-    if ($fin <= $debut) {
-        Response::error("La date de fin doit être après la date de début", 400);
+    if (!$espace['disponible']) {
+        Response::error("Cet espace n'est pas disponible actuellement", 400);
     }
+
+    $debutStr = $debut->format('Y-m-d H:i:s');
+    $finStr = $fin->format('Y-m-d H:i:s');
 
     $heures = ($fin->getTimestamp() - $debut->getTimestamp()) / 3600;
+
+    if ($heures <= 0) {
+        Response::error("La duree de reservation doit etre positive", 400);
+    }
+
+    if ($heures > 8760) {
+        Response::error("La duree maximale est de 1 an", 400);
+    }
+
+    $prixHeure = floatval($espace['prix_heure'] ?? 0);
+    $prixJour = floatval($espace['prix_jour'] ?? 0);
 
     $montant = 0;
     $type = 'heure';
 
-    if ($heures < 24) {
-        $montant = ceil($heures) * $espace['prix_heure'];
+    if ($heures < 8) {
+        $montant = ceil($heures) * $prixHeure;
         $type = 'heure';
+    } elseif ($heures < 24) {
+        $montant = $prixJour;
+        $type = 'jour';
     } else {
         $jours = ceil($heures / 24);
-        $montant = $jours * $espace['prix_jour'];
+        $montant = $jours * $prixJour;
         $type = 'jour';
     }
 
@@ -67,31 +128,35 @@ try {
         AND statut IN ('confirmee', 'en_attente', 'en_cours')
         AND NOT (date_fin <= ? OR date_debut >= ?)
     ");
-    $stmt->execute([$data->espace_id, $data->date_debut, $data->date_fin]);
+    $stmt->execute([$data->espace_id, $debutStr, $finStr]);
     $conflit = $stmt->fetch();
 
-    if ($conflit['count'] > 0) {
-        Response::error("Cet espace est déjà réservé pour ces dates", 409);
+    if ($conflit && $conflit['count'] > 0) {
+        Response::error("Cet espace est deja reserve pour ce creneau", 409);
     }
 
     $id = UuidHelper::generate();
-    $participants = isset($data->participants) ? (int)$data->participants : 1;
-    $notes = isset($data->notes) ? $data->notes : null;
+    $participants = isset($data->participants) ? max(1, (int)$data->participants) : 1;
+    $notes = isset($data->notes) ? trim($data->notes) : null;
+
+    if ($participants > $espace['capacite']) {
+        $participants = $espace['capacite'];
+    }
 
     $stmt = $db->prepare("
         INSERT INTO reservations (
             id, user_id, espace_id, date_debut, date_fin,
             statut, type_reservation, montant_total,
-            montant_paye, participants, notes
-        ) VALUES (?, ?, ?, ?, ?, 'en_attente', ?, ?, 0, ?, ?)
+            montant_paye, participants, notes, created_at
+        ) VALUES (?, ?, ?, ?, ?, 'en_attente', ?, ?, 0, ?, ?, NOW())
     ");
 
     $result = $stmt->execute([
         $id,
         $auth['id'],
         $data->espace_id,
-        $data->date_debut,
-        $data->date_fin,
+        $debutStr,
+        $finStr,
         $type,
         $montant,
         $participants,
@@ -99,7 +164,7 @@ try {
     ]);
 
     if (!$result) {
-        Response::error("Erreur lors de la création", 500);
+        Response::error("Erreur lors de la creation de la reservation", 500);
     }
 
     $stmt = $db->prepare("
@@ -111,9 +176,9 @@ try {
     $stmt->execute([$id]);
     $reservation = $stmt->fetch();
 
-    Response::success($reservation, "Réservation créée avec succès", 201);
+    Response::success($reservation, "Reservation creee avec succes", 201);
 
 } catch (Exception $e) {
-    error_log("Erreur création réservation: " . $e->getMessage());
+    error_log("Erreur creation reservation: " . $e->getMessage());
     Response::error("Erreur serveur: " . $e->getMessage(), 500);
 }
