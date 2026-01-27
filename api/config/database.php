@@ -79,13 +79,25 @@ class Database
         try {
             $dsn = "mysql:host={$this->host};port={$this->port};dbname={$this->db_name};charset={$this->charset}";
 
-            $this->conn = new PDO($dsn, $this->username, $this->password, [
+            $options = [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 PDO::ATTR_EMULATE_PREPARES => false,
-                PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES {$this->charset} COLLATE {$this->charset}_unicode_ci, time_zone = '+00:00'",
                 PDO::ATTR_PERSISTENT => false
-            ]);
+            ];
+
+            // Ajouter MYSQL_ATTR_INIT_COMMAND seulement si disponible
+            if (defined('PDO::MYSQL_ATTR_INIT_COMMAND')) {
+                $options[PDO::MYSQL_ATTR_INIT_COMMAND] = "SET NAMES {$this->charset} COLLATE {$this->charset}_unicode_ci, time_zone = '+00:00'";
+            }
+
+            $this->conn = new PDO($dsn, $this->username, $this->password, $options);
+
+            // Fallback : exécuter SET NAMES si la constante n'était pas disponible
+            if (!defined('PDO::MYSQL_ATTR_INIT_COMMAND')) {
+                $this->conn->exec("SET NAMES {$this->charset} COLLATE {$this->charset}_unicode_ci");
+                $this->conn->exec("SET time_zone = '+00:00'");
+            }
 
         } catch (PDOException $e) {
             error_log("DB Connection Error: " . $e->getMessage());

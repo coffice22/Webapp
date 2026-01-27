@@ -1,5 +1,11 @@
 # Coffice - Plateforme de Coworking
 
+> ⚠️ **IMPORTANT**: Voir `CORRECTION_RESERVATION.md` pour la correction complète du système de réservation
+
+---
+
+# Coffice - Plateforme de Coworking
+
 Application web complète de gestion d'espaces de coworking située au Mohammadia Mall, Alger.
 
 ## 📋 Vue d'ensemble
