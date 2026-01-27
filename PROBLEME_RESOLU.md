@@ -3,6 +3,7 @@
 ## Problème Identifié
 
 La création de réservations échouait avec le message générique :
+
 ```json
 {
   "success": false,
@@ -19,6 +20,7 @@ L'UUID de l'espace (`1204bb80-f70e-11f0-b5ec-0050560122dd`) envoyé par le front
 ### 1. Logs de Débogage Détaillés ✅
 
 Ajout de logs complets dans `api/reservations/create.php` :
+
 - Log de la requête brute reçue
 - Log de l'ID utilisateur authentifié
 - Log de l'ID espace recherché
@@ -30,6 +32,7 @@ Ajout de logs complets dans `api/reservations/create.php` :
 ### 2. Script d'Initialisation des Espaces ✅
 
 Créé `scripts/init_espaces.php` qui :
+
 - Vérifie si des espaces existent dans la base
 - Affiche les UUIDs de tous les espaces
 - Crée automatiquement les 5 espaces s'ils n'existent pas
@@ -37,6 +40,7 @@ Créé `scripts/init_espaces.php` qui :
 ### 3. Endpoint de Diagnostic ✅
 
 Créé `api/debug/diagnostic.php` qui fournit :
+
 - État de la connexion à la base de données
 - Nombre d'espaces dans la base
 - Liste complète des espaces avec leurs IDs
@@ -61,6 +65,7 @@ php scripts/init_espaces.php
 ```
 
 **Résultat attendu :**
+
 ```
 === VERIFICATION DES ESPACES ===
 
@@ -81,11 +86,13 @@ Nombre d'espaces créés: 5
 ### Étape 2 : Vérifier via Diagnostic
 
 Visitez dans votre navigateur :
+
 ```
 https://coffice.dz/api/debug/diagnostic.php
 ```
 
 Vous devriez voir un JSON avec :
+
 ```json
 {
   "summary": {
@@ -112,6 +119,7 @@ Vous devriez voir un JSON avec :
 ### Étape 4 : Consulter les Logs
 
 **Sur votre serveur cPanel :**
+
 1. Connectez-vous à cPanel
 2. Allez dans "Erreurs" ou "Error Log"
 3. Recherchez les lignes commençant par :
@@ -120,6 +128,7 @@ Vous devriez voir un JSON avec :
    ```
 
 **Les logs vous montreront exactement :**
+
 - Les données reçues
 - L'ID de l'espace recherché
 - Si l'espace existe ou non
@@ -157,6 +166,7 @@ Le problème est **uniquement** lié à l'absence des espaces dans la base de do
 ## Support
 
 Si après avoir suivi ces étapes le problème persiste :
+
 1. Partagez la sortie de `php scripts/init_espaces.php`
 2. Partagez le JSON de `api/debug/diagnostic.php`
 3. Partagez les logs PHP contenant "RESERVATION CREATE REQUEST"
