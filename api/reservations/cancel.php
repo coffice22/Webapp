@@ -1,57 +1,59 @@
 <?php
 
-/**
- * API: Annuler une réservation
- * POST /api/reservations/cancel.php
- */
-
 require_once '../config/cors.php';
 require_once '../config/database.php';
 require_once '../utils/Auth.php';
 require_once '../utils/Response.php';
 
+header('Content-Type: application/json');
+
 try {
     $auth = Auth::verifyAuth();
-    $data = json_decode(file_get_contents("php://input"));
 
-    if (empty($data->id)) {
-        Response::error("ID réservation requis", 400);
+    $input = file_get_contents("php://input");
+    $data = json_decode($input);
+
+    if (!$data || empty($data->id)) {
+        Response::error("ID requis", 400);
     }
 
-    $database = Database::getInstance();
-    $db = $database->getConnection();
+    $db = Database::getInstance()->getConnection();
 
-    // Vérifier que la réservation existe
-    $query = "SELECT user_id, statut FROM reservations WHERE id = :id LIMIT 1";
-    $stmt = $db->prepare($query);
-    $stmt->bindParam(':id', $data->id);
-    $stmt->execute();
+    $stmt = $db->prepare("SELECT * FROM reservations WHERE id = ?");
+    $stmt->execute([$data->id]);
+    $reservation = $stmt->fetch();
 
-    if ($stmt->rowCount() === 0) {
+    if (!$reservation) {
         Response::error("Réservation non trouvée", 404);
     }
 
-    $reservation = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    // Les users ne peuvent annuler que leurs propres réservations
     if ($auth['role'] !== 'admin' && $reservation['user_id'] !== $auth['id']) {
-        Response::error("Accès non autorisé", 403);
+        Response::error("Accès refusé", 403);
     }
 
-    // Vérifier qu'elle n'est pas déjà annulée
     if ($reservation['statut'] === 'annulee') {
-        Response::error("Cette réservation est déjà annulée", 400);
+        Response::error("Réservation déjà annulée", 400);
     }
 
-    // Annuler la réservation
-    $query = "UPDATE reservations SET statut = 'annulee' WHERE id = :id";
-    $stmt = $db->prepare($query);
-    $stmt->bindParam(':id', $data->id);
-    $stmt->execute();
+    $stmt = $db->prepare("UPDATE reservations SET statut = 'annulee' WHERE id = ?");
+    $result = $stmt->execute([$data->id]);
 
-    Response::success(null, "Réservation annulée avec succès");
+    if (!$result) {
+        Response::error("Erreur lors de l'annulation", 500);
+    }
+
+    $stmt = $db->prepare("
+        SELECT r.*, e.nom as espace_nom, e.type as espace_type
+        FROM reservations r
+        LEFT JOIN espaces e ON r.espace_id = e.id
+        WHERE r.id = ?
+    ");
+    $stmt->execute([$data->id]);
+    $updated = $stmt->fetch();
+
+    Response::success($updated, "Réservation annulée avec succès");
 
 } catch (Exception $e) {
-    error_log("Cancel reservation error: " . $e->getMessage());
-    Response::serverError("Erreur lors de l'annulation");
+    error_log("Erreur annulation réservation: " . $e->getMessage());
+    Response::error("Erreur serveur", 500);
 }

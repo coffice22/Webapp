@@ -457,20 +457,14 @@ class ApiClient {
     dateFin: string;
     participants?: number;
     notes?: string;
-    codePromo?: string;
   }) {
-    // Ne PAS envoyer montant_total - le serveur le calcule de manière sécurisée
-    // Ne PAS envoyer statut, type_reservation, mode_paiement - gérés par le serveur
     const apiData = {
       espace_id: data.espaceId,
       date_debut: data.dateDebut,
       date_fin: data.dateFin,
       participants: data.participants || 1,
       notes: data.notes || null,
-      code_promo: data.codePromo || null,
     };
-
-    logger.debug("[API] Creating reservation:", apiData);
 
     return this.request("/reservations/create.php", {
       method: "POST",
