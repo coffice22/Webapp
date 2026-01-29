@@ -26,7 +26,8 @@ export const blogArticles: BlogArticle[] = [
     id: "1",
     slug: "formes-juridiques-algerie",
     title: "Les formes juridiques en Algerie: Guide complet",
-    excerpt: "Decouvrez les differentes formes juridiques disponibles en Algerie pour creer votre entreprise: SARL, EURL, SPA, SNC, et Auto-entrepreneur.",
+    excerpt:
+      "Decouvrez les differentes formes juridiques disponibles en Algerie pour creer votre entreprise: SARL, EURL, SPA, SNC, et Auto-entrepreneur.",
     content: `
 ## Introduction
 
@@ -90,7 +91,8 @@ N'hesitez pas a consulter un expert-comptable ou un avocat pour vous accompagner
     id: "2",
     slug: "spas-startup-algerie",
     title: "La Societe Par Actions Simplifiee (SPAS) en Algerie",
-    excerpt: "Nouvelle forme juridique offrant plus de flexibilite pour la creation et la gestion des startups en Algerie.",
+    excerpt:
+      "Nouvelle forme juridique offrant plus de flexibilite pour la creation et la gestion des startups en Algerie.",
     content: `
 ## Qu'est-ce que la SPAS?
 
@@ -138,7 +140,8 @@ La SPAS represente une avancee majeure pour l'ecosysteme entrepreneurial algerie
     id: "3",
     slug: "labels-startup-algerie",
     title: "Comment obtenir les labels Startup en Algerie",
-    excerpt: "Guide pratique pour obtenir les labels startup, projet innovant et incubateur selon le decret 20-254.",
+    excerpt:
+      "Guide pratique pour obtenir les labels startup, projet innovant et incubateur selon le decret 20-254.",
     content: `
 ## Les differents labels
 
@@ -186,7 +189,8 @@ Le processus peut prendre de 2 a 4 semaines selon la completude du dossier.
     id: "4",
     slug: "irg-algerie",
     title: "L'impot sur le revenu global (IRG) en Algerie",
-    excerpt: "Comprendre l'IRG, l'impot direct qui affecte les revenus des personnes physiques en Algerie.",
+    excerpt:
+      "Comprendre l'IRG, l'impot direct qui affecte les revenus des personnes physiques en Algerie.",
     content: `
 ## Qu'est-ce que l'IRG?
 
@@ -232,7 +236,8 @@ Certains revenus beneficient d'exonerations totales ou partielles selon la legis
     id: "5",
     slug: "ibs-algerie",
     title: "L'impot sur les benefices des societes (IBS)",
-    excerpt: "Guide complet sur l'IBS, l'impot annuel applicable aux societes de capitaux en Algerie.",
+    excerpt:
+      "Guide complet sur l'IBS, l'impot annuel applicable aux societes de capitaux en Algerie.",
     content: `
 ## Definition de l'IBS
 
@@ -277,7 +282,8 @@ L'IBS se calcule sur le benefice net comptable apres reintegrations et deduction
     id: "6",
     slug: "tva-algerie",
     title: "La taxe sur la valeur ajoutee (TVA) en Algerie",
-    excerpt: "Tout savoir sur la TVA en Algerie: taux, mecanisme, declarations et recuperation.",
+    excerpt:
+      "Tout savoir sur la TVA en Algerie: taux, mecanisme, declarations et recuperation.",
     content: `
 ## Principe de la TVA
 
@@ -321,7 +327,8 @@ La TVA doit obligatoirement figurer sur les factures avec mention du taux appliq
     id: "7",
     slug: "creation-numero-employeur-cnas",
     title: "Creation d'un numero employeur CNAS",
-    excerpt: "Procedure complete pour obtenir votre numero employeur a 10 chiffres aupres de la CNAS.",
+    excerpt:
+      "Procedure complete pour obtenir votre numero employeur a 10 chiffres aupres de la CNAS.",
     content: `
 ## Qu'est-ce que le numero employeur?
 
@@ -366,7 +373,8 @@ Une fois le numero obtenu, vous pouvez acceder a la plateforme de teledeclaratio
     id: "8",
     slug: "facture-algerie",
     title: "La facture en Algerie: Guide complet",
-    excerpt: "Regles commerciales, juridiques, fiscales et comptables de la facturation en Algerie.",
+    excerpt:
+      "Regles commerciales, juridiques, fiscales et comptables de la facturation en Algerie.",
     content: `
 ## Importance de la facture
 
@@ -417,7 +425,8 @@ Le defaut de facturation ou les factures non conformes peuvent entrainer des pen
     id: "9",
     slug: "etapes-creation-entreprise",
     title: "Les 10 etapes pour creer une entreprise en Algerie",
-    excerpt: "Guide pas a pas pour creer votre entreprise en Algerie, de l'idee a l'immatriculation.",
+    excerpt:
+      "Guide pas a pas pour creer votre entreprise en Algerie, de l'idee a l'immatriculation.",
     content: `
 ## Etape 1: Definir votre projet
 
@@ -484,7 +493,8 @@ Le Numero d'Identification Statistique aupres de l'ONS.
     id: "10",
     slug: "domiciliation-entreprise-algerie",
     title: "La domiciliation d'entreprise en Algerie",
-    excerpt: "Tout savoir sur la domiciliation d'entreprise: avantages, procedure et obligations.",
+    excerpt:
+      "Tout savoir sur la domiciliation d'entreprise: avantages, procedure et obligations.",
     content: `
 ## Qu'est-ce que la domiciliation?
 
