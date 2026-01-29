@@ -26,6 +26,10 @@ const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Legal = lazy(() => import("./pages/Legal"));
 const ERPSystem = lazy(() => import("./pages/ERPSystem"));
+const Blog = lazy(() => import("./pages/Blog"));
+const BlogArticle = lazy(() => import("./pages/BlogArticle"));
+
+import { BLOG_ENABLED } from "./data/blogArticles";
 
 function App() {
   useScrollAnimation();
@@ -170,6 +174,14 @@ function App() {
 
             {/* ERP System pour admin */}
             <Route path="/erp/*" element={<ERPSystem />} />
+
+            {/* Blog (conditionnel) */}
+            {BLOG_ENABLED && (
+              <>
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/blog/:slug" element={<BlogArticle />} />
+              </>
+            )}
 
             {/* Page 404 - doit être en dernier */}
             <Route

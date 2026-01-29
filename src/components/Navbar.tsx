@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, MessageCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import Logo from "./Logo";
+import { BLOG_ENABLED } from "../data/blogArticles";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,18 +21,27 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const navLinks = [
-    { name: t("nav.home"), path: "/" },
-    { name: t("nav.spaces"), path: "/espaces" },
-    { name: t("nav.domiciliation"), path: "/domiciliation" },
-    { name: t("nav.about"), path: "/a-propos" },
-  ];
+  const navLinks = useMemo(() => {
+    const links = [
+      { name: t("nav.home"), path: "/" },
+      { name: t("nav.spaces"), path: "/espaces" },
+      { name: t("nav.domiciliation"), path: "/domiciliation" },
+      { name: t("nav.about"), path: "/a-propos" },
+    ];
+    if (BLOG_ENABLED) {
+      links.push({ name: "Blog", path: "/blog" });
+    }
+    return links;
+  }, [t]);
 
   const isActive = (path: string) => {
     if (path === "/espaces") {
       return (
         location.pathname === "/espaces" || location.pathname === "/tarifs"
       );
+    }
+    if (path === "/blog") {
+      return location.pathname.startsWith("/blog");
     }
     return location.pathname === path;
   };

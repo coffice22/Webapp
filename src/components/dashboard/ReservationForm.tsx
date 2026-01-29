@@ -75,13 +75,49 @@ const isDisponible = (espace: EspaceAPI): boolean => {
   return true;
 };
 
+const OPENING_HOUR = 8;
+const OPENING_MINUTE = 30;
+const CLOSING_HOUR = 18;
+const CLOSING_MINUTE = 30;
+
+const getMinTime = (): Date => {
+  const date = new Date();
+  return setMinutes(setHours(date, OPENING_HOUR), OPENING_MINUTE);
+};
+
+const getMaxTime = (): Date => {
+  const date = new Date();
+  return setMinutes(setHours(date, CLOSING_HOUR), CLOSING_MINUTE);
+};
+
 const getDefaultStartDate = (): Date => {
   const now = new Date();
-  return setMinutes(setHours(now, now.getHours() + 1), 0);
+  let hour = now.getHours() + 1;
+  let minute = 0;
+
+  if (hour < OPENING_HOUR || (hour === OPENING_HOUR && now.getMinutes() < OPENING_MINUTE)) {
+    hour = OPENING_HOUR;
+    minute = OPENING_MINUTE;
+  } else if (hour > CLOSING_HOUR || (hour === CLOSING_HOUR && minute > 0)) {
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return setMinutes(setHours(tomorrow, OPENING_HOUR), OPENING_MINUTE);
+  }
+
+  return setMinutes(setHours(now, hour), minute);
 };
 
 const getDefaultEndDate = (): Date => {
-  return addHours(getDefaultStartDate(), 2);
+  const start = getDefaultStartDate();
+  const endDate = addHours(start, 2);
+  const endHour = endDate.getHours();
+  const endMinute = endDate.getMinutes();
+
+  if (endHour > CLOSING_HOUR || (endHour === CLOSING_HOUR && endMinute > CLOSING_MINUTE)) {
+    return setMinutes(setHours(start, CLOSING_HOUR), CLOSING_MINUTE);
+  }
+
+  return endDate;
 };
 
 const getEquipmentIcon = (equip: string) => {
@@ -222,6 +258,26 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
     const now = new Date();
     if (isBefore(watchDateDebut, startOfDay(now))) {
       toast.error("La date de debut ne peut pas etre dans le passe");
+      return false;
+    }
+
+    const startHour = watchDateDebut.getHours();
+    const startMinute = watchDateDebut.getMinutes();
+    const endHour = watchDateFin.getHours();
+    const endMinute = watchDateFin.getMinutes();
+
+    const startInMinutes = startHour * 60 + startMinute;
+    const endInMinutes = endHour * 60 + endMinute;
+    const openingInMinutes = OPENING_HOUR * 60 + OPENING_MINUTE;
+    const closingInMinutes = CLOSING_HOUR * 60 + CLOSING_MINUTE;
+
+    if (startInMinutes < openingInMinutes || startInMinutes > closingInMinutes) {
+      toast.error("Les reservations sont possibles entre 8h30 et 18h30");
+      return false;
+    }
+
+    if (endInMinutes < openingInMinutes || endInMinutes > closingInMinutes) {
+      toast.error("Les reservations sont possibles entre 8h30 et 18h30");
       return false;
     }
 
@@ -457,6 +513,13 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
               </div>
             </div>
 
+            <div className="flex items-center justify-center mb-2">
+              <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-amber-50 text-amber-700 rounded-full text-xs font-medium">
+                <Clock className="w-3 h-3" />
+                Horaires: 8h30 - 18h30
+              </span>
+            </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
@@ -469,7 +532,14 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                     if (date) {
                       setValue("date_debut", date);
                       if (date >= watchDateFin) {
-                        setValue("date_fin", addHours(date, 2));
+                        const newEnd = addHours(date, 2);
+                        const endHour = newEnd.getHours();
+                        const endMinute = newEnd.getMinutes();
+                        if (endHour > CLOSING_HOUR || (endHour === CLOSING_HOUR && endMinute > CLOSING_MINUTE)) {
+                          setValue("date_fin", setMinutes(setHours(date, CLOSING_HOUR), CLOSING_MINUTE));
+                        } else {
+                          setValue("date_fin", newEnd);
+                        }
                       }
                     }
                   }}
@@ -478,6 +548,8 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                   timeIntervals={30}
                   dateFormat="dd/MM/yyyy HH:mm"
                   minDate={new Date()}
+                  minTime={getMinTime()}
+                  maxTime={getMaxTime()}
                   locale={fr}
                   className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-sm font-medium transition-all"
                   placeholderText="Selectionnez"
@@ -497,6 +569,8 @@ const ReservationForm: React.FC<ReservationFormProps> = ({
                   timeIntervals={30}
                   dateFormat="dd/MM/yyyy HH:mm"
                   minDate={watchDateDebut}
+                  minTime={getMinTime()}
+                  maxTime={getMaxTime()}
                   locale={fr}
                   className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-sm font-medium transition-all"
                   placeholderText="Selectionnez"
