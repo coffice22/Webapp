@@ -28,9 +28,7 @@ const BlogArticle = () => {
   const relatedArticles = useMemo(() => {
     if (!article) return [];
     return blogArticles
-      .filter(
-        (a) => a.id !== article.id && a.category === article.category
-      )
+      .filter((a) => a.id !== article.id && a.category === article.category)
       .slice(0, 3);
   }, [article]);
 
@@ -40,14 +38,16 @@ const BlogArticle = () => {
           title: `${article.title} | Blog Coffice`,
           description: article.excerpt,
         }
-      : {}
+      : {},
   );
 
   if (!article) {
     return <Navigate to="/blog" replace />;
   }
 
-  const categoryInfo = blogCategories.find((c) => c.id === article.category) || {
+  const categoryInfo = blogCategories.find(
+    (c) => c.id === article.category,
+  ) || {
     name: article.category,
     color: "bg-gray-500",
   };
