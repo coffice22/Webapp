@@ -68,21 +68,21 @@ const benefits = [
   {
     icon: MapPin,
     title: "Adresse prestigieuse",
-    description: "Mohammadia Mall, 4eme etage, Bureau 1178, Alger",
+    description: "Mohammadia Mall, 4ème étage, Bureau 1178, Alger",
     color: "text-amber-600",
     bg: "bg-amber-50",
   },
   {
     icon: FileText,
     title: "Services inclus",
-    description: "Reception courrier, salle de reunion, assistance",
+    description: "Réception courrier, salle de réunion, assistance",
     color: "text-blue-600",
     bg: "bg-blue-50",
   },
   {
     icon: CheckCircle,
     title: "Validation rapide",
-    description: "Traitement sous 48h ouvrees",
+    description: "Traitement sous 48h ouvrées",
     color: "text-emerald-600",
     bg: "bg-emerald-50",
   },
@@ -97,10 +97,10 @@ const requiredDocumentsNewCompany = (formeJuridique: LegalFormType) => {
   if (!isAutoEntrepreneur) {
     docs.push({
       id: "denomination",
-      name: "Denomination de la societe",
+      name: "Dénomination de la société",
       description: isPersonneMorale
-        ? "A obtenir aupres du CNRC (juste au-dessus de nous au 5eme etage)"
-        : "A obtenir aupres du CNRC pour personne physique",
+        ? "À obtenir auprès du CNRC (juste au-dessus de nous au 5ème étage)"
+        : "À obtenir auprès du CNRC pour personne physique",
       required: true,
     });
   }
@@ -108,21 +108,21 @@ const requiredDocumentsNewCompany = (formeJuridique: LegalFormType) => {
   docs.push({
     id: "extrait_naissance",
     name: "Extrait de naissance",
-    description: isAutoEntrepreneur ? "De l'auto-entrepreneur" : "Du futur gerant",
+    description: isAutoEntrepreneur ? "De l'auto-entrepreneur" : "Du futur gérant",
     required: true,
   });
 
   docs.push({
     id: "cni",
-    name: "Carte d'identite nationale",
-    description: isAutoEntrepreneur ? "De l'auto-entrepreneur" : "Du futur gerant",
+    name: "Carte d'identité nationale",
+    description: isAutoEntrepreneur ? "De l'auto-entrepreneur" : "Du futur gérant",
     required: true,
   });
 
   docs.push({
     id: "justificatif_domicile",
-    name: "Justificatif de domicile (Residence)",
-    description: "Facture d'electricite ou de gaz recente",
+    name: "Justificatif de domicile (Résidence)",
+    description: "Facture d'électricité ou de gaz récente",
     required: true,
   });
 
@@ -131,12 +131,12 @@ const requiredDocumentsNewCompany = (formeJuridique: LegalFormType) => {
 
 const requiredDocumentsExistingCompany = [
   { id: "registre_commerce", name: "Extrait de registre du commerce", required: true },
-  { id: "statuts", name: "Statuts de la societe", required: true },
-  { id: "pv_nomination", name: "PV de nomination du gerant", required: true },
+  { id: "statuts", name: "Statuts de la société", required: true },
+  { id: "pv_nomination", name: "PV de nomination du gérant", required: true },
   { id: "nif_nis", name: "Copie NIF et NIS", required: false },
   { id: "article_imposition", name: "Article d'imposition", required: true },
-  { id: "cni_gerant", name: "Piece d'identite du gerant", required: true },
-  { id: "justificatif_domicile_gerant", name: "Justificatif de domicile du gerant", required: true },
+  { id: "cni_gerant", name: "Pièce d'identité du gérant", required: true },
+  { id: "justificatif_domicile_gerant", name: "Justificatif de domicile du gérant", required: true },
 ];
 
 const Domiciliation = () => {
@@ -200,7 +200,7 @@ const Domiciliation = () => {
 
   const validateStep1 = (): boolean => {
     if (!companyStatus) {
-      toast.error("Veuillez indiquer si votre entreprise est deja creee ou non");
+      toast.error("Veuillez indiquer si votre entreprise est déjà créée ou non");
       return false;
     }
     return true;
@@ -211,7 +211,7 @@ const Domiciliation = () => {
 
     if (!formData.raisonSociale.trim()) {
       newErrors.raisonSociale = companyStatus === "new_creation"
-        ? "Le nom prevu de l'entreprise est requis"
+        ? "Le nom prévu de l'entreprise est requis"
         : "La raison sociale est requise";
     }
     if (!formData.formeJuridique) {
@@ -221,14 +221,14 @@ const Domiciliation = () => {
       if (!formData.nif.trim()) {
         newErrors.nif = "Le NIF est requis";
       } else if (formData.nif.length < 10) {
-        newErrors.nif = "Le NIF doit contenir au moins 10 caracteres";
+        newErrors.nif = "Le NIF doit contenir au moins 10 caractères";
       }
     }
     if (!formData.representantLegal.nom.trim()) {
       newErrors["representantLegal.nom"] = "Le nom est requis";
     }
     if (!formData.representantLegal.prenom.trim()) {
-      newErrors["representantLegal.prenom"] = "Le prenom est requis";
+      newErrors["representantLegal.prenom"] = "Le prénom est requis";
     }
     if (!formData.representantLegal.email.trim()) {
       newErrors["representantLegal.email"] = "L'email est requis";

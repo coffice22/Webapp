@@ -20,9 +20,9 @@ import { fr } from "date-fns/locale";
 
 const Blog = () => {
   useSEO({
-    title: "Blog - Coffice | Conseils pour entrepreneurs en Algerie",
+    title: "Blog - Coffice | Conseils pour entrepreneurs en Algérie",
     description:
-      "Decouvrez nos articles sur la creation d'entreprise, la fiscalite, les startups et les demarches administratives en Algerie.",
+      "Découvrez nos articles sur la création d'entreprise, la fiscalité, les startups et les démarches administratives en Algérie.",
   });
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -76,8 +76,8 @@ const Blog = () => {
               Le Blog Coffice
             </h1>
             <p className="text-lg text-white/90 mb-8">
-              Guides pratiques, conseils et actualites pour les entrepreneurs
-              algeriens. Tout ce que vous devez savoir pour creer et gerer votre
+              Guides pratiques, conseils et actualités pour les entrepreneurs
+              algériens. Tout ce que vous devez savoir pour créer et gérer votre
               entreprise.
             </p>
 
@@ -102,7 +102,7 @@ const Blog = () => {
               <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 sticky top-24">
                 <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
                   <Filter className="w-5 h-5 text-amber-500" />
-                  Categories
+                  Catégories
                 </h3>
                 <div className="space-y-2">
                   <button
@@ -140,8 +140,8 @@ const Blog = () => {
                   <div className="flex flex-wrap gap-2">
                     {[
                       "startup",
-                      "fiscalite",
-                      "creation",
+                      "fiscalité",
+                      "création",
                       "SARL",
                       "TVA",
                       "CNAS",
@@ -164,10 +164,10 @@ const Blog = () => {
                 <div className="bg-white rounded-2xl p-12 text-center">
                   <BookOpen className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                   <h3 className="text-xl font-bold text-gray-900 mb-2">
-                    Aucun article trouve
+                    Aucun article trouvé
                   </h3>
                   <p className="text-gray-600">
-                    Essayez de modifier vos criteres de recherche
+                    Essayez de modifier vos critères de recherche
                   </p>
                 </div>
               ) : (

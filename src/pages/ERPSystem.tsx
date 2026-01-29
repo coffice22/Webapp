@@ -92,7 +92,7 @@ const ERPSystem = () => {
     }
   }, [user]);
 
-  // Redirection si non authentifie ou non admin
+  // Redirection si non authentifié ou non admin
   if (!user || user?.role !== "admin") {
     return <Navigate to="/connexion" replace />;
   }
@@ -202,11 +202,11 @@ const ERPSystem = () => {
       role: formData.role || "user",
     });
     if (result.success) {
-      toast.success("Utilisateur cree avec succes");
+      toast.success("Utilisateur créé avec succès");
       setShowActionModal(false);
       setFormData({});
     } else {
-      toast.error(result.error || "Erreur lors de la creation");
+      toast.error(result.error || "Erreur lors de la création");
     }
   };
 
@@ -247,11 +247,11 @@ const ERPSystem = () => {
       description: formData.description || "",
     });
     if (result.success) {
-      toast.success("Espace cree avec succes");
+      toast.success("Espace créé avec succès");
       setShowActionModal(false);
       setFormData({});
     } else {
-      toast.error(result.error || "Erreur lors de la creation");
+      toast.error(result.error || "Erreur lors de la création");
     }
   };
 
@@ -268,7 +268,7 @@ const ERPSystem = () => {
       description: formData.description,
     });
     if (result.success) {
-      toast.success("Espace modifie avec succes");
+      toast.success("Espace modifié avec succès");
       setShowActionModal(false);
       setFormData({});
     } else {
@@ -286,7 +286,7 @@ const ERPSystem = () => {
       dureeJours: parseInt(formData.dureeJours) || 30,
       couleur: formData.couleur || "#3B82F6",
     });
-    toast.success("Abonnement cree avec succes");
+    toast.success("Abonnement créé avec succès");
     setShowActionModal(false);
     setFormData({});
   };

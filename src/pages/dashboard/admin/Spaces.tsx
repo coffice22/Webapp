@@ -37,10 +37,10 @@ import type { Espace } from "../../../types";
 
 const equipementsList = [
   { id: "wifi", label: "WiFi", icon: Wifi },
-  { id: "ecran", label: "Ecran", icon: Monitor },
-  { id: "cafe", label: "Cafe", icon: Coffee },
+  { id: "ecran", label: "Écran", icon: Monitor },
+  { id: "cafe", label: "Café", icon: Coffee },
   { id: "imprimante", label: "Imprimante", icon: Printer },
-  { id: "visio", label: "Visioconference", icon: Video },
+  { id: "visio", label: "Visioconférence", icon: Video },
 ];
 
 const Spaces = () => {
@@ -92,7 +92,7 @@ const Spaces = () => {
       if (editingSpace) {
         const result = await updateEspace(editingSpace.id, dataToSend);
         if (result.success) {
-          toast.success("Espace modifie avec succes");
+          toast.success("Espace modifié avec succès");
           setShowModal(false);
           resetForm();
         } else {
@@ -101,15 +101,15 @@ const Spaces = () => {
       } else {
         const result = await addEspace(dataToSend);
         if (result.success) {
-          toast.success("Espace cree avec succes");
+          toast.success("Espace créé avec succès");
           setShowModal(false);
           resetForm();
         } else {
-          toast.error(result.error || "Erreur lors de la creation");
+          toast.error(result.error || "Erreur lors de la création");
         }
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Erreur lors de l'operation");
+      toast.error(error instanceof Error ? error.message : "Erreur lors de l'opération");
     } finally {
       setLoading(false);
     }

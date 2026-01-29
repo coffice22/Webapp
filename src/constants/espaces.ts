@@ -12,7 +12,7 @@ export const ESPACE_TYPE_LABELS: Record<EspaceType, string> = {
   [ESPACE_TYPES.BOX_4]: "Box 4 places",
   [ESPACE_TYPES.BOX_3]: "Box 3 places",
   [ESPACE_TYPES.OPEN_SPACE]: "Open Space",
-  [ESPACE_TYPES.SALLE_REUNION]: "Salle de Reunion",
+  [ESPACE_TYPES.SALLE_REUNION]: "Salle de Réunion",
   [ESPACE_TYPES.POSTE_INFORMATIQUE]: "Poste Informatique",
 };
 

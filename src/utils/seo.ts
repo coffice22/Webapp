@@ -1,66 +1,66 @@
 export const seoData = {
   home: {
-    title: "Coffice - Espace de Coworking Premium a Alger | Mohammadia Mall",
+    title: "Coffice - Espace de Coworking Premium à Alger | Mohammadia Mall",
     description:
-      "Coffice, espace de coworking moderne au Mohammadia Mall, Alger. Bureaux prives, salles de reunion, domiciliation d'entreprise. WiFi haut debit, kitchenette, terrasse. Reservez des maintenant.",
+      "Coffice, espace de coworking moderne au Mohammadia Mall, Alger. Bureaux privés, salles de réunion, domiciliation d'entreprise. WiFi haut débit, kitchenette, terrasse. Réservez dès maintenant.",
     keywords: [
       "coworking alger",
       "espace de travail alger",
-      "bureau partage alger",
-      "domiciliation entreprise algerie",
+      "bureau partagé alger",
+      "domiciliation entreprise algérie",
       "location bureau alger",
-      "salle de reunion alger",
+      "salle de réunion alger",
       "mohammadia mall coworking",
       "bureau flexible alger",
       "espace professionnel alger",
     ],
   },
   spaces: {
-    title: "Nos Espaces de Travail - Coffice Alger | Bureaux et Salles de Reunion",
+    title: "Nos Espaces de Travail - Coffice Alger | Bureaux et Salles de Réunion",
     description:
-      "Decouvrez nos espaces de coworking: 2 box de 4 places, 1 box de 3 places, open space 12 places avec postes informatiques, salle de reunion avec terrasse. Mohammadia Mall, 4eme etage.",
+      "Découvrez nos espaces de coworking: 2 box de 4 places, 1 box de 3 places, open space 12 places avec postes informatiques, salle de réunion avec terrasse. Mohammadia Mall, 4ème étage.",
     keywords: [
       "bureaux alger",
-      "salle de reunion alger",
+      "salle de réunion alger",
       "espace coworking mohammadia",
-      "box prive alger",
+      "box privé alger",
       "open space alger",
-      "bureau equipe alger",
+      "bureau équipé alger",
     ],
   },
   pricing: {
     title: "Tarifs Coworking Alger - Coffice | Formules Flexibles",
     description:
-      "Tarifs competitifs pour votre espace de travail a Alger. Formules a l'heure, journee ou mois. Domiciliation a partir de 12 000 DA/mois. Devis gratuit.",
+      "Tarifs compétitifs pour votre espace de travail à Alger. Formules à l'heure, journée ou mois. Domiciliation à partir de 12 000 DA/mois. Devis gratuit.",
     keywords: [
       "prix coworking alger",
       "tarif bureau alger",
-      "abonnement coworking algerie",
+      "abonnement coworking algérie",
       "location bureau prix alger",
-      "domiciliation tarif algerie",
+      "domiciliation tarif algérie",
     ],
   },
   about: {
-    title: "A Propos de Coffice - Coworking Alger | Notre Histoire",
+    title: "À Propos de Coffice - Coworking Alger | Notre Histoire",
     description:
-      "Coffice est un espace de coworking nouvelle generation situe au Mohammadia Mall, Alger. Dedie aux entrepreneurs, freelances et entreprises en quete de flexibilite.",
+      "Coffice est un espace de coworking nouvelle génération situé au Mohammadia Mall, Alger. Dédié aux entrepreneurs, freelances et entreprises en quête de flexibilité.",
     keywords: [
       "coworking alger histoire",
-      "espace travail algerie",
+      "espace travail algérie",
       "coffice alger",
       "coworking mohammadia mall",
     ],
   },
   domiciliation: {
-    title: "Domiciliation d'Entreprise a Alger - Coffice | Adresse Commerciale",
+    title: "Domiciliation d'Entreprise à Alger - Coffice | Adresse Commerciale",
     description:
-      "Domiciliez votre entreprise au Mohammadia Mall, Alger. Adresse prestigieuse, reception courrier, assistance administrative. A partir de 12 000 DA/mois. CNRC au 5eme etage.",
+      "Domiciliez votre entreprise au Mohammadia Mall, Alger. Adresse prestigieuse, réception courrier, assistance administrative. À partir de 12 000 DA/mois. CNRC au 5ème étage.",
     keywords: [
       "domiciliation entreprise alger",
-      "adresse commerciale algerie",
-      "siege social alger",
-      "domiciliation societe algerie",
-      "creation entreprise alger",
+      "adresse commerciale algérie",
+      "siège social alger",
+      "domiciliation société algérie",
+      "création entreprise alger",
     ],
   },
 };
@@ -73,13 +73,13 @@ export const structuredData = {
     name: "Coffice",
     alternateName: "Coffice Coworking Alger",
     description:
-      "Espace de coworking moderne a Alger avec bureaux prives, salles de reunion, domiciliation d'entreprise et services professionnels.",
+      "Espace de coworking moderne à Alger avec bureaux privés, salles de réunion, domiciliation d'entreprise et services professionnels.",
     url: "https://coffice.dz",
     telephone: "+213-XXX-XXX-XXX",
     email: "contact@coffice.dz",
     address: {
       "@type": "PostalAddress",
-      streetAddress: "Mohammadia Mall, 4eme etage, Bureau 1178",
+      streetAddress: "Mohammadia Mall, 4ème étage, Bureau 1178",
       addressLocality: "Alger",
       addressRegion: "Alger",
       postalCode: "16000",
@@ -120,23 +120,23 @@ export const structuredData = {
           itemOffered: {
             "@type": "Service",
             name: "Espace Coworking",
-            description: "Acces a nos espaces de travail partages",
+            description: "Accès à nos espaces de travail partagés",
           },
         },
         {
           "@type": "Offer",
           itemOffered: {
             "@type": "Service",
-            name: "Bureau Prive",
-            description: "Box prives de 3 a 4 places",
+            name: "Bureau Privé",
+            description: "Box privés de 3 à 4 places",
           },
         },
         {
           "@type": "Offer",
           itemOffered: {
             "@type": "Service",
-            name: "Salle de Reunion",
-            description: "Salle de reunion equipee avec terrasse",
+            name: "Salle de Réunion",
+            description: "Salle de réunion équipée avec terrasse",
           },
         },
         {
@@ -164,42 +164,42 @@ export const structuredData = {
     mainEntity: [
       {
         "@type": "Question",
-        name: "Ou se trouve Coffice a Alger?",
+        name: "Où se trouve Coffice à Alger ?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Coffice est situe au Mohammadia Mall, 4eme etage, Bureau 1178 a Alger. Facilement accessible et proche du CNRC (5eme etage).",
+          text: "Coffice est situé au Mohammadia Mall, 4ème étage, Bureau 1178 à Alger. Facilement accessible et proche du CNRC (5ème étage).",
         },
       },
       {
         "@type": "Question",
-        name: "Quels sont les tarifs de domiciliation?",
+        name: "Quels sont les tarifs de domiciliation ?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "La domiciliation d'entreprise commence a 12 000 DA par mois. Les contrats sont de 6 mois ou 1 an avec une reduction de 10% pour l'engagement annuel.",
+          text: "La domiciliation d'entreprise commence à 12 000 DA par mois. Les contrats sont de 6 mois ou 1 an avec une réduction de 10% pour l'engagement annuel.",
         },
       },
       {
         "@type": "Question",
-        name: "Quels espaces sont disponibles chez Coffice?",
+        name: "Quels espaces sont disponibles chez Coffice ?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Nous disposons de 2 box de 4 places, 1 box de 3 places, 1 open space de 12 places avec 2 postes informatiques puissants, et 1 salle de reunion avec terrasse.",
+          text: "Nous disposons de 2 box de 4 places, 1 box de 3 places, 1 open space de 12 places avec 2 postes informatiques puissants, et 1 salle de réunion avec terrasse.",
         },
       },
       {
         "@type": "Question",
-        name: "Quels services sont inclus?",
+        name: "Quels services sont inclus ?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Nos services incluent: WiFi haut debit, kitchenette equipee, reception du courrier, assistance administrative, acces a la salle de reunion (selon formule).",
+          text: "Nos services incluent : WiFi haut débit, kitchenette équipée, réception du courrier, assistance administrative, accès à la salle de réunion (selon formule).",
         },
       },
       {
         "@type": "Question",
-        name: "Comment reserver un espace?",
+        name: "Comment réserver un espace ?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Vous pouvez reserver directement sur notre site web en creant un compte, ou nous contacter par telephone ou email. Les reservations sont confirmees sous 24h.",
+          text: "Vous pouvez réserver directement sur notre site web en créant un compte, ou nous contacter par téléphone ou email. Les réservations sont confirmées sous 24h.",
         },
       },
     ],

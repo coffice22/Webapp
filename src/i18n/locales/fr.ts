@@ -27,7 +27,7 @@ export const translationFr = {
     title: "Nos Espaces",
     coworking: {
       name: "Espace Coworking",
-      tagline: "Votre bureau flexible au coeur d'Alger",
+      tagline: "Votre bureau flexible au cœur d'Alger",
       description:
         "Un environnement dynamique de 200m² avec 24 postes open space",
       priceDay: "1 200 DA TTC / jour",

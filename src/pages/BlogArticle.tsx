@@ -121,7 +121,7 @@ const BlogArticle = () => {
                     <p className="font-semibold text-gray-900">
                       {article.author}
                     </p>
-                    <p className="text-sm text-gray-500">Redacteur</p>
+                    <p className="text-sm text-gray-500">Rédacteur</p>
                   </div>
                 </div>
 
