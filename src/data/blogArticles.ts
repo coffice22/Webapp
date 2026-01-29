@@ -543,4 +543,4 @@ A partir de 12 000 DA/mois avec engagement de 6 mois minimum.
   },
 ];
 
-export const BLOG_ENABLED = false;
+export const BLOG_ENABLED = true;
