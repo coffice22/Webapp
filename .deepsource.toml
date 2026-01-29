@@ -1,12 +1,15 @@
 version = 1
 
-# Analyseurs pour le projet Coffice (React + TypeScript + PHP + MySQL)
-
 [[analyzers]]
 name = "javascript"
+
   [analyzers.meta]
   plugins = ["react"]
-  environment = ["browser", "nodejs", "vitest"]
+  environment = [
+    "browser",
+    "nodejs",
+    "vitest"
+  ]
 
 [[analyzers]]
 name = "php"
