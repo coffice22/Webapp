@@ -42,9 +42,12 @@ const categoryIcons: Record<string, React.ElementType> = {
 };
 
 const difficultyConfig = {
-  "débutant": { color: "bg-green-100 text-green-700", label: "Débutant" },
-  "intermédiaire": { color: "bg-amber-100 text-amber-700", label: "Intermédiaire" },
-  "avancé": { color: "bg-red-100 text-red-700", label: "Avancé" },
+  débutant: { color: "bg-green-100 text-green-700", label: "Débutant" },
+  intermédiaire: {
+    color: "bg-amber-100 text-amber-700",
+    label: "Intermédiaire",
+  },
+  avancé: { color: "bg-red-100 text-red-700", label: "Avancé" },
 };
 
 const Blog = () => {
@@ -69,7 +72,7 @@ const Blog = () => {
         article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         article.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
         article.tags.some((tag) =>
-          tag.toLowerCase().includes(searchQuery.toLowerCase())
+          tag.toLowerCase().includes(searchQuery.toLowerCase()),
         );
 
       const matchesCategory =
@@ -130,9 +133,9 @@ const Blog = () => {
             </h1>
 
             <p className="text-lg md:text-xl text-slate-300 mb-10 max-w-3xl mx-auto">
-              Guides pratiques, tutoriels détaillés et conseils d'experts pour créer,
-              gérer et développer votre entreprise. De la création aux obligations fiscales,
-              tout ce dont vous avez besoin.
+              Guides pratiques, tutoriels détaillés et conseils d'experts pour
+              créer, gérer et développer votre entreprise. De la création aux
+              obligations fiscales, tout ce dont vous avez besoin.
             </p>
 
             <div className="relative max-w-2xl mx-auto">
@@ -147,7 +150,13 @@ const Blog = () => {
             </div>
 
             <div className="flex flex-wrap justify-center gap-3 mt-8">
-              {["création entreprise", "SARL", "fiscalité", "auto-entrepreneur", "CNAS"].map((tag) => (
+              {[
+                "création entreprise",
+                "SARL",
+                "fiscalité",
+                "auto-entrepreneur",
+                "CNAS",
+              ].map((tag) => (
                 <button
                   key={tag}
                   onClick={() => setSearchQuery(tag)}
@@ -170,8 +179,12 @@ const Blog = () => {
                   <Star className="w-6 h-6 text-amber-600" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900">Articles à la une</h2>
-                  <p className="text-gray-600">Les guides essentiels pour bien démarrer</p>
+                  <h2 className="text-2xl font-bold text-gray-900">
+                    Articles à la une
+                  </h2>
+                  <p className="text-gray-600">
+                    Les guides essentiels pour bien démarrer
+                  </p>
                 </div>
               </div>
             </div>
@@ -179,7 +192,9 @@ const Blog = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {featuredArticles.map((article, index) => {
                 const categoryInfo = getCategoryInfo(article.category);
-                const IconComponent = getCategoryIcon(categoryInfo.icon || "Lightbulb");
+                const IconComponent = getCategoryIcon(
+                  categoryInfo.icon || "Lightbulb",
+                );
 
                 return (
                   <motion.article
@@ -200,32 +215,46 @@ const Blog = () => {
                       }`}
                     >
                       <div className="flex items-center gap-2 mb-4">
-                        <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 ${categoryInfo.color} text-white text-xs font-medium rounded-full`}>
+                        <span
+                          className={`inline-flex items-center gap-1.5 px-3 py-1.5 ${categoryInfo.color} text-white text-xs font-medium rounded-full`}
+                        >
                           <IconComponent className="w-3.5 h-3.5" />
                           {categoryInfo.name}
                         </span>
                         {article.difficulty && (
-                          <span className={`px-3 py-1.5 text-xs font-medium rounded-full ${difficultyConfig[article.difficulty].color}`}>
+                          <span
+                            className={`px-3 py-1.5 text-xs font-medium rounded-full ${difficultyConfig[article.difficulty].color}`}
+                          >
                             {difficultyConfig[article.difficulty].label}
                           </span>
                         )}
                       </div>
 
-                      <h3 className={`font-bold mb-3 group-hover:text-amber-500 transition-colors ${
-                        index === 0 ? "text-2xl md:text-3xl text-white" : "text-xl text-gray-900"
-                      }`}>
+                      <h3
+                        className={`font-bold mb-3 group-hover:text-amber-500 transition-colors ${
+                          index === 0
+                            ? "text-2xl md:text-3xl text-white"
+                            : "text-xl text-gray-900"
+                        }`}
+                      >
                         {article.title}
                       </h3>
 
-                      <p className={`mb-6 line-clamp-3 ${
-                        index === 0 ? "text-slate-300 text-lg" : "text-gray-600"
-                      }`}>
+                      <p
+                        className={`mb-6 line-clamp-3 ${
+                          index === 0
+                            ? "text-slate-300 text-lg"
+                            : "text-gray-600"
+                        }`}
+                      >
                         {article.excerpt}
                       </p>
 
-                      <div className={`flex items-center justify-between mt-auto ${
-                        index === 0 ? "text-slate-400" : "text-gray-500"
-                      }`}>
+                      <div
+                        className={`flex items-center justify-between mt-auto ${
+                          index === 0 ? "text-slate-400" : "text-gray-500"
+                        }`}
+                      >
                         <div className="flex items-center gap-4 text-sm">
                           <span className="flex items-center gap-1">
                             <Clock className="w-4 h-4" />
@@ -233,13 +262,19 @@ const Blog = () => {
                           </span>
                           <span className="flex items-center gap-1">
                             <Calendar className="w-4 h-4" />
-                            {format(new Date(article.publishedAt), "dd MMM yyyy", { locale: fr })}
+                            {format(
+                              new Date(article.publishedAt),
+                              "dd MMM yyyy",
+                              { locale: fr },
+                            )}
                           </span>
                         </div>
 
-                        <span className={`inline-flex items-center gap-1 font-medium text-sm ${
-                          index === 0 ? "text-amber-400" : "text-amber-600"
-                        }`}>
+                        <span
+                          className={`inline-flex items-center gap-1 font-medium text-sm ${
+                            index === 0 ? "text-amber-400" : "text-amber-600"
+                          }`}
+                        >
                           Lire
                           <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                         </span>
@@ -259,31 +294,43 @@ const Blog = () => {
             <div className="p-2 bg-slate-100 rounded-xl">
               <Filter className="w-5 h-5 text-slate-600" />
             </div>
-            <h2 className="text-xl font-bold text-gray-900">Explorer par catégorie</h2>
+            <h2 className="text-xl font-bold text-gray-900">
+              Explorer par catégorie
+            </h2>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {displayedCategories.map((category) => {
               const IconComponent = getCategoryIcon(category.icon);
-              const articleCount = blogArticles.filter(a => a.category === category.id).length;
+              const articleCount = blogArticles.filter(
+                (a) => a.category === category.id,
+              ).length;
 
               return (
                 <button
                   key={category.id}
-                  onClick={() => setSelectedCategory(
-                    selectedCategory === category.id ? null : category.id
-                  )}
+                  onClick={() =>
+                    setSelectedCategory(
+                      selectedCategory === category.id ? null : category.id,
+                    )
+                  }
                   className={`p-4 rounded-2xl border-2 transition-all text-left ${
                     selectedCategory === category.id
                       ? "border-amber-500 bg-amber-50"
                       : "border-gray-200 bg-white hover:border-gray-300"
                   }`}
                 >
-                  <div className={`w-10 h-10 rounded-xl ${category.color} flex items-center justify-center mb-3`}>
+                  <div
+                    className={`w-10 h-10 rounded-xl ${category.color} flex items-center justify-center mb-3`}
+                  >
                     <IconComponent className="w-5 h-5 text-white" />
                   </div>
-                  <h3 className="font-semibold text-gray-900 mb-1">{category.name}</h3>
-                  <p className="text-sm text-gray-500">{articleCount} article{articleCount > 1 ? "s" : ""}</p>
+                  <h3 className="font-semibold text-gray-900 mb-1">
+                    {category.name}
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    {articleCount} article{articleCount > 1 ? "s" : ""}
+                  </p>
                 </button>
               );
             })}
@@ -294,8 +341,12 @@ const Blog = () => {
               onClick={() => setShowAllCategories(!showAllCategories)}
               className="mt-4 text-amber-600 hover:text-amber-700 font-medium text-sm flex items-center gap-1 mx-auto"
             >
-              {showAllCategories ? "Voir moins" : `Voir toutes les catégories (${blogCategories.length})`}
-              <ChevronRight className={`w-4 h-4 transition-transform ${showAllCategories ? "rotate-90" : ""}`} />
+              {showAllCategories
+                ? "Voir moins"
+                : `Voir toutes les catégories (${blogCategories.length})`}
+              <ChevronRight
+                className={`w-4 h-4 transition-transform ${showAllCategories ? "rotate-90" : ""}`}
+              />
             </button>
           )}
         </div>
@@ -347,16 +398,23 @@ const Blog = () => {
                   <div className="space-y-3">
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Total articles</span>
-                      <span className="font-semibold text-gray-900">{blogArticles.length}</span>
+                      <span className="font-semibold text-gray-900">
+                        {blogArticles.length}
+                      </span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Catégories</span>
-                      <span className="font-semibold text-gray-900">{blogCategories.length}</span>
+                      <span className="font-semibold text-gray-900">
+                        {blogCategories.length}
+                      </span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Temps de lecture total</span>
+                      <span className="text-gray-600">
+                        Temps de lecture total
+                      </span>
                       <span className="font-semibold text-gray-900">
-                        {blogArticles.reduce((acc, a) => acc + a.readTime, 0)} min
+                        {blogArticles.reduce((acc, a) => acc + a.readTime, 0)}{" "}
+                        min
                       </span>
                     </div>
                   </div>
@@ -380,11 +438,11 @@ const Blog = () => {
                     ? getCategoryInfo(selectedCategory).name
                     : searchQuery
                       ? `Résultats pour "${searchQuery}"`
-                      : "Tous les articles"
-                  }
+                      : "Tous les articles"}
                 </h2>
                 <span className="text-gray-500">
-                  {filteredArticles.length} article{filteredArticles.length > 1 ? "s" : ""}
+                  {filteredArticles.length} article
+                  {filteredArticles.length > 1 ? "s" : ""}
                 </span>
               </div>
 
@@ -411,7 +469,9 @@ const Blog = () => {
                 <div className="space-y-4">
                   {filteredArticles.map((article, index) => {
                     const categoryInfo = getCategoryInfo(article.category);
-                    const IconComponent = getCategoryIcon(categoryInfo.icon || "Lightbulb");
+                    const IconComponent = getCategoryIcon(
+                      categoryInfo.icon || "Lightbulb",
+                    );
 
                     return (
                       <motion.article
@@ -426,13 +486,17 @@ const Blog = () => {
                           className="block p-6"
                         >
                           <div className="flex flex-col md:flex-row md:items-start gap-4">
-                            <div className={`hidden md:flex w-14 h-14 rounded-2xl ${categoryInfo.color} items-center justify-center flex-shrink-0`}>
+                            <div
+                              className={`hidden md:flex w-14 h-14 rounded-2xl ${categoryInfo.color} items-center justify-center flex-shrink-0`}
+                            >
                               <IconComponent className="w-7 h-7 text-white" />
                             </div>
 
                             <div className="flex-1 min-w-0">
                               <div className="flex flex-wrap items-center gap-2 mb-3">
-                                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 ${categoryInfo.color} text-white text-xs font-medium rounded-full md:hidden`}>
+                                <span
+                                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 ${categoryInfo.color} text-white text-xs font-medium rounded-full md:hidden`}
+                                >
                                   <IconComponent className="w-3 h-3" />
                                   {categoryInfo.name}
                                 </span>
@@ -440,14 +504,15 @@ const Blog = () => {
                                   {categoryInfo.name}
                                 </span>
                                 {article.difficulty && (
-                                  <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${difficultyConfig[article.difficulty].color}`}>
+                                  <span
+                                    className={`px-2.5 py-1 text-xs font-medium rounded-full ${difficultyConfig[article.difficulty].color}`}
+                                  >
                                     {difficultyConfig[article.difficulty].label}
                                   </span>
                                 )}
                                 {article.featured && (
                                   <span className="px-2.5 py-1 bg-amber-100 text-amber-700 text-xs font-medium rounded-full flex items-center gap-1">
-                                    <Star className="w-3 h-3" />
-                                    À la une
+                                    <Star className="w-3 h-3" />À la une
                                   </span>
                                 )}
                               </div>
@@ -472,7 +537,11 @@ const Blog = () => {
                                   </span>
                                   <span className="hidden sm:flex items-center gap-1">
                                     <Calendar className="w-4 h-4" />
-                                    {format(new Date(article.publishedAt), "dd MMM yyyy", { locale: fr })}
+                                    {format(
+                                      new Date(article.publishedAt),
+                                      "dd MMM yyyy",
+                                      { locale: fr },
+                                    )}
                                   </span>
                                 </div>
 
@@ -519,8 +588,8 @@ const Blog = () => {
             Besoin d'un espace pour travailler ?
           </h2>
           <p className="text-slate-300 mb-8 max-w-2xl mx-auto">
-            Coffice vous offre des espaces de coworking modernes et une domiciliation
-            d'entreprise professionnelle au coeur d'Alger.
+            Coffice vous offre des espaces de coworking modernes et une
+            domiciliation d'entreprise professionnelle au coeur d'Alger.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link

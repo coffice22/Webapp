@@ -17,14 +17,62 @@ export interface BlogArticle {
 }
 
 export const blogCategories = [
-  { id: "creation", name: "Création d'entreprise", color: "bg-emerald-500", icon: "Building2", description: "Guides complets pour créer votre entreprise en Algérie" },
-  { id: "juridique", name: "Juridique", color: "bg-blue-500", icon: "Scale", description: "Formes juridiques, statuts et obligations légales" },
-  { id: "fiscalite", name: "Fiscalité", color: "bg-amber-500", icon: "Calculator", description: "Impôts, taxes et déclarations fiscales" },
-  { id: "social", name: "CNAS/CASNOS", color: "bg-rose-500", icon: "Users", description: "Sécurité sociale et cotisations" },
-  { id: "startup", name: "Startups", color: "bg-cyan-500", icon: "Rocket", description: "Écosystème startup et innovation en Algérie" },
-  { id: "comptabilite", name: "Comptabilité", color: "bg-violet-500", icon: "FileSpreadsheet", description: "Gestion comptable et financière" },
-  { id: "financement", name: "Financement", color: "bg-green-500", icon: "Banknote", description: "Options de financement et aides disponibles" },
-  { id: "pratique", name: "Guides pratiques", color: "bg-orange-500", icon: "Lightbulb", description: "Conseils et astuces pour entrepreneurs" },
+  {
+    id: "creation",
+    name: "Création d'entreprise",
+    color: "bg-emerald-500",
+    icon: "Building2",
+    description: "Guides complets pour créer votre entreprise en Algérie",
+  },
+  {
+    id: "juridique",
+    name: "Juridique",
+    color: "bg-blue-500",
+    icon: "Scale",
+    description: "Formes juridiques, statuts et obligations légales",
+  },
+  {
+    id: "fiscalite",
+    name: "Fiscalité",
+    color: "bg-amber-500",
+    icon: "Calculator",
+    description: "Impôts, taxes et déclarations fiscales",
+  },
+  {
+    id: "social",
+    name: "CNAS/CASNOS",
+    color: "bg-rose-500",
+    icon: "Users",
+    description: "Sécurité sociale et cotisations",
+  },
+  {
+    id: "startup",
+    name: "Startups",
+    color: "bg-cyan-500",
+    icon: "Rocket",
+    description: "Écosystème startup et innovation en Algérie",
+  },
+  {
+    id: "comptabilite",
+    name: "Comptabilité",
+    color: "bg-violet-500",
+    icon: "FileSpreadsheet",
+    description: "Gestion comptable et financière",
+  },
+  {
+    id: "financement",
+    name: "Financement",
+    color: "bg-green-500",
+    icon: "Banknote",
+    description: "Options de financement et aides disponibles",
+  },
+  {
+    id: "pratique",
+    name: "Guides pratiques",
+    color: "bg-orange-500",
+    icon: "Lightbulb",
+    description: "Conseils et astuces pour entrepreneurs",
+  },
 ];
 
 export const blogArticles: BlogArticle[] = [
@@ -32,7 +80,8 @@ export const blogArticles: BlogArticle[] = [
     id: "1",
     slug: "guide-complet-creation-entreprise-algerie-2024",
     title: "Guide complet : Créer son entreprise en Algérie en 2024",
-    excerpt: "Le guide ultime pour créer votre entreprise en Algérie. Toutes les étapes, documents, démarches et conseils pour réussir votre projet entrepreneurial.",
+    excerpt:
+      "Le guide ultime pour créer votre entreprise en Algérie. Toutes les étapes, documents, démarches et conseils pour réussir votre projet entrepreneurial.",
     featured: true,
     difficulty: "débutant",
     content: `
@@ -281,13 +330,22 @@ Contactez-nous pour en savoir plus.
     publishedAt: "2024-12-20",
     updatedAt: "2024-12-28",
     readTime: 25,
-    tags: ["création", "entreprise", "guide", "démarches", "CNRC", "registre de commerce"],
+    tags: [
+      "création",
+      "entreprise",
+      "guide",
+      "démarches",
+      "CNRC",
+      "registre de commerce",
+    ],
   },
   {
     id: "2",
     slug: "formes-juridiques-algerie-comparatif-complet",
-    title: "SARL, EURL, SPA, Auto-entrepreneur : Quelle forme juridique choisir ?",
-    excerpt: "Comparatif détaillé des formes juridiques en Algérie. Avantages, inconvénients, capital, responsabilité : tout pour faire le bon choix.",
+    title:
+      "SARL, EURL, SPA, Auto-entrepreneur : Quelle forme juridique choisir ?",
+    excerpt:
+      "Comparatif détaillé des formes juridiques en Algérie. Avantages, inconvénients, capital, responsabilité : tout pour faire le bon choix.",
     featured: true,
     difficulty: "débutant",
     content: `
@@ -518,13 +576,22 @@ N'hésitez pas à consulter un expert-comptable ou un avocat pour affiner votre 
     author: "Coffice",
     publishedAt: "2024-12-18",
     readTime: 20,
-    tags: ["juridique", "SARL", "EURL", "SPA", "SPAS", "auto-entrepreneur", "comparatif"],
+    tags: [
+      "juridique",
+      "SARL",
+      "EURL",
+      "SPA",
+      "SPAS",
+      "auto-entrepreneur",
+      "comparatif",
+    ],
   },
   {
     id: "3",
     slug: "fiscalite-entreprise-algerie-guide-complet",
     title: "La fiscalité des entreprises en Algérie : IBS, TVA, TAP, IRG",
-    excerpt: "Maîtrisez la fiscalité algérienne : impôts, taxes, déclarations et optimisation fiscale légale pour votre entreprise.",
+    excerpt:
+      "Maîtrisez la fiscalité algérienne : impôts, taxes, déclarations et optimisation fiscale légale pour votre entreprise.",
     featured: true,
     difficulty: "intermédiaire",
     content: `
@@ -755,7 +822,8 @@ N'hésitez pas à consulter un expert-comptable pour optimiser votre situation f
     id: "4",
     slug: "cnas-casnos-guide-complet-securite-sociale",
     title: "CNAS et CASNOS : Guide complet de la sécurité sociale en Algérie",
-    excerpt: "Tout comprendre sur les cotisations sociales, l'affiliation CNAS/CASNOS, les déclarations et les prestations pour employeurs et indépendants.",
+    excerpt:
+      "Tout comprendre sur les cotisations sociales, l'affiliation CNAS/CASNOS, les déclarations et les prestations pour employeurs et indépendants.",
     difficulty: "intermédiaire",
     content: `
 ## Introduction
@@ -987,13 +1055,21 @@ La protection sociale est un investissement pour vous et vos salariés. Une bonn
     author: "Coffice",
     publishedAt: "2024-12-12",
     readTime: 18,
-    tags: ["CNAS", "CASNOS", "cotisations", "sécurité sociale", "employeur", "retraite"],
+    tags: [
+      "CNAS",
+      "CASNOS",
+      "cotisations",
+      "sécurité sociale",
+      "employeur",
+      "retraite",
+    ],
   },
   {
     id: "5",
     slug: "startup-algerie-label-financement-avantages",
     title: "Startups en Algérie : Label, financement et avantages fiscaux",
-    excerpt: "Comment obtenir le label startup, les sources de financement disponibles et tous les avantages fiscaux pour les entreprises innovantes en Algérie.",
+    excerpt:
+      "Comment obtenir le label startup, les sources de financement disponibles et tous les avantages fiscaux pour les entreprises innovantes en Algérie.",
     featured: true,
     difficulty: "intermédiaire",
     content: `
@@ -1241,13 +1317,21 @@ L'écosystème startup algérien offre de réelles opportunités pour les entrep
     author: "Coffice",
     publishedAt: "2024-12-10",
     readTime: 20,
-    tags: ["startup", "label", "financement", "SPAS", "innovation", "avantages fiscaux"],
+    tags: [
+      "startup",
+      "label",
+      "financement",
+      "SPAS",
+      "innovation",
+      "avantages fiscaux",
+    ],
   },
   {
     id: "6",
     slug: "facturation-algerie-mentions-obligatoires",
     title: "La facture en Algérie : Mentions obligatoires et conformité",
-    excerpt: "Toutes les règles de facturation en Algérie : mentions obligatoires, facturation électronique, TVA et sanctions en cas de non-conformité.",
+    excerpt:
+      "Toutes les règles de facturation en Algérie : mentions obligatoires, facturation électronique, TVA et sanctions en cas de non-conformité.",
     difficulty: "débutant",
     content: `
 ## Introduction
@@ -1468,13 +1552,20 @@ Une facturation conforme est essentielle pour votre entreprise. Elle vous protè
     author: "Coffice",
     publishedAt: "2024-12-08",
     readTime: 15,
-    tags: ["facturation", "TVA", "mentions obligatoires", "comptabilité", "conformité"],
+    tags: [
+      "facturation",
+      "TVA",
+      "mentions obligatoires",
+      "comptabilité",
+      "conformité",
+    ],
   },
   {
     id: "7",
     slug: "registres-obligatoires-entreprise-algerie",
     title: "Les registres obligatoires en entreprise : Inventaire, paie, AG",
-    excerpt: "Guide complet des livres et registres obligatoires que toute entreprise algérienne doit tenir : inventaire, paie, assemblées générales, etc.",
+    excerpt:
+      "Guide complet des livres et registres obligatoires que toute entreprise algérienne doit tenir : inventaire, paie, assemblées générales, etc.",
     difficulty: "débutant",
     content: `
 ## Introduction
@@ -1721,13 +1812,20 @@ La tenue des registres obligatoires n'est pas une option. C'est une obligation l
     author: "Coffice",
     publishedAt: "2024-12-05",
     readTime: 14,
-    tags: ["registres", "comptabilité", "juridique", "obligations légales", "paie"],
+    tags: [
+      "registres",
+      "comptabilité",
+      "juridique",
+      "obligations légales",
+      "paie",
+    ],
   },
   {
     id: "8",
     slug: "domiciliation-entreprise-algerie-avantages",
     title: "Domiciliation d'entreprise en Algérie : Guide complet",
-    excerpt: "Tout savoir sur la domiciliation commerciale : avantages, procédure, documents requis et tarifs pour domicilier votre entreprise à Alger.",
+    excerpt:
+      "Tout savoir sur la domiciliation commerciale : avantages, procédure, documents requis et tarifs pour domicilier votre entreprise à Alger.",
     difficulty: "débutant",
     content: `
 ## Introduction
@@ -1949,7 +2047,8 @@ La domiciliation est une solution idéale pour démarrer ou développer votre ac
     id: "9",
     slug: "financement-creation-entreprise-algerie",
     title: "Financer sa création d'entreprise en Algérie",
-    excerpt: "Toutes les options de financement pour créer votre entreprise : ANSEJ, CNAC, ANGEM, banques, business angels et fonds d'investissement.",
+    excerpt:
+      "Toutes les options de financement pour créer votre entreprise : ANSEJ, CNAC, ANGEM, banques, business angels et fonds d'investissement.",
     difficulty: "intermédiaire",
     content: `
 ## Introduction
@@ -2224,13 +2323,21 @@ Le financement est accessible si vous êtes bien préparé. Combinez plusieurs s
     author: "Coffice",
     publishedAt: "2024-11-28",
     readTime: 18,
-    tags: ["financement", "ANSEJ", "CNAC", "banques", "investisseurs", "business angels"],
+    tags: [
+      "financement",
+      "ANSEJ",
+      "CNAC",
+      "banques",
+      "investisseurs",
+      "business angels",
+    ],
   },
   {
     id: "10",
     slug: "ifu-auto-entrepreneur-algerie",
     title: "L'IFU et le statut d'auto-entrepreneur en Algérie",
-    excerpt: "Guide complet sur l'Impôt Forfaitaire Unique : conditions, taux, déclarations et avantages du régime simplifié pour les petites activités.",
+    excerpt:
+      "Guide complet sur l'Impôt Forfaitaire Unique : conditions, taux, déclarations et avantages du régime simplifié pour les petites activités.",
     difficulty: "débutant",
     content: `
 ## Introduction
@@ -2462,7 +2569,13 @@ L'IFU et le statut d'auto-entrepreneur sont d'excellentes solutions pour démarr
     author: "Coffice",
     publishedAt: "2024-11-25",
     readTime: 16,
-    tags: ["IFU", "auto-entrepreneur", "fiscalité", "régime simplifié", "création"],
+    tags: [
+      "IFU",
+      "auto-entrepreneur",
+      "fiscalité",
+      "régime simplifié",
+      "création",
+    ],
   },
 ];
 
