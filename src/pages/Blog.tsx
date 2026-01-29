@@ -35,7 +35,7 @@ const Blog = () => {
         article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         article.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
         article.tags.some((tag) =>
-          tag.toLowerCase().includes(searchQuery.toLowerCase())
+          tag.toLowerCase().includes(searchQuery.toLowerCase()),
         );
 
       const matchesCategory =
@@ -197,7 +197,7 @@ const Blog = () => {
                               {format(
                                 new Date(article.publishedAt),
                                 "dd MMM yyyy",
-                                { locale: fr }
+                                { locale: fr },
                               )}
                             </span>
                             <span className="flex items-center gap-1 text-sm text-gray-500">
