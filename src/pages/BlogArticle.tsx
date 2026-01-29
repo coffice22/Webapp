@@ -42,9 +42,21 @@ const categoryIcons: Record<string, React.ElementType> = {
 };
 
 const difficultyConfig = {
-  "débutant": { color: "bg-green-100 text-green-700 border-green-200", label: "Débutant", icon: "1" },
-  "intermédiaire": { color: "bg-amber-100 text-amber-700 border-amber-200", label: "Intermédiaire", icon: "2" },
-  "avancé": { color: "bg-red-100 text-red-700 border-red-200", label: "Avancé", icon: "3" },
+  débutant: {
+    color: "bg-green-100 text-green-700 border-green-200",
+    label: "Débutant",
+    icon: "1",
+  },
+  intermédiaire: {
+    color: "bg-amber-100 text-amber-700 border-amber-200",
+    label: "Intermédiaire",
+    icon: "2",
+  },
+  avancé: {
+    color: "bg-red-100 text-red-700 border-red-200",
+    label: "Avancé",
+    icon: "3",
+  },
 };
 
 const BlogArticle = () => {
@@ -59,9 +71,7 @@ const BlogArticle = () => {
   const relatedArticles = useMemo(() => {
     if (!article) return [];
     return blogArticles
-      .filter(
-        (a) => a.id !== article.id && a.category === article.category
-      )
+      .filter((a) => a.id !== article.id && a.category === article.category)
       .slice(0, 3);
   }, [article]);
 
@@ -96,7 +106,7 @@ const BlogArticle = () => {
           title: `${article.title} | Blog Coffice`,
           description: article.excerpt,
         }
-      : {}
+      : {},
   );
 
   useEffect(() => {
@@ -111,13 +121,16 @@ const BlogArticle = () => {
     return <Navigate to="/blog" replace />;
   }
 
-  const categoryInfo = blogCategories.find((c) => c.id === article.category) || {
+  const categoryInfo = blogCategories.find(
+    (c) => c.id === article.category,
+  ) || {
     name: article.category,
     color: "bg-gray-500",
     icon: "Lightbulb",
   };
 
-  const IconComponent = categoryIcons[categoryInfo.icon || "Lightbulb"] || Lightbulb;
+  const IconComponent =
+    categoryIcons[categoryInfo.icon || "Lightbulb"] || Lightbulb;
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -169,7 +182,7 @@ const BlogArticle = () => {
                 {item}
               </li>
             ))}
-          </ListTag>
+          </ListTag>,
         );
         listItems = [];
         listType = null;
@@ -195,7 +208,7 @@ const BlogArticle = () => {
           >
             <span className="w-1 h-8 bg-amber-500 rounded-full" />
             {title}
-          </h2>
+          </h2>,
         );
         return;
       }
@@ -211,7 +224,7 @@ const BlogArticle = () => {
             className="text-xl md:text-2xl font-semibold text-gray-900 mt-8 mb-4 scroll-mt-24"
           >
             {title}
-          </h3>
+          </h3>,
         );
         return;
       }
@@ -221,7 +234,7 @@ const BlogArticle = () => {
         elements.push(
           <p key={index} className="font-semibold text-gray-900 mb-4 text-lg">
             {trimmed.replace(/\*\*/g, "")}
-          </p>
+          </p>,
         );
         return;
       }
@@ -252,7 +265,7 @@ const BlogArticle = () => {
       elements.push(
         <p key={index} className="text-gray-600 mb-4 leading-relaxed text-lg">
           {trimmed}
-        </p>
+        </p>,
       );
     });
 
@@ -281,12 +294,16 @@ const BlogArticle = () => {
               </Link>
 
               <div className="flex flex-wrap items-center gap-3 mb-6">
-                <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 ${categoryInfo.color} text-white text-sm font-medium rounded-full`}>
+                <span
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 ${categoryInfo.color} text-white text-sm font-medium rounded-full`}
+                >
                   <IconComponent className="w-4 h-4" />
                   {categoryInfo.name}
                 </span>
                 {article.difficulty && (
-                  <span className={`px-3 py-1.5 text-sm font-medium rounded-full border ${difficultyConfig[article.difficulty].color}`}>
+                  <span
+                    className={`px-3 py-1.5 text-sm font-medium rounded-full border ${difficultyConfig[article.difficulty].color}`}
+                  >
                     Niveau : {difficultyConfig[article.difficulty].label}
                   </span>
                 )}
@@ -316,12 +333,17 @@ const BlogArticle = () => {
                     <div className="flex items-center gap-3 text-sm text-gray-500">
                       <span className="flex items-center gap-1">
                         <Calendar className="w-4 h-4" />
-                        {format(new Date(article.publishedAt), "dd MMMM yyyy", { locale: fr })}
+                        {format(new Date(article.publishedAt), "dd MMMM yyyy", {
+                          locale: fr,
+                        })}
                       </span>
                       {article.updatedAt && (
                         <span className="flex items-center gap-1">
                           <RefreshCw className="w-3.5 h-3.5" />
-                          Mis à jour le {format(new Date(article.updatedAt), "dd MMM yyyy", { locale: fr })}
+                          Mis à jour le{" "}
+                          {format(new Date(article.updatedAt), "dd MMM yyyy", {
+                            locale: fr,
+                          })}
                         </span>
                       )}
                     </div>
@@ -394,7 +416,8 @@ const BlogArticle = () => {
                             Cet article vous a été utile ?
                           </h4>
                           <p className="text-gray-600 text-sm mb-4">
-                            Partagez-le avec d'autres entrepreneurs qui pourraient en bénéficier.
+                            Partagez-le avec d'autres entrepreneurs qui
+                            pourraient en bénéficier.
                           </p>
                           <button
                             onClick={handleShare}
@@ -449,12 +472,16 @@ const BlogArticle = () => {
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {relatedArticles.map((related) => {
-                    const relatedCategoryInfo = blogCategories.find((c) => c.id === related.category) || {
+                    const relatedCategoryInfo = blogCategories.find(
+                      (c) => c.id === related.category,
+                    ) || {
                       name: related.category,
                       color: "bg-gray-500",
                       icon: "Lightbulb",
                     };
-                    const RelatedIcon = categoryIcons[relatedCategoryInfo.icon || "Lightbulb"] || Lightbulb;
+                    const RelatedIcon =
+                      categoryIcons[relatedCategoryInfo.icon || "Lightbulb"] ||
+                      Lightbulb;
 
                     return (
                       <Link
@@ -462,7 +489,9 @@ const BlogArticle = () => {
                         to={`/blog/${related.slug}`}
                         className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-lg hover:border-gray-200 transition-all group"
                       >
-                        <div className={`w-10 h-10 rounded-xl ${relatedCategoryInfo.color} flex items-center justify-center mb-4`}>
+                        <div
+                          className={`w-10 h-10 rounded-xl ${relatedCategoryInfo.color} flex items-center justify-center mb-4`}
+                        >
                           <RelatedIcon className="w-5 h-5 text-white" />
                         </div>
                         <h4 className="font-bold text-gray-900 mb-2 group-hover:text-amber-600 transition-colors line-clamp-2">
