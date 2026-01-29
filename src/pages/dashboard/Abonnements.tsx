@@ -61,7 +61,8 @@ const Abonnements = () => {
   const { user } = useAuthStore();
   const [abonnements, setAbonnements] = useState<Abonnement[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedAbonnement, setSelectedAbonnement] = useState<Abonnement | null>(null);
+  const [selectedAbonnement, setSelectedAbonnement] =
+    useState<Abonnement | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [subscribing, setSubscribing] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
@@ -84,7 +85,7 @@ const Abonnements = () => {
 
   useEffect(() => {
     if (user) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         nom: user.nom || "",
         prenom: user.prenom || "",
@@ -98,7 +99,9 @@ const Abonnements = () => {
     try {
       const response = await apiClient.getAbonnements();
       if (response.success && response.data) {
-        const abonnementsData = Array.isArray(response.data) ? response.data : [];
+        const abonnementsData = Array.isArray(response.data)
+          ? response.data
+          : [];
         const formatted = abonnementsData.map((a: Record<string, unknown>) => ({
           id: a.id,
           nom: a.nom,
@@ -176,8 +179,10 @@ const Abonnements = () => {
 
     setSubscribing(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      toast.success("Demande d'abonnement envoyee! Vous recevrez un email de confirmation.");
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      toast.success(
+        "Demande d'abonnement envoyee! Vous recevrez un email de confirmation.",
+      );
       setCurrentStep(4);
     } catch {
       toast.error("Erreur lors de la souscription");
@@ -191,7 +196,7 @@ const Abonnements = () => {
     setSelectedAbonnement(null);
     setCurrentStep(1);
     setErrors({});
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       entreprise: "",
       dateDebutSouhaitee: null,
@@ -201,7 +206,8 @@ const Abonnements = () => {
   };
 
   const getDureeText = (duree: number) => {
-    if (duree >= 365) return `${Math.floor(duree / 365)} an${Math.floor(duree / 365) > 1 ? "s" : ""}`;
+    if (duree >= 365)
+      return `${Math.floor(duree / 365)} an${Math.floor(duree / 365) > 1 ? "s" : ""}`;
     if (duree >= 30) return `${Math.floor(duree / 30)} mois`;
     return `${duree} jours`;
   };
@@ -219,14 +225,20 @@ const Abonnements = () => {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Abonnements</h1>
-        <p className="text-gray-600 mt-1">Choisissez l'abonnement qui vous convient</p>
+        <p className="text-gray-600 mt-1">
+          Choisissez l'abonnement qui vous convient
+        </p>
       </div>
 
       {abonnements.length === 0 ? (
         <Card className="p-12 text-center">
           <CreditCard className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-xl font-bold text-gray-900 mb-2">Aucun abonnement disponible</h3>
-          <p className="text-gray-600">Les abonnements seront bientot disponibles</p>
+          <h3 className="text-xl font-bold text-gray-900 mb-2">
+            Aucun abonnement disponible
+          </h3>
+          <p className="text-gray-600">
+            Les abonnements seront bientot disponibles
+          </p>
         </Card>
       ) : (
         <motion.div
@@ -250,7 +262,10 @@ const Abonnements = () => {
               >
                 {abonnement.populaire && (
                   <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                    <Badge variant="success" className="px-4 py-1 bg-amber-500 text-white">
+                    <Badge
+                      variant="success"
+                      className="px-4 py-1 bg-amber-500 text-white"
+                    >
                       <Star className="w-3 h-3 mr-1" />
                       Populaire
                     </Badge>
@@ -258,9 +273,13 @@ const Abonnements = () => {
                 )}
 
                 <div className="text-center mb-6">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">{abonnement.nom}</h3>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                    {abonnement.nom}
+                  </h3>
                   {abonnement.description && (
-                    <p className="text-sm text-gray-600">{abonnement.description}</p>
+                    <p className="text-sm text-gray-600">
+                      {abonnement.description}
+                    </p>
                   )}
                 </div>
 
@@ -286,7 +305,10 @@ const Abonnements = () => {
                   {abonnement.avantages.length > 0 && (
                     <div className="space-y-3">
                       {abonnement.avantages.map((avantage, i) => (
-                        <div key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                        <div
+                          key={i}
+                          className="flex items-start gap-2 text-sm text-gray-700"
+                        >
                           <Check className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
                           <span>{avantage}</span>
                         </div>
@@ -316,7 +338,9 @@ const Abonnements = () => {
         <div className="flex items-start gap-3">
           <Info className="w-5 h-5 text-blue-600 mt-0.5" />
           <div className="flex-1">
-            <h3 className="font-bold text-blue-900 mb-2">Informations importantes</h3>
+            <h3 className="font-bold text-blue-900 mb-2">
+              Informations importantes
+            </h3>
             <ul className="space-y-2 text-sm text-blue-700">
               <li className="flex items-center gap-2">
                 <div className="w-1.5 h-1.5 bg-blue-600 rounded-full"></div>
@@ -337,10 +361,16 @@ const Abonnements = () => {
 
       <Modal
         isOpen={showModal}
-        onClose={currentStep === 4 ? handleCloseModal : () => {
-          if (!subscribing) handleCloseModal();
-        }}
-        title={currentStep === 4 ? "Demande envoyee" : "Souscrire a un abonnement"}
+        onClose={
+          currentStep === 4
+            ? handleCloseModal
+            : () => {
+                if (!subscribing) handleCloseModal();
+              }
+        }
+        title={
+          currentStep === 4 ? "Demande envoyee" : "Souscrire a un abonnement"
+        }
       >
         {selectedAbonnement && (
           <div className="space-y-6">
@@ -358,16 +388,24 @@ const Abonnements = () => {
                       >
                         <step.icon className="w-4 h-4" />
                       </div>
-                      <span className={`text-[10px] mt-2 font-medium ${
-                        currentStep >= step.id ? "text-amber-600" : "text-gray-400"
-                      }`}>
+                      <span
+                        className={`text-[10px] mt-2 font-medium ${
+                          currentStep >= step.id
+                            ? "text-amber-600"
+                            : "text-gray-400"
+                        }`}
+                      >
                         {step.title}
                       </span>
                     </div>
                     {index < 2 && (
-                      <div className={`flex-1 h-1 mx-2 rounded-full min-w-[20px] ${
-                        currentStep > step.id ? "bg-gradient-to-r from-amber-500 to-orange-500" : "bg-gray-200"
-                      }`} />
+                      <div
+                        className={`flex-1 h-1 mx-2 rounded-full min-w-[20px] ${
+                          currentStep > step.id
+                            ? "bg-gradient-to-r from-amber-500 to-orange-500"
+                            : "bg-gray-200"
+                        }`}
+                      />
                     )}
                   </React.Fragment>
                 ))}
@@ -389,9 +427,13 @@ const Abonnements = () => {
                         <Package className="w-6 h-6 text-white" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="font-bold text-gray-900 text-lg">{selectedAbonnement.nom}</h3>
+                        <h3 className="font-bold text-gray-900 text-lg">
+                          {selectedAbonnement.nom}
+                        </h3>
                         {selectedAbonnement.description && (
-                          <p className="text-sm text-gray-600 mt-1">{selectedAbonnement.description}</p>
+                          <p className="text-sm text-gray-600 mt-1">
+                            {selectedAbonnement.description}
+                          </p>
                         )}
                       </div>
                     </div>
@@ -411,10 +453,15 @@ const Abonnements = () => {
 
                   {selectedAbonnement.avantages.length > 0 && (
                     <div className="p-4 bg-gray-50 rounded-xl">
-                      <h4 className="font-semibold text-gray-900 mb-3">Avantages inclus:</h4>
+                      <h4 className="font-semibold text-gray-900 mb-3">
+                        Avantages inclus:
+                      </h4>
                       <div className="space-y-2">
                         {selectedAbonnement.avantages.map((avantage, i) => (
-                          <div key={i} className="flex items-center gap-2 text-sm text-gray-700">
+                          <div
+                            key={i}
+                            className="flex items-center gap-2 text-sm text-gray-700"
+                          >
                             <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0" />
                             <span>{avantage}</span>
                           </div>
@@ -428,7 +475,10 @@ const Abonnements = () => {
                       <Shield className="w-5 h-5 text-blue-600 mt-0.5" />
                       <div className="text-sm text-blue-700">
                         <p className="font-medium">Garantie satisfaction</p>
-                        <p>Si vous n'etes pas satisfait, contactez-nous dans les 7 premiers jours.</p>
+                        <p>
+                          Si vous n'etes pas satisfait, contactez-nous dans les
+                          7 premiers jours.
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -460,7 +510,11 @@ const Abonnements = () => {
                         }}
                         className={errors.nom ? "border-red-500" : ""}
                       />
-                      {errors.nom && <p className="text-red-500 text-sm mt-1">{errors.nom}</p>}
+                      {errors.nom && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.nom}
+                        </p>
+                      )}
                     </div>
                     <div>
                       <Input
@@ -469,11 +523,16 @@ const Abonnements = () => {
                         value={formData.prenom}
                         onChange={(e) => {
                           setFormData({ ...formData, prenom: e.target.value });
-                          if (errors.prenom) setErrors({ ...errors, prenom: "" });
+                          if (errors.prenom)
+                            setErrors({ ...errors, prenom: "" });
                         }}
                         className={errors.prenom ? "border-red-500" : ""}
                       />
-                      {errors.prenom && <p className="text-red-500 text-sm mt-1">{errors.prenom}</p>}
+                      {errors.prenom && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.prenom}
+                        </p>
+                      )}
                     </div>
                   </div>
 
@@ -490,13 +549,19 @@ const Abonnements = () => {
                         }}
                         className={errors.email ? "border-red-500" : ""}
                       />
-                      {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                      {errors.email && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.email}
+                        </p>
+                      )}
                     </div>
                     <Input
                       label="Telephone"
                       icon={<Phone className="w-5 h-5" />}
                       value={formData.telephone}
-                      onChange={(e) => setFormData({ ...formData, telephone: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, telephone: e.target.value })
+                      }
                       placeholder="+213 XXX XX XX XX"
                     />
                   </div>
@@ -505,30 +570,38 @@ const Abonnements = () => {
                     label="Entreprise (optionnel)"
                     icon={<Building className="w-5 h-5" />}
                     value={formData.entreprise}
-                    onChange={(e) => setFormData({ ...formData, entreprise: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, entreprise: e.target.value })
+                    }
                     placeholder="Nom de votre entreprise"
                   />
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Date de debut souhaitee <span className="text-red-500">*</span>
+                      Date de debut souhaitee{" "}
+                      <span className="text-red-500">*</span>
                     </label>
                     <DatePicker
                       selected={formData.dateDebutSouhaitee}
                       onChange={(date) => {
                         setFormData({ ...formData, dateDebutSouhaitee: date });
-                        if (errors.dateDebutSouhaitee) setErrors({ ...errors, dateDebutSouhaitee: "" });
+                        if (errors.dateDebutSouhaitee)
+                          setErrors({ ...errors, dateDebutSouhaitee: "" });
                       }}
                       minDate={new Date()}
                       locale="fr"
                       dateFormat="dd MMMM yyyy"
                       placeholderText="Selectionnez une date"
                       className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 ${
-                        errors.dateDebutSouhaitee ? "border-red-500" : "border-gray-200"
+                        errors.dateDebutSouhaitee
+                          ? "border-red-500"
+                          : "border-gray-200"
                       }`}
                     />
                     {errors.dateDebutSouhaitee && (
-                      <p className="text-red-500 text-sm mt-1">{errors.dateDebutSouhaitee}</p>
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.dateDebutSouhaitee}
+                      </p>
                     )}
                   </div>
 
@@ -538,7 +611,12 @@ const Abonnements = () => {
                     </label>
                     <textarea
                       value={formData.commentaire}
-                      onChange={(e) => setFormData({ ...formData, commentaire: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          commentaire: e.target.value,
+                        })
+                      }
                       placeholder="Des besoins particuliers?"
                       rows={3}
                       className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 resize-none"
@@ -567,7 +645,9 @@ const Abonnements = () => {
                         Abonnement selectionne
                       </h4>
                       <div className="flex justify-between items-center">
-                        <span className="text-gray-700">{selectedAbonnement.nom}</span>
+                        <span className="text-gray-700">
+                          {selectedAbonnement.nom}
+                        </span>
                         <span className="font-bold text-gray-900">
                           {selectedAbonnement.prix.toLocaleString()} DA
                         </span>
@@ -585,22 +665,30 @@ const Abonnements = () => {
                       <div className="grid grid-cols-2 gap-3 text-sm">
                         <div>
                           <span className="text-gray-500">Nom complet:</span>
-                          <p className="font-medium text-gray-900">{formData.prenom} {formData.nom}</p>
+                          <p className="font-medium text-gray-900">
+                            {formData.prenom} {formData.nom}
+                          </p>
                         </div>
                         <div>
                           <span className="text-gray-500">Email:</span>
-                          <p className="font-medium text-gray-900">{formData.email}</p>
+                          <p className="font-medium text-gray-900">
+                            {formData.email}
+                          </p>
                         </div>
                         {formData.telephone && (
                           <div>
                             <span className="text-gray-500">Telephone:</span>
-                            <p className="font-medium text-gray-900">{formData.telephone}</p>
+                            <p className="font-medium text-gray-900">
+                              {formData.telephone}
+                            </p>
                           </div>
                         )}
                         {formData.entreprise && (
                           <div>
                             <span className="text-gray-500">Entreprise:</span>
-                            <p className="font-medium text-gray-900">{formData.entreprise}</p>
+                            <p className="font-medium text-gray-900">
+                              {formData.entreprise}
+                            </p>
                           </div>
                         )}
                       </div>
@@ -616,7 +704,11 @@ const Abonnements = () => {
                           <span className="text-gray-500">Debut:</span>
                           <p className="font-medium text-gray-900">
                             {formData.dateDebutSouhaitee
-                              ? format(formData.dateDebutSouhaitee, "dd MMMM yyyy", { locale: fr })
+                              ? format(
+                                  formData.dateDebutSouhaitee,
+                                  "dd MMMM yyyy",
+                                  { locale: fr },
+                                )
                               : "-"}
                           </p>
                         </div>
@@ -624,7 +716,9 @@ const Abonnements = () => {
                           <span className="text-gray-500">Fin prevue:</span>
                           <p className="font-medium text-gray-900">
                             {getEndDate()
-                              ? format(getEndDate()!, "dd MMMM yyyy", { locale: fr })
+                              ? format(getEndDate()!, "dd MMMM yyyy", {
+                                  locale: fr,
+                                })
                               : "-"}
                           </p>
                         </div>
@@ -636,11 +730,17 @@ const Abonnements = () => {
                     <input
                       type="checkbox"
                       checked={formData.acceptConditions}
-                      onChange={(e) => setFormData({ ...formData, acceptConditions: e.target.checked })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          acceptConditions: e.target.checked,
+                        })
+                      }
                       className="w-5 h-5 text-amber-500 rounded border-gray-300 focus:ring-amber-500 mt-0.5"
                     />
                     <span className="text-sm text-gray-700">
-                      J'accepte les conditions generales d'utilisation et la politique de confidentialite de Coffice
+                      J'accepte les conditions generales d'utilisation et la
+                      politique de confidentialite de Coffice
                     </span>
                   </label>
 
@@ -651,8 +751,14 @@ const Abonnements = () => {
                         <p className="font-medium mb-1">Prochaines etapes:</p>
                         <ol className="list-decimal list-inside space-y-1">
                           <li>Votre demande sera envoyee a notre equipe</li>
-                          <li>Vous recevrez un email avec les modalites de paiement</li>
-                          <li>Votre abonnement sera active apres confirmation du paiement</li>
+                          <li>
+                            Vous recevrez un email avec les modalites de
+                            paiement
+                          </li>
+                          <li>
+                            Votre abonnement sera active apres confirmation du
+                            paiement
+                          </li>
                         </ol>
                       </div>
                     </div>
@@ -671,25 +777,34 @@ const Abonnements = () => {
                     <CheckCircle className="w-10 h-10 text-white" />
                   </div>
 
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Demande envoyee!</h3>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                    Demande envoyee!
+                  </h3>
                   <p className="text-gray-600 mb-6">
-                    Votre demande d'abonnement a ete envoyee avec succes. Nous vous contacterons prochainement.
+                    Votre demande d'abonnement a ete envoyee avec succes. Nous
+                    vous contacterons prochainement.
                   </p>
 
                   <div className="bg-gray-50 rounded-xl p-4 text-left mb-6">
-                    <h4 className="font-semibold text-gray-900 mb-2">Recapitulatif:</h4>
+                    <h4 className="font-semibold text-gray-900 mb-2">
+                      Recapitulatif:
+                    </h4>
                     <p className="text-sm text-gray-600">
                       <strong>Abonnement:</strong> {selectedAbonnement.nom}
                     </p>
                     <p className="text-sm text-gray-600">
-                      <strong>Montant:</strong> {selectedAbonnement.prix.toLocaleString()} DA
+                      <strong>Montant:</strong>{" "}
+                      {selectedAbonnement.prix.toLocaleString()} DA
                     </p>
                     <p className="text-sm text-gray-600">
                       <strong>Email de confirmation:</strong> {formData.email}
                     </p>
                   </div>
 
-                  <Button onClick={handleCloseModal} className="bg-gray-900 hover:bg-gray-800">
+                  <Button
+                    onClick={handleCloseModal}
+                    className="bg-gray-900 hover:bg-gray-800"
+                  >
                     Fermer
                   </Button>
                 </motion.div>
@@ -699,7 +814,12 @@ const Abonnements = () => {
             {currentStep < 4 && (
               <div className="flex justify-between gap-3 pt-4 border-t">
                 {currentStep > 1 ? (
-                  <Button type="button" variant="outline" onClick={prevStep} disabled={subscribing}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={prevStep}
+                    disabled={subscribing}
+                  >
                     <ArrowLeft className="w-4 h-4 mr-2" />
                     Precedent
                   </Button>

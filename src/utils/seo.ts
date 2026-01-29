@@ -16,7 +16,8 @@ export const seoData = {
     ],
   },
   spaces: {
-    title: "Nos Espaces de Travail - Coffice Alger | Bureaux et Salles de Reunion",
+    title:
+      "Nos Espaces de Travail - Coffice Alger | Bureaux et Salles de Reunion",
     description:
       "Decouvrez nos espaces de coworking: 2 box de 4 places, 1 box de 3 places, open space 12 places avec postes informatiques, salle de reunion avec terrasse. Mohammadia Mall, 4eme etage.",
     keywords: [

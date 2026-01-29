@@ -28,7 +28,8 @@ export const useSEO = (pageData?: SEOData) => {
     const getDefaultSEOData = () => {
       const path = location.pathname;
       if (path === "/") return seoData.home;
-      if (path === "/espaces" || path === "/espaces-tarifs") return seoData.spaces;
+      if (path === "/espaces" || path === "/espaces-tarifs")
+        return seoData.spaces;
       if (path === "/tarifs") return seoData.pricing;
       if (path === "/a-propos") return seoData.about;
       if (path.includes("/domiciliation")) return seoData.domiciliation;
@@ -77,10 +78,7 @@ export const useSEO = (pageData?: SEOData) => {
     }
 
     if (location.pathname === "/") {
-      injectStructuredData([
-        structuredData.organization,
-        structuredData.faq,
-      ]);
+      injectStructuredData([structuredData.organization, structuredData.faq]);
     } else {
       injectStructuredData(structuredData.organization);
     }
