@@ -76,8 +76,48 @@ const ReservationDetail: React.FC = () => {
     try {
       setLoading(true);
       const response = await apiClient.getReservation(id!);
+<<<<<<< HEAD
       if (response.success && response.data) {
         setReservation(response.data as ReservationDetail);
+=======
+      console.log('🔍 Données reçues:', response.data);
+      
+      if (response.success && response.data) {
+        // Mapper snake_case vers camelCase
+        const rawData = response.data as any;
+        const mappedData: ReservationDetail = {
+          id: rawData.id,
+          userId: rawData.user_id,
+          espaceId: rawData.espace_id,
+          dateDebut: rawData.date_debut,
+          dateFin: rawData.date_fin,
+          statut: rawData.statut,
+          montantTotal: parseFloat(rawData.montant_total),
+          montantPaye: parseFloat(rawData.montant_paye),
+          participants: rawData.participants,
+          notes: rawData.notes,
+          codePromo: rawData.code_promo_id,
+          modePaiement: rawData.mode_paiement,
+          typeReservation: rawData.type_reservation,
+          createdAt: rawData.created_at,
+          user: rawData.user_nom ? {
+            nom: rawData.user_nom,
+            prenom: rawData.user_prenom,
+            email: rawData.user_email,
+            telephone: rawData.user_telephone,
+          } : undefined,
+          espace: rawData.espace_nom ? {
+            nom: rawData.espace_nom,
+            type: rawData.espace_type,
+            capacite: rawData.capacite,
+            tarifHoraire: parseFloat(rawData.prix_heure),
+            tarifJournalier: parseFloat(rawData.prix_jour),
+            tarifMensuel: undefined,
+          } : undefined,
+        };
+        
+        setReservation(mappedData);
+>>>>>>> feature/improvements
       } else {
         toast.error("Réservation introuvable");
         navigate("/app/reservations");
@@ -215,23 +255,39 @@ const ReservationDetail: React.FC = () => {
                 <div>
                   <p className="text-sm text-gray-600">Date de début</p>
                   <p className="font-medium">
+<<<<<<< HEAD
                     {format(new Date(reservation.dateDebut), "dd MMMM yyyy", {
+=======
+                    {format(new Date(reservation.dateDebut.replace(' ', 'T')), "dd MMMM yyyy", {
+>>>>>>> feature/improvements
                       locale: fr,
                     })}
                   </p>
                   <p className="text-sm text-gray-500">
+<<<<<<< HEAD
                     {format(new Date(reservation.dateDebut), "HH:mm")}
+=======
+                    {format(new Date(reservation.dateDebut.replace(' ', 'T')), "HH:mm")}
+>>>>>>> feature/improvements
                   </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Date de fin</p>
                   <p className="font-medium">
+<<<<<<< HEAD
                     {format(new Date(reservation.dateFin), "dd MMMM yyyy", {
+=======
+                    {format(new Date(reservation.dateFin.replace(' ', 'T')), "dd MMMM yyyy", {
+>>>>>>> feature/improvements
                       locale: fr,
                     })}
                   </p>
                   <p className="text-sm text-gray-500">
+<<<<<<< HEAD
                     {format(new Date(reservation.dateFin), "HH:mm")}
+=======
+                    {format(new Date(reservation.dateFin.replace(' ', 'T')), "HH:mm")}
+>>>>>>> feature/improvements
                   </p>
                 </div>
               </div>

@@ -67,6 +67,7 @@ try {
         'wilaya' => 'wilaya',
         'commune' => 'commune',
         'avatar' => 'avatar',
+<<<<<<< HEAD
         'typeEntreprise' => 'type_entreprise',
         'nif' => 'nif',
         'nis' => 'nis',
@@ -79,6 +80,30 @@ try {
         'siegeSocial' => 'siege_social',
         'activitePrincipale' => 'activite_principale',
         'formeJuridique' => 'forme_juridique'
+=======
+        // Accepter les deux formats (camelCase ET snake_case)
+        'typeEntreprise' => 'type_entreprise',
+        'type_entreprise' => 'type_entreprise',  // ← AJOUTE
+        'nif' => 'nif',
+        'nis' => 'nis',
+        'registreCommerce' => 'registre_commerce',
+        'registre_commerce' => 'registre_commerce',  // ← AJOUTE
+        'articleImposition' => 'article_imposition',
+        'article_imposition' => 'article_imposition',  // ← AJOUTE
+        'numeroAutoEntrepreneur' => 'numero_auto_entrepreneur',
+        'numero_auto_entrepreneur' => 'numero_auto_entrepreneur',  // ← AJOUTE
+        'raisonSociale' => 'raison_sociale',
+        'raison_sociale' => 'raison_sociale',  // ← AJOUTE
+        'dateCreationEntreprise' => 'date_creation_entreprise',
+        'date_creation_entreprise' => 'date_creation_entreprise',  // ← AJOUTE
+        'capital' => 'capital',
+        'siegeSocial' => 'siege_social',
+        'siege_social' => 'siege_social',  // ← AJOUTE
+        'activitePrincipale' => 'activite_principale',
+        'activite_principale' => 'activite_principale',  // ← AJOUTE
+        'formeJuridique' => 'forme_juridique',
+        'forme_juridique' => 'forme_juridique',  // ← AJOUTE
+>>>>>>> feature/improvements
     ];
 
     // L'admin peut aussi changer le rôle et le statut
@@ -119,6 +144,10 @@ try {
 
     $query = "UPDATE users SET " . implode(', ', $updates) . " WHERE id = :id";
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> feature/improvements
     $stmt = $db->prepare($query);
 
     if (!$stmt) {

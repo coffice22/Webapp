@@ -122,7 +122,15 @@ export const useAppStore = create<AppState>()(
         set({ loading: true });
 
         try {
+<<<<<<< HEAD
           await Promise.all([get().loadEspaces(), get().loadReservations()]);
+=======
+          await Promise.all([
+            get().loadEspaces(),
+            get().loadReservations(),
+            get().loadDemandesDomiciliation()
+          ]);
+>>>>>>> feature/improvements
 
           set({ initialized: true });
         } catch (error) {
@@ -280,9 +288,15 @@ export const useAppStore = create<AppState>()(
               dateFin: r.date_fin,
               statut: r.statut,
               typeReservation: r.type_reservation,
+<<<<<<< HEAD
               montantTotal: r.montant_total,
               reduction: r.reduction,
               montantPaye: r.montant_paye,
+=======
+              montantTotal: parseFloat(r.montant_total as string) || 0,
+              reduction: parseFloat(r.reduction as string) || 0,
+              montantPaye: parseFloat(r.montant_paye as string) || 0,
+>>>>>>> feature/improvements
               modePaiement: r.mode_paiement,
               notes: r.notes,
               dateCreation: r.created_at,
@@ -380,6 +394,7 @@ export const useAppStore = create<AppState>()(
       loadDemandesDomiciliation: async () => {
         try {
           const response = await apiClient.getDomiciliations();
+<<<<<<< HEAD
           if (response.success && response.data) {
             const demandesDomiciliation = Array.isArray(response.data)
               ? response.data.map((d: Record<string, unknown>) => ({
@@ -413,6 +428,47 @@ export const useAppStore = create<AppState>()(
                 }))
               : [];
 
+=======
+          console.log('🔍 Réponse API domiciliations:', response);
+          
+          if (response.success && response.data) {
+            // ← CORRECTION ICI : extraire response.data.data
+            const rawData = Array.isArray(response.data) 
+              ? response.data 
+              : response.data.data || [];  // ← Accéder à data.data
+            
+            const demandesDomiciliation = rawData.map((d: Record<string, unknown>) => ({
+              id: d.id,
+              userId: d.user_id,
+              utilisateur: d.utilisateur,
+              raisonSociale: d.raison_sociale,
+              formeJuridique: d.forme_juridique,
+              nif: d.nif,
+              nis: d.nis,
+              registreCommerce: d.registre_commerce,
+              articleImposition: d.article_imposition,
+              coordonneesFiscales: d.coordonnees_fiscales,
+              coordonneesAdministratives: d.coordonnees_administratives,
+              representantLegal: {
+                nom: d.representant_nom,
+                prenom: d.representant_prenom,
+                fonction: d.representant_fonction,
+                telephone: d.representant_telephone,
+                email: d.representant_email,
+              },
+              domaineActivite: d.domaine_activite,
+              adresseSiegeSocial: d.adresse_siege_social,
+              capital: d.capital,
+              dateCreationEntreprise: d.date_creation_entreprise,
+              statut: d.statut,
+              commentaireAdmin: d.commentaire_admin,
+              montantMensuel: d.montant_mensuel,  // ← AJOUTE CECI (pour afficher le tarif)
+              dateValidation: d.date_validation,
+              dateCreation: d.created_at,
+              updatedAt: d.updated_at,
+            }));
+          
+>>>>>>> feature/improvements
             const domiciliationServices = demandesDomiciliation
               .filter((d: DemandeDomiciliation) => d.statut === "validee")
               .map((d: DemandeDomiciliation) => ({
@@ -436,8 +492,12 @@ export const useAppStore = create<AppState>()(
                 startDate: d.dateValidation || d.dateCreation,
                 endDate: new Date(
                   new Date(d.dateValidation || d.dateCreation).setFullYear(
+<<<<<<< HEAD
                     new Date(d.dateValidation || d.dateCreation).getFullYear() +
                       1,
+=======
+                    new Date(d.dateValidation || d.dateCreation).getFullYear() + 1,
+>>>>>>> feature/improvements
                   ),
                 ),
                 status: "active" as const,
