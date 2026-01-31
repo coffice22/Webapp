@@ -67,20 +67,6 @@ try {
         'wilaya' => 'wilaya',
         'commune' => 'commune',
         'avatar' => 'avatar',
-<<<<<<< HEAD
-        'typeEntreprise' => 'type_entreprise',
-        'nif' => 'nif',
-        'nis' => 'nis',
-        'registreCommerce' => 'registre_commerce',
-        'articleImposition' => 'article_imposition',
-        'numeroAutoEntrepreneur' => 'numero_auto_entrepreneur',
-        'raisonSociale' => 'raison_sociale',
-        'dateCreationEntreprise' => 'date_creation_entreprise',
-        'capital' => 'capital',
-        'siegeSocial' => 'siege_social',
-        'activitePrincipale' => 'activite_principale',
-        'formeJuridique' => 'forme_juridique'
-=======
         // Accepter les deux formats (camelCase ET snake_case)
         'typeEntreprise' => 'type_entreprise',
         'type_entreprise' => 'type_entreprise',  // ← AJOUTE
@@ -103,7 +89,6 @@ try {
         'activite_principale' => 'activite_principale',  // ← AJOUTE
         'formeJuridique' => 'forme_juridique',
         'forme_juridique' => 'forme_juridique',  // ← AJOUTE
->>>>>>> feature/improvements
     ];
 
     // L'admin peut aussi changer le rôle et le statut
@@ -142,12 +127,7 @@ try {
         Response::error("Aucune donnée à mettre à jour", 400);
     }
 
-    $query = "UPDATE users SET " . implode(', ', $updates) . " WHERE id = :id";
-
-<<<<<<< HEAD
-=======
-
->>>>>>> feature/improvements
+    $query = "UPDATE users SET " . implode(', ', $updates) . " WHERE id = :id"
     $stmt = $db->prepare($query);
 
     if (!$stmt) {

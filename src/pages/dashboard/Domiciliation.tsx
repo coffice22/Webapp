@@ -46,11 +46,7 @@ import "react-datepicker/dist/react-datepicker.css";
 registerLocale("fr", fr);
 
 type CompanyStatus = "existing" | "new_creation" | null;
-<<<<<<< HEAD
-type LegalFormType = "SARL" | "EURL" | "SPA" | "SNC" | "EI" | "AUTO" | "";
-=======
 type LegalFormType = "SARL" | "EURL" | "SPA" | "SNC" | "ST" | "AUTO" | "";
->>>>>>> feature/improvements
 type DomiciliationPeriod = "6_months" | "1_year";
 
 interface UploadedDocument {
@@ -149,10 +145,7 @@ const Domiciliation = () => {
     getUserDemandeDomiciliation,
     createDemandeDomiciliation,
     loadDemandesDomiciliation,
-<<<<<<< HEAD
-=======
     demandesDomiciliation
->>>>>>> feature/improvements
   } = useAppStore();
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -168,10 +161,6 @@ const Domiciliation = () => {
     if (user) {
       loadDemandesDomiciliation();
     }
-<<<<<<< HEAD
-=======
-
->>>>>>> feature/improvements
   }, [user, loadDemandesDomiciliation]);
 
   const demande = user ? getUserDemandeDomiciliation(user.id) : null;
@@ -229,15 +218,6 @@ const Domiciliation = () => {
     if (!formData.formeJuridique) {
       newErrors.formeJuridique = "La forme juridique est requise";
     }
-<<<<<<< HEAD
-    if (companyStatus === "existing") {
-      if (!formData.nif.trim()) {
-        newErrors.nif = "Le NIF est requis";
-      } else if (formData.nif.length < 10) {
-        newErrors.nif = "Le NIF doit contenir au moins 10 caractères";
-      }
-    }
-=======
     
     // Validation pour entreprise existante
     if (companyStatus === "existing") {
@@ -256,7 +236,6 @@ const Domiciliation = () => {
       }
     }
     
->>>>>>> feature/improvements
     if (!formData.representantLegal.nom.trim()) {
       newErrors["representantLegal.nom"] = "Le nom est requis";
     }
@@ -270,8 +249,6 @@ const Domiciliation = () => {
     }
 
     setErrors(newErrors);
-<<<<<<< HEAD
-=======
     
     // Afficher un toast si erreurs
     if (Object.keys(newErrors).length > 0) {
@@ -279,7 +256,6 @@ const Domiciliation = () => {
       toast.error(firstError);
     }
     
->>>>>>> feature/improvements
     return Object.keys(newErrors).length === 0;
   };
 
@@ -422,11 +398,8 @@ const Domiciliation = () => {
       case 4:
         isValid = validateStep4();
         break;
-<<<<<<< HEAD
-=======
       case 5:
         return;
->>>>>>> feature/improvements
       default:
         isValid = true;
     }
@@ -995,11 +968,7 @@ const Domiciliation = () => {
                       <option value="EURL">EURL - Entreprise Unipersonnelle</option>
                       <option value="SPA">SPA - Societe Par Actions</option>
                       <option value="SNC">SNC - Societe en Nom Collectif</option>
-<<<<<<< HEAD
-                      <option value="EI">Entreprise Individuelle</option>
-=======
                       <option value="ST">Startup</option>
->>>>>>> feature/improvements
                       <option value="AUTO">Auto-Entrepreneur</option>
                     </select>
                     {errors.formeJuridique && (
@@ -1037,15 +1006,6 @@ const Domiciliation = () => {
                       )}
                     </div>
 
-<<<<<<< HEAD
-                    <Input
-                      label="NIS"
-                      icon={<Hash className="w-5 h-5" />}
-                      value={formData.nis}
-                      onChange={(e) => setFormData({ ...formData, nis: e.target.value })}
-                      placeholder="123456789012345"
-                    />
-=======
                     <div>
                       <Input
                         label="NIS"
@@ -1062,7 +1022,6 @@ const Domiciliation = () => {
                         <p className="text-red-500 text-sm mt-1">{errors.nis}</p>
                       )}
                     </div>
->>>>>>> feature/improvements
                   </div>
                 )}
 
@@ -1482,11 +1441,7 @@ const Domiciliation = () => {
                 Precedent
               </Button>
             )}
-<<<<<<< HEAD
-            {currentStep < 5 ? (
-=======
             {currentStep < 5 && (
->>>>>>> feature/improvements
               <Button
                 type="button"
                 onClick={nextStep}
@@ -1500,13 +1455,9 @@ const Domiciliation = () => {
                 Suivant
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
-<<<<<<< HEAD
-            ) : (
-=======
             )}
             {  
               currentStep === 5 && (
->>>>>>> feature/improvements
               <Button
                 type="submit"
                 disabled={loading}
@@ -1523,13 +1474,8 @@ const Domiciliation = () => {
                     Envoyer la demande
                   </span>
                 )}
-<<<<<<< HEAD
-              </Button>
-            )}
-=======
               </Button>)
             }
->>>>>>> feature/improvements
           </div>
         </form>
       </Modal>

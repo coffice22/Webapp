@@ -276,15 +276,6 @@ const AdminDomiciliations = () => {
       const payload: ActionPayload = { domiciliation_id: selectedDemande.id };
 
       if (actionType === "valider") {
-<<<<<<< HEAD
-        endpoint = "/api/domiciliations/validate.php";
-        payload.commentaire = commentaire;
-      } else if (actionType === "rejeter") {
-        endpoint = "/api/domiciliations/reject.php";
-        payload.commentaire = commentaire;
-      } else if (actionType === "activer") {
-        endpoint = "/api/domiciliations/activate.php";
-=======
         endpoint = "/domiciliations/validate.php";
         payload.commentaire = commentaire;
       } else if (actionType === "rejeter") {
@@ -292,7 +283,6 @@ const AdminDomiciliations = () => {
         payload.commentaire = commentaire;
       } else if (actionType === "activer") {
         endpoint = "/domiciliations/activate.php";
->>>>>>> feature/improvements
         payload.montant_mensuel = montantMensuel;
         payload.date_debut = dateDebut;
         payload.date_fin = dateFin;

@@ -76,10 +76,6 @@ const ReservationDetail: React.FC = () => {
     try {
       setLoading(true);
       const response = await apiClient.getReservation(id!);
-<<<<<<< HEAD
-      if (response.success && response.data) {
-        setReservation(response.data as ReservationDetail);
-=======
       console.log('🔍 Données reçues:', response.data);
       
       if (response.success && response.data) {
@@ -117,7 +113,6 @@ const ReservationDetail: React.FC = () => {
         };
         
         setReservation(mappedData);
->>>>>>> feature/improvements
       } else {
         toast.error("Réservation introuvable");
         navigate("/app/reservations");
@@ -255,39 +250,23 @@ const ReservationDetail: React.FC = () => {
                 <div>
                   <p className="text-sm text-gray-600">Date de début</p>
                   <p className="font-medium">
-<<<<<<< HEAD
-                    {format(new Date(reservation.dateDebut), "dd MMMM yyyy", {
-=======
                     {format(new Date(reservation.dateDebut.replace(' ', 'T')), "dd MMMM yyyy", {
->>>>>>> feature/improvements
                       locale: fr,
                     })}
                   </p>
                   <p className="text-sm text-gray-500">
-<<<<<<< HEAD
-                    {format(new Date(reservation.dateDebut), "HH:mm")}
-=======
                     {format(new Date(reservation.dateDebut.replace(' ', 'T')), "HH:mm")}
->>>>>>> feature/improvements
                   </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Date de fin</p>
                   <p className="font-medium">
-<<<<<<< HEAD
-                    {format(new Date(reservation.dateFin), "dd MMMM yyyy", {
-=======
                     {format(new Date(reservation.dateFin.replace(' ', 'T')), "dd MMMM yyyy", {
->>>>>>> feature/improvements
                       locale: fr,
                     })}
                   </p>
                   <p className="text-sm text-gray-500">
-<<<<<<< HEAD
-                    {format(new Date(reservation.dateFin), "HH:mm")}
-=======
                     {format(new Date(reservation.dateFin.replace(' ', 'T')), "HH:mm")}
->>>>>>> feature/improvements
                   </p>
                 </div>
               </div>
