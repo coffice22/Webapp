@@ -96,18 +96,20 @@ const MyCompany = () => {
       // Mapper pour l'API (garder en camelCase car l'API fait la conversion)
       const dataToSend = {
         entreprise: formData.entreprise || null,
-        raisonSociale: formData.raisonSociale || null,  // ← camelCase
-        formeJuridique: formData.formeJuridique || null,  // ← camelCase
-        typeEntreprise: formData.typeEntreprise || null,  // ← camelCase
+        raisonSociale: formData.raisonSociale || null, // ← camelCase
+        formeJuridique: formData.formeJuridique || null, // ← camelCase
+        typeEntreprise: formData.typeEntreprise || null, // ← camelCase
         nif: formData.nif || null,
         nis: formData.nis || null,
-        registreCommerce: formData.registreCommerce || null,  // ← camelCase
-        articleImposition: formData.articleImposition || null,  // ← camelCase
-        numeroAutoEntrepreneur: formData.numeroAutoEntrepreneur || null,  // ← camelCase
-        activitePrincipale: formData.activitePrincipale || null,  // ← camelCase
-        siegeSocial: formData.siegeSocial || null,  // ← camelCase
-        capital: formData.capital ? parseFloat(formData.capital.toString()) : null,
-        dateCreationEntreprise: formData.dateCreationEntreprise || null,  // ← camelCase
+        registreCommerce: formData.registreCommerce || null, // ← camelCase
+        articleImposition: formData.articleImposition || null, // ← camelCase
+        numeroAutoEntrepreneur: formData.numeroAutoEntrepreneur || null, // ← camelCase
+        activitePrincipale: formData.activitePrincipale || null, // ← camelCase
+        siegeSocial: formData.siegeSocial || null, // ← camelCase
+        capital: formData.capital
+          ? parseFloat(formData.capital.toString())
+          : null,
+        dateCreationEntreprise: formData.dateCreationEntreprise || null, // ← camelCase
         wilaya: formData.wilaya || null,
         commune: formData.commune || null,
       };
@@ -117,8 +119,15 @@ const MyCompany = () => {
       toast.success("Informations de l'entreprise mises à jour avec succès");
       setIsEditing(false);
     } catch (error) {
-      logger.error("Erreur mise à jour:", error instanceof Error ? error.message : "Unknown error");
-      toast.error(error instanceof Error ? error.message : "Erreur lors de la mise à jour");
+      logger.error(
+        "Erreur mise à jour:",
+        error instanceof Error ? error.message : "Unknown error",
+      );
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Erreur lors de la mise à jour",
+      );
     }
   };
 
@@ -260,8 +269,12 @@ const MyCompany = () => {
                     required={isEditing}
                   >
                     <option value="">Sélectionnez un type</option>
-                    <option value="sarl">SARL - Société à Responsabilité Limitée</option>
-                    <option value="eurl">EURL - Entreprise Unipersonnelle à Responsabilité Limitée</option>
+                    <option value="sarl">
+                      SARL - Société à Responsabilité Limitée
+                    </option>
+                    <option value="eurl">
+                      EURL - Entreprise Unipersonnelle à Responsabilité Limitée
+                    </option>
                     <option value="spa">SPA - Société Par Actions</option>
                     <option value="snc">SNC - Société en Nom Collectif</option>
                     <option value="st">Startup</option>
@@ -285,8 +298,12 @@ const MyCompany = () => {
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent disabled:bg-gray-50"
                   >
                     <option value="">Sélectionnez</option>
-                    <option value="sarl">SARL - Société à Responsabilité Limitée</option>
-                    <option value="eurl">EURL - Entreprise Unipersonnelle à Responsabilité Limitée</option>
+                    <option value="sarl">
+                      SARL - Société à Responsabilité Limitée
+                    </option>
+                    <option value="eurl">
+                      EURL - Entreprise Unipersonnelle à Responsabilité Limitée
+                    </option>
                     <option value="spa">SPA - Société Par Actions</option>
                     <option value="snc">SNC - Société en Nom Collectif</option>
                     <option value="st">Startup</option>
