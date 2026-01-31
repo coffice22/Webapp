@@ -90,7 +90,9 @@ const benefits = [
 
 const requiredDocumentsNewCompany = (formeJuridique: LegalFormType) => {
   const isAutoEntrepreneur = formeJuridique === "AUTO";
-  const isPersonneMorale = ["SARL", "EURL", "SPA", "SNC"].includes(formeJuridique);
+  const isPersonneMorale = ["SARL", "EURL", "SPA", "SNC"].includes(
+    formeJuridique,
+  );
 
   const docs = [];
 
@@ -108,14 +110,18 @@ const requiredDocumentsNewCompany = (formeJuridique: LegalFormType) => {
   docs.push({
     id: "extrait_naissance",
     name: "Extrait de naissance",
-    description: isAutoEntrepreneur ? "De l'auto-entrepreneur" : "Du futur gérant",
+    description: isAutoEntrepreneur
+      ? "De l'auto-entrepreneur"
+      : "Du futur gérant",
     required: true,
   });
 
   docs.push({
     id: "cni",
     name: "Carte d'identité nationale",
-    description: isAutoEntrepreneur ? "De l'auto-entrepreneur" : "Du futur gérant",
+    description: isAutoEntrepreneur
+      ? "De l'auto-entrepreneur"
+      : "Du futur gérant",
     required: true,
   });
 
@@ -130,13 +136,21 @@ const requiredDocumentsNewCompany = (formeJuridique: LegalFormType) => {
 };
 
 const requiredDocumentsExistingCompany = [
-  { id: "registre_commerce", name: "Extrait de registre du commerce", required: true },
+  {
+    id: "registre_commerce",
+    name: "Extrait de registre du commerce",
+    required: true,
+  },
   { id: "statuts", name: "Statuts de la société", required: true },
   { id: "pv_nomination", name: "PV de nomination du gérant", required: true },
   { id: "nif_nis", name: "Copie NIF et NIS", required: false },
   { id: "article_imposition", name: "Article d'imposition", required: true },
   { id: "cni_gerant", name: "Pièce d'identité du gérant", required: true },
-  { id: "justificatif_domicile_gerant", name: "Justificatif de domicile du gérant", required: true },
+  {
+    id: "justificatif_domicile_gerant",
+    name: "Justificatif de domicile du gérant",
+    required: true,
+  },
 ];
 
 const Domiciliation = () => {
@@ -145,7 +159,7 @@ const Domiciliation = () => {
     getUserDemandeDomiciliation,
     createDemandeDomiciliation,
     loadDemandesDomiciliation,
-    demandesDomiciliation
+    demandesDomiciliation,
   } = useAppStore();
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -154,7 +168,9 @@ const Domiciliation = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [companyStatus, setCompanyStatus] = useState<CompanyStatus>(null);
-  const [uploadedDocuments, setUploadedDocuments] = useState<UploadedDocument[]>([]);
+  const [uploadedDocuments, setUploadedDocuments] = useState<
+    UploadedDocument[]
+  >([]);
   const [currentDocumentType, setCurrentDocumentType] = useState<string>("");
 
   useEffect(() => {
@@ -186,7 +202,7 @@ const Domiciliation = () => {
 
   useEffect(() => {
     if (user) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         representantLegal: {
           ...prev.representantLegal,
@@ -201,7 +217,9 @@ const Domiciliation = () => {
 
   const validateStep1 = (): boolean => {
     if (!companyStatus) {
-      toast.error("Veuillez indiquer si votre entreprise est déjà créée ou non");
+      toast.error(
+        "Veuillez indiquer si votre entreprise est déjà créée ou non",
+      );
       return false;
     }
     return true;
@@ -211,23 +229,25 @@ const Domiciliation = () => {
     const newErrors: Record<string, string> = {};
 
     if (!formData.raisonSociale.trim()) {
-      newErrors.raisonSociale = companyStatus === "new_creation"
-        ? "Le nom prévu de l'entreprise est requis"
-        : "La raison sociale est requise";
+      newErrors.raisonSociale =
+        companyStatus === "new_creation"
+          ? "Le nom prévu de l'entreprise est requis"
+          : "La raison sociale est requise";
     }
     if (!formData.formeJuridique) {
       newErrors.formeJuridique = "La forme juridique est requise";
     }
-    
+
     // Validation pour entreprise existante
     if (companyStatus === "existing") {
       // Validation NIF
       if (!formData.nif.trim()) {
         newErrors.nif = "Le NIF est requis";
-      } else if (formData.nif.length !== 20) {  // ← CORRECTION ICI
+      } else if (formData.nif.length !== 20) {
+        // ← CORRECTION ICI
         newErrors.nif = "Le NIF doit contenir exactement 20 caractères";
       }
-      
+
       // Validation NIS (AJOUTÉ)
       if (!formData.nis.trim()) {
         newErrors.nis = "Le NIS est requis";
@@ -235,7 +255,7 @@ const Domiciliation = () => {
         newErrors.nis = "Le NIS doit contenir exactement 15 caractères";
       }
     }
-    
+
     if (!formData.representantLegal.nom.trim()) {
       newErrors["representantLegal.nom"] = "Le nom est requis";
     }
@@ -244,31 +264,38 @@ const Domiciliation = () => {
     }
     if (!formData.representantLegal.email.trim()) {
       newErrors["representantLegal.email"] = "L'email est requis";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.representantLegal.email)) {
+    } else if (
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.representantLegal.email)
+    ) {
       newErrors["representantLegal.email"] = "Email invalide";
     }
 
     setErrors(newErrors);
-    
+
     // Afficher un toast si erreurs
     if (Object.keys(newErrors).length > 0) {
       const firstError = Object.values(newErrors)[0];
       toast.error(firstError);
     }
-    
+
     return Object.keys(newErrors).length === 0;
   };
 
   const validateStep3 = (): boolean => {
-    const requiredDocs = companyStatus === "new_creation"
-      ? requiredDocumentsNewCompany(formData.formeJuridique).filter(d => d.required)
-      : requiredDocumentsExistingCompany.filter(d => d.required);
+    const requiredDocs =
+      companyStatus === "new_creation"
+        ? requiredDocumentsNewCompany(formData.formeJuridique).filter(
+            (d) => d.required,
+          )
+        : requiredDocumentsExistingCompany.filter((d) => d.required);
 
-    const uploadedIds = uploadedDocuments.map(d => d.type);
-    const missingDocs = requiredDocs.filter(d => !uploadedIds.includes(d.id));
+    const uploadedIds = uploadedDocuments.map((d) => d.type);
+    const missingDocs = requiredDocs.filter((d) => !uploadedIds.includes(d.id));
 
     if (missingDocs.length > 0) {
-      toast.error(`Documents manquants: ${missingDocs.map(d => d.name).join(", ")}`);
+      toast.error(
+        `Documents manquants: ${missingDocs.map((d) => d.name).join(", ")}`,
+      );
       return false;
     }
     return true;
@@ -348,7 +375,8 @@ const Domiciliation = () => {
           border: "border-amber-200",
           gradient: "from-amber-500 to-orange-500",
           label: "En attente de validation",
-          description: "Votre demande est en cours d'examen par notre equipe. Vous serez notifie des que le traitement sera termine.",
+          description:
+            "Votre demande est en cours d'examen par notre equipe. Vous serez notifie des que le traitement sera termine.",
         };
       case "validee":
         return {
@@ -358,7 +386,8 @@ const Domiciliation = () => {
           border: "border-emerald-200",
           gradient: "from-emerald-500 to-teal-500",
           label: "Demande validee",
-          description: "Votre demande a ete approuvee. Vous recevrez prochainement votre attestation de domiciliation.",
+          description:
+            "Votre demande a ete approuvee. Vous recevrez prochainement votre attestation de domiciliation.",
         };
       case "rejetee":
         return {
@@ -368,7 +397,8 @@ const Domiciliation = () => {
           border: "border-red-200",
           gradient: "from-red-500 to-rose-500",
           label: "Demande rejetee",
-          description: "Votre demande n'a pas ete acceptee. Consultez le commentaire ci-dessous pour plus de details.",
+          description:
+            "Votre demande n'a pas ete acceptee. Consultez le commentaire ci-dessous pour plus de details.",
         };
       default:
         return {
@@ -430,7 +460,12 @@ const Domiciliation = () => {
       return;
     }
 
-    const allowedTypes = ["application/pdf", "image/jpeg", "image/png", "image/webp"];
+    const allowedTypes = [
+      "application/pdf",
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+    ];
     if (!allowedTypes.includes(file.type)) {
       toast.error("Format non supporte. Utilisez PDF, JPEG ou PNG");
       return;
@@ -443,8 +478,8 @@ const Domiciliation = () => {
       file,
     };
 
-    setUploadedDocuments(prev => {
-      const filtered = prev.filter(d => d.type !== currentDocumentType);
+    setUploadedDocuments((prev) => {
+      const filtered = prev.filter((d) => d.type !== currentDocumentType);
       return [...filtered, newDoc];
     });
 
@@ -453,16 +488,17 @@ const Domiciliation = () => {
   };
 
   const removeDocument = (docId: string) => {
-    setUploadedDocuments(prev => prev.filter(d => d.id !== docId));
+    setUploadedDocuments((prev) => prev.filter((d) => d.id !== docId));
   };
 
   const getUploadedDoc = (docType: string) => {
-    return uploadedDocuments.find(d => d.type === docType);
+    return uploadedDocuments.find((d) => d.type === docType);
   };
 
   const canProceedStep1 = companyStatus !== null;
   const canProceedStep2 = useMemo(() => {
-    const baseRequired = formData.raisonSociale.trim() &&
+    const baseRequired =
+      formData.raisonSociale.trim() &&
       formData.formeJuridique &&
       formData.representantLegal.nom.trim() &&
       formData.representantLegal.prenom.trim() &&
@@ -506,7 +542,9 @@ const Domiciliation = () => {
 
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Domiciliation d'Entreprise</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Domiciliation d'Entreprise
+          </h1>
           <p className="text-gray-500 mt-1">
             Domiciliez votre entreprise au Mohammadia Mall
           </p>
@@ -528,10 +566,14 @@ const Domiciliation = () => {
           animate={{ opacity: 1, y: 0 }}
           className="space-y-6"
         >
-          <Card className={`p-0 overflow-hidden border-2 ${getStatusInfo(demande.statut).border}`}>
+          <Card
+            className={`p-0 overflow-hidden border-2 ${getStatusInfo(demande.statut).border}`}
+          >
             <div className={`p-6 md:p-8 ${getStatusInfo(demande.statut).bg}`}>
               <div className="flex flex-col md:flex-row md:items-start gap-6">
-                <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${getStatusInfo(demande.statut).gradient} flex items-center justify-center flex-shrink-0 shadow-lg`}>
+                <div
+                  className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${getStatusInfo(demande.statut).gradient} flex items-center justify-center flex-shrink-0 shadow-lg`}
+                >
                   {React.createElement(getStatusInfo(demande.statut).icon, {
                     className: "w-8 h-8 text-white",
                   })}
@@ -584,30 +626,50 @@ const Domiciliation = () => {
                   <Building className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-gray-900">Informations Entreprise</h2>
-                  <p className="text-sm text-gray-500">Details de votre demande</p>
+                  <h2 className="text-xl font-bold text-gray-900">
+                    Informations Entreprise
+                  </h2>
+                  <p className="text-sm text-gray-500">
+                    Details de votre demande
+                  </p>
                 </div>
               </div>
 
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-gray-50 rounded-xl p-4">
-                    <p className="text-xs text-gray-500 mb-1 uppercase tracking-wide">Raison Sociale</p>
-                    <p className="font-semibold text-gray-900">{demande.raisonSociale}</p>
+                    <p className="text-xs text-gray-500 mb-1 uppercase tracking-wide">
+                      Raison Sociale
+                    </p>
+                    <p className="font-semibold text-gray-900">
+                      {demande.raisonSociale}
+                    </p>
                   </div>
                   <div className="bg-gray-50 rounded-xl p-4">
-                    <p className="text-xs text-gray-500 mb-1 uppercase tracking-wide">Forme Juridique</p>
-                    <p className="font-semibold text-gray-900">{demande.formeJuridique}</p>
+                    <p className="text-xs text-gray-500 mb-1 uppercase tracking-wide">
+                      Forme Juridique
+                    </p>
+                    <p className="font-semibold text-gray-900">
+                      {demande.formeJuridique}
+                    </p>
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-gray-50 rounded-xl p-4">
-                    <p className="text-xs text-gray-500 mb-1 uppercase tracking-wide">NIF</p>
-                    <p className="font-semibold text-gray-900">{demande.nif || "Non renseigne"}</p>
+                    <p className="text-xs text-gray-500 mb-1 uppercase tracking-wide">
+                      NIF
+                    </p>
+                    <p className="font-semibold text-gray-900">
+                      {demande.nif || "Non renseigne"}
+                    </p>
                   </div>
                   <div className="bg-gray-50 rounded-xl p-4">
-                    <p className="text-xs text-gray-500 mb-1 uppercase tracking-wide">NIS</p>
-                    <p className="font-semibold text-gray-900">{demande.nis || "Non renseigne"}</p>
+                    <p className="text-xs text-gray-500 mb-1 uppercase tracking-wide">
+                      NIS
+                    </p>
+                    <p className="font-semibold text-gray-900">
+                      {demande.nis || "Non renseigne"}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -620,7 +682,9 @@ const Domiciliation = () => {
                     <User className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold text-gray-900">Representant Legal</h2>
+                    <h2 className="text-xl font-bold text-gray-900">
+                      Representant Legal
+                    </h2>
                     <p className="text-sm text-gray-500">Contact principal</p>
                   </div>
                 </div>
@@ -632,10 +696,13 @@ const Domiciliation = () => {
                     </div>
                     <div>
                       <p className="font-semibold text-gray-900">
-                        {demande.representantLegal.prenom} {demande.representantLegal.nom}
+                        {demande.representantLegal.prenom}{" "}
+                        {demande.representantLegal.nom}
                       </p>
                       {demande.representantLegal.fonction && (
-                        <p className="text-sm text-gray-500">{demande.representantLegal.fonction}</p>
+                        <p className="text-sm text-gray-500">
+                          {demande.representantLegal.fonction}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -646,7 +713,9 @@ const Domiciliation = () => {
                         className="flex items-center gap-2 text-blue-600 hover:text-blue-700 transition-colors"
                       >
                         <Mail className="w-4 h-4" />
-                        <span className="text-sm">{demande.representantLegal.email}</span>
+                        <span className="text-sm">
+                          {demande.representantLegal.email}
+                        </span>
                       </a>
                     )}
                     {demande.representantLegal.telephone && (
@@ -655,7 +724,9 @@ const Domiciliation = () => {
                         className="flex items-center gap-2 text-blue-600 hover:text-blue-700 transition-colors"
                       >
                         <Phone className="w-4 h-4" />
-                        <span className="text-sm">{demande.representantLegal.telephone}</span>
+                        <span className="text-sm">
+                          {demande.representantLegal.telephone}
+                        </span>
                       </a>
                     )}
                   </div>
@@ -671,7 +742,9 @@ const Domiciliation = () => {
                   <AlertCircle className="w-6 h-6 text-red-600" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-red-900 mb-2 text-lg">Raison du rejet</h3>
+                  <h3 className="font-bold text-red-900 mb-2 text-lg">
+                    Raison du rejet
+                  </h3>
                   <p className="text-red-700">{demande.commentaireAdmin}</p>
                 </div>
               </div>
@@ -685,10 +758,15 @@ const Domiciliation = () => {
                   <CreditCard className="w-6 h-6 text-emerald-600" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-bold text-emerald-900 mb-2 text-lg">Tarif mensuel</h3>
+                  <h3 className="font-bold text-emerald-900 mb-2 text-lg">
+                    Tarif mensuel
+                  </h3>
                   <p className="text-3xl font-bold text-emerald-600">
                     {Number(demande.montantMensuel).toLocaleString()} DA
-                    <span className="text-base font-normal text-emerald-700"> / mois</span>
+                    <span className="text-base font-normal text-emerald-700">
+                      {" "}
+                      / mois
+                    </span>
                   </p>
                 </div>
               </div>
@@ -702,9 +780,13 @@ const Domiciliation = () => {
                 Soumettre une nouvelle demande
               </h3>
               <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                Vous pouvez corriger les informations et soumettre une nouvelle demande de domiciliation.
+                Vous pouvez corriger les informations et soumettre une nouvelle
+                demande de domiciliation.
               </p>
-              <Button onClick={handleOpenModal} className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
+              <Button
+                onClick={handleOpenModal}
+                className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
+              >
                 <Plus className="w-5 h-5 mr-2" />
                 Nouvelle demande
               </Button>
@@ -731,7 +813,9 @@ const Domiciliation = () => {
                     Domiciliez votre entreprise
                   </h2>
                   <p className="text-lg text-white/90 mb-6">
-                    Beneficiez d'une adresse prestigieuse au coeur d'Alger et profitez de tous nos services professionnels. Creation ou transfert de siege social.
+                    Beneficiez d'une adresse prestigieuse au coeur d'Alger et
+                    profitez de tous nos services professionnels. Creation ou
+                    transfert de siege social.
                   </p>
                   <Button
                     onClick={handleOpenModal}
@@ -754,12 +838,20 @@ const Domiciliation = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
                 >
-                  <Card className={`p-6 ${benefit.bg} border-0 hover:shadow-lg transition-shadow`}>
-                    <div className={`w-12 h-12 ${benefit.bg} rounded-xl flex items-center justify-center mb-4`}>
+                  <Card
+                    className={`p-6 ${benefit.bg} border-0 hover:shadow-lg transition-shadow`}
+                  >
+                    <div
+                      className={`w-12 h-12 ${benefit.bg} rounded-xl flex items-center justify-center mb-4`}
+                    >
                       <benefit.icon className={`w-6 h-6 ${benefit.color}`} />
                     </div>
-                    <h3 className="font-bold text-gray-900 mb-2">{benefit.title}</h3>
-                    <p className="text-sm text-gray-600">{benefit.description}</p>
+                    <h3 className="font-bold text-gray-900 mb-2">
+                      {benefit.title}
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      {benefit.description}
+                    </p>
                   </Card>
                 </motion.div>
               ))}
@@ -768,21 +860,35 @@ const Domiciliation = () => {
             <Card className="p-8">
               <div className="text-center mb-8">
                 <Award className="w-12 h-12 text-amber-500 mx-auto mb-4" />
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">Notre offre</h3>
-                <p className="text-gray-600">Tout ce dont vous avez besoin pour votre entreprise</p>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                  Notre offre
+                </h3>
+                <p className="text-gray-600">
+                  Tout ce dont vous avez besoin pour votre entreprise
+                </p>
               </div>
 
               <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-8 border border-amber-200">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                   <div>
-                    <p className="text-sm text-amber-600 font-medium mb-2">Tarif mensuel</p>
-                    <p className="text-4xl font-bold text-gray-900">
-                      12 000 <span className="text-xl text-gray-600">DA/mois</span>
+                    <p className="text-sm text-amber-600 font-medium mb-2">
+                      Tarif mensuel
                     </p>
-                    <p className="text-sm text-gray-500 mt-1">HT - Engagement 6 mois ou 1 an</p>
+                    <p className="text-4xl font-bold text-gray-900">
+                      12 000{" "}
+                      <span className="text-xl text-gray-600">DA/mois</span>
+                    </p>
+                    <p className="text-sm text-gray-500 mt-1">
+                      HT - Engagement 6 mois ou 1 an
+                    </p>
                   </div>
                   <div className="flex flex-col gap-3">
-                    {["Adresse commerciale officielle", "Reception du courrier", "Salle de reunion (2h/mois)", "Assistance administrative"].map((item, i) => (
+                    {[
+                      "Adresse commerciale officielle",
+                      "Reception du courrier",
+                      "Salle de reunion (2h/mois)",
+                      "Assistance administrative",
+                    ].map((item, i) => (
                       <div key={i} className="flex items-center gap-2">
                         <CheckCircle className="w-5 h-5 text-emerald-500" />
                         <span className="text-gray-700">{item}</span>
@@ -818,16 +924,24 @@ const Domiciliation = () => {
                   >
                     <step.icon className="w-4 h-4 md:w-5 md:h-5" />
                   </div>
-                  <span className={`text-[10px] md:text-xs mt-2 font-medium ${
-                    currentStep >= step.id ? "text-amber-600" : "text-gray-400"
-                  }`}>
+                  <span
+                    className={`text-[10px] md:text-xs mt-2 font-medium ${
+                      currentStep >= step.id
+                        ? "text-amber-600"
+                        : "text-gray-400"
+                    }`}
+                  >
                     {step.title}
                   </span>
                 </div>
                 {index < steps.length - 1 && (
-                  <div className={`flex-1 h-1 mx-1 md:mx-3 rounded-full min-w-[20px] ${
-                    currentStep > step.id ? "bg-gradient-to-r from-amber-500 to-orange-500" : "bg-gray-200"
-                  }`} />
+                  <div
+                    className={`flex-1 h-1 mx-1 md:mx-3 rounded-full min-w-[20px] ${
+                      currentStep > step.id
+                        ? "bg-gradient-to-r from-amber-500 to-orange-500"
+                        : "bg-gray-200"
+                    }`}
+                  />
                 )}
               </React.Fragment>
             ))}
@@ -848,7 +962,8 @@ const Domiciliation = () => {
                 </h3>
 
                 <p className="text-gray-600">
-                  Avant de commencer, indiquez-nous si votre entreprise est deja creee ou si vous etes en cours de creation.
+                  Avant de commencer, indiquez-nous si votre entreprise est deja
+                  creee ou si vous etes en cours de creation.
                 </p>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -864,9 +979,12 @@ const Domiciliation = () => {
                     <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
                       <Building className="w-6 h-6 text-blue-600" />
                     </div>
-                    <h4 className="font-bold text-gray-900 mb-2">Entreprise existante</h4>
+                    <h4 className="font-bold text-gray-900 mb-2">
+                      Entreprise existante
+                    </h4>
                     <p className="text-sm text-gray-600">
-                      Mon entreprise est deja immatriculee et je souhaite transferer mon siege social
+                      Mon entreprise est deja immatriculee et je souhaite
+                      transferer mon siege social
                     </p>
                     {companyStatus === "existing" && (
                       <div className="mt-4 flex items-center gap-2 text-amber-600">
@@ -888,9 +1006,12 @@ const Domiciliation = () => {
                     <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center mb-4">
                       <UserPlus className="w-6 h-6 text-emerald-600" />
                     </div>
-                    <h4 className="font-bold text-gray-900 mb-2">Nouvelle creation</h4>
+                    <h4 className="font-bold text-gray-900 mb-2">
+                      Nouvelle creation
+                    </h4>
                     <p className="text-sm text-gray-600">
-                      Je souhaite creer mon entreprise et domicilier mon siege social chez Coffice
+                      Je souhaite creer mon entreprise et domicilier mon siege
+                      social chez Coffice
                     </p>
                     {companyStatus === "new_creation" && (
                       <div className="mt-4 flex items-center gap-2 text-amber-600">
@@ -906,10 +1027,14 @@ const Domiciliation = () => {
                     <div className="flex items-start gap-3">
                       <Info className="w-5 h-5 text-blue-600 mt-0.5" />
                       <div className="text-sm text-blue-700">
-                        <p className="font-medium mb-2">Information importante:</p>
+                        <p className="font-medium mb-2">
+                          Information importante:
+                        </p>
                         <p>
-                          Pour creer votre entreprise (hors auto-entrepreneur), vous aurez besoin d'une denomination (nom de societe)
-                          que vous pouvez obtenir au CNRC situe juste au-dessus de nous au 5eme etage du Mohammadia Mall.
+                          Pour creer votre entreprise (hors auto-entrepreneur),
+                          vous aurez besoin d'une denomination (nom de societe)
+                          que vous pouvez obtenir au CNRC situe juste au-dessus
+                          de nous au 5eme etage du Mohammadia Mall.
                         </p>
                       </div>
                     </div>
@@ -928,23 +1053,39 @@ const Domiciliation = () => {
               >
                 <h3 className="font-bold text-lg text-gray-900 flex items-center gap-2">
                   <Building className="w-5 h-5 text-amber-500" />
-                  {companyStatus === "new_creation" ? "Informations de la future entreprise" : "Informations de l'entreprise"}
+                  {companyStatus === "new_creation"
+                    ? "Informations de la future entreprise"
+                    : "Informations de l'entreprise"}
                 </h3>
 
                 <div>
                   <Input
-                    label={companyStatus === "new_creation" ? "Nom prevu de l'entreprise" : "Raison Sociale"}
+                    label={
+                      companyStatus === "new_creation"
+                        ? "Nom prevu de l'entreprise"
+                        : "Raison Sociale"
+                    }
                     icon={<Building className="w-5 h-5" />}
                     value={formData.raisonSociale}
                     onChange={(e) => {
-                      setFormData({ ...formData, raisonSociale: e.target.value });
-                      if (errors.raisonSociale) setErrors({ ...errors, raisonSociale: "" });
+                      setFormData({
+                        ...formData,
+                        raisonSociale: e.target.value,
+                      });
+                      if (errors.raisonSociale)
+                        setErrors({ ...errors, raisonSociale: "" });
                     }}
-                    placeholder={companyStatus === "new_creation" ? "Ex: Innovation Tech" : "Ex: SARL Innovation Tech"}
+                    placeholder={
+                      companyStatus === "new_creation"
+                        ? "Ex: Innovation Tech"
+                        : "Ex: SARL Innovation Tech"
+                    }
                     className={errors.raisonSociale ? "border-red-500" : ""}
                   />
                   {errors.raisonSociale && (
-                    <p className="text-red-500 text-sm mt-1">{errors.raisonSociale}</p>
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.raisonSociale}
+                    </p>
                   )}
                 </div>
 
@@ -956,23 +1097,37 @@ const Domiciliation = () => {
                     <select
                       value={formData.formeJuridique}
                       onChange={(e) => {
-                        setFormData({ ...formData, formeJuridique: e.target.value as LegalFormType });
-                        if (errors.formeJuridique) setErrors({ ...errors, formeJuridique: "" });
+                        setFormData({
+                          ...formData,
+                          formeJuridique: e.target.value as LegalFormType,
+                        });
+                        if (errors.formeJuridique)
+                          setErrors({ ...errors, formeJuridique: "" });
                       }}
                       className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all ${
-                        errors.formeJuridique ? "border-red-500" : "border-gray-200"
+                        errors.formeJuridique
+                          ? "border-red-500"
+                          : "border-gray-200"
                       }`}
                     >
                       <option value="">Selectionnez</option>
-                      <option value="SARL">SARL - Societe a Responsabilite Limitee</option>
-                      <option value="EURL">EURL - Entreprise Unipersonnelle</option>
+                      <option value="SARL">
+                        SARL - Societe a Responsabilite Limitee
+                      </option>
+                      <option value="EURL">
+                        EURL - Entreprise Unipersonnelle
+                      </option>
                       <option value="SPA">SPA - Societe Par Actions</option>
-                      <option value="SNC">SNC - Societe en Nom Collectif</option>
+                      <option value="SNC">
+                        SNC - Societe en Nom Collectif
+                      </option>
                       <option value="ST">Startup</option>
                       <option value="AUTO">Auto-Entrepreneur</option>
                     </select>
                     {errors.formeJuridique && (
-                      <p className="text-red-500 text-sm mt-1">{errors.formeJuridique}</p>
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.formeJuridique}
+                      </p>
                     )}
                   </div>
 
@@ -981,7 +1136,12 @@ const Domiciliation = () => {
                       label="Domaine d'Activite"
                       icon={<Briefcase className="w-5 h-5" />}
                       value={formData.domaineActivite}
-                      onChange={(e) => setFormData({ ...formData, domaineActivite: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          domaineActivite: e.target.value,
+                        })
+                      }
                       placeholder="Ex: Services informatiques"
                     />
                   </div>
@@ -1002,7 +1162,9 @@ const Domiciliation = () => {
                         className={errors.nif ? "border-red-500" : ""}
                       />
                       {errors.nif && (
-                        <p className="text-red-500 text-sm mt-1">{errors.nif}</p>
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.nif}
+                        </p>
                       )}
                     </div>
 
@@ -1013,13 +1175,15 @@ const Domiciliation = () => {
                         value={formData.nis}
                         onChange={(e) => {
                           setFormData({ ...formData, nis: e.target.value });
-                          if (errors.nis) setErrors({ ...errors, nis: "" });  // ← AJOUTE CECI
+                          if (errors.nis) setErrors({ ...errors, nis: "" }); // ← AJOUTE CECI
                         }}
                         placeholder="123456789012345"
-                        className={errors.nis ? "border-red-500" : ""}  // ← AJOUTE CECI
+                        className={errors.nis ? "border-red-500" : ""} // ← AJOUTE CECI
                       />
-                      {errors.nis && (  // ← AJOUTE CE BLOC
-                        <p className="text-red-500 text-sm mt-1">{errors.nis}</p>
+                      {errors.nis && ( // ← AJOUTE CE BLOC
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.nis}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -1028,7 +1192,9 @@ const Domiciliation = () => {
                 <div className="border-t pt-4 mt-4">
                   <h4 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
                     <User className="w-4 h-4 text-blue-500" />
-                    {companyStatus === "new_creation" ? "Futur gerant / Auto-entrepreneur" : "Representant legal"}
+                    {companyStatus === "new_creation"
+                      ? "Futur gerant / Auto-entrepreneur"
+                      : "Representant legal"}
                   </h4>
 
                   <div className="grid grid-cols-2 gap-4">
@@ -1040,7 +1206,10 @@ const Domiciliation = () => {
                         onChange={(e) => {
                           setFormData({
                             ...formData,
-                            representantLegal: { ...formData.representantLegal, nom: e.target.value },
+                            representantLegal: {
+                              ...formData.representantLegal,
+                              nom: e.target.value,
+                            },
                           });
                           if (errors["representantLegal.nom"]) {
                             const newErrors = { ...errors };
@@ -1048,10 +1217,16 @@ const Domiciliation = () => {
                             setErrors(newErrors);
                           }
                         }}
-                        className={errors["representantLegal.nom"] ? "border-red-500" : ""}
+                        className={
+                          errors["representantLegal.nom"]
+                            ? "border-red-500"
+                            : ""
+                        }
                       />
                       {errors["representantLegal.nom"] && (
-                        <p className="text-red-500 text-sm mt-1">{errors["representantLegal.nom"]}</p>
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors["representantLegal.nom"]}
+                        </p>
                       )}
                     </div>
 
@@ -1063,7 +1238,10 @@ const Domiciliation = () => {
                         onChange={(e) => {
                           setFormData({
                             ...formData,
-                            representantLegal: { ...formData.representantLegal, prenom: e.target.value },
+                            representantLegal: {
+                              ...formData.representantLegal,
+                              prenom: e.target.value,
+                            },
                           });
                           if (errors["representantLegal.prenom"]) {
                             const newErrors = { ...errors };
@@ -1071,10 +1249,16 @@ const Domiciliation = () => {
                             setErrors(newErrors);
                           }
                         }}
-                        className={errors["representantLegal.prenom"] ? "border-red-500" : ""}
+                        className={
+                          errors["representantLegal.prenom"]
+                            ? "border-red-500"
+                            : ""
+                        }
                       />
                       {errors["representantLegal.prenom"] && (
-                        <p className="text-red-500 text-sm mt-1">{errors["representantLegal.prenom"]}</p>
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors["representantLegal.prenom"]}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -1087,7 +1271,10 @@ const Domiciliation = () => {
                       onChange={(e) =>
                         setFormData({
                           ...formData,
-                          representantLegal: { ...formData.representantLegal, telephone: e.target.value },
+                          representantLegal: {
+                            ...formData.representantLegal,
+                            telephone: e.target.value,
+                          },
                         })
                       }
                       placeholder="+213 XXX XX XX XX"
@@ -1102,7 +1289,10 @@ const Domiciliation = () => {
                         onChange={(e) => {
                           setFormData({
                             ...formData,
-                            representantLegal: { ...formData.representantLegal, email: e.target.value },
+                            representantLegal: {
+                              ...formData.representantLegal,
+                              email: e.target.value,
+                            },
                           });
                           if (errors["representantLegal.email"]) {
                             const newErrors = { ...errors };
@@ -1111,10 +1301,16 @@ const Domiciliation = () => {
                           }
                         }}
                         placeholder="email@exemple.com"
-                        className={errors["representantLegal.email"] ? "border-red-500" : ""}
+                        className={
+                          errors["representantLegal.email"]
+                            ? "border-red-500"
+                            : ""
+                        }
                       />
                       {errors["representantLegal.email"] && (
-                        <p className="text-red-500 text-sm mt-1">{errors["representantLegal.email"]}</p>
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors["representantLegal.email"]}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -1141,17 +1337,21 @@ const Domiciliation = () => {
                     : "Telechargez les documents necessaires pour le transfert de siege social."}
                 </p>
 
-                {companyStatus === "new_creation" && formData.formeJuridique === "AUTO" && (
-                  <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl">
-                    <div className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-emerald-600 mt-0.5" />
-                      <div className="text-sm text-emerald-700">
-                        <p className="font-medium">Bonne nouvelle!</p>
-                        <p>En tant qu'auto-entrepreneur, vous n'avez pas besoin de denomination.</p>
+                {companyStatus === "new_creation" &&
+                  formData.formeJuridique === "AUTO" && (
+                    <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl">
+                      <div className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-emerald-600 mt-0.5" />
+                        <div className="text-sm text-emerald-700">
+                          <p className="font-medium">Bonne nouvelle!</p>
+                          <p>
+                            En tant qu'auto-entrepreneur, vous n'avez pas besoin
+                            de denomination.
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
                 <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2">
                   {getRequiredDocuments().map((doc) => {
@@ -1170,15 +1370,23 @@ const Domiciliation = () => {
                         <div className="flex items-start justify-between gap-3">
                           <div className="flex-1">
                             <div className="flex items-center gap-2">
-                              <span className="font-medium text-gray-900">{doc.name}</span>
+                              <span className="font-medium text-gray-900">
+                                {doc.name}
+                              </span>
                               {doc.required ? (
-                                <Badge variant="warning" className="text-xs">Requis</Badge>
+                                <Badge variant="warning" className="text-xs">
+                                  Requis
+                                </Badge>
                               ) : (
-                                <Badge variant="default" className="text-xs">Optionnel</Badge>
+                                <Badge variant="default" className="text-xs">
+                                  Optionnel
+                                </Badge>
                               )}
                             </div>
                             {"description" in doc && doc.description && (
-                              <p className="text-xs text-gray-500 mt-1">{doc.description}</p>
+                              <p className="text-xs text-gray-500 mt-1">
+                                {doc.description}
+                              </p>
                             )}
                             {uploaded && (
                               <p className="text-xs text-emerald-600 mt-1 flex items-center gap-1">
@@ -1238,39 +1446,56 @@ const Domiciliation = () => {
                   <div className="grid grid-cols-2 gap-4">
                     <button
                       type="button"
-                      onClick={() => setFormData({ ...formData, period: "6_months" })}
+                      onClick={() =>
+                        setFormData({ ...formData, period: "6_months" })
+                      }
                       className={`p-4 rounded-xl border-2 text-center transition-all ${
                         formData.period === "6_months"
                           ? "border-amber-500 bg-amber-50"
                           : "border-gray-200 hover:border-amber-300"
                       }`}
                     >
-                      <span className="block text-2xl font-bold text-gray-900">6 mois</span>
-                      <span className="text-sm text-gray-600">72 000 DA HT</span>
+                      <span className="block text-2xl font-bold text-gray-900">
+                        6 mois
+                      </span>
+                      <span className="text-sm text-gray-600">
+                        72 000 DA HT
+                      </span>
                     </button>
                     <button
                       type="button"
-                      onClick={() => setFormData({ ...formData, period: "1_year" })}
+                      onClick={() =>
+                        setFormData({ ...formData, period: "1_year" })
+                      }
                       className={`p-4 rounded-xl border-2 text-center transition-all relative ${
                         formData.period === "1_year"
                           ? "border-amber-500 bg-amber-50"
                           : "border-gray-200 hover:border-amber-300"
                       }`}
                     >
-                      <Badge className="absolute -top-2 -right-2 bg-emerald-500 text-white text-xs">-10%</Badge>
-                      <span className="block text-2xl font-bold text-gray-900">1 an</span>
-                      <span className="text-sm text-gray-600">129 600 DA HT</span>
+                      <Badge className="absolute -top-2 -right-2 bg-emerald-500 text-white text-xs">
+                        -10%
+                      </Badge>
+                      <span className="block text-2xl font-bold text-gray-900">
+                        1 an
+                      </span>
+                      <span className="text-sm text-gray-600">
+                        129 600 DA HT
+                      </span>
                     </button>
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Date de debut souhaitee <span className="text-red-500">*</span>
+                    Date de debut souhaitee{" "}
+                    <span className="text-red-500">*</span>
                   </label>
                   <DatePicker
                     selected={formData.dateDebutSouhaitee}
-                    onChange={(date) => setFormData({ ...formData, dateDebutSouhaitee: date })}
+                    onChange={(date) =>
+                      setFormData({ ...formData, dateDebutSouhaitee: date })
+                    }
                     minDate={new Date()}
                     locale="fr"
                     dateFormat="dd MMMM yyyy"
@@ -1287,17 +1512,37 @@ const Domiciliation = () => {
                         <p className="font-medium mb-1">Recapitulatif:</p>
                         <ul className="space-y-1">
                           <li>
-                            Debut souhaite: <strong>{format(formData.dateDebutSouhaitee, "dd MMMM yyyy", { locale: fr })}</strong>
+                            Debut souhaite:{" "}
+                            <strong>
+                              {format(
+                                formData.dateDebutSouhaitee,
+                                "dd MMMM yyyy",
+                                { locale: fr },
+                              )}
+                            </strong>
                           </li>
                           <li>
-                            Duree: <strong>{formData.period === "6_months" ? "6 mois" : "1 an"}</strong>
+                            Duree:{" "}
+                            <strong>
+                              {formData.period === "6_months"
+                                ? "6 mois"
+                                : "1 an"}
+                            </strong>
                           </li>
                           <li>
-                            Fin prevue: <strong>{getPeriodEndDate() ? format(getPeriodEndDate()!, "dd MMMM yyyy", { locale: fr }) : "-"}</strong>
+                            Fin prevue:{" "}
+                            <strong>
+                              {getPeriodEndDate()
+                                ? format(getPeriodEndDate()!, "dd MMMM yyyy", {
+                                    locale: fr,
+                                  })
+                                : "-"}
+                            </strong>
                           </li>
                         </ul>
                         <p className="mt-2 text-xs">
-                          La date effective du contrat sera confirmee apres validation de votre demande.
+                          La date effective du contrat sera confirmee apres
+                          validation de votre demande.
                         </p>
                       </div>
                     </div>
@@ -1325,9 +1570,13 @@ const Domiciliation = () => {
                       <CheckCircle className="w-6 h-6 text-emerald-600" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-emerald-900 mb-2">Pret a soumettre</h4>
+                      <h4 className="font-bold text-emerald-900 mb-2">
+                        Pret a soumettre
+                      </h4>
                       <p className="text-sm text-emerald-700">
-                        Verifiez les informations ci-dessous avant de soumettre votre demande. Notre equipe traitera votre demande sous 48h ouvrees.
+                        Verifiez les informations ci-dessous avant de soumettre
+                        votre demande. Notre equipe traitera votre demande sous
+                        48h ouvrees.
                       </p>
                     </div>
                   </div>
@@ -1337,27 +1586,37 @@ const Domiciliation = () => {
                   <div className="bg-gray-50 rounded-xl p-4">
                     <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
                       <Building className="w-4 h-4 text-amber-500" />
-                      {companyStatus === "new_creation" ? "Future entreprise" : "Entreprise"}
+                      {companyStatus === "new_creation"
+                        ? "Future entreprise"
+                        : "Entreprise"}
                     </h4>
                     <div className="grid grid-cols-2 gap-3 text-sm">
                       <div>
                         <span className="text-gray-500">Nom:</span>
-                        <p className="font-medium text-gray-900">{formData.raisonSociale}</p>
+                        <p className="font-medium text-gray-900">
+                          {formData.raisonSociale}
+                        </p>
                       </div>
                       <div>
                         <span className="text-gray-500">Forme juridique:</span>
-                        <p className="font-medium text-gray-900">{formData.formeJuridique}</p>
+                        <p className="font-medium text-gray-900">
+                          {formData.formeJuridique}
+                        </p>
                       </div>
                       {companyStatus === "existing" && formData.nif && (
                         <div>
                           <span className="text-gray-500">NIF:</span>
-                          <p className="font-medium text-gray-900">{formData.nif}</p>
+                          <p className="font-medium text-gray-900">
+                            {formData.nif}
+                          </p>
                         </div>
                       )}
                       {formData.domaineActivite && (
                         <div>
                           <span className="text-gray-500">Domaine:</span>
-                          <p className="font-medium text-gray-900">{formData.domaineActivite}</p>
+                          <p className="font-medium text-gray-900">
+                            {formData.domaineActivite}
+                          </p>
                         </div>
                       )}
                     </div>
@@ -1366,18 +1625,23 @@ const Domiciliation = () => {
                   <div className="bg-blue-50 rounded-xl p-4">
                     <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
                       <User className="w-4 h-4 text-blue-500" />
-                      {companyStatus === "new_creation" ? "Futur gerant" : "Representant"}
+                      {companyStatus === "new_creation"
+                        ? "Futur gerant"
+                        : "Representant"}
                     </h4>
                     <div className="grid grid-cols-2 gap-3 text-sm">
                       <div>
                         <span className="text-gray-500">Nom complet:</span>
                         <p className="font-medium text-gray-900">
-                          {formData.representantLegal.prenom} {formData.representantLegal.nom}
+                          {formData.representantLegal.prenom}{" "}
+                          {formData.representantLegal.nom}
                         </p>
                       </div>
                       <div>
                         <span className="text-gray-500">Email:</span>
-                        <p className="font-medium text-gray-900">{formData.representantLegal.email}</p>
+                        <p className="font-medium text-gray-900">
+                          {formData.representantLegal.email}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -1390,12 +1654,16 @@ const Domiciliation = () => {
                     <div className="grid grid-cols-2 gap-3 text-sm">
                       <div>
                         <span className="text-gray-500">Duree:</span>
-                        <p className="font-medium text-gray-900">{formData.period === "6_months" ? "6 mois" : "1 an"}</p>
+                        <p className="font-medium text-gray-900">
+                          {formData.period === "6_months" ? "6 mois" : "1 an"}
+                        </p>
                       </div>
                       <div>
                         <span className="text-gray-500">Debut souhaite:</span>
                         <p className="font-medium text-gray-900">
-                          {formData.dateDebutSouhaitee ? format(formData.dateDebutSouhaitee, "dd/MM/yyyy") : "-"}
+                          {formData.dateDebutSouhaitee
+                            ? format(formData.dateDebutSouhaitee, "dd/MM/yyyy")
+                            : "-"}
                         </p>
                       </div>
                     </div>
@@ -1407,8 +1675,11 @@ const Domiciliation = () => {
                       Documents ({uploadedDocuments.length})
                     </h4>
                     <div className="space-y-1">
-                      {uploadedDocuments.map(doc => (
-                        <p key={doc.id} className="text-sm text-gray-700 flex items-center gap-2">
+                      {uploadedDocuments.map((doc) => (
+                        <p
+                          key={doc.id}
+                          className="text-sm text-gray-700 flex items-center gap-2"
+                        >
                           <CheckCircle className="w-3 h-3 text-emerald-500" />
                           {doc.name}
                         </p>
@@ -1436,7 +1707,12 @@ const Domiciliation = () => {
 
           <div className="flex justify-between gap-3 pt-4 border-t">
             {currentStep > 1 && (
-              <Button type="button" variant="outline" onClick={prevStep} disabled={loading}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={prevStep}
+                disabled={loading}
+              >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Precedent
               </Button>
@@ -1456,8 +1732,7 @@ const Domiciliation = () => {
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             )}
-            {  
-              currentStep === 5 && (
+            {currentStep === 5 && (
               <Button
                 type="submit"
                 disabled={loading}
@@ -1474,8 +1749,8 @@ const Domiciliation = () => {
                     Envoyer la demande
                   </span>
                 )}
-              </Button>)
-            }
+              </Button>
+            )}
           </div>
         </form>
       </Modal>

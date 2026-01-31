@@ -62,7 +62,9 @@ const ReservationDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuthStore();
-  const [reservation, setReservation] = useState<ReservationDetail | null>(null);
+  const [reservation, setReservation] = useState<ReservationDetail | null>(
+    null,
+  );
   const [loading, setLoading] = useState(true);
   const [showCancelModal, setShowCancelModal] = useState(false);
 
@@ -76,8 +78,8 @@ const ReservationDetail: React.FC = () => {
     try {
       setLoading(true);
       const response = await apiClient.getReservation(id!);
-      console.log('🔍 Données reçues:', response.data);
-      
+      console.log("🔍 Données reçues:", response.data);
+
       if (response.success && response.data) {
         // Mapper snake_case vers camelCase
         const rawData = response.data as any;
@@ -96,22 +98,26 @@ const ReservationDetail: React.FC = () => {
           modePaiement: rawData.mode_paiement,
           typeReservation: rawData.type_reservation,
           createdAt: rawData.created_at,
-          user: rawData.user_nom ? {
-            nom: rawData.user_nom,
-            prenom: rawData.user_prenom,
-            email: rawData.user_email,
-            telephone: rawData.user_telephone,
-          } : undefined,
-          espace: rawData.espace_nom ? {
-            nom: rawData.espace_nom,
-            type: rawData.espace_type,
-            capacite: rawData.capacite,
-            tarifHoraire: parseFloat(rawData.prix_heure),
-            tarifJournalier: parseFloat(rawData.prix_jour),
-            tarifMensuel: undefined,
-          } : undefined,
+          user: rawData.user_nom
+            ? {
+                nom: rawData.user_nom,
+                prenom: rawData.user_prenom,
+                email: rawData.user_email,
+                telephone: rawData.user_telephone,
+              }
+            : undefined,
+          espace: rawData.espace_nom
+            ? {
+                nom: rawData.espace_nom,
+                type: rawData.espace_type,
+                capacite: rawData.capacite,
+                tarifHoraire: parseFloat(rawData.prix_heure),
+                tarifJournalier: parseFloat(rawData.prix_jour),
+                tarifMensuel: undefined,
+              }
+            : undefined,
         };
-        
+
         setReservation(mappedData);
       } else {
         toast.error("Réservation introuvable");
@@ -138,7 +144,9 @@ const ReservationDetail: React.FC = () => {
         toast.error(response.error || "Erreur lors de l'annulation");
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Erreur lors de l'annulation");
+      toast.error(
+        error instanceof Error ? error.message : "Erreur lors de l'annulation",
+      );
     }
   };
 
@@ -222,7 +230,9 @@ const ReservationDetail: React.FC = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-gray-600">Type</p>
-                  <p className="font-medium">{reservation.espace?.type || "N/A"}</p>
+                  <p className="font-medium">
+                    {reservation.espace?.type || "N/A"}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Capacité</p>
@@ -233,7 +243,9 @@ const ReservationDetail: React.FC = () => {
               </div>
               {reservation.participants && (
                 <div>
-                  <p className="text-sm text-gray-600">Nombre de participants</p>
+                  <p className="text-sm text-gray-600">
+                    Nombre de participants
+                  </p>
                   <p className="font-medium">{reservation.participants}</p>
                 </div>
               )}
@@ -250,23 +262,37 @@ const ReservationDetail: React.FC = () => {
                 <div>
                   <p className="text-sm text-gray-600">Date de début</p>
                   <p className="font-medium">
-                    {format(new Date(reservation.dateDebut.replace(' ', 'T')), "dd MMMM yyyy", {
-                      locale: fr,
-                    })}
+                    {format(
+                      new Date(reservation.dateDebut.replace(" ", "T")),
+                      "dd MMMM yyyy",
+                      {
+                        locale: fr,
+                      },
+                    )}
                   </p>
                   <p className="text-sm text-gray-500">
-                    {format(new Date(reservation.dateDebut.replace(' ', 'T')), "HH:mm")}
+                    {format(
+                      new Date(reservation.dateDebut.replace(" ", "T")),
+                      "HH:mm",
+                    )}
                   </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Date de fin</p>
                   <p className="font-medium">
-                    {format(new Date(reservation.dateFin.replace(' ', 'T')), "dd MMMM yyyy", {
-                      locale: fr,
-                    })}
+                    {format(
+                      new Date(reservation.dateFin.replace(" ", "T")),
+                      "dd MMMM yyyy",
+                      {
+                        locale: fr,
+                      },
+                    )}
                   </p>
                   <p className="text-sm text-gray-500">
-                    {format(new Date(reservation.dateFin.replace(' ', 'T')), "HH:mm")}
+                    {format(
+                      new Date(reservation.dateFin.replace(" ", "T")),
+                      "HH:mm",
+                    )}
                   </p>
                 </div>
               </div>
@@ -304,7 +330,9 @@ const ReservationDetail: React.FC = () => {
                   {reservation.user.telephone && (
                     <div>
                       <p className="text-sm text-gray-600">Téléphone</p>
-                      <p className="font-medium">{reservation.user.telephone}</p>
+                      <p className="font-medium">
+                        {reservation.user.telephone}
+                      </p>
                     </div>
                   )}
                 </div>
@@ -371,9 +399,13 @@ const ReservationDetail: React.FC = () => {
               <div>
                 <p className="text-gray-600">Date de création</p>
                 <p className="font-medium">
-                  {format(new Date(reservation.createdAt), "dd MMM yyyy à HH:mm", {
-                    locale: fr,
-                  })}
+                  {format(
+                    new Date(reservation.createdAt),
+                    "dd MMM yyyy à HH:mm",
+                    {
+                      locale: fr,
+                    },
+                  )}
                 </p>
               </div>
             </div>

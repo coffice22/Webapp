@@ -125,7 +125,7 @@ export const useAppStore = create<AppState>()(
           await Promise.all([
             get().loadEspaces(),
             get().loadReservations(),
-            get().loadDemandesDomiciliation()
+            get().loadDemandesDomiciliation(),
           ]);
 
           set({ initialized: true });
@@ -178,20 +178,29 @@ export const useAppStore = create<AppState>()(
           }
           return { success: false, error: response.error };
         } catch (error) {
-          return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
+          return {
+            success: false,
+            error: error instanceof Error ? error.message : "Unknown error",
+          };
         }
       },
 
       updateEspace: async (id, data) => {
         try {
-          const response = await apiClient.updateEspace(id, data as Record<string, unknown>);
+          const response = await apiClient.updateEspace(
+            id,
+            data as Record<string, unknown>,
+          );
           if (response.success) {
             await get().loadEspaces();
             return { success: true };
           }
           return { success: false, error: response.error };
         } catch (error) {
-          return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
+          return {
+            success: false,
+            error: error instanceof Error ? error.message : "Unknown error",
+          };
         }
       },
 
@@ -204,7 +213,10 @@ export const useAppStore = create<AppState>()(
           }
           return { success: false, error: response.error };
         } catch (error) {
-          return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
+          return {
+            success: false,
+            error: error instanceof Error ? error.message : "Unknown error",
+          };
         }
       },
 
@@ -216,25 +228,27 @@ export const useAppStore = create<AppState>()(
             response.data &&
             Array.isArray(response.data)
           ) {
-            const abonnements = response.data.map((a: Record<string, unknown>) => ({
-              id: a.id,
-              nom: a.nom,
-              type: a.type,
-              prix: a.prix,
-              prixAvecDomiciliation: a.prix_avec_domiciliation,
-              creditsMensuels: a.credits_mensuels,
-              creditMensuel: a.credits_mensuels,
-              dureeMois: a.duree_mois,
-              dureeJours: (a.duree_mois || 1) * 30,
-              description: a.description,
-              avantages: a.avantages || [],
-              actif: a.actif,
-              statut: a.statut,
-              couleur: a.couleur || "#3B82F6",
-              ordre: a.ordre,
-              createdAt: a.created_at,
-              updatedAt: a.updated_at,
-            }));
+            const abonnements = response.data.map(
+              (a: Record<string, unknown>) => ({
+                id: a.id,
+                nom: a.nom,
+                type: a.type,
+                prix: a.prix,
+                prixAvecDomiciliation: a.prix_avec_domiciliation,
+                creditsMensuels: a.credits_mensuels,
+                creditMensuel: a.credits_mensuels,
+                dureeMois: a.duree_mois,
+                dureeJours: (a.duree_mois || 1) * 30,
+                description: a.description,
+                avantages: a.avantages || [],
+                actif: a.actif,
+                statut: a.statut,
+                couleur: a.couleur || "#3B82F6",
+                ordre: a.ordre,
+                createdAt: a.created_at,
+                updatedAt: a.updated_at,
+              }),
+            );
             set({ abonnements });
           }
         } catch (error) {
@@ -244,27 +258,38 @@ export const useAppStore = create<AppState>()(
 
       addAbonnement: async (data) => {
         try {
-          const response = await apiClient.createAbonnement(data as Record<string, unknown>);
+          const response = await apiClient.createAbonnement(
+            data as Record<string, unknown>,
+          );
           if (response.success) {
             await get().loadAbonnements();
             return { success: true };
           }
           return { success: false, error: response.error };
         } catch (error) {
-          return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
+          return {
+            success: false,
+            error: error instanceof Error ? error.message : "Unknown error",
+          };
         }
       },
 
       updateAbonnement: async (id, data) => {
         try {
-          const response = await apiClient.updateAbonnement(id, data as Record<string, unknown>);
+          const response = await apiClient.updateAbonnement(
+            id,
+            data as Record<string, unknown>,
+          );
           if (response.success) {
             await get().loadAbonnements();
             return { success: true };
           }
           return { success: false, error: response.error };
         } catch (error) {
-          return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
+          return {
+            success: false,
+            error: error instanceof Error ? error.message : "Unknown error",
+          };
         }
       },
 
@@ -276,38 +301,40 @@ export const useAppStore = create<AppState>()(
             response.data &&
             Array.isArray(response.data)
           ) {
-            const reservations = response.data.map((r: Record<string, unknown>) => ({
-              id: r.id,
-              userId: r.user_id,
-              espaceId: r.espace_id,
-              dateDebut: r.date_debut,
-              dateFin: r.date_fin,
-              statut: r.statut,
-              typeReservation: r.type_reservation,
-              montantTotal: parseFloat(r.montant_total as string) || 0,
-              reduction: parseFloat(r.reduction as string) || 0,
-              montantPaye: parseFloat(r.montant_paye as string) || 0,
-              modePaiement: r.mode_paiement,
-              notes: r.notes,
-              dateCreation: r.created_at,
-              createdAt: r.created_at,
-              espace: r.espace_nom
-                ? {
-                    id: r.espace_id,
-                    nom: r.espace_nom,
-                    type: r.espace_type,
-                  }
-                : undefined,
-              utilisateur: r.user_nom
-                ? {
-                    id: r.user_id,
-                    nom: r.user_nom,
-                    prenom: r.user_prenom,
-                    email: r.user_email,
-                    role: "user" as const,
-                  }
-                : undefined,
-            }));
+            const reservations = response.data.map(
+              (r: Record<string, unknown>) => ({
+                id: r.id,
+                userId: r.user_id,
+                espaceId: r.espace_id,
+                dateDebut: r.date_debut,
+                dateFin: r.date_fin,
+                statut: r.statut,
+                typeReservation: r.type_reservation,
+                montantTotal: parseFloat(r.montant_total as string) || 0,
+                reduction: parseFloat(r.reduction as string) || 0,
+                montantPaye: parseFloat(r.montant_paye as string) || 0,
+                modePaiement: r.mode_paiement,
+                notes: r.notes,
+                dateCreation: r.created_at,
+                createdAt: r.created_at,
+                espace: r.espace_nom
+                  ? {
+                      id: r.espace_id,
+                      nom: r.espace_nom,
+                      type: r.espace_type,
+                    }
+                  : undefined,
+                utilisateur: r.user_nom
+                  ? {
+                      id: r.user_id,
+                      nom: r.user_nom,
+                      prenom: r.user_prenom,
+                      email: r.user_email,
+                      role: "user" as const,
+                    }
+                  : undefined,
+              }),
+            );
             set({ reservations });
           }
         } catch (error) {
@@ -337,20 +364,29 @@ export const useAppStore = create<AppState>()(
             error: response.error || "Erreur lors de la creation",
           };
         } catch (error) {
-          return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
+          return {
+            success: false,
+            error: error instanceof Error ? error.message : "Unknown error",
+          };
         }
       },
 
       updateReservation: async (id, data) => {
         try {
-          const response = await apiClient.updateReservation(id, data as Record<string, unknown>);
+          const response = await apiClient.updateReservation(
+            id,
+            data as Record<string, unknown>,
+          );
           if (response.success) {
             await get().loadReservations();
             return { success: true };
           }
           return { success: false, error: response.error };
         } catch (error) {
-          return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
+          return {
+            success: false,
+            error: error instanceof Error ? error.message : "Unknown error",
+          };
         }
       },
 
@@ -384,45 +420,47 @@ export const useAppStore = create<AppState>()(
       loadDemandesDomiciliation: async () => {
         try {
           const response = await apiClient.getDomiciliations();
-          console.log('🔍 Réponse API domiciliations:', response);
-          
+          console.log("🔍 Réponse API domiciliations:", response);
+
           if (response.success && response.data) {
             // ← CORRECTION ICI : extraire response.data.data
-            const rawData = Array.isArray(response.data) 
-              ? response.data 
-              : response.data.data || [];  // ← Accéder à data.data
-            
-            const demandesDomiciliation = rawData.map((d: Record<string, unknown>) => ({
-              id: d.id,
-              userId: d.user_id,
-              utilisateur: d.utilisateur,
-              raisonSociale: d.raison_sociale,
-              formeJuridique: d.forme_juridique,
-              nif: d.nif,
-              nis: d.nis,
-              registreCommerce: d.registre_commerce,
-              articleImposition: d.article_imposition,
-              coordonneesFiscales: d.coordonnees_fiscales,
-              coordonneesAdministratives: d.coordonnees_administratives,
-              representantLegal: {
-                nom: d.representant_nom,
-                prenom: d.representant_prenom,
-                fonction: d.representant_fonction,
-                telephone: d.representant_telephone,
-                email: d.representant_email,
-              },
-              domaineActivite: d.domaine_activite,
-              adresseSiegeSocial: d.adresse_siege_social,
-              capital: d.capital,
-              dateCreationEntreprise: d.date_creation_entreprise,
-              statut: d.statut,
-              commentaireAdmin: d.commentaire_admin,
-              montantMensuel: d.montant_mensuel,  // ← AJOUTE CECI (pour afficher le tarif)
-              dateValidation: d.date_validation,
-              dateCreation: d.created_at,
-              updatedAt: d.updated_at,
-            }));
-          
+            const rawData = Array.isArray(response.data)
+              ? response.data
+              : response.data.data || []; // ← Accéder à data.data
+
+            const demandesDomiciliation = rawData.map(
+              (d: Record<string, unknown>) => ({
+                id: d.id,
+                userId: d.user_id,
+                utilisateur: d.utilisateur,
+                raisonSociale: d.raison_sociale,
+                formeJuridique: d.forme_juridique,
+                nif: d.nif,
+                nis: d.nis,
+                registreCommerce: d.registre_commerce,
+                articleImposition: d.article_imposition,
+                coordonneesFiscales: d.coordonnees_fiscales,
+                coordonneesAdministratives: d.coordonnees_administratives,
+                representantLegal: {
+                  nom: d.representant_nom,
+                  prenom: d.representant_prenom,
+                  fonction: d.representant_fonction,
+                  telephone: d.representant_telephone,
+                  email: d.representant_email,
+                },
+                domaineActivite: d.domaine_activite,
+                adresseSiegeSocial: d.adresse_siege_social,
+                capital: d.capital,
+                dateCreationEntreprise: d.date_creation_entreprise,
+                statut: d.statut,
+                commentaireAdmin: d.commentaire_admin,
+                montantMensuel: d.montant_mensuel, // ← AJOUTE CECI (pour afficher le tarif)
+                dateValidation: d.date_validation,
+                dateCreation: d.created_at,
+                updatedAt: d.updated_at,
+              }),
+            );
+
             const domiciliationServices = demandesDomiciliation
               .filter((d: DemandeDomiciliation) => d.statut === "validee")
               .map((d: DemandeDomiciliation) => ({
@@ -446,7 +484,8 @@ export const useAppStore = create<AppState>()(
                 startDate: d.dateValidation || d.dateCreation,
                 endDate: new Date(
                   new Date(d.dateValidation || d.dateCreation).setFullYear(
-                    new Date(d.dateValidation || d.dateCreation).getFullYear() + 1,
+                    new Date(d.dateValidation || d.dateCreation).getFullYear() +
+                      1,
                   ),
                 ),
                 status: "active" as const,
@@ -493,7 +532,10 @@ export const useAppStore = create<AppState>()(
           }
           return { success: false, error: response.error || "Erreur creation" };
         } catch (error) {
-          return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
+          return {
+            success: false,
+            error: error instanceof Error ? error.message : "Unknown error",
+          };
         }
       },
 
@@ -536,7 +578,10 @@ export const useAppStore = create<AppState>()(
           }
           return { success: false, error: response.error };
         } catch (error) {
-          return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
+          return {
+            success: false,
+            error: error instanceof Error ? error.message : "Unknown error",
+          };
         }
       },
 
@@ -575,7 +620,10 @@ export const useAppStore = create<AppState>()(
           }
           return { success: false, error: response.error };
         } catch (error) {
-          return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
+          return {
+            success: false,
+            error: error instanceof Error ? error.message : "Unknown error",
+          };
         }
       },
 
