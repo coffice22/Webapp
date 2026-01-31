@@ -29,10 +29,7 @@ const MyCompany = () => {
   const { updateUser } = useAppStore();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-<<<<<<< HEAD
-=======
     entreprise: user?.entreprise || "",
->>>>>>> feature/improvements
     raisonSociale: user?.raisonSociale || "",
     formeJuridique: user?.formeJuridique || "",
     typeEntreprise: user?.typeEntreprise || "",
@@ -54,10 +51,7 @@ const MyCompany = () => {
   useEffect(() => {
     if (user) {
       setFormData({
-<<<<<<< HEAD
-=======
         entreprise: user?.entreprise || "",
->>>>>>> feature/improvements
         raisonSociale: user.raisonSociale || "",
         formeJuridique: user.formeJuridique || "",
         typeEntreprise: user.typeEntreprise || "",
@@ -81,9 +75,6 @@ const MyCompany = () => {
     if (!user) return;
 
     try {
-<<<<<<< HEAD
-      const result = await updateUser(user.id, formData);
-=======
       // Validation simple côté frontend
       if (!formData.raisonSociale.trim()) {
         toast.error("La raison sociale est obligatoire");
@@ -122,7 +113,6 @@ const MyCompany = () => {
       };
 
       const result = await updateUser(user.id, dataToSend);
->>>>>>> feature/improvements
       await useAuthStore.getState().loadUser();
       toast.success("Informations de l'entreprise mises à jour avec succès");
       setIsEditing(false);
@@ -136,10 +126,7 @@ const MyCompany = () => {
     setIsEditing(false);
     if (user) {
       setFormData({
-<<<<<<< HEAD
-=======
         entreprise: user?.entreprise || "",
->>>>>>> feature/improvements
         raisonSociale: user.raisonSociale || "",
         formeJuridique: user.formeJuridique || "",
         typeEntreprise: user.typeEntreprise || "",
@@ -242,8 +229,6 @@ const MyCompany = () => {
                 required={isEditing}
               />
 
-<<<<<<< HEAD
-=======
               <Input
                 label="Nom de l'Entreprise"
                 icon={<Building className="w-5 h-5" />}
@@ -256,7 +241,6 @@ const MyCompany = () => {
                 required={isEditing}
               />
 
->>>>>>> feature/improvements
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -276,25 +260,12 @@ const MyCompany = () => {
                     required={isEditing}
                   >
                     <option value="">Sélectionnez un type</option>
-<<<<<<< HEAD
-                    <option value="SARL">
-                      SARL - Société à Responsabilité Limitée
-                    </option>
-                    <option value="EURL">
-                      EURL - Entreprise Unipersonnelle à Responsabilité Limitée
-                    </option>
-                    <option value="SPA">SPA - Société Par Actions</option>
-                    <option value="SNC">SNC - Société en Nom Collectif</option>
-                    <option value="EI">EI - Entreprise Individuelle</option>
-                    <option value="AUTO">Auto-Entrepreneur</option>
-=======
                     <option value="sarl">SARL - Société à Responsabilité Limitée</option>
                     <option value="eurl">EURL - Entreprise Unipersonnelle à Responsabilité Limitée</option>
                     <option value="spa">SPA - Société Par Actions</option>
                     <option value="snc">SNC - Société en Nom Collectif</option>
                     <option value="st">Startup</option>
                     <option value="auto_entrepreneur">Auto-Entrepreneur</option>
->>>>>>> feature/improvements
                   </select>
                 </div>
 
@@ -314,21 +285,12 @@ const MyCompany = () => {
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent disabled:bg-gray-50"
                   >
                     <option value="">Sélectionnez</option>
-<<<<<<< HEAD
-                    <option value="SARL">SARL</option>
-                    <option value="EURL">EURL</option>
-                    <option value="SPA">SPA</option>
-                    <option value="SNC">SNC</option>
-                    <option value="EI">Entreprise Individuelle</option>
-                    <option value="AUTO">Auto-Entrepreneur</option>
-=======
                     <option value="sarl">SARL - Société à Responsabilité Limitée</option>
                     <option value="eurl">EURL - Entreprise Unipersonnelle à Responsabilité Limitée</option>
                     <option value="spa">SPA - Société Par Actions</option>
                     <option value="snc">SNC - Société en Nom Collectif</option>
                     <option value="st">Startup</option>
                     <option value="auto_entrepreneur">Auto-Entrepreneur</option>
->>>>>>> feature/improvements
                   </select>
                 </div>
               </div>
