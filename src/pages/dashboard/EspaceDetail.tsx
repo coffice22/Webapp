@@ -199,22 +199,35 @@ const EspaceDetail: React.FC = () => {
             </div>
           </Card>
 
-          {espace.equipements && espace.equipements.length > 0 && (
-            <Card className="p-6">
-              <h2 className="text-xl font-bold mb-4">Équipements disponibles</h2>
-              <div className="grid grid-cols-2 gap-3">
-                {espace.equipements.map((equipement, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg"
-                  >
-                    <div className="w-2 h-2 bg-accent rounded-full"></div>
-                    <span className="text-sm font-medium">{equipement}</span>
-                  </div>
-                ))}
-              </div>
-            </Card>
-          )}
+          {(() => {
+            let items: string[] = [];
+            if (Array.isArray(espace.equipements)) {
+              items = espace.equipements;
+            } else if (typeof espace.equipements === 'string') {
+              try {
+                items = JSON.parse(espace.equipements);
+              } catch (e) {
+                items = [];
+              }
+            }
+
+            return items.length > 0 ? (
+              <Card className="p-6">
+                <h2 className="text-xl font-bold mb-4">Équipements disponibles</h2>
+                <div className="grid grid-cols-2 gap-3">
+                  {items.map((equipement, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg"
+                    >
+                      <div className="w-2 h-2 bg-accent rounded-full"></div>
+                      <span className="text-sm font-medium">{equipement}</span>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            ) : null;
+          })()}
         </div>
 
         <div className="space-y-6">
