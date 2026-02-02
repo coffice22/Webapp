@@ -1,0 +1,70 @@
+[28-Jan-2026 13:39:59 UTC] === RESERVATION CREATE REQUEST ===
+[28-Jan-2026 13:39:59 UTC] Raw input: {"espace_id":"1204bb80-f70e-11f0-b5ec-0050560122dd","date_debut":"2026-01-29T07:00:00.000Z","date_fin":"2026-01-29T11:00:00.000Z","participants":12,"notes":""}
+[28-Jan-2026 13:39:59 UTC] Decoded data: {"espace_id":"1204bb80-f70e-11f0-b5ec-0050560122dd","date_debut":"2026-01-29T07:00:00.000Z","date_fin":"2026-01-29T11:00:00.000Z","participants":12,"notes":""}
+[28-Jan-2026 13:39:59 UTC] User ID: 62adf1fb-a63b-4f42-9a4a-faf8e8f1e03a
+[28-Jan-2026 13:39:59 UTC] Checking espace with ID: 1204bb80-f70e-11f0-b5ec-0050560122dd
+[28-Jan-2026 13:39:59 UTC] Espace found: Open Space (1204bb80-f70e-11f0-b5ec-0050560122dd)
+[28-Jan-2026 14:48:00 UTC] === RESERVATION CREATE REQUEST ===
+[28-Jan-2026 14:48:00 UTC] Raw input: {"espace_id":"1204bb80-f70e-11f0-b5ec-0050560122dd","date_debut":"2026-01-28T07:00:00.000Z","date_fin":"2026-01-28T16:00:00.000Z","participants":3,"notes":""}
+[28-Jan-2026 14:48:00 UTC] Decoded data: {"espace_id":"1204bb80-f70e-11f0-b5ec-0050560122dd","date_debut":"2026-01-28T07:00:00.000Z","date_fin":"2026-01-28T16:00:00.000Z","participants":3,"notes":""}
+[28-Jan-2026 14:48:00 UTC] User ID: 62adf1fb-a63b-4f42-9a4a-faf8e8f1e03a
+[28-Jan-2026 14:48:00 UTC] Checking espace with ID: 1204bb80-f70e-11f0-b5ec-0050560122dd
+[28-Jan-2026 14:48:00 UTC] Espace found: Open Space (1204bb80-f70e-11f0-b5ec-0050560122dd)
+[28-Jan-2026 14:51:16 UTC] === RESERVATION CREATE REQUEST ===
+[28-Jan-2026 14:51:16 UTC] Raw input: {"espace_id":"1204cdca-f70e-11f0-b5ec-0050560122dd","date_debut":"2026-01-28T07:00:00.000Z","date_fin":"2026-01-28T16:00:00.000Z","participants":1,"notes":""}
+[28-Jan-2026 14:51:16 UTC] Decoded data: {"espace_id":"1204cdca-f70e-11f0-b5ec-0050560122dd","date_debut":"2026-01-28T07:00:00.000Z","date_fin":"2026-01-28T16:00:00.000Z","participants":1,"notes":""}
+[28-Jan-2026 14:51:16 UTC] User ID: 62adf1fb-a63b-4f42-9a4a-faf8e8f1e03a
+[28-Jan-2026 14:51:16 UTC] Checking espace with ID: 1204cdca-f70e-11f0-b5ec-0050560122dd
+[28-Jan-2026 14:51:16 UTC] Espace found: Private Booth Atlas (1204cdca-f70e-11f0-b5ec-0050560122dd)
+[28-Jan-2026 14:51:55 UTC] === RESERVATION CREATE REQUEST ===
+[28-Jan-2026 14:51:55 UTC] Raw input: {"espace_id":"1204cc77-f70e-11f0-b5ec-0050560122dd","date_debut":"2026-01-28T09:30:00.000Z","date_fin":"2026-01-28T14:30:00.000Z","participants":1,"notes":"besoin de 3 rallonge "}
+[28-Jan-2026 14:51:55 UTC] Decoded data: {"espace_id":"1204cc77-f70e-11f0-b5ec-0050560122dd","date_debut":"2026-01-28T09:30:00.000Z","date_fin":"2026-01-28T14:30:00.000Z","participants":1,"notes":"besoin de 3 rallonge "}
+[28-Jan-2026 14:51:55 UTC] User ID: 62adf1fb-a63b-4f42-9a4a-faf8e8f1e03a
+[28-Jan-2026 14:51:55 UTC] Checking espace with ID: 1204cc77-f70e-11f0-b5ec-0050560122dd
+[28-Jan-2026 14:51:55 UTC] Espace found: Private Booth Aurès (1204cc77-f70e-11f0-b5ec-0050560122dd)
+[28-Jan-2026 14:53:04 UTC] === RESERVATION CREATE REQUEST ===
+[28-Jan-2026 14:53:04 UTC] Raw input: {"espace_id":"1204cd72-f70e-11f0-b5ec-0050560122dd","date_debut":"2026-01-28T08:00:00.000Z","date_fin":"2026-01-28T17:00:00.000Z","participants":2,"notes":"fauteuil premium"}
+[28-Jan-2026 14:53:04 UTC] Decoded data: {"espace_id":"1204cd72-f70e-11f0-b5ec-0050560122dd","date_debut":"2026-01-28T08:00:00.000Z","date_fin":"2026-01-28T17:00:00.000Z","participants":2,"notes":"fauteuil premium"}
+[28-Jan-2026 14:53:04 UTC] User ID: 62adf1fb-a63b-4f42-9a4a-faf8e8f1e03a
+[28-Jan-2026 14:53:04 UTC] Checking espace with ID: 1204cd72-f70e-11f0-b5ec-0050560122dd
+[28-Jan-2026 14:53:04 UTC] Espace found: Private Booth Hoggar (1204cd72-f70e-11f0-b5ec-0050560122dd)
+[28-Jan-2026 14:55:33 UTC] === RESERVATION CREATE REQUEST ===
+[28-Jan-2026 14:55:33 UTC] Raw input: {"espace_id":"1204ce62-f70e-11f0-b5ec-0050560122dd","date_debut":"2026-01-28T07:00:00.000Z","date_fin":"2026-01-28T08:30:00.000Z","participants":1,"notes":""}
+[28-Jan-2026 14:55:33 UTC] Decoded data: {"espace_id":"1204ce62-f70e-11f0-b5ec-0050560122dd","date_debut":"2026-01-28T07:00:00.000Z","date_fin":"2026-01-28T08:30:00.000Z","participants":1,"notes":""}
+[28-Jan-2026 14:55:33 UTC] User ID: 62adf1fb-a63b-4f42-9a4a-faf8e8f1e03a
+[28-Jan-2026 14:55:33 UTC] Checking espace with ID: 1204ce62-f70e-11f0-b5ec-0050560122dd
+[28-Jan-2026 14:55:33 UTC] Espace found: Salle de Réunion Premium (1204ce62-f70e-11f0-b5ec-0050560122dd)
+[28-Jan-2026 22:58:09 UTC] === RESERVATION CREATE REQUEST ===
+[28-Jan-2026 22:58:09 UTC] Raw input: {"espace_id":"1204ce62-f70e-11f0-b5ec-0050560122dd","date_debut":"2026-02-01T07:00:00.000Z","date_fin":"2026-02-01T16:00:00.000Z","participants":6,"notes":""}
+[28-Jan-2026 22:58:09 UTC] Decoded data: {"espace_id":"1204ce62-f70e-11f0-b5ec-0050560122dd","date_debut":"2026-02-01T07:00:00.000Z","date_fin":"2026-02-01T16:00:00.000Z","participants":6,"notes":""}
+[28-Jan-2026 22:58:09 UTC] User ID: 241bc6ca-fc5f-44f4-a070-e2c71b631104
+[28-Jan-2026 22:58:09 UTC] Checking espace with ID: 1204ce62-f70e-11f0-b5ec-0050560122dd
+[28-Jan-2026 22:58:09 UTC] Espace found: Salle de Réunion Premium (1204ce62-f70e-11f0-b5ec-0050560122dd)
+[28-Jan-2026 23:08:59 UTC] === RESERVATION CREATE REQUEST ===
+[28-Jan-2026 23:08:59 UTC] Raw input: {"espace_id":"1204cdca-f70e-11f0-b5ec-0050560122dd","date_debut":"2026-02-12T00:00:04.000Z","date_fin":"2026-02-28T02:00:04.000Z","participants":2,"notes":""}
+[28-Jan-2026 23:08:59 UTC] Decoded data: {"espace_id":"1204cdca-f70e-11f0-b5ec-0050560122dd","date_debut":"2026-02-12T00:00:04.000Z","date_fin":"2026-02-28T02:00:04.000Z","participants":2,"notes":""}
+[28-Jan-2026 23:08:59 UTC] User ID: 0033da4a-1467-49a3-9d40-5d2b93cc1d8a
+[28-Jan-2026 23:08:59 UTC] Checking espace with ID: 1204cdca-f70e-11f0-b5ec-0050560122dd
+[28-Jan-2026 23:08:59 UTC] Espace found: Private Booth Atlas (1204cdca-f70e-11f0-b5ec-0050560122dd)
+[29-Jan-2026 00:10:12 UTC] === RESERVATION CREATE REQUEST ===
+[29-Jan-2026 00:10:12 UTC] Raw input: {"espace_id":"1204cdca-f70e-11f0-b5ec-0050560122dd","date_debut":"2026-01-29T01:00:00.497Z","date_fin":"2026-01-29T03:00:00.497Z","participants":4,"notes":""}
+[29-Jan-2026 00:10:12 UTC] Decoded data: {"espace_id":"1204cdca-f70e-11f0-b5ec-0050560122dd","date_debut":"2026-01-29T01:00:00.497Z","date_fin":"2026-01-29T03:00:00.497Z","participants":4,"notes":""}
+[29-Jan-2026 00:10:12 UTC] User ID: 8521de8a-dbe5-4751-b1ac-86c8fb18e3e7
+[29-Jan-2026 00:10:12 UTC] Checking espace with ID: 1204cdca-f70e-11f0-b5ec-0050560122dd
+[29-Jan-2026 00:10:12 UTC] Espace found: Private Booth Atlas (1204cdca-f70e-11f0-b5ec-0050560122dd)
+[29-Jan-2026 04:54:37 UTC] === RESERVATION CREATE REQUEST ===
+[29-Jan-2026 04:54:37 UTC] Raw input: {"espace_id":"1204bb80-f70e-11f0-b5ec-0050560122dd","date_debut":"2026-01-29T07:30:11.740Z","date_fin":"2026-02-28T07:30:26.000Z","participants":1,"notes":""}
+[29-Jan-2026 04:54:37 UTC] Decoded data: {"espace_id":"1204bb80-f70e-11f0-b5ec-0050560122dd","date_debut":"2026-01-29T07:30:11.740Z","date_fin":"2026-02-28T07:30:26.000Z","participants":1,"notes":""}
+[29-Jan-2026 04:54:37 UTC] User ID: 0033da4a-1467-49a3-9d40-5d2b93cc1d8a
+[29-Jan-2026 04:54:37 UTC] Checking espace with ID: 1204bb80-f70e-11f0-b5ec-0050560122dd
+[29-Jan-2026 04:54:37 UTC] Espace found: Open Space (1204bb80-f70e-11f0-b5ec-0050560122dd)
+[31-Jan-2026 18:51:42 UTC] === RESERVATION CREATE REQUEST ===
+[31-Jan-2026 18:51:42 UTC] Raw input: {"espace_id":"1204cdca-f70e-11f0-b5ec-0050560122dd","date_debut":"2026-02-01T07:30:29.023Z","date_fin":"2026-02-01T09:30:29.023Z","participants":1,"notes":""}
+[31-Jan-2026 18:51:42 UTC] Decoded data: {"espace_id":"1204cdca-f70e-11f0-b5ec-0050560122dd","date_debut":"2026-02-01T07:30:29.023Z","date_fin":"2026-02-01T09:30:29.023Z","participants":1,"notes":""}
+[31-Jan-2026 18:51:42 UTC] User ID: e67b3147-c55b-4c3e-944f-0fc038ee73dd
+[31-Jan-2026 18:51:42 UTC] Checking espace with ID: 1204cdca-f70e-11f0-b5ec-0050560122dd
+[31-Jan-2026 18:51:42 UTC] Espace found: Private Booth Atlas (1204cdca-f70e-11f0-b5ec-0050560122dd)
+[02-Feb-2026 13:50:13 UTC] PHP Warning:  PHP Startup: session.gc_divisor must be greater than 0 in Unknown on line 0
+[02-Feb-2026 13:50:15 UTC] PHP Warning:  PHP Startup: session.gc_divisor must be greater than 0 in Unknown on line 0
+[02-Feb-2026 13:51:16 UTC] PHP Warning:  PHP Startup: session.gc_divisor must be greater than 0 in Unknown on line 0
+[02-Feb-2026 13:51:16 UTC] PHP Warning:  PHP Startup: session.gc_divisor must be greater than 0 in Unknown on line 0

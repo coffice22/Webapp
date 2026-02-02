@@ -384,7 +384,7 @@ export const useAppStore = create<AppState>()(
       loadDemandesDomiciliation: async () => {
         try {
           const response = await apiClient.getDomiciliations();
-          console.log('🔍 Réponse API domiciliations:', response);
+          
           
           if (response.success && response.data) {
             // ← CORRECTION ICI : extraire response.data.data

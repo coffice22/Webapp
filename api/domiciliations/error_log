@@ -1,0 +1,550 @@
+[27-Jan-2026 14:51:17 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[27-Jan-2026 14:51:17 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[27-Jan-2026 14:51:21 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[27-Jan-2026 14:51:22 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[27-Jan-2026 14:51:43 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[27-Jan-2026 14:51:43 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[27-Jan-2026 14:51:47 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[27-Jan-2026 14:51:47 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[27-Jan-2026 14:52:11 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[27-Jan-2026 14:52:11 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[27-Jan-2026 16:08:43 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[27-Jan-2026 16:15:46 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[27-Jan-2026 16:52:34 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[27-Jan-2026 16:52:35 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[27-Jan-2026 19:06:41 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[27-Jan-2026 19:09:39 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[27-Jan-2026 19:09:51 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[28-Jan-2026 13:42:20 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[28-Jan-2026 13:42:20 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[28-Jan-2026 14:18:22 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[28-Jan-2026 14:35:24 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[28-Jan-2026 14:35:57 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[28-Jan-2026 14:35:57 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[28-Jan-2026 14:39:47 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[28-Jan-2026 14:39:48 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[28-Jan-2026 14:56:16 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[28-Jan-2026 14:56:17 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[28-Jan-2026 22:06:17 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[28-Jan-2026 22:06:40 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[28-Jan-2026 22:07:11 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[28-Jan-2026 23:04:18 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[28-Jan-2026 23:09:23 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[28-Jan-2026 23:09:39 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[28-Jan-2026 23:10:03 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 00:09:57 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 00:11:01 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 00:11:21 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 02:55:57 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 02:55:57 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 02:56:04 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 02:56:04 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 02:56:23 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 03:25:34 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 03:25:34 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 03:25:37 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 03:25:38 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 03:26:16 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 03:26:16 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 03:28:35 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 03:28:35 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 03:37:51 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 03:37:51 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 03:47:27 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 03:47:34 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 03:47:57 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 03:47:57 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 03:49:11 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 03:52:00 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 03:52:00 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 03:52:02 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 03:52:02 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 03:55:50 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 04:48:57 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 04:48:57 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 04:48:59 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 04:48:59 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 04:50:09 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 04:50:09 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 04:50:59 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 04:51:00 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 04:53:19 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 04:53:20 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 13:43:18 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 13:57:54 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 13:57:55 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 14:10:50 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 14:10:50 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 14:13:24 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 14:13:24 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 20:47:22 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 20:47:22 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 21:17:19 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 21:17:24 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 21:17:26 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 21:17:27 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 21:17:35 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 21:25:55 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 21:26:13 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 21:26:13 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 21:26:25 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 21:26:25 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 21:26:52 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 21:26:52 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 21:27:27 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 21:27:27 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 21:42:32 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 21:42:32 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 21:45:18 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 21:45:18 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 21:54:48 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 21:54:52 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 21:56:00 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 21:56:08 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 21:56:13 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 22:01:03 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 22:01:04 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 22:01:53 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 22:01:53 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 22:02:43 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 22:02:43 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 22:03:41 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 22:24:44 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 22:24:51 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 22:25:06 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 22:25:41 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 22:25:46 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 22:25:49 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 22:27:05 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 22:28:52 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 22:31:45 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 22:31:45 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 22:31:52 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 22:31:53 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 22:33:49 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 22:34:29 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 22:34:29 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 22:36:47 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 22:36:48 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 22:38:37 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 22:38:38 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 22:38:53 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 22:40:18 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 22:40:18 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 22:40:27 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 22:40:27 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:100
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 100
+[29-Jan-2026 22:45:14 UTC] AUTH OK: {"id":"be9366a8-0f8f-4559-8f5e-8709660ed8b4","email":"admin@coffice.dz","role":"admin"}
+[29-Jan-2026 22:45:14 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:101
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 101
+[29-Jan-2026 22:45:15 UTC] AUTH OK: {"id":"be9366a8-0f8f-4559-8f5e-8709660ed8b4","email":"admin@coffice.dz","role":"admin"}
+[29-Jan-2026 22:45:15 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/domiciliations/index.php:101
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/domiciliations/index.php on line 101

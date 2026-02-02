@@ -1,0 +1,16 @@
+[29-Jan-2026 14:03:07 UTC] User update error: SQLSTATE[22007]: Invalid datetime format: 1366 Incorrect decimal value: '' for column `cofficed_coffice`.`users`.`capital` at row 1
+[29-Jan-2026 14:03:07 UTC] User update trace: #0 /home/cofficed/public_html/api/users/update.php(135): PDOStatement->execute(Array)
+#1 {main}
+[29-Jan-2026 14:03:07 UTC] APP_ENV value: development
+[29-Jan-2026 14:03:45 UTC] User update error: SQLSTATE[22007]: Invalid datetime format: 1366 Incorrect decimal value: '' for column `cofficed_coffice`.`users`.`capital` at row 1
+[29-Jan-2026 14:03:45 UTC] User update trace: #0 /home/cofficed/public_html/api/users/update.php(135): PDOStatement->execute(Array)
+#1 {main}
+[29-Jan-2026 14:03:45 UTC] APP_ENV value: development
+[29-Jan-2026 14:07:56 UTC] User update error: SQLSTATE[22007]: Invalid datetime format: 1366 Incorrect decimal value: '' for column `cofficed_coffice`.`users`.`capital` at row 1
+[29-Jan-2026 14:07:56 UTC] User update trace: #0 /home/cofficed/public_html/api/users/update.php(135): PDOStatement->execute(Array)
+#1 {main}
+[29-Jan-2026 14:07:56 UTC] APP_ENV value: development
+[29-Jan-2026 14:08:03 UTC] User update error: SQLSTATE[22007]: Invalid datetime format: 1366 Incorrect decimal value: '' for column `cofficed_coffice`.`users`.`capital` at row 1
+[29-Jan-2026 14:08:03 UTC] User update trace: #0 /home/cofficed/public_html/api/users/update.php(135): PDOStatement->execute(Array)
+#1 {main}
+[29-Jan-2026 14:08:03 UTC] APP_ENV value: development

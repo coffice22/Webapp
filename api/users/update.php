@@ -5,6 +5,16 @@
  * PUT /api/users/update.php?id=xxx
  * POST /api/users/update.php?id=xxx (alternative)
  */
+function debugLog($message, $data = null) {
+    $logFile = __DIR__ . '/../../debug_update.log';
+    $timestamp = date('Y-m-d H:i:s');
+    $logMessage = "[$timestamp] $message";
+    if ($data !== null) {
+        $logMessage .= "\n" . print_r($data, true);
+    }
+    $logMessage .= "\n================\n";
+    file_put_contents($logFile, $logMessage, FILE_APPEND);
+}
 
 require_once '../config/cors.php';
 require_once '../config/database.php';
@@ -47,6 +57,8 @@ try {
 
     $rawInput = file_get_contents("php://input");
     $data = json_decode($rawInput);
+    debugLog("📥 Raw input", $rawInput);
+    debugLog("📦 Parsed data", $data);
 
     if (!$data) {
         Response::error("Données manquantes ou JSON invalide", 400);
@@ -67,28 +79,28 @@ try {
         'wilaya' => 'wilaya',
         'commune' => 'commune',
         'avatar' => 'avatar',
-        // Accepter les deux formats (camelCase ET snake_case)
+        // Accepter à la fois camelCase ET snake_case
         'typeEntreprise' => 'type_entreprise',
-        'type_entreprise' => 'type_entreprise',  // ← AJOUTE
+        'type_entreprise' => 'type_entreprise',
         'nif' => 'nif',
         'nis' => 'nis',
         'registreCommerce' => 'registre_commerce',
-        'registre_commerce' => 'registre_commerce',  // ← AJOUTE
+        'registre_commerce' => 'registre_commerce',
         'articleImposition' => 'article_imposition',
-        'article_imposition' => 'article_imposition',  // ← AJOUTE
+        'article_imposition' => 'article_imposition',
         'numeroAutoEntrepreneur' => 'numero_auto_entrepreneur',
-        'numero_auto_entrepreneur' => 'numero_auto_entrepreneur',  // ← AJOUTE
+        'numero_auto_entrepreneur' => 'numero_auto_entrepreneur',
         'raisonSociale' => 'raison_sociale',
-        'raison_sociale' => 'raison_sociale',  // ← AJOUTE
+        'raison_sociale' => 'raison_sociale',
         'dateCreationEntreprise' => 'date_creation_entreprise',
-        'date_creation_entreprise' => 'date_creation_entreprise',  // ← AJOUTE
+        'date_creation_entreprise' => 'date_creation_entreprise',
         'capital' => 'capital',
         'siegeSocial' => 'siege_social',
-        'siege_social' => 'siege_social',  // ← AJOUTE
+        'siege_social' => 'siege_social',
         'activitePrincipale' => 'activite_principale',
-        'activite_principale' => 'activite_principale',  // ← AJOUTE
+        'activite_principale' => 'activite_principale',
         'formeJuridique' => 'forme_juridique',
-        'forme_juridique' => 'forme_juridique',  // ← AJOUTE
+        'forme_juridique' => 'forme_juridique'
     ];
 
     // L'admin peut aussi changer le rôle et le statut
@@ -127,7 +139,11 @@ try {
         Response::error("Aucune donnée à mettre à jour", 400);
     }
 
-    $query = "UPDATE users SET " . implode(', ', $updates) . " WHERE id = :id"
+    $query = "UPDATE users SET " . implode(', ', $updates) . " WHERE id = :id";
+
+    debugLog("🔍 Requête SQL", $query);
+    debugLog("📊 Paramètres", $params);
+    
     $stmt = $db->prepare($query);
 
     if (!$stmt) {
@@ -147,6 +163,8 @@ try {
         error_log("Execute failed: " . print_r($stmt->errorInfo(), true));
         throw new Exception("Erreur d'exécution de la requête: " . implode(', ', $stmt->errorInfo()));
     }
+    
+    debugLog("✅ Mise à jour réussie", ['userId' => $userId]);
 
     Response::success(['id' => $userId], "Utilisateur mis à jour avec succès");
 

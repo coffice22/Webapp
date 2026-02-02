@@ -1,4 +1,7 @@
 <?php
+ini_set('log_errors', 1);
+ini_set('error_log', __DIR__ . '/error.log');
+error_reporting(E_ALL);
 
 /**
  * API: Liste des demandes de domiciliation
@@ -13,6 +16,7 @@ require_once '../utils/Pagination.php';
 
 try {
     $auth = Auth::verifyAuth();
+    error_log("AUTH OK: " . json_encode($auth));
 
     $database = Database::getInstance();
     $db = $database->getConnection();

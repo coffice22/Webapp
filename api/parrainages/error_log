@@ -1,0 +1,20 @@
+[28-Jan-2026 23:05:00 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/parrainages/index.php:136
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/parrainages/index.php on line 136
+[28-Jan-2026 23:07:57 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/parrainages/index.php:136
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/parrainages/index.php on line 136
+[29-Jan-2026 02:47:42 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/parrainages/index.php:136
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/parrainages/index.php on line 136
+[29-Jan-2026 03:17:28 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/parrainages/index.php:136
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/parrainages/index.php on line 136
+[29-Jan-2026 03:47:37 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Pagination::paginate() in /home/cofficed/public_html/api/parrainages/index.php:136
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/parrainages/index.php on line 136

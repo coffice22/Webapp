@@ -1,0 +1,4 @@
+[29-Jan-2026 04:51:22 UTC] PHP Warning:  Array to string conversion in /home/cofficed/public_html/api/espaces/update.php on line 59
+[29-Jan-2026 04:51:22 UTC] Update espace error: SQLSTATE[23000]: Integrity constraint violation: 4025 CONSTRAINT `espaces.equipements` failed for `cofficed_coffice`.`espaces`
+[02-Feb-2026 13:50:13 UTC] PHP Warning:  PHP Startup: session.gc_divisor must be greater than 0 in Unknown on line 0
+[02-Feb-2026 13:51:15 UTC] PHP Warning:  PHP Startup: session.gc_divisor must be greater than 0 in Unknown on line 0

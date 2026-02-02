@@ -1,0 +1,184 @@
+[27-Jan-2026 14:26:26 UTC] PHP Warning:  preg_match(): Unknown modifier '~' in /home/cofficed/public_html/api/utils/Validator.php on line 99
+[27-Jan-2026 14:26:49 UTC] PHP Warning:  preg_match(): Unknown modifier '~' in /home/cofficed/public_html/api/utils/Validator.php on line 99
+[27-Jan-2026 14:27:15 UTC] PHP Warning:  preg_match(): Unknown modifier '~' in /home/cofficed/public_html/api/utils/Validator.php on line 99
+[27-Jan-2026 14:29:33 UTC] PHP Warning:  preg_match(): Unknown modifier '~' in /home/cofficed/public_html/api/utils/Validator.php on line 99
+[27-Jan-2026 14:29:45 UTC] PHP Warning:  preg_match(): Unknown modifier '~' in /home/cofficed/public_html/api/utils/Validator.php on line 99
+[27-Jan-2026 14:30:07 UTC] PHP Warning:  preg_match(): Unknown modifier '~' in /home/cofficed/public_html/api/utils/Validator.php on line 99
+[27-Jan-2026 14:30:53 UTC] PHP Warning:  preg_match(): Unknown modifier '~' in /home/cofficed/public_html/api/utils/Validator.php on line 99
+[27-Jan-2026 14:44:58 UTC] PHP Warning:  preg_match(): Unknown modifier '~' in /home/cofficed/public_html/api/utils/Validator.php on line 99
+[27-Jan-2026 14:45:07 UTC] PHP Warning:  preg_match(): Unknown modifier '~' in /home/cofficed/public_html/api/utils/Validator.php on line 99
+[27-Jan-2026 14:48:13 UTC] PHP Warning:  preg_match(): Unknown modifier '~' in /home/cofficed/public_html/api/utils/Validator.php on line 99
+[27-Jan-2026 14:48:18 UTC] PHP Warning:  preg_match(): Unknown modifier '~' in /home/cofficed/public_html/api/utils/Validator.php on line 99
+[27-Jan-2026 14:49:10 UTC] PHP Warning:  preg_match(): Unknown modifier '~' in /home/cofficed/public_html/api/utils/Validator.php on line 99
+[27-Jan-2026 14:51:54 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Auth::getCurrentUser() in /home/cofficed/public_html/api/auth/logout.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/auth/logout.php on line 16
+[27-Jan-2026 16:11:01 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Auth::getCurrentUser() in /home/cofficed/public_html/api/auth/logout.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/auth/logout.php on line 16
+[27-Jan-2026 16:11:22 UTC] PHP Warning:  preg_match(): Unknown modifier '~' in /home/cofficed/public_html/api/utils/Validator.php on line 99
+[27-Jan-2026 16:52:38 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Auth::getCurrentUser() in /home/cofficed/public_html/api/auth/logout.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/auth/logout.php on line 16
+[27-Jan-2026 16:53:15 UTC] PHP Warning:  preg_match(): Unknown modifier '~' in /home/cofficed/public_html/api/utils/Validator.php on line 99
+[27-Jan-2026 17:04:06 UTC] PHP Warning:  preg_match(): Unknown modifier '~' in /home/cofficed/public_html/api/utils/Validator.php on line 99
+[27-Jan-2026 17:45:14 UTC] PHP Warning:  preg_match(): Unknown modifier '~' in /home/cofficed/public_html/api/utils/Validator.php on line 99
+[27-Jan-2026 18:05:05 UTC] PHP Warning:  preg_match(): Unknown modifier '~' in /home/cofficed/public_html/api/utils/Validator.php on line 99
+[27-Jan-2026 18:07:50 UTC] Hashing password...
+[27-Jan-2026 18:07:50 UTC] Generated user ID: 62adf1fb-a63b-4f42-9a4a-faf8e8f1e03a
+[27-Jan-2026 18:07:50 UTC] User created successfully with code parrainage: CPF62ADF1
+[27-Jan-2026 18:07:50 UTC] Parrainage code created: CPF62ADF1
+[27-Jan-2026 18:07:50 UTC] Tokens generated
+[27-Jan-2026 18:07:50 UTC] Registration complete for: anesjob70@gmail.com
+[27-Jan-2026 18:08:12 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Auth::getCurrentUser() in /home/cofficed/public_html/api/auth/logout.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/auth/logout.php on line 16
+[27-Jan-2026 18:09:03 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Auth::getCurrentUser() in /home/cofficed/public_html/api/auth/logout.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/auth/logout.php on line 16
+[27-Jan-2026 18:09:57 UTC] Hashing password...
+[27-Jan-2026 18:09:57 UTC] Generated user ID: 2fcbb514-fcb1-49e2-93d8-941e7b4ca3b6
+[27-Jan-2026 18:09:57 UTC] User created successfully with code parrainage: CPF2FCBB5
+[27-Jan-2026 18:09:57 UTC] Parrainage code created: CPF2FCBB5
+[27-Jan-2026 18:09:57 UTC] Tokens generated
+[27-Jan-2026 18:09:57 UTC] Registration complete for: sasukehamma@gmail.com
+[27-Jan-2026 18:10:06 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Auth::getCurrentUser() in /home/cofficed/public_html/api/auth/logout.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/auth/logout.php on line 16
+[27-Jan-2026 18:26:00 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Auth::getCurrentUser() in /home/cofficed/public_html/api/auth/logout.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/auth/logout.php on line 16
+[28-Jan-2026 13:41:57 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Auth::getCurrentUser() in /home/cofficed/public_html/api/auth/logout.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/auth/logout.php on line 16
+[28-Jan-2026 13:43:11 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Auth::getCurrentUser() in /home/cofficed/public_html/api/auth/logout.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/auth/logout.php on line 16
+[28-Jan-2026 14:17:11 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Auth::getCurrentUser() in /home/cofficed/public_html/api/auth/logout.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/auth/logout.php on line 16
+[28-Jan-2026 14:35:45 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Auth::getCurrentUser() in /home/cofficed/public_html/api/auth/logout.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/auth/logout.php on line 16
+[28-Jan-2026 14:38:13 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Auth::getCurrentUser() in /home/cofficed/public_html/api/auth/logout.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/auth/logout.php on line 16
+[28-Jan-2026 14:39:32 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Auth::getCurrentUser() in /home/cofficed/public_html/api/auth/logout.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/auth/logout.php on line 16
+[28-Jan-2026 14:40:01 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Auth::getCurrentUser() in /home/cofficed/public_html/api/auth/logout.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/auth/logout.php on line 16
+[28-Jan-2026 14:55:58 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Auth::getCurrentUser() in /home/cofficed/public_html/api/auth/logout.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/auth/logout.php on line 16
+[28-Jan-2026 14:58:06 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Auth::getCurrentUser() in /home/cofficed/public_html/api/auth/logout.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/auth/logout.php on line 16
+[28-Jan-2026 15:01:45 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Auth::getCurrentUser() in /home/cofficed/public_html/api/auth/logout.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/auth/logout.php on line 16
+[28-Jan-2026 23:06:02 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Auth::getCurrentUser() in /home/cofficed/public_html/api/auth/logout.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/auth/logout.php on line 16
+[28-Jan-2026 23:07:51 UTC] Hashing password...
+[28-Jan-2026 23:07:51 UTC] Generated user ID: 0033da4a-1467-49a3-9d40-5d2b93cc1d8a
+[28-Jan-2026 23:07:51 UTC] User created successfully with code parrainage: CPF0033DA
+[28-Jan-2026 23:07:51 UTC] Parrainage code created: CPF0033DA
+[28-Jan-2026 23:07:51 UTC] Processing referral code: CPF784E71
+[28-Jan-2026 23:07:51 UTC] Tokens generated
+[28-Jan-2026 23:07:51 UTC] Registration complete for: massylben@gmail.com
+[28-Jan-2026 23:09:33 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Auth::getCurrentUser() in /home/cofficed/public_html/api/auth/logout.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/auth/logout.php on line 16
+[29-Jan-2026 00:09:37 UTC] Hashing password...
+[29-Jan-2026 00:09:37 UTC] Generated user ID: 8521de8a-dbe5-4751-b1ac-86c8fb18e3e7
+[29-Jan-2026 00:09:37 UTC] User created successfully with code parrainage: CPF8521DE
+[29-Jan-2026 00:09:37 UTC] Parrainage code created: CPF8521DE
+[29-Jan-2026 00:09:37 UTC] Tokens generated
+[29-Jan-2026 00:09:37 UTC] Registration complete for: salo.pepe@gmail.com
+[29-Jan-2026 02:46:48 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Auth::getCurrentUser() in /home/cofficed/public_html/api/auth/logout.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/auth/logout.php on line 16
+[29-Jan-2026 02:47:48 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Auth::getCurrentUser() in /home/cofficed/public_html/api/auth/logout.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/auth/logout.php on line 16
+[29-Jan-2026 02:56:08 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Auth::getCurrentUser() in /home/cofficed/public_html/api/auth/logout.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/auth/logout.php on line 16
+[29-Jan-2026 03:25:55 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Auth::getCurrentUser() in /home/cofficed/public_html/api/auth/logout.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/auth/logout.php on line 16
+[29-Jan-2026 03:51:54 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Auth::getCurrentUser() in /home/cofficed/public_html/api/auth/logout.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/auth/logout.php on line 16
+[29-Jan-2026 03:55:55 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Auth::getCurrentUser() in /home/cofficed/public_html/api/auth/logout.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/auth/logout.php on line 16
+[29-Jan-2026 04:53:43 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Auth::getCurrentUser() in /home/cofficed/public_html/api/auth/logout.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/auth/logout.php on line 16
+[29-Jan-2026 21:26:30 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Auth::getCurrentUser() in /home/cofficed/public_html/api/auth/logout.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/auth/logout.php on line 16
+[29-Jan-2026 21:42:33 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Auth::getCurrentUser() in /home/cofficed/public_html/api/auth/logout.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/auth/logout.php on line 16
+[29-Jan-2026 22:30:37 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Auth::getCurrentUser() in /home/cofficed/public_html/api/auth/logout.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/auth/logout.php on line 16
+[30-Jan-2026 13:58:09 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Auth::getCurrentUser() in /home/cofficed/public_html/api/auth/logout.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/auth/logout.php on line 16
+[30-Jan-2026 23:13:18 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Auth::getCurrentUser() in /home/cofficed/public_html/api/auth/logout.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/auth/logout.php on line 16
+[30-Jan-2026 23:37:11 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Auth::getCurrentUser() in /home/cofficed/public_html/api/auth/logout.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/auth/logout.php on line 16
+[31-Jan-2026 18:51:17 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Auth::getCurrentUser() in /home/cofficed/public_html/api/auth/logout.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/auth/logout.php on line 16
+[31-Jan-2026 18:52:02 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Auth::getCurrentUser() in /home/cofficed/public_html/api/auth/logout.php:16
+Stack trace:
+#0 {main}
+  thrown in /home/cofficed/public_html/api/auth/logout.php on line 16
+[02-Feb-2026 13:49:50 UTC] PHP Warning:  PHP Startup: session.gc_divisor must be greater than 0 in Unknown on line 0
+[02-Feb-2026 13:49:51 UTC] PHP Warning:  PHP Startup: session.gc_divisor must be greater than 0 in Unknown on line 0
+[02-Feb-2026 13:50:13 UTC] PHP Warning:  PHP Startup: session.gc_divisor must be greater than 0 in Unknown on line 0
+[02-Feb-2026 13:50:14 UTC] PHP Warning:  PHP Startup: session.gc_divisor must be greater than 0 in Unknown on line 0
+[02-Feb-2026 13:51:14 UTC] PHP Warning:  PHP Startup: session.gc_divisor must be greater than 0 in Unknown on line 0
+[02-Feb-2026 13:51:16 UTC] PHP Warning:  PHP Startup: session.gc_divisor must be greater than 0 in Unknown on line 0

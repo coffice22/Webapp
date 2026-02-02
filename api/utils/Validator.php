@@ -96,10 +96,12 @@ class Validator
             return false;
         }
 
-        if (!preg_match('/[!@#$%^&*(),.?":{}|<>_\-+=\[\]\\\/~`]/', $password)) {
-            $this->errors[$fieldName] = "Le mot de passe doit contenir au moins un caractère spécial (!@#$%^&*(),.?\":{}|<>_-+=[]\\/)";
+        if (!preg_match('/[^a-zA-Z0-9]/', $password)) {
+            $this->errors[$fieldName] =
+                "Le mot de passe doit contenir au moins un caractère spécial";
             return false;
         }
+
 
         return true;
     }

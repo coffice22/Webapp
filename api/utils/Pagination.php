@@ -19,6 +19,21 @@ class Pagination
      * @param int $limit Nombre d'éléments par page
      * @param int $maxLimit Limite maximale d'éléments par page
      */
+     
+    public static function paginate($total, $page = 1, $limit = 20)
+    {
+        $totalPages = max(1, ceil($total / $limit));
+
+        return [
+            'total' => (int) $total,
+            'page' => (int) $page,
+            'limit' => (int) $limit,
+            'total_pages' => $totalPages,
+            'has_prev' => $page > 1,
+            'has_next' => $page < $totalPages,
+        ];
+    }
+     
     public function __construct($page = 1, $limit = 20, $maxLimit = 100)
     {
         $this->page = max(1, (int)$page);
