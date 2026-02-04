@@ -417,7 +417,7 @@ export const useAppStore = create<AppState>()(
               dateCreationEntreprise: d.date_creation_entreprise,
               statut: d.statut,
               commentaireAdmin: d.commentaire_admin,
-              montantMensuel: d.montant_mensuel,  // ← AJOUTE CECI (pour afficher le tarif)
+              montantMensuel: parseFloat(d.montant_mensuel as string) || 0,  // ← AJOUTE CECI (pour afficher le tarif)
               dateValidation: d.date_validation,
               dateCreation: d.created_at,
               updatedAt: d.updated_at,
