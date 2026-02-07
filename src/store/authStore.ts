@@ -16,6 +16,7 @@ interface AuthState {
   logout: () => Promise<void>;
   updateProfile: (data: Partial<User>) => Promise<void>;
   loadUser: () => Promise<void>;
+  setUser: (user: User) => void;
 }
 
 interface RegisterData {
@@ -68,10 +69,28 @@ export const useAuthStore = create<AuthState>()(
             return;
           }
 
-          console.log("[Auth] Utilisateur initialisé:", response.data);
+          const userData = response.data as any;
+          
+          // CORRECTION: Mapper les données snake_case → camelCase dès l'initialisation
+          const mappedUser: User = {
+            ...userData,
+            // S'assurer que les champs camelCase sont présents
+            raisonSociale: userData.raison_sociale || userData.raisonSociale,
+            formeJuridique: userData.forme_juridique || userData.formeJuridique,
+            typeEntreprise: userData.type_entreprise || userData.typeEntreprise,
+            registreCommerce: userData.registre_commerce || userData.registreCommerce,
+            articleImposition: userData.article_imposition || userData.articleImposition,
+            numeroAutoEntrepreneur: userData.numero_auto_entrepreneur || userData.numeroAutoEntrepreneur,
+            activitePrincipale: userData.activite_principale || userData.activitePrincipale,
+            siegeSocial: userData.siege_social || userData.siegeSocial,
+            dateCreationEntreprise: userData.date_creation_entreprise || userData.dateCreationEntreprise,
+          };
+
+          console.log("[Auth] Utilisateur initialisé:", mappedUser);
+          
           set({
-            user: response.data as User,
-            isAdmin: (response.data as User).role === "admin",
+            user: mappedUser,
+            isAdmin: mappedUser.role === "admin",
             isInitialized: true,
             isLoading: false,
           });
@@ -97,15 +116,34 @@ export const useAuthStore = create<AuthState>()(
             throw new Error(response.error || "Erreur de connexion");
           }
 
-          const responseData = response.data as { token: string; refreshToken?: string; user: User };
+          const responseData = response.data as { token: string; refreshToken?: string; user: any };
           apiClient.setToken(responseData.token, responseData.refreshToken);
 
+          // Mapper les données snake_case → camelCase
+          const mappedUser: User = {
+            ...responseData.user,
+            raisonSociale: responseData.user.raison_sociale ?? responseData.user.raisonSociale,
+            formeJuridique: responseData.user.forme_juridique ?? responseData.user.formeJuridique,
+            typeEntreprise: responseData.user.type_entreprise ?? responseData.user.typeEntreprise,
+            registreCommerce: responseData.user.registre_commerce ?? responseData.user.registreCommerce,
+            articleImposition: responseData.user.article_imposition ?? responseData.user.articleImposition,
+            numeroAutoEntrepreneur: responseData.user.numero_auto_entrepreneur ?? responseData.user.numeroAutoEntrepreneur,
+            activitePrincipale: responseData.user.activite_principale ?? responseData.user.activitePrincipale,
+            siegeSocial: responseData.user.siege_social ?? responseData.user.siegeSocial,
+            dateCreationEntreprise: responseData.user.date_creation_entreprise ?? responseData.user.dateCreationEntreprise,
+          };
+
           set({
-            user: responseData.user,
-            isAdmin: responseData.user.role === "admin",
+            user: mappedUser,
+            isAdmin: mappedUser.role === "admin",
             isLoading: false,
           });
-
+          
+          console.log('Mapped user:', mappedUser);
+          
+          // ✅ SOLUTION: Fetch complete user data after login
+          await get().loadUser();
+          
           toast.success("Connexion réussie");
         } catch (error) {
           set({ isLoading: false });
@@ -125,11 +163,25 @@ export const useAuthStore = create<AuthState>()(
             throw new Error(response.error || "Erreur lors de l'inscription");
           }
 
-          const responseData = response.data as { token: string; refreshToken?: string; user: User };
+          const responseData = response.data as { token: string; refreshToken?: string; user: any };
           apiClient.setToken(responseData.token, responseData.refreshToken);
 
+          // Mapper les données snake_case → camelCase
+          const mappedUser: User = {
+            ...responseData.user,
+            raisonSociale: responseData.user.raison_sociale || responseData.user.raisonSociale,
+            formeJuridique: responseData.user.forme_juridique || responseData.user.formeJuridique,
+            typeEntreprise: responseData.user.type_entreprise || responseData.user.typeEntreprise,
+            registreCommerce: responseData.user.registre_commerce || responseData.user.registreCommerce,
+            articleImposition: responseData.user.article_imposition || responseData.user.articleImposition,
+            numeroAutoEntrepreneur: responseData.user.numero_auto_entrepreneur || responseData.user.numeroAutoEntrepreneur,
+            activitePrincipale: responseData.user.activite_principale || responseData.user.activitePrincipale,
+            siegeSocial: responseData.user.siege_social || responseData.user.siegeSocial,
+            dateCreationEntreprise: responseData.user.date_creation_entreprise || responseData.user.dateCreationEntreprise,
+          };
+
           set({
-            user: responseData.user,
+            user: mappedUser,
             isAdmin: false,
             isLoading: false,
           });
@@ -201,14 +253,39 @@ export const useAuthStore = create<AuthState>()(
 
       loadUser: async () => {
         try {
+          console.log("[Auth] loadUser appelé");
           const response = await apiClient.me();
 
           if (response.success && response.data) {
-            set({ user: response.data as User });
+            const userData = response.data as any;
+            
+            // Mapper les données snake_case vers camelCase
+            const mappedUser: User = {
+              ...userData,
+              // S'assurer que les champs camelCase sont présents
+              raisonSociale: userData.raison_sociale || userData.raisonSociale,
+              formeJuridique: userData.forme_juridique || userData.formeJuridique,
+              typeEntreprise: userData.type_entreprise || userData.typeEntreprise,
+              registreCommerce: userData.registre_commerce || userData.registreCommerce,
+              articleImposition: userData.article_imposition || userData.articleImposition,
+              numeroAutoEntrepreneur: userData.numero_auto_entrepreneur || userData.numeroAutoEntrepreneur,
+              activitePrincipale: userData.activite_principale || userData.activitePrincipale,
+              siegeSocial: userData.siege_social || userData.siegeSocial,
+              dateCreationEntreprise: userData.date_creation_entreprise || userData.dateCreationEntreprise,
+            };
+            
+            console.log("[Auth] Utilisateur chargé:", mappedUser);
+            
+            // Force une nouvelle référence pour déclencher les re-renders
+            set({ user: { ...mappedUser } });
           }
         } catch (error) {
-          console.error("Load user error:", error);
+          console.error("[Auth] Load user error:", error);
         }
+      },
+
+      setUser: (user: User) => {
+        set({ user: { ...user } });
       },
     }),
     {

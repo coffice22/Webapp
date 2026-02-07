@@ -385,43 +385,61 @@ export const useAppStore = create<AppState>()(
         try {
           const response = await apiClient.getDomiciliations();
           
+          console.log('Response brute:', response);
           
           if (response.success && response.data) {
-            // ← CORRECTION ICI : extraire response.data.data
+            // Extraire les données selon la structure de la réponse
             const rawData = Array.isArray(response.data) 
               ? response.data 
-              : response.data.data || [];  // ← Accéder à data.data
+              : response.data.data || [];
             
-            const demandesDomiciliation = rawData.map((d: Record<string, unknown>) => ({
-              id: d.id,
-              userId: d.user_id,
-              utilisateur: d.utilisateur,
-              raisonSociale: d.raison_sociale,
-              formeJuridique: d.forme_juridique,
-              nif: d.nif,
-              nis: d.nis,
-              registreCommerce: d.registre_commerce,
-              articleImposition: d.article_imposition,
-              coordonneesFiscales: d.coordonnees_fiscales,
-              coordonneesAdministratives: d.coordonnees_administratives,
-              representantLegal: {
-                nom: d.representant_nom,
-                prenom: d.representant_prenom,
-                fonction: d.representant_fonction,
-                telephone: d.representant_telephone,
-                email: d.representant_email,
-              },
-              domaineActivite: d.domaine_activite,
-              adresseSiegeSocial: d.adresse_siege_social,
-              capital: d.capital,
-              dateCreationEntreprise: d.date_creation_entreprise,
-              statut: d.statut,
-              commentaireAdmin: d.commentaire_admin,
-              montantMensuel: parseFloat(d.montant_mensuel as string) || 0,  // ← AJOUTE CECI (pour afficher le tarif)
-              dateValidation: d.date_validation,
-              dateCreation: d.created_at,
-              updatedAt: d.updated_at,
-            }));
+            console.log('Raw data:', rawData);
+            
+            const demandesDomiciliation = rawData.map((d: Record<string, unknown>) => {
+              // Log pour déboguer
+              console.log('Domiciliation item:', {
+                id: d.id,
+                montant_mensuel: d.montant_mensuel,
+                raison_sociale: d.raison_sociale
+              });
+              
+              return {
+                id: d.id,
+                userId: d.user_id,
+                utilisateur: d.utilisateur,
+                raisonSociale: d.raison_sociale,
+                formeJuridique: d.forme_juridique,
+                nif: d.nif,
+                nis: d.nis,
+                registreCommerce: d.registre_commerce,
+                articleImposition: d.article_imposition,
+                coordonneesFiscales: d.coordonnees_fiscales,
+                coordonneesAdministratives: d.coordonnees_administratives,
+                representantLegal: {
+                  nom: d.representant_nom,
+                  prenom: d.representant_prenom,
+                  fonction: d.representant_fonction,
+                  telephone: d.representant_telephone,
+                  email: d.representant_email,
+                },
+                domaineActivite: d.domaine_activite,
+                adresseSiegeSocial: d.adresse_siege_social,
+                capital: d.capital,
+                dateCreationEntreprise: d.date_creation_entreprise,
+                statut: d.statut,
+                commentaireAdmin: d.commentaire_admin,
+                // CORRECTION: Convertir explicitement en nombre
+                montantMensuel: d.montant_mensuel ? parseFloat(d.montant_mensuel as string) : 0,
+                montant_mensuel: d.montant_mensuel ? parseFloat(d.montant_mensuel as string) : 0, // Ajouter aussi en snake_case
+                dateDebut: d.date_debut,
+                dateFin: d.date_fin,
+                dateValidation: d.date_validation,
+                dateCreation: d.created_at,
+                updatedAt: d.updated_at,
+              };
+            });
+          
+            console.log('Demandes mappées:', demandesDomiciliation);
           
             const domiciliationServices = demandesDomiciliation
               .filter((d: DemandeDomiciliation) => d.statut === "validee")
@@ -514,7 +532,7 @@ export const useAppStore = create<AppState>()(
             set({ users });
           }
         } catch (error) {
-          logger.error("Erreur chargement utilisateurs:", error);
+          console.error("Erreur chargement utilisateurs:", error);
         }
       },
 
@@ -542,25 +560,39 @@ export const useAppStore = create<AppState>()(
 
       updateUser: async (userId, data) => {
         try {
+          console.log("[Store] updateUser appelé avec:", { userId, data });
+          
           const response = await apiClient.updateUser(userId, data);
+          
           if (!response.success) {
             throw new Error(response.error || "Erreur mise a jour");
           }
 
-          const { user, loadUser } = (
-            await import("./authStore")
-          ).useAuthStore.getState();
+          console.log("[Store] Réponse API:", response);
 
+          // Importer le store d'authentification
+          const authStore = (await import("./authStore")).useAuthStore;
+          const { user } = authStore.getState();
+
+          // Si c'est l'utilisateur connecté, recharger ses données
           if (user?.id === userId) {
-            await loadUser();
+            console.log("[Store] Rechargement des données utilisateur...");
+            await authStore.getState().loadUser();
+            
+            // Attendre un petit moment pour que le state se propage
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            console.log("[Store] Utilisateur après rechargement:", authStore.getState().user);
           }
 
+          // Si admin, recharger la liste des utilisateurs
           if (user?.role === "admin") {
             await get().loadUsers();
           }
 
           toast.success("Informations mises a jour");
         } catch (error) {
+          console.error("[Store] Erreur updateUser:", error);
           toast.error(error instanceof Error ? error.message : "Erreur");
           throw error;
         }

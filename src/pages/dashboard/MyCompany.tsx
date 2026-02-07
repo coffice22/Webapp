@@ -25,50 +25,58 @@ import { wilayas } from "../../data/wilayas";
 import { logger } from "../../utils/logger";
 
 const MyCompany = () => {
-  const { user } = useAuthStore();
+  const { user, loadUser } = useAuthStore();
   const { updateUser } = useAppStore();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    entreprise: user?.entreprise || "",
-    raisonSociale: user?.raisonSociale || "",
-    formeJuridique: user?.formeJuridique || "",
-    typeEntreprise: user?.typeEntreprise || "",
-    nif: user?.nif || "",
-    nis: user?.nis || "",
-    registreCommerce: user?.registreCommerce || "",
-    articleImposition: user?.articleImposition || "",
-    numeroAutoEntrepreneur: user?.numeroAutoEntrepreneur || "",
-    activitePrincipale: user?.activitePrincipale || "",
-    siegeSocial: user?.siegeSocial || "",
-    capital: user?.capital || "",
-    dateCreationEntreprise: user?.dateCreationEntreprise || "",
-    wilaya: user?.wilaya || "",
-    commune: user?.commune || "",
+    entreprise: "",
+    raisonSociale: "",
+    formeJuridique: "",
+    typeEntreprise: "",
+    nif: "",
+    nis: "",
+    registreCommerce: "",
+    articleImposition: "",
+    numeroAutoEntrepreneur: "",
+    activitePrincipale: "",
+    siegeSocial: "",
+    capital: "",
+    dateCreationEntreprise: "",
+    wilaya: "",
+    commune: "",
   });
 
-  const hasCompanyInfo = user?.raisonSociale || user?.nif || user?.nis;
-
+  // Charger les données utilisateur au montage ET à chaque changement de user
   useEffect(() => {
     if (user) {
       setFormData({
-        entreprise: user?.entreprise || "",
-        raisonSociale: user.raisonSociale || "",
-        formeJuridique: user.formeJuridique || "",
-        typeEntreprise: user.typeEntreprise || "",
+        entreprise: user.entreprise || "",
+        raisonSociale: user.raisonSociale || user.raison_sociale || "",
+        formeJuridique: user.formeJuridique || user.forme_juridique || "",
+        typeEntreprise: user.typeEntreprise || user.type_entreprise || "",
         nif: user.nif || "",
         nis: user.nis || "",
-        registreCommerce: user.registreCommerce || "",
-        articleImposition: user.articleImposition || "",
-        numeroAutoEntrepreneur: user.numeroAutoEntrepreneur || "",
-        activitePrincipale: user.activitePrincipale || "",
-        siegeSocial: user.siegeSocial || "",
+        registreCommerce: user.registreCommerce || user.registre_commerce || "",
+        articleImposition: user.articleImposition || user.article_imposition || "",
+        numeroAutoEntrepreneur: user.numeroAutoEntrepreneur || user.numero_auto_entrepreneur || "",
+        activitePrincipale: user.activitePrincipale || user.activite_principale || "",
+        siegeSocial: user.siegeSocial || user.siege_social || "",
         capital: user.capital || "",
-        dateCreationEntreprise: user.dateCreationEntreprise || "",
+        dateCreationEntreprise: user.dateCreationEntreprise || user.date_creation_entreprise || "",
         wilaya: user.wilaya || "",
         commune: user.commune || "",
       });
     }
-  }, [user]);
+  }, [user]); // Se déclenche à chaque changement de user
+
+  const hasCompanyInfo = !!(
+    user?.raisonSociale || 
+    user?.raison_sociale || 
+    user?.nif || 
+    user?.nis
+  );
+
+  console.log("hasCompanyInfo: ",hasCompanyInfo)
 
   const handleSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -92,30 +100,33 @@ const MyCompany = () => {
         return;
       }
 
-      // Mapper camelCase → snake_case pour l'API
-      // Mapper pour l'API (garder en camelCase car l'API fait la conversion)
+      // Préparer les données à envoyer
       const dataToSend = {
         entreprise: formData.entreprise || null,
-        raisonSociale: formData.raisonSociale || null,  // ← camelCase
-        formeJuridique: formData.formeJuridique || null,  // ← camelCase
-        typeEntreprise: formData.typeEntreprise || null,  // ← camelCase
+        raisonSociale: formData.raisonSociale || null,
+        formeJuridique: formData.formeJuridique || null,
+        typeEntreprise: formData.typeEntreprise || null,
         nif: formData.nif || null,
         nis: formData.nis || null,
-        registreCommerce: formData.registreCommerce || null,  // ← camelCase
-        articleImposition: formData.articleImposition || null,  // ← camelCase
-        numeroAutoEntrepreneur: formData.numeroAutoEntrepreneur || null,  // ← camelCase
-        activitePrincipale: formData.activitePrincipale || null,  // ← camelCase
-        siegeSocial: formData.siegeSocial || null,  // ← camelCase
+        registreCommerce: formData.registreCommerce || null,
+        articleImposition: formData.articleImposition || null,
+        numeroAutoEntrepreneur: formData.numeroAutoEntrepreneur || null,
+        activitePrincipale: formData.activitePrincipale || null,
+        siegeSocial: formData.siegeSocial || null,
         capital: formData.capital ? parseFloat(formData.capital.toString()) : null,
-        dateCreationEntreprise: formData.dateCreationEntreprise || null,  // ← camelCase
+        dateCreationEntreprise: formData.dateCreationEntreprise || null,
         wilaya: formData.wilaya || null,
         commune: formData.commune || null,
       };
 
-      const result = await updateUser(user.id, dataToSend);
-      await useAuthStore.getState().loadUser();
-      toast.success("Informations de l'entreprise mises à jour avec succès");
+      // Mettre à jour via le store
+      await updateUser(user.id, dataToSend);
+      
+      // Recharger les données utilisateur pour s'assurer d'avoir les dernières infos
+      await loadUser();
+      
       setIsEditing(false);
+      toast.success("Informations de l'entreprise mises à jour avec succès");
     } catch (error) {
       logger.error("Erreur mise à jour:", error instanceof Error ? error.message : "Unknown error");
       toast.error(error instanceof Error ? error.message : "Erreur lors de la mise à jour");
@@ -127,18 +138,18 @@ const MyCompany = () => {
     if (user) {
       setFormData({
         entreprise: user?.entreprise || "",
-        raisonSociale: user.raisonSociale || "",
-        formeJuridique: user.formeJuridique || "",
-        typeEntreprise: user.typeEntreprise || "",
+        raisonSociale: user.raisonSociale || user.raison_sociale || "",
+        formeJuridique: user.formeJuridique || user.forme_juridique || "",
+        typeEntreprise: user.typeEntreprise || user.type_entreprise || "",
         nif: user.nif || "",
         nis: user.nis || "",
-        registreCommerce: user.registreCommerce || "",
-        articleImposition: user.articleImposition || "",
-        numeroAutoEntrepreneur: user.numeroAutoEntrepreneur || "",
-        activitePrincipale: user.activitePrincipale || "",
-        siegeSocial: user.siegeSocial || "",
+        registreCommerce: user.registreCommerce || user.registre_commerce || "",
+        articleImposition: user.articleImposition || user.article_imposition || "",
+        numeroAutoEntrepreneur: user.numeroAutoEntrepreneur || user.numero_auto_entrepreneur || "",
+        activitePrincipale: user.activitePrincipale || user.activite_principale || "",
+        siegeSocial: user.siegeSocial || user.siege_social || "",
         capital: user.capital || "",
-        dateCreationEntreprise: user.dateCreationEntreprise || "",
+        dateCreationEntreprise: user.dateCreationEntreprise || user.date_creation_entreprise || "",
         wilaya: user.wilaya || "",
         commune: user.commune || "",
       });
@@ -179,7 +190,7 @@ const MyCompany = () => {
         )}
       </div>
 
-      {!hasCompanyInfo && !isEditing ? (
+      {(!hasCompanyInfo && !isEditing) &&(
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -199,7 +210,8 @@ const MyCompany = () => {
             </Button>
           </Card>
         </motion.div>
-      ) : (
+      )}
+     {(hasCompanyInfo || isEditing)  &&(
         <form onSubmit={handleSubmit} className="space-y-6">
           <Card className="p-6">
             <div className="flex items-center gap-3 mb-6">
